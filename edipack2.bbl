@@ -1,0 +1,40 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{Georges2013ACMP}
+A.~Georges, L.~de' Medici, J.~Mravlje, { Strong Correlations from Hund's
+  Coupling.}, Annu.~Rev. Condens. Matter Phys. 45 (2013) 137--178.
+
+\bibitem{Lin1993CIP}
+H.~Lin, J.~Gubernatis, \href{https://doi.org/10.1063/1.4823192}{Exact
+  diagonalization methods for quantum systems}, Computers in Physics 7~(4)
+  (1993) 400--407.
+\newline\urlprefix\url{https://doi.org/10.1063/1.4823192}
+
+\bibitem{Lanczos1950JRNBSB}
+C.~Lanczos, {An iteration method for the solution of the eigenvalue problem of
+  linear differential and integral operators}, J. Res. Natl. Bur. Stand. B 45
+  (1950) 255--282.
+\newblock \href {https://doi.org/10.6028/jres.045.026}
+  {\path{doi:10.6028/jres.045.026}}.
+
+\bibitem{Lehoucq1998}
+R.~Lehoucq, D.~Sorensen, C.~Yang,
+  \href{https://books.google.it/books?id=iMUea23N\_CQC}{ARPACK Users' Guide:
+  Solution of Large-scale Eigenvalue Problems with Implicitly Restarted Arnoldi
+  Methods}, Software, Environments, Tools, Society for Industrial and Applied
+  Mathematics, 1998.
+\newline\urlprefix\url{https://books.google.it/books?id=iMUea23N\_CQC}
+
+\bibitem{Maschhoff1996}
+K.~J. "Maschhoff, D.~C. Sorensen, P{\_}arpack: An efficient portable large
+  scale eigenvalue package for distributed memory parallel architectures, in:
+  J.~"Wa{\'{s}}niewski, J.~Dongarra, K.~Madsen, D.~Olesen (Eds.), Applied
+  Parallel Computing Industrial Computation and Optimization, Springer Berlin
+  Heidelberg, Berlin, Heidelberg, 1996, pp. 478--486.
+
+\end{thebibliography}
