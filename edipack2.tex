@@ -22,7 +22,7 @@
 
 
 \usepackage{listings}
-\lstset{
+\lstdefinestyle{fstyle}{
   frame=lines,
   language=fortran,
   basicstyle=\footnotesize,
@@ -31,7 +31,8 @@
   fontadjust=true,
   keywordstyle=\color{magenta},
   mathescape,
-  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt}
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
 
 
 \usepackage{array}
@@ -159,7 +160,7 @@
 \usepackage{bbold}
 \def\11{\mathbb{1}}
 \def\00{\mathbf{0}}
-\def\NAME{{\rm EDIpack2.0}}
+\def\NAME{{\rm EDIpack2 }}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
@@ -171,23 +172,24 @@
 
 \begin{frontmatter}
 
-\title{\NAME plus Triqs interface}
-\author[]{L.~Crippa}
-\author[]{I.~Krivenko}
-\author[]{S.~Giuli}
-\author[]{G.~Bellomia}
-\author[]{....}
-% \author[]{A.~Scazzola}
-% \author[]{F.~Petocchi}
-% \author[]{G.~Mazza}
-% \author[]{L.~de Medici}
-% \author[]{M.~Capone}
-\author[a]{A.~Amaricci\corref{author}}
+\title{EDIpack2: interoperable Lanczos-based exact diagonalization solver for
+  generic quantum impurity problems.}
+% \author[]{L.~Crippa}
+% \author[]{I.~Krivenko}
+% \author[]{S.~Giuli}
+% \author[]{G.~Bellomia}
+% \author[]{....}
+% % \author[]{A.~Scazzola}
+% % \author[]{F.~Petocchi}
+% % \author[]{G.~Mazza}
+% % \author[]{L.~de Medici}
+% % \author[]{M.~Capone}
+% \author[a]{A.~Amaricci\corref{author}}
 
-\cortext[author] {Corresponding author.\\\textit{E-mail address:} amaricci@iom.cnr.it}
+% \cortext[author] {Corresponding author.\\\textit{E-mail address:} amaricci@iom.cnr.it}
 
-\address[a]{CNR-IOM, Istituto Officina dei Materiali,
-    Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136 Trieste, Italy}
+% \address[a]{CNR-IOM, Istituto Officina dei Materiali,
+%     Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136 Trieste, Italy}
 \begin{abstract}
   
 \end{abstract}
@@ -209,7 +211,7 @@
 \begin{small}
   \noindent
   \\
-  {\em Program Title:}  \NAME                                        \\
+  {\em Program Title:}  EDIpack2                                        \\
 {\em Licensing provisions:} GPLv3\\
 {\em Programming language:}  Fortran, Python \\
 {\em Classification:} 6.5, 7.4, 20 \\
@@ -218,343 +220,239 @@
 {\em Solution method:} .\\
 \end{small}
 
-\section{Introduction}\label{SecIntro}
+\section{Introduction and Motivation}\label{SecIntro}
+
+A few words about the motivations who led us to develop this
+software, possible applications and advantages:
 
 
-\section{Library Structure}\label{SecStruct}
-\subsection{Dependencies}
+* flexibility: can address generic cases including multi-orbital,
+superconducting or spin-non-conserving regimes
+
+* zero and low finite temperatures
+
+* direct access to (well approximated) analytic dynamical functions
+
+* direct access to impurity Fock space quantities
+
+bla bla bla
+
+\section{Structure}\label{SecStruct}
 \subsection{EDIpack2}
-\subsection{EDIpy}
+\subsection{EDIpack2ineq}
+\subsection{EDIpack2 C-bindings}
 \subsection{EDIpack2Triqs}
 
 
 \section{Installation}\label{SecInstall}
-\subsection{Building}
-\subsection{Install}
-\subsection{Python API and TRIQS interface}
-\subsection{Conda Packaging}
+The installation of \NAME is available through CMake which ensures
+multi-platforms compabitility and dependencies resolution.  
+The software builds into two distinct libraries: {\tt
+  libedipack.a} and {\tt libedipack\_cbinding.so}.
+The former, alongside the generated Fortan modules files,
+wraps the \NAME software. The latter enables interoperability through
+bindings to the C language.    
+
+\subsection{Dependencies}
+Although \NAME is as much self-contained as possible its development
+hinges on two external libraries.
+\begin{itemize}
+\item {\bf SciFortran}: an open-source Fortran library to support
+  mathematical and scientific software development. 
+\item {\bf MPI} (optional): a distributed memory parallel communication layer with support to modern Fortran compiler.
+\end{itemize}
+ 
+SciFortran provides a solid development platform enabling access to
+many algorithms and functions, including standard linear algebra
+operations and high-performance Lanczos based algorithms. This
+greatly reduces code clutter and development time.
+The use of distributed memory parallel environment, although optional,
+is required to access scalable parallel diagonalization algorithms
+which speed up calculations for large dimensional systems. 
+
+\subsection{Build and Install}
+\subsubsection{Source}
+The software can be installed from source as follows. The source can
+be retrieved directly from its GitHub repository, for instance using:
+\begin{lstlisting}[language=Bash]
+git clone https://github.com/edipack/EDIpack2.0 EDIpack2
+\end{lstlisting}
+Then, assuming to be in the software directoru, a conventional
+out-of-source building is performed using two different compilations
+backends.
+
+\begin{itemize}
+  \item {\bf GNU Make}\\
+This is the default CMake workflow:
+\begin{lstlisting}[language=Bash]
+mkdir build
+cd build
+cmake ..
+make -j
+make install
+\end{lstlisting}
+
+
+\item{\bf Ninja}
+
+An alternative workflow employs the Ninja building backend with
+Fortran support. Ninja is generally faster and automatically supports
+multi-threaded building:
+\begin{lstlisting}[language=Bash]
+mkdir build
+cd build
+cmake -GNinja ..
+ninja
+ninja install
+\end{lstlisting}
+\end{itemize}
+
+\noindent
+The CMake configurations can be further tuned using the following variables:
+\begin{center}
+\begin{tabular}{ l|l|l } 
+ \hline
+  {\bf Option}               & {\bf Scope} & {\bf Value} \\
+  \hline
+  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack2/TAG/PLAT/BRANCH\\
+  -D{\bf USE\_MPI}       & MPI support  &  True/{\color{red}False}\\
+  -D{\bf WITH\_INEQ}   & Inequivalent impurities support & {\color{red}True}/{False}\\
+  -D{\bf VERBOSE}      & Verbose CMake output & {\color{red}True}/{False}\\ 
+  -D{\bf BUILD\_TYPE} & Compilation flags & {\color{red}RELEASE}/TESTING/DEBUG/AGGRESSIVE \\
+ \hline
+\end{tabular}
+\end{center}
+
+The default target builds and install either the main library and the C-binding.
+However, a specific building for each library is available specifying
+the required target. A recap message is printed at the end of the
+CMake configuration step. 
+
+\subsubsection{Anaconda}
+As an alternative we provide for both Linux and OSx systems
+installation through Anaconda packages into a virtual
+environment containing Python ($>3.10$).
+
+The Conda package installation procedure reads:
+\begin{lstlisting}[language=Bash]
+conda create -n edipack
+conda activate edipack
+conda install -c conda-forge -c edipack edipack2
+\end{lstlisting}
+\noindent
+which installs a bundle of Scifor and \NAME libraries together with
+specific {\tt pkg-config} configurations files which can be used to
+retrieve compilation and linking flags. 
+
+
+\subsection{OS Loading}
+In oder to avoid possible conflicts or require administrative
+privileges, the building step results get installed by default in a user home
+directory, specified by the CMake variable {\tt PREFIX}.
+In doing so, however, one misses the chance of automatic loading into
+the operative system.
+
+We offer different strategies to perform this action:
+\begin{enumerate}
+\item  A CMake generated configuration file for environment module
+  which allows to load and unload the library at any time. This is
+  preferred solution for HPC systems. 
+\item A CMake generated bash script to be sourced (once or
+  permanently) in any shell session to add \NAME library to the
+  default environment.
+\item A CMake generated pkg-config configuration file to be added in
+  the pkg-config path itself.  
+\end{enumerate}
+An automatically generated recap message with all instructions is
+generated at the end of the installation procedure. 
+
+
+
+\subsection{Python API}
+\subsubsection{Build from source}
+EDIpy2, i.e. the Python API of EDIpack2, is available as a stand-alone
+module which depends on both \NAME and SciFortran. The package can be
+obtained from the repository
+\href{https://github.com/EDIpack/EDIpy2.0}{EDIpy2}.
+
+\begin{lstlisting}[language=Bash]
+git clone https://github.com/edipack/EDIpy2 EDIpy2
+cd EDIpy2
+pip install . 
+\end{lstlisting}
+In some more recent Python distribution the flag {\tt
+  --break-system-packages} might be required to complete
+installation or a virtual environment should be used instead. 
+
+\subsubsection{Anaconda}
+As for EDIpack2, also the Python API in EDIpy2 are available through
+Anaconda packaging. In this case the resolution of the dependencies is
+taken care from Conda itself:
+
+\begin{lstlisting}[language=Bash]
+conda create -n edipack
+conda activate edipack
+conda install -c conda-forge -c edipack edipack2
+\end{lstlisting}
+
+
+
+
+\subsection{TRIQS interface}
+A purely Python \NAME to Triqs interface is available, leveraging on
+the C-bindings and Python API. The corresponding module depends on
+\NAME (which ultimately depends on SciFortran) and Triqs.
+Assuming the two software are correctly installed in the OS, the
+EDIpack2Triqs interface is installed as follows:
+
+\begin{lstlisting}[language=Bash]
+git clone https://github.com/krivenko/edipack2triqs
+cd edipack2triqs
+pip install .
+\end{lstlisting}
+
+
 
 
 
 \section{Usage}\label{SecUsage}
-\subsection{Basic Fortran: Bethe lattice DMFT}
-\subsection{Python code: Attractive Hubbard model}
-\subsection{TRIQS interface: Multi-orbital Hubbard}
-\subsection{Advance: Non-SU2}
+\subsection{Bethe lattice DMFT (Fortran API)}
+\subsection{Attractive Hubbard model (Python API)}
+\subsection{Multi-orbital Hubbard (Triqs)}
 
 
-\section{EDIpack2 Implementation}\label{SecEDIpack}
+\section{Implementation}\label{SecEDIpack}
 
 \subsection{The quantum impurity problem}\label{sSecQIM}
-We consider a system of $N_s$ electronic levels.  A portion $N_\alpha$  of them,
-i.e. the impurity levels, interact via a local repulsion, while the
-remaining $N_s-N_\alpha$, i.e. the  \textit{bath} levels, are  non-interacting.
-In a typical setup the impurity levels are independently coupled to a
-set of $N_b$ electronic levels, so that the total number is $N_{s}=N_\alpha 
-(N_{b}+1)$. Other choices for the bath topology are possible, which entail a different counting of the total levels.
-The Hamiltonian of the electronic system we consider has the form:
-\begin{equation}\label{Ham1}
-  \begin{split}
-    \hat{H}^{e}=&\hat{H}^0+\hat{H}^{int} \\
-    \hat{H}^0 = &
-    \sum_{\a\b\sigma}
-    H^{loc}_{\a\b\sigma}d^{+}_{\a\sigma}d_{\b\sigma}  + \cr
-    &\sum_{\nu\a\b\sigma}h^\nu_{\a\b\sigma}a^{+}_{\nu\a\sigma}a_{\nu\b\sigma}+ 
-  % 
-    \sum_{\nu\a\sigma}V^\nu_{\a\sigma}d^{+}_{\a\sigma}a_{\nu\a\sigma}+
-    H.c. \\
-    \hat{H}^{int}=& U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}-\\
-    &J_X\sum_{\a\neq \b}d^{+}_{\a\uparrow}d_{\a\downarrow}d^{+}_{\b\downarrow}d_{\b\uparrow}+J_P\sum_{\a \neq \b}d^{+}_{\a\uparrow}d^{+}_{\a\downarrow}d_{\b\downarrow}d_{\b\uparrow}
-\end{split}
-\end{equation}
-where $a_{\alpha\sigma}$, $d_{\a\sigma}$ ($a^+_{\alpha\sigma}$,
-$d^+_{\a\sigma}$) are, respectively, the destruction (creation) operators for
-the bath and impurity electrons with
-orbital $\alpha$ and spin $\sigma$,
-$n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$. 
-The term $H_{\a\b\s}^{loc}$ is the non-interacting part of
-the impurity Hamiltonian, 
-$h_{\a\b\s}^\nu$ and $V_{\a\s}^\nu$ are, respectively, the local Hamiltonian
-and the impurity hybridization of the $\nu-$th bath level. 
-  Finally, $\hat{H}^{int}$ is the local
-  multi-orbital interaction~\cite{Georges2013ACMP}.
-  The first three terms represent the density-density part of the
-  interaction, while the remaining two are,
-  respectively, the spin-exchange and pair-hopping terms. 
-  $U$ is the local Coulomb interaction strength, $J$ is the Hund's
-  coupling~\cite{Georges2013ACMP}. We introduced
-  independent coupling controlling the spin-exchange and pair-hopping terms,
-  respectively $J_X$ and $J_P$. The fully symmetric Kanamori
-  interaction is obtained setting $U'=U-2J$ and
-  $J_X=J_P=J$~\cite{Georges2013ACMP}.
 
 \subsection{The  basis states}\label{sSecBasis}
-A natural representation of the basis states for the Fock space $\FF_e$
-is obtained in the occupation number formalism of second quantization.
-The \textit{Fock basis} for a finite system of $N_s$ electrons is
-composed of states of the form
-$\ket{\vec{n}}=\ket{n_{1\up},\dots,n_{N_s\up},n_{1\dw},\dots,n_{N_s\dw}}$, 
-where each element $n_{a\sigma}=0,1$ describes the absence or the
-presence of an electron with spin $\sigma$ at the level $a$. In
-conjunction with the basis states, we introduce the non-Hermitian, anti-commuting, annihilation and
-creation operators $c_{a\sigma}$ and
-$c^{+}_{a\sigma}$, respectively. These operators act on the states
-$\ket{\vec{n}}$ as:  
-\begin{equation}
-  \begin{aligned}
-    % 1.
-    c_{a\sigma}\ket{\vec{n}}=
-    \begin{cases}
-      (-1)^{\#_{a\sigma}}\ket{\dots,n_{a\sigma}\!-\!1,\dots}
-      &\text{if $n_{a\sigma}\!=\! 1$}\\
-      0 &\text{otherwise}
-    \end{cases};
-  \end{aligned}
-\end{equation}
-    \begin{equation}
-  \begin{aligned}
-    c^{+}_{a\sigma}\ket{\vec{n}}=
-     \begin{cases}
-      (-1)^{\#_{a\sigma}}\ket{\dots,n_{a\sigma}\!+\!1,\dots}
-      & \text{if $n_{a\sigma}\!=\! 0$}\\
-      0 & \text{otherwise}
-    \end{cases}    
-  \end{aligned}
-\end{equation}
-with $\#_{a\sigma}=\sum_{b\sigma'<a\sigma} n_{b\sigma'}$. 
-Thus, each state is represented as a string of zeros and
-ones, i.e. the binary decomposition of a given integer number $I$. Using
-the identification $\ket{\vec{n}}=\ket{I}$, with
-$I=0,\dots,2^{2N_s}-1$, each state in the Fock space can be encoded in a computer using
-a sequence of $2N_s$ bits or, equivalently, an integer number in a
-fixed representation.
-The exponentially growing size of the Fock space will
-eventually make such representation unpractical.
-A solution is obtained by decomposing each state according to the
-existing QNs. For a given set $[\vec{N}_\up,\vec{N}_\dw]$ of QNs we
-then have: 
-\begin{equation}
-  \begin{split}
-  \ket{\vec{n}} &=
-  \prod_{\a=1}^{N_{ud}}\prod_{\sigma=\up\dw}\ket{n_1\dots
-    n_{N_{bit}}}_{\a\sigma}\cr
-  &=
-  \begin{cases}
-    \ket{\vec{n}_\up}\ket{\vec{n}_\dw},\
-    \text{if}\ N_{ud}=1\\
-    %
-      \ket{\vec{n}_{1\up}}\cdots\ket{\vec{n}_{N_{ud}\up}}
-      \ket{\vec{n}_{1\dw}}\cdots\ket{\vec{n}_{N_{ud}\dw}},\
-      \text{if}\ N_{ud}=N_\alpha
-    \end{cases}
-    \end{split}
-\end{equation}
-so that, if the total number of electrons with spin $\up$ and $\dw$ is 
-conserved, any state is identified by two binary sequences of
-$N_{bit}=N_s$ bits, one per spin orientation.
-Alternatively, if the number of electrons with spin $\up$ and $\dw$ per orbital is conserved, the
-states are decomposed into two sets of
-binary sequences (one set per spin orientation), each sequence
-being made of  $N_{bit}=N_s/N_\alpha$ bits.
-Each binary sequence is associated to a suitable tuple
-of integer numbers,  univocally identifying the Fock state:
-$I \rightarrow [\vec{I}_\up,\vec{I}_\dw]$, 
-where $I=0,\dots,2^{2N_s}-1$ and
-$\vec{I}_\sigma=[I_{1\sigma},\dots,I_{N_{ud}\sigma}]$ with
-$I_{\a\sigma}=0,\dots,2^{N_{bit}}-1$. 
-Through such decomposition, each state can be described by the
-smallest bit set compatible with the conserved QNs.
-This setup generalizes the method introduced by Lin and Gubernatis in
-Ref.\onlinecite{Lin1993CIP}. 
-The relation
-between the Fock state index $I$ and its tuple decomposition can be
-easily inverted:
-\begin{equation}\label{Irelation}
-I = I_1 + \sum_{i=2}^{2N_{ud}}I_i 2^{N_{bit}(i-1)}\,,
-\end{equation}
-where we rearranged the tuple as $[\vec{I}_\up,\vec{I}_\dw]=[I_1,\dots,I_{2N_{ud}}]$. 
 
-
-Such organization of the Fock states is used to construct
-a suitable basis for the sectors $\SS[\vec{N}_\up,\vec{N}_\dw]$.
-To any given Fock state $\ket{\vec{n}}$ and its
-integer representation $I$, containing the correct bit decomposition
-dictated by the QNs, it is associated a state $\ket{i}$ and an integer
-$i=1,\dots,D_\SS$ through a suitable \textit{map} $\vec{\MM}_\SS$.
-In particular,
-each tuple of integers identifying a Fock state belonging to $\SS$ is associated to a new
-tuple specific for each sector state:
-$I\in\SS=[\vec{I}_\up,\vec{I}_\dw]\in\SS \xrightarrow{\vec{\MM}_\SS}
-[\vec{i}_\up,\vec{i}_\dw]=i$, 
-where $\vec{i}_\sigma=[i_{1\sigma},\dots,i_{N_{ud}\sigma}]$ and
-$i_{\a\sigma}=1,\dots,D_{\a\sigma}$.
-The tuple $[\vec{i}_\up,\vec{i}_\dw]$ univocally identifies a basis state
-$\ket{i}=\ket{\vec{i}_\up,\vec{i}_\dw}$ of the sector $\SS$, through a
-relation similar to \eqref{Irelation}:
-\begin{equation}
-i = i_{1\up} +
-\sum_\sigma\sum_{l=2}^{N_{ud}}(i_{l\sigma}-1)\prod_{\a=1}^{l-1}D_{\a\sigma}
-\label{SectorIndxDecomp}
-\end{equation}
-
-
-
-  
 \subsection{Conserved quantum numbers}\label{sSecQNs}
-A system of $N_s$ electrons is associated to
-a Fock space of the form $\FF_e=\bigoplus_{n=0}^{N_s}
-S_-\HH_e^{\otimes n}$,  where $\HH_e=\{\ket{0},\ket{\up},\ket{\dw},\ket{\up\dw} \}$ is the local
-Hilbert space of the electrons on a single level,
-$S_-$ is the anti-symmetrization operator, $\bigoplus$ is the direct sum and
-$\bigotimes$ the tensor product.
-The total dimension of the Fock space $\FF_e$ is
-$\text{dim}(\HH_e)^{N_s}=4^{N_s}= 2^{2N_s}$. 
-
-The solution of the eigenvalue problem for $H_e$ is simplified by taking
-into account the existence of conserved quantities.
-The Hamiltonian \eqref{Ham1} conserves the total charge
-$\hat{N}$ and the spin component $\hat{S}_z$, as long as we assume
-that no terms  breaking the particle number or spin conservation are present,
-e.g. local spin-orbital coupling, in-plane magnetic field,
-superconducting order, etc.
-The conservation of  $\hat{N}$ and $\hat{S}_z$ can be conveniently
-re-expressed in terms of conserved number of electrons with spin $\up$ and $\dw$, i.e. $\hat{N}_\up$,
-$\hat{N}_\dw$.
-Moreover,  if the terms $H^{loc}$ and $h$ are
-diagonal and we consider only the density-density part of the
-interaction, i.e. $J_X=J_P=0$, the number of electrons with spin $\up$ and $\dw$ is conserved \textit{per
-  orbital}, i.e. $\hat{N}^m_\up$, $\hat{N}^m_\dw$, where
-$m=1,\dots,N_\alpha$.
-
-%
-% 
-In order to formally unify the treatment of these two cases we introduce some convenient
-parameters,
-  namely  $N_{ud}=1$ $(N_\alpha)$ and
-$N_{bit}=N_s$ $(N_s/N_\alpha)$ for conserved total (orbital resolved) number of
-electrons with spin $\up$ and $\dw$.
-The first corresponds to the number of conserved operators per
-spin, the latter indicates the number of electronic levels per spin
-(spin and orbital). In the following section we will give a more precise meaning to
-$N_{bit}$.
-
-In the rest of this work we will indicate the set of conserved quantum
-numbers (QN)s with the tuple $[\vec{N}_\up,\vec{N}_\dw]$, where ($\sigma=\up,\dw$):
-\begin{equation}
-  \vec{N}_\sigma=
-  \begin{cases}
-    N_{1\sigma}\==N_\sigma, & \text{if}\ N_{ud}=1 \\
-    [N_{1\sigma},\dots,N_{N_\alpha\sigma} ], & \text{if}\ N_{ud}=N_\alpha    
-  \end{cases}
-\end{equation}
-  Note that for $N_{ud}=1$ we identified the single
-  component $N_{1\sigma}$ of the vector $\vec{N}_\sigma$ with the
-  total number of electrons with spin $\sigma$, i.e. $N_{\sigma}$.
-
-In presence of a set of conserved QNs,  the Fock space decomposes into
-a number of sub-spaces of reduced dimension, each
-corresponding to a given value of the QNs tuple. We indicate
-each sub-space with the term \textit{sector} and the symbol
-$\SS[\vec{N}_\up,\vec{N}_\dw]$, or just $\SS$ where no confusion
-arises.
-The dimension of each sector is given by the number of ways we can
-arrange $N_{\a\sigma}$ elements into $N_{bit}$ positions, i.e.:
-\begin{equation}
-  \begin{split}
-  \text{dim}\left(\SS[\vec{N}_\up,\vec{N}_\dw]\right)  & =  \prod_{\a=1}^{N_{ud}}
-  \binom{N_{bit}}{N_{\a\up}}
-  \prod_{\a=1}^{N_{ud}}
-  \binom{N_{bit}}{N_{\a\dw}}\cr
-  &\==
-  \prod_{\a=1}^{N_{ud}}D_{\a\up}
-  \prod_{\a=1}^{N_{ud}}D_{\a\dw}
-  \stackrel{\text{def}}{=}D_{\up}D_{\dw} \== D_\SS
-  \end{split}
- \label{nud_dimension}
-\end{equation}
-where we introduced the symbols $D_\sigma$ and $D_{\a\sigma}$  to
-indicate, respectively, the dimension of total and orbital spin-subspace 
-associated to the given set of QNs. Note that $D_\sigma\==D_{1,\sigma}$ for
-$N_{ud}=1$. 
-
-
-
 
 \subsection{Krylov based Diagonalization}\label{sSecHam}
-The matrix representing the system Hamiltonian in the Fock space has a
-block-diagonal structure in presence of a given set of conserved QNs.
-Each block corresponds to the Hamiltonian of a sector
-$\SS[\vec{N}_\up,\vec{N}_\dw]$. The analysis of the spectrum, thus,
-reduces to the recursive analysis of the sector Hamiltonians. 
-In each sector, the Hamiltonian of the system has the following general form: 
-\begin{equation}
-H^e_\SS = H_d  + H_\up\otimes \mathbb{I}_\dw + \mathbb{I}_\up\otimes
-H_\dw + H_{nd}\,.
-\label{Hdecomp}
-\end{equation}
-$H_d$ is a diagonal term containing the local part of the Hamiltonian,
-including the density-density terms of the interaction.
-The $H_\sigma$ components describe all the hopping processes of the
-electrons with spin $\sigma=\up,\dw$.
-Finally the term $H_{nd}$ contains all the remaining non-diagonal
-elements which do not fit in the previous two components,
-e.g. the spin-exchange and pair-hopping interaction terms.
-If the QNs are conserved per orbital, i.e. if $H_{nd}\==0$ and no
-inter-orbital local hopping terms are present,  each $H_\sigma$
-further splits into a sum of smaller terms:
-$$
-H_\sigma = \sum_{\a=1}^{N_\alpha}\mathbb{I}_{1\sigma}\otimes\cdots\otimes
-H_{\a\sigma}\otimes\cdots\otimes \mathbb{I}_{N_\alpha\sigma}
-$$
 
+\subsection{Dynamical correlation functions}
 
-Each term of the  Hamiltonian matrix is constructed  independently 
-iterating over one or more  components of the sector basis states.
-For example, the construction of the matrices $H_{\a\sigma}$ only involve iterations over the components
-$\ket{i_{\a\sigma}}$ of the sector basis. In general we have:
-\begin{equation}
-\begin{split}
-  \bra{\vec{i}_\up\vec{i}_\dw}H^e_\SS\ket{\vec{j}_\up\vec{j}_\dw}
-  =&
-  \bra{\vec{i}_\up\vec{i}_\dw}
-  H_d + H_\up\otimes \mathbb{I}_\dw + \mathbb{I}_\up\otimes H_\dw + H_{nd}
-  \ket{\vec{j}_\up\vec{j}_\dw}\cr
-  =&
-  \bra{\vec{i}_\up\vec{i}_\dw}H_d\ket{\vec{i}_\up\vec{i}_\dw} +\cr
-  &\bra{\vec{i}_\up}H_\up\ket{\vec{j}_\up}\delta_{\vec{i}_\dw\vec{j}_\dw}
-  +
-  \bra{\vec{i}_\dw}H_\dw\ket{\vec{j}_\dw}\delta_{\vec{i}_\up\vec{j}_\up} + \cr
-  &\bra{\vec{i}_\up\vec{i}_\dw}H_{nd}\ket{\vec{j}_\up\vec{j}_\dw} 
-\end{split}
-\label{Hbuild}
-\end{equation}
+\subsection{Observables}
 
-For very large systems, storing the Hamiltonian matrix in the memory
-can be highly inefficient.
-In such cases, Krylov or Lanczos
-methods~\cite{Lanczos1950JRNBSB,Lin1993CIP,Lehoucq1998,Maschhoff1996} can
-be implemented using a storage-free algorithm, performing the
-necessary linear operations on-the-fly.
-This solution has generally a negative impact on the execution
-time, however this can be well compensated by scaling in a massively
-parallel framework.
-
-\subsection{Dynamical correlation functions, observables and reduced
-  impurity density matrix}
+\subsection{Reduced impurity density matrix}
 
 \subsection{Bath parametrization}
 
-\subsection{Bath $\chi^2$ fit}
-
+\subsection{Bath Optimization}
 
 \subsection{Input/Output}
 
 
 
-\section{EDIpy: Python API}\label{SecEDIpy}
 
+\section{Inequivalent impurities}
 
-\section{edipack2triqs: a thin interface to TRIQS}\label{Secedi2triqs}
+\section{C-bindings}\label{SecCbind}
+
+\section{Python API}
+
+\section{Triqs interface}\label{SecEDI2Triqs}
 
 
 
@@ -562,890 +460,6 @@ parallel framework.
 
 
 \section*{Acknowledgements}
-
-
-
-
-
-% \section*{Appendix A: Input Variables}\label{AppendixA}
-% Here is reported a list of the global input variables of the
-% library. The input parameters are arranged into the following table,
-% as discussed in \secu{SecWorkflow}.
-% Note that only a subset of the input parameters are transparent to the
-% user, i.e. can be directly accessed from the calling program.
-% These variables  are indicated with a symbol in the first column of
-% the table.  In the columns from $2^{\rm nd}$ to $4^{\rm th}$ we indicate,
-% respectively, the variable name, the type and the default value.
-% Finally, In the last column we provide a short
-% description of the variable purpose.
-
-% % \begin{longtable}{ M{0.01pt} T{0.19\textwidth}  T{0.04\textwidth}
-%     %     D{0.11\textwidth} M{0.52\textwidth}  }
-
-% \begin{tabularx}{\linewidth}{ M{0.01\textwidth} T{0.19\textwidth}
-%     T{0.04\textwidth} D{0.11\textwidth} M{0.52\textwidth} }
-%   \caption{List of the \NAME\ input variables.}\\
-%   \hline 
-%   \hline
-%   {\it \footnotesize \phantom{T}} & {\it Variable} & {\it Type} & {\it Default} & {\it
-%                                                          \footnotesize
-%                                                          Description} \\
-%   \hline
-%   \hline
-%   \endhead
-%   \hline
-%   \multicolumn{5}{c}{\bf Most relevant control variables}\\
-%   \hline
-%   $\circ$ & Norb & Int & 1 & Number of impurity orbitals.\\
-%   \hline
-%   $\circ$ & Nspin& Int & 1 & Number of spin channels treated
-%                              independently. \texttt{Nspin}=1 enforces
-%                              non-magnetic solution.\\
-%   \hline
-%    & Nbath& Int & 6  & Number of bath sites. See \texttt{bath\_type}
-%                        for information about resulting total number of
-%                        electronic levels $N_s$.\\
-%   \hline
-%   $\circ$ & bath\_type& Char & ``normal''    & Set the bath type:
-%                                      \texttt{normal}:
-%                                      $N_s=\mathtt{Norb}(1+\mathtt{Nbath})$,
-%                                      \texttt{hybrid}:
-%                                      $N_s=\mathtt{Norb}+\mathtt{Nbath}$,
-%                                      and \texttt{replica}:
-%                                      $N_s=\mathtt{Norb}(1+\mathtt{Nbath})$,
-%                                      See \secu{SecBath}.\\
-%   \hline
-% %--------
-%   $\circ$ & Uloc& Dble & 2.0   & Local intra-orbital interactions $U$,
-%                                      different values per orbitals can
-%                                      be defined.\\
-%   \hline
-%   $\circ$ & Ust& Dble & 0.0   & Local inter-orbital interaction $U'$,
-%                                 with opposite spin orientations.
-%                                 For the Kanamori interaction this 
-%                                 must be set to
-%                                 $\mathtt{Uloc}-2\mathtt{Jh}$, with \texttt{Jh}
-%                                 the Hund's coupling. 
-%                                 The value $U''$ for equal spin orientation
-%                                 is automatically set by the difference 
-%                                 $\mathtt{Ust}-\mathtt{Jh}$. \\
-%   \hline
-%   $\circ$ & Jh   & Dble & 0.0 &  Hund's coupling.\\
-%   \hline
-%   $\circ$ & Jx   & Dble & 0.0 & Spin-Exchange coupling constant.\\
-%   \hline
-%   $\circ$ & Jp   & Dble & 0.0 & Pair-Hopping coupling constant.\\
-%   \hline
-%     $\circ$ & beta   & Dble & 1000 & Inverse temperature. For $T=0$
-%                                    calculations this value sets a 
-%                                    discretization of the Matsubara
-%                                    frequencies.\\
-%   \hline
-%   $\circ$ & xmu   & Dble & 0.0 & Chemical potential. This parameter
-%                                  sets the average occupations of the
-%                                  impurity. 
-%                                  If \texttt{HFMODE=True} this value
-%                                  contains the Hartree shift, i.e. $\mathtt{xmu}=0.0$ sets the half-filling for a particle-hole
-%                                  symmetric case.\\
-%   \hline
-%      & HFmode  & Bool & .true. & If True the Hartree shift is included in the
-%                 interaction, e.g. $U(n_\up-1/2)(n_\dw-1/2)$. In this
-%                        case zero chemical potential corresponds to
-%                        half-filling for a particle-hole symmetric system.\\  
-%   \hline
-%   $\circ$ & Lmats & Int & 4096 & Number of Matsubara frequencies.\\
-%   \hline
-%   $\circ$ & Lreal  & Int & 5000 & Number of real-axis frequencies\\
-%   \hline
-%     $\circ$ & eps   & Dble & 0.01 & Real-axis broadening.\\
-%   \hline
-%   $\circ$ & wini, wfin & Dble & -5, 5 & Real-axis frequency range.\\
-%   \hline
-%   $\circ$ & Nloop    & Int & 100 & Maximum number of allowed iterations in the DMFT solution.\\
-%   \hline
-%   $\circ$ & dmft\_error & Dble & 1e-5 & Convergence threshold for the
-%                                         DMFT iterative cycle.\\
-%   \hline
-%   %--------
-%   $\circ$ & Nph    & Int & 0 & Maximum number of phonons.\\
-%   \hline
-%   $\circ$ & g\_ph   & Dble & 0.0& Electron-Phonon coupling.\\
-%   \hline
-%   $\circ$ & w0\_ph  & Dble & 0.0& Holstein phonon frequency.\\
-%   \hline
-%   $\circ$ & xmin, xmax & Dble & -3, 3& Phonon probability distribution spatial range.\\
-%   \hline
-% %--------
-%    & chispin\_flag & Bool & .false. & Flag to include the evaluation of Spin-Spin susceptibilities.\\
-%   \hline
-%    &  chidens\_flag &Bool & .false. & Flag to include the evaluation of Density-Density susceptibilities.\\
-%   \hline
-%    & chipair\_flag & Bool & .false. &  Flag to include the evaluation
-%                                       of $s$-wave Pair susceptibilities.\\
-%   \hline
-%    & chiexct\_flag & Bool & .false. & Flag to include the evaluation of Excitonic susceptibilities.\\
-%   \hline
-%   %-------
-%    & ed\_sparse\_H    & Bool & .true. &  Flag to select storage type of the sparse
-%                          Hamiltonian. True: sparse matrix object,
-%                          False:on-the-fly matrix-vector product.\\
-%   \hline
-%    & ed\_total\_ud     & Bool & .true. & Flag to select quantum numbers type.
-%                                  True: conserved total electron occupation per
-%                                  spin. 
-%                                  False: conserved electrons
-%                                  occupations per orbital and spin.\\
-%   \hline 
-%    & ed\_print\_Sigma & Bool & .true. & Flag to print out the impurity Self-energies.\\
-%   \hline
-%    & ed\_print\_G        & Bool & .true. & Flag to print out the interacting impurity Green's functions.\\
-%   \hline
-%    & ed\_print\_G0      & Bool & .true. & Flag to print out the non-interacting
-%                               impurity Green's functions.\\
-%   \hline
-%    & ed\_twin             & Bool & .false. & Flag to reduce the number of visited
-%                                        sector using  sectors symmetry:
-%                                        $[\vec{N}_\up,\vec{N}_\dw]\leftrightarrow[\vec{N}_\dw,\vec{N}_\up]$.
-%                                        A warning is raised if
-%                                        \texttt{ed\_twin=.true.} and
-%                                        \texttt{Nspin=2} as this
-%                                        symmetry 
-%                                        conflicts with possible long-range
-%                                        magnetic order.\\ 
-%   \hline
-%    & ed\_verbose       & Int & 3 & Verbosity level [0-5]. \\
-%   \hline
-%   % ----------
-%    & lanc\_method     & Char & ``arpack'' & String to select Lanczos
-%                                    method. \texttt{ARPACK}: uses
-%                                    P-Arpack, \texttt{LANCZOS}: uses
-%                                    single vector Lanczos method
-%                                    with no re-orthogonalization \\
-%   \hline
-%    & lanc\_tolerance  & Dble & 1e-18 & Tolerance for the Lanczos algorithm. \\
-%   \hline
-%    & lanc\_niter         & Int & 512 & Largest number of Lanczos
-%                                        iterations used in the
-%                                        Diagonalization of each sector Hamiltonian.\\
-%   \hline
-%    & lanc\_ngfiter      & Int & 200 & Largest dimension of the Krylov basis in
-%                               the evaluation of the Green's function.\\
-%   \hline
-%   & lanc\_nstates\_sector  & Int & 2 & Maximum number of eigenvalues per sector
-%                                         required to P-Arpack. For $T>0$ this number
-%                                         indicates an initial guess and
-%                                        is adjusted during the
-%                                        annealing.  \\
-%   \hline
-%    & lanc\_nstates\_total    & Int & 1 & Maximum number of states in
-%                                          the spectrum. 
-%                                          $\mathtt{lanc\_nstates\_total}=1$
-%                                          indicates that only the
-%                                          groundstate should be
-%                                          evaluated, resulting in zero
-%                                          temperature calculation.
-%                                          For $T>0$ calculations a value 
-%                                          $\mathtt{lanc\_nstates\_total}>1$
-%                                          is required. This value is
-%                                          used as an initial guess and adjusted
-%                                          during finite temperature
-%                                          annealing. See
-%                                          \texttt{cutoff} and
-%                                          Sec.~\ref{CodeEigenspace}. \\
-%   \hline
-%      & ed\_finite\_temp & Bool & .false. &  Flag to select finite temperature
-%                                          method. If True 
-%                                          $\mathtt{lanc\_nstates\_total} > 1$ is required.\\  
-%   \hline  
-
-%    & lanc\_ncv\_factor & Int & 10 & Factor to determine block size
-%                                     \texttt{Ncv} used in P-Arpack 
-%                                     using the expression:
-%                                           $\mathtt{Ncv}=\mathtt{lanc\_ncv\_factor}*\mathtt{Neigen}+\mathtt{lanc\_ncv\_add}$.
-%                                           P-Arpack requires \texttt{Ncv}
-%                                           to be at least twice of the
-%                                           required Eigensolutions \texttt{Neigen}.
-%                                           At zero temperature
-%                                           \texttt{Neigen}=\texttt{lanc\_nstates\_sector}. 
-%                                           At finite temperature
-%                                           \texttt{Neigen} is
-%                                           automatically adjusted from
-%                                           initial value, possibly leading to
-%                                           a block size \texttt{Ncv}
-%                                           too large.
-%                                           Reducing the value of
-%                                           \texttt{lanc\_ncv\_factor}
-%                                           down to its minimum value 2
-%                                           can be required to perform P-Arpack calculations.\\
-%   \hline
-%    & lanc\_ncv\_add       & Int & 0 & Factor to determine block size
-%                                       \texttt{Ncv} used in P-Arpack 
-%                                       using  the expression:
-%                                       $\mathtt{Ncv}=\mathtt{lanc\_ncv\_factor}*\mathtt{Neigen}+\mathtt{lanc\_ncv\_add}$.
-%                                       P-Arpack requires \texttt{Ncv}
-%                                       to be at least twice of the
-%                                       required Eigensolutions
-%                                       \texttt{Neigen}. \\
-%   \hline   
-%   % ----------  
-%   $\circ$ & cg\_Scheme           & Char & ``Weiss'' & Conjugate Gradient fit scheme.
-%                                                       \texttt{Delta}: fit $\Delta(i\omega_n)$, \texttt{Weiss}: fit $\GG_0(i\omega_n)$.\\
-%   \hline
-%    & cg\_method           & Int & 0 & Conjugate Gradient minimization method.
-%                                       $\mathtt{cg\_method}=0$: Fletcher-Reeves-Polak-Ribiere
-%                                       minimisation algorithm. 
-%                                       $\mathtt{cg\_method}=1$: use the f77 \texttt{minimize} procedure published in
-%                                       Ref.\onlinecite{Georges1996RMP}
-%                                       and largely used in the DMFT community.\\
-%   \hline
-%    & cg\_Lfit   & Int & 1000 & Number of Matsubara frequencies used in
-%                                the calculation of the cost function
-%                                $\chi$ with the Conjugate
-%                                Gradient minimization. $\mathtt{Lfit}\leq\mathtt{Lmats}$.  \\
-%   \hline
-%    & cg\_grad             & Int & 0 & Type of gradient evaluation. $\mathtt{cg\_grad}=0$: Analytic,
-%                                       $\mathtt{cg\_grad}=1$:
-%                                       Numeric. If
-%                                       $\mathtt{cg\_method}=1$ then use
-%                                       of 
-%                                       $\mathtt{cg\_grad}=1$ is
-%                                       enforced as this method does not
-%                                       support analytic gradient calculation.\\
-%   \hline
-%   \hline
-%   \multicolumn{5}{c}{\bf More specific control variables, less
-%   frequently changed}\\
-%   \hline
-%   \hline  
-%   $\circ$ & sb\_field & Dble & 0.0& Small symmetry-breaking field.\\
-%   \hline  
-%   $\circ$ & Nsuccess  & Int & 1 & Minimum number of repeated iterations below
-%                                   threshold required to reach convergence.  \\
-%   \hline
-%    & cutoff  & Dble & 1e-9 & Cutoff for the Boltzmann factor in the
-%                              spectral summation, i.e.
-%                              $e^{-\beta(E-E_0)}<\mathtt{cutoff}$. See Sec.~\ref{CodeEigenspace}.\\
-%   \hline  
-%    & gs\_threshold & Dble & 1e-9 & Energy threshold for the groundstate
-%                       degeneracy. Eigenstates of energy $E$ within
-%                                    $|E-E_0|<\mathtt{gs\_threshold}$
-%                                    are considered as degenerate groundstates.\\
-%   \hline
-%    &ed\_sectors & Bool & .false. & This flag is used to reduce
-%                                          the number of sectors
-%                                     investigated during the
-%                                     construction of the spectrum. Only
-%                                     the sectors with QNs listed in the file
-%                                     \texttt{SectorFile} and those with
-%                                     plus and minus
-%                                     \texttt{ed\_sectors\_shift} are considered.\\
-%   \hline
-%     & ed\_sectors\_shift & Int & 1 & A shift of the QNs for the list
-%                                      of sectors read from
-%                                      \texttt{SectorFile} is
-%                                      \texttt{ed\_sectors=.true.}.
-%                                      The list is enlarged
-%                                      including the QNs obtained
-%                                      by applying a shift
-%                                      $\pm
-%                                      1,\ldots,\pm\mathtt{ed\_sectors\_shift}$
-%                                      to each element of the list.\\
-%   \hline
-%    & ed\_hw\_bath & Dble & 2.0 & The half-bandwidth for the bath
-%                               initialization using discretized flat density of
-%                               states.\\
-%   \hline  
-%    & ed\_offset\_bath & Dble & 0.1 & Energy offset for the
-%                                    initialization of the diagonal
-%                                    terms in replica bath. A small
-%                                    value randomly chosen in the
-%                                    interval
-%                                    $\epsilon\in [-\mathtt{ed\_offset\_bath}:\mathtt{ed\_offset\_bath}]$
-%                                    is added to the diagonal terms of
-%                                    the bath to avoid possible spectral
-%                                      degeneracies.\\
-%   \hline
-%   $\circ$ & Lpos & Int & 100 & Number of points used to obtain the phonon probability
-%                      distribution function.\\ 
-%   \hline
-%   $\circ$ & nread & Dble & 0.0 & Target density for fixed density
-%                        calculations. Use the procedure
-%                        \texttt{ed\_search\_variable}   to adjust
-%                        chemical potential \texttt{xmu} so that local
-%                        occupation is
-%                        $|n-\mathtt{nread}|<\mathtt{nerr}$. \\
-%   \hline
-%    & nerr & Dble & 1e-4 & Error threshold for fixed-density
-%                        calculations.\\
-%   \hline 
-%    & ndelta& Dble & 0.1 & Initial step for the variation of the chemical
-%                        potential in fixed-density calculations.\\
-%   \hline  
-%    & ncoeff & Dble & 1d0 & A multiplier for the initial ndelta as read
-%                            from a file: $\mathtt{ndelta}\rightarrow\mathtt{ndelta}*\mathtt{ncoeff}$.\\
-%   \hline  
-%    & ed\_solve\_offdiag\_gf & Bool & .false. & Force the calculation of
-%                                          the off-diagonal Green's
-%                                          functions.
-%                                          True if \texttt{bath\_type}$\neq$\texttt{normal} \\ 
-%   \hline
-%    & ed\_all\_G           & Bool & .false. & Flag to evaluate all components of the
-%                                              impurity Green's functions,
-%                                              irrespective of the symmetries of the
-%                                              problem when using
-%                                              \texttt{bath\_type}=\texttt{replica}.
-%                                              If False only the Green's
-%                                              functions corresponding
-%                                              to non-vanishing
-%                                              components of the bath
-%                                              Hamiltonian
-%                                              $h^\nu_{\a\b\sigma}$ are
-%                                              evaluated.  \\
-%   \hline
-%    & lanc\_nstates\_step    & Int & 2 & Number of states to be added
-%                                         to
-%                                         \texttt{lanc\_nstates\_sector}
-%                                         for each sector during finite
-%                                         temperature annealing of the
-%                                         state list. See
-%                                         Sec.~\secu{CodeEigenspace}. \\  
-%   \hline
-%    & lanc\_dim\_threshold   & Int & 1024 & Dimension threshold below
-%                                            which Lapack diagonalization method is
-%                                            used to determine
-%                                            eigensolutions. \\
-%   \hline
-%    & cg\_Niter             & Int & 500 & Maximum number of iteration
-%                                          for the Conjugate Gradient minimization.\\
-%   \hline
-%    & cg\_Ftol             & Dble & 1e-6 & Tolerance for the Conjugate Gradient minimization.\\
-%   \hline
-%    & cg\_stop             & Int & 0 & Stop condition for the Conjugate Gradient
-%                                       minimization of the cost function $\chi(x)$.
-%                                       0: $C_1+C_2$, 1: $C_1$, 2: $C_2$ with
-%                                       conditions 
-%                                       $C_1=|\chi^{n-1} - \chi^n|<\mathtt{cg\_Ftol}(1+\chi^n)$,
-%                                       $C_2=||x^{n-1}
-%                                       -x^n||<\mathtt{cg\_Ftol}(1+||x^n||)$. See
-%                                       Sec.~\secu{SecBathFit}.\\
-%   \hline
-%    & cg\_Weight         & Int & 1 & A weight factor used in the cost
-%                                     function $\chi$ of the Conjugate
-%                                     Gradient minimization. Increasing this
-%                                     parameter favors the fit of the low
-%                                     frequency part of $\chi$.
-%                                     1: $\mathtt{cg\_weight}=1$,
-%                                     2: $\mathtt{cg\_weight}=1/\mathtt{Lfit}$,
-%                                     3:
-%                                     $\mathtt{cg\_weight}=1/\omega_n$. See
-%                                     Sec.~\secu{SecBathFit}.\\
-%   \hline
-%    & cg\_pow             & Int & 2 & The exponent of the cost function
-%                                      $\chi$ as 
-%                                      $|X -
-%                                      X^{And}|^{\mathtt{cg\_pow}}$ used
-%                                      in Conjugate Gradient
-%                                      minimization. See Sec.~\ref{SecBathFit}.\\
-%   \hline
-%   % ----------
-%   $\circ$ & Hfile & Char & ``hamiltonian'' & File name to read/write bath parameters\\
-%   \hline
-%   & SectorFile & Char & ``sectors'' & File name to read/write
-%                                              sectors contributing to
-%                                              the state list. On output
-%                                              it contains the QNs of
-%                                              the list of sectors
-%                                              contributing to the
-%                                              evaluated spectrum. On
-%                                              input such list is used
-%                                              to reduce the sectors
-%                                              analysis. See
-%                                       \texttt{ed\_sectors} and \texttt{ed\_sectors\_shift}. \\
-%   \hline
-%   $\circ$ & LOGfile  & Int & 6 & Fortran unit for the log
-%                                  output. Value must be in  the range
-%                                  $[6:999]$. 6 is the standard output. \\
-%   \hline
-%   \label{TableParameters}
-% \end{tabularx}
-
-
-
-
-
-
-% \section*{Appendix B: Main procedures}\label{AppendixB}
-% In this appendix we report a list of all the procedures made
-% accessible by either Fortan or Python API of the \NAME\ library. As
-% discussed in Sec.~\ref{SecUsage} all such procedures feature implicit
-% MPI support, i.e. they are executed in parallel if the MPI framework
-% has been initialized in the calling program.
-
-% In the first column we report the procedure names and the possible
-% input arguments. In order to unify the naming conventions of the
-% interfaces we use the prefix \texttt{?=ed\_,  edipack.} to indicate,
-% respectively, the Fortran and Python procedures.
-% In the second column we briefly describe the purpose of
-% the procedure and the nature of the arguments.
-% The inputs in square brackets are optional.
-
-% The procedures are grouped with respect to the library module
-% containing them, indicated in a single column at the beginning of each
-% group.
-
-% \begin{tabularx}{\linewidth}{ T{0.46\textwidth}  M{0.49\textwidth} }
-%   \caption{List of the \NAME\ procedures.}\\
-%   \hline
-%   \hline
-%   {\it PROCEDURE} {(\texttt{?=ed\_, edipack.})} & {\it \footnotesize INFO} \\
-%   \hline
-%   \hline
-%   \endhead
-%   \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf INPUT\_VARS}\\
-%   \hline
-%   \hline
-%   ?read\_input(File) &
-%                        Reads global input variables from the user
-%                        indicated file \texttt{File}.
-%                        Argument: \texttt{File} is a character string of arbitrary length.
-%                        If the file does not exist in the calling directory
-%                        a default one with prefix 
-%                        ``\texttt{used.}'' is produced using default
-%                        values.
-%                        The value of
-%                        each variable can be updated also from command line
-%                        using the syntax \texttt{Variable=}$Value$.\\
-%   \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf  MAIN}\\
-%   \hline
-%   \hline
-%   ?init\_solver(Bath) & Initializes the whole ED calculation, allocate global static 
-%                         memory, perform compatibility checks and setup global
-%                         variables.
-%                         Argument: \texttt{Bath}  is a rank-1 dble array 
-%                         of dimension \texttt{Nb=?get\_bath\_dimension}.
-%                         For problems with \texttt{Nsites} inequivalent atoms
-%                         \texttt{Bath} is a rank-2 dble array of 
-%                         dimensions [\texttt{Nsites},\texttt{Nb}].
-%                         On \texttt{Bath} contains the bath parameters, either guessed from
-%                         flat density of states  or read from the
-%                         file \texttt{Hfile.restart}. \\
-%   \hline
-%   ?solve(Bath,Hloc)  &   Solve the quantum impurity problem using ED
-%                        method.
-%                        Arguments: \texttt{Bath} is a rank-1 dble array
-%                         of dimension
-%                        \texttt{Nb=?get\_bath\_dimension}.
-%                        For problems with \texttt{Nsites} inequivalent atoms
-%                        \texttt{Bath} is a rank-2 dble array of 
-%                        dimensions [\texttt{Nsites},\texttt{Nb}].
-%                        \texttt{Hloc} is a rank-4 dble array of
-%                        dimensions [\texttt{Nspin,Nspin,Norb,Norb}] or
-%                        a rank-5 of dimensions
-%                        [\texttt{Nsites,Nspin,Nspin,Norb,Norb}]. Arguments
-%                        are not changed on output.\\ 
-
-
-%   \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf  IO}\\
-%   \hline
-%   \hline
-%   ?get\_sigma\_matsubara(Func,[Nsites])  & Returns the Matsubara
-%                                               self-energy function in \texttt{Func}.
-%                                               Argument: \texttt{Func}
-%                                               is a rank-5 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nspin,Nspin,Norb,Norb,Lmats}].
-%                                               If \texttt{Nsites} is
-%                                               present \texttt{Func}
-%                                               is a rank-6 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nsites,Nspin,Nspin,Norb,Norb,Lmats}]
-%                                               and the procedure returns
-%                                               the function for each
-%                                               inequivalent atom.\\
-%   \hline
-%   ?get\_sigma\_realaxis(Func,[Nsites])  &  Returns the real-axis
-%                                               self-energy function in \texttt{Func}.
-%                                               Argument: \texttt{Func}
-%                                               is a rank-5 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nspin,Nspin,Norb,Norb,Lreal}].
-%                                               If \texttt{Nsites} is
-%                                               present \texttt{Func}
-%                                               is a rank-6 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nsites,Nspin,Nspin,Norb,Norb,Lreal}]
-%                                               and the procedure returns
-%                                               the function for each
-%                                               inequivalent atom.\\
-%   \hline
-%   ?get\_gimp\_matsubara(Func,[Nsites])  & Returns the Matsubara
-%                                              impurity Green's function in \texttt{Func}.
-%                                               Argument: \texttt{Func}
-%                                               is a rank-5 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nspin,Nspin,Norb,Norb,Lmats}].
-%                                               If \texttt{Nsites} is
-%                                               present \texttt{Func}
-%                                               is a rank-6 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nsites,Nspin,Nspin,Norb,Norb,Lmats}]
-%                                               and the procedure returns
-%                                               the function for each
-%                                               inequivalent atom.\\
-%   \hline
-%   ?get\_gimp\_realaxis(Func,[Nsites])  & Returns the real-axis
-%                                              impurity Green's function in \texttt{Func}.
-%                                               Argument: \texttt{Func}
-%                                               is a rank-5 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nspin,Nspin,Norb,Norb,Lreal}].
-%                                               If \texttt{Nsites} is
-%                                               present \texttt{Func}
-%                                               is a rank-6 cmplx array
-%                                               of dimensions
-%                                               [\texttt{Nsites,Nspin,Nspin,Norb,Norb,Lreal}]
-%                                               and the procedure returns
-%                                               the function for each
-%                                               inequivalent atom.\\
-%   \hline
-
-  
-%   ?get\_dens(Var,[Nsites])  & Returns the impurity occupations in
-%                                  \texttt{Var}.
-%                                  Argument: \texttt{Var} is a rank-1 dble array of dimensions [\texttt{Norb}].
-%                                  If \texttt{Nsites} is present \texttt{var} is a rank-2 dble array of
-%                                  dimensions [\texttt{Nsites,Norb}] and the procedure returns
-%                                  the value for each inequivalent atom.\\
-%   \hline
-%   ?get\_mag(Var,[Nsites])  &  Returns the impurity magnetization in
-%                                 \texttt{Var}.
-%                                 Argument: \texttt{Var} is a rank-1 dble array of dimensions [\texttt{Norb}].
-%                                 If \texttt{Nsites} is present \texttt{var} is a rank-2 dble array of
-%                                 dimensions [\texttt{Nsites,Norb}] and the procedure returns
-%                                 the value for each inequivalent atom.\\
-%   \hline
-%   ?get\_docc(Var,[Nsites])  & Returns the impurity double occupancy
-%                                  in \texttt{Var}.
-%                                  Argument: \texttt{Var} is a rank-1 dble array of dimensions [\texttt{Norb}].
-%                                  If \texttt{Nsites} is present \texttt{var} is a rank-2 dble array of
-%                                  dimensions [\texttt{Nsites,Norb}] and the procedure returns
-%                                  the value for each inequivalent atom.\\
-%   \hline
-%   ?get\_eimp(Var,[Nsites])  & Returns the impurity local energies components
-%                                  in \texttt{Var}.
-%                                  Argument: \texttt{Var} is a rank-1 dble array of dimensions [4].
-%                                  If \texttt{Nsites} is present \texttt{var} is a rank-2 dble array of
-%                                  dimensions [\texttt{Nsites,4}] and the procedure returns
-%                                  the value for each inequivalent atom.\\
-%   \hline
-%   ?get\_doubles(Var,[Nsites])  & Returns additional impurity double
-%                                  occupancies from multi-orbital
-%                                  terms in \texttt{Var}.
-%                                  Argument: \texttt{Var} is a rank-1 dble array of dimensions [4].
-%                                  If \texttt{Nsites} is present \texttt{var} is a rank-2 dble array of
-%                                  dimensions [\texttt{Nsites,4}] and the procedure returns
-%                                  the value for each inequivalent atom.\\
-  
-
-
-%   \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf  BATH}\\
-%   \hline
-%   \hline
-%   ?get\_bath\_dimension() & Returns the number \texttt{Nb} of bath parameters
-%                                required to describe the quantum
-%                                impurity problem, based on the value of
-%                                different input variables,
-%                                e.g. \texttt{Norb, Nbath, bath\_type}.
-%                                Output: \texttt{Nb} integer constant. \\
-%   \hline
-%   \makecell[l]{
-%   ?set\_Hreplica(Hloc) \\
-%   ?set\_Hreplica(Hvec,LambdaVec)} & Sets up the matrix basis and the
-%                                     initial guess for the variational
-%                                     bath parameters which determined
-%                                     the shape of the  bath for \texttt{bath\_type=replica}.
-%                                     The procedure
-%                                     accepts either the local
-%                                     non-interacting Hamiltonian
-%                                     \texttt{Hloc} or  the \texttt{Nsym}
-%                                     matrix basis components
-%                                     \texttt{Hvec} and the
-%                                     corresponding variational
-%                                     parameters \texttt{Lambdavec}. See
-%                                     Sec.~\ref{SecBath}.  
-%                                     Arguments: \texttt{Hloc} is a
-%                                     rank-4 dble array of dimensions
-%                                     [\texttt{Nspin,Nspin,Norb,Norb}]
-%                                     or a rank-2 dble array of dimensions
-%                                     [\texttt{Nspin*Norb,Nspin*Norb}].
-%                                     \texttt{Hvec} is a rank-5 dble
-%                                     array of dimensions
-%                                     [\texttt{Nspin,Nspin,Norb,Norb,Nsym}].
-%                                     \texttt{LambdaVec} is a rank-1
-%                                     dble array of dimensions
-%                                     \texttt{Nsym} or a rank-2 dble
-%                                     array of dimensions
-%                                     [\texttt{Nsites,Nsym}], for
-%                                     \texttt{Nsites} inequivalent
-%                                     atoms. \\
-%   \hline
-  
-%   ?get\_bath\_component\_dimension(Type) & Returns the dimensions a 
-%                                            rank-3 dble array should
-%                                            have to store a specific
-%                                            component of the bath. 
-%                                            The output is a rank-1 int
-%                                            array \texttt{Ndim(1:3)} of dimension 3. 
-%                                            Argument: \texttt{Type} is
-%                                            a single
-%                                            character. Possible values
-%                                            are \texttt{Type=e, v, l},
-%                                            corresponding to energy,
-%                                            hybridization or lambda
-%                                            components. \\
-%   \hline
-%   ?get\_bath\_component(Array,Bath,Type) & Returns in
-%                                                 \texttt{Array} the
-%                                                 specified components
-%                                                 \texttt{Type} of the
-%                                                 bath \texttt{Bath}.
-%                                                 Arguments:
-%                                                 \texttt{Array} a
-%                                                 rank-3 dble array of
-%                                                 dimensions
-%                                                 [\texttt{Ndim(1),Ndim(2),Ndim(3)}]
-%                                                 as returned by a call
-%                                                 to
-%                                                 \texttt{?get\_bath\_component\_dimension(Type)}.
-%                                                 \texttt{Bath} is a
-%                                                 rank-1 dble array of dimension
-%                                                 \texttt{Nb=?get\_bath\_dimension}.
-%                                                 \texttt{Type=e, v, l}
-%                                                 is  a single character.\\
-%   \hline
-%   ?set\_bath\_component(Array,Bath,Type) &
-%                                                Sets the specified component
-%                                                \texttt{Type} in the
-%                                                bath \texttt{Bath}
-%                                                to \texttt{Array}.
-%                                                Arguments:
-%                                                \texttt{Array} a
-%                                                rank-3 dble array of
-%                                                dimensions
-%                                                [\texttt{Ndim(1),Ndim(2),Ndim(3)}]
-%                                                as returned by a call
-%                                                to
-%                                                \texttt{?get\_bath\_component\_dimension(Type)}.
-%                                                \texttt{Bath} is a
-%                                                 rank-1 dble array of dimension
-%                                                \texttt{Nb=?get\_bath\_dimension}.
-%                                                \texttt{Type=e, v, l}
-%                                                is  a single character.\\
-%   \hline
-%   ?copy\_bath\_component(BathIN,BathOUT,Type) & Copies the specified component
-%                                                \texttt{Type} from the
-%                                                    input bath
-%                                                    \texttt{BathIn} to
-%                                                    the output bath \texttt{BathOut}. 
-%                                                    Arguments:
-%                                                    \texttt{BathIn} and
-%                                                    \texttt{BathOut}
-%                                                    are rank-1 dble array of dimension
-%                                                    \texttt{Nb=?get\_bath\_dimension}.
-%                                                    \texttt{Type=e, v, l}
-%                                                    is  a single
-%                                                    character.\\
-  
-%   \hline
-%   ?spin\_symmetrize\_bath(Bath[,save])& Enforces spin symmetry in the bath
-%                                         \texttt{Bath}.
-%                                         Arguments: \texttt{Bath} is a rank-1 dble array
-%                                         of dimension
-%                                         \texttt{Nb=?get\_bath\_dimension}.
-%                                         For problems with \texttt{Nsites} inequivalent atoms
-%                                         \texttt{Bath} is a rank-2 dble array of 
-%                                         dimensions [\texttt{Nsites},\texttt{Nb}].
-%                                         \texttt{save} is a logical
-%                                         value used to optionally write
-%                                         out the output bath.\\
-%   \hline
-%   ?orb\_symmetrize\_bath(Bath[,save])& Enforces symmetry among orbitals in the bath
-%                                    \texttt{Bath}.
-%                                    Arguments: \texttt{Bath} is a rank-1 dble array
-%                                         of dimension
-%                                         \texttt{Nb=?get\_bath\_dimension}.
-%                                         For problems with \texttt{Nsites} inequivalent atoms
-%                                         \texttt{Bath} is a rank-2 dble array of 
-%                                         dimensions [\texttt{Nsites},\texttt{Nb}].
-%                                         \texttt{save} is a logical
-%                                         value used to optionally write
-%                                         out the output bath.\\
-%   \hline
-%   ?orb\_equality\_bath(Bath,Indx[,save])&
-%                                              Equals each orbital 
-%                                              components in the bath
-%                                              \texttt{Bath} to be
-%                                              identical to those of the
-%                                              orbital \texttt{Indx}.
-%                                               Arguments: \texttt{Bath} is a rank-1 dble array
-%                                              of dimension
-%                                              \texttt{Nb=?get\_bath\_dimension}.
-%                                              For problems with \texttt{Nsites} inequivalent atoms
-%                                              \texttt{Bath} is a rank-2 dble array of 
-%                                              dimensions
-%                                              [\texttt{Nsites},\texttt{Nb}].
-%                                              \texttt{Indx} is a
-%                                              integer constant. 
-%                                              \texttt{save} is a logical
-%                                              value used to optionally write
-%                                              out the output bath.\\
-%   \hline
-%   ?ph\_symmetrize\_bath(Bath[,save])& Enforces particle-hole symmetry
-%                                       in the bath \texttt{Bath}.
-%                                        Arguments: \texttt{Bath} is a rank-1 dble array
-%                                         of dimension
-%                                         \texttt{Nb=?get\_bath\_dimension}.
-%                                         For problems with \texttt{Nsites} inequivalent atoms
-%                                         \texttt{Bath} is a rank-2 dble array of 
-%                                         dimensions [\texttt{Nsites},\texttt{Nb}].
-%                                         \texttt{save} is a logical
-%                                         value used to optionally write
-%                                         out the output bath.\\
-%   \hline
-%   ?ph\_trans\_bath(Bath[,save])& Perform a particle-hole transformation onto the
-%                           bath \texttt{Bath}.
-%                            Arguments: \texttt{Bath} is a rank-1 dble array
-%                                         of dimension
-%                                         \texttt{Nb=?get\_bath\_dimension}.
-%                                         For problems with \texttt{Nsites} inequivalent atoms
-%                                         \texttt{Bath} is a rank-2 dble array of 
-%                                         dimensions [\texttt{Nsites},\texttt{Nb}].
-%                                         \texttt{save} is a logical
-%                                         value used to optionally write
-%                                         out the output bath.\\
-%   \hline
-%   ?break\_symmetry\_bath(Bath,Field,Sign[,save]) &
-%                                                     Breaks spin
-%                                                     symmetry in the bath \texttt{Bath}
-%                                                    using a small field of
-%                                                    amplitude 
-%                                                    \texttt{Field} with sign
-%                                                    \texttt{Sign}. The
-%                                                    quantity
-%                                                    \texttt{Field*Sign}
-%                                                    is added or
-%                                                    subtracted,
-%                                                    respectively for spin
-%                                                    up and down, to the
-%                                                    local energies of each bath level.  
-%                                                    Arguments: \texttt{Bath} is a rank-1 dble array
-%                                                    of dimension
-%                                                    \texttt{Nb=?get\_bath\_dimension}.
-%                                                    For problems with \texttt{Nsites} inequivalent atoms
-%                                                    \texttt{Bath} is a rank-2 dble array of 
-%                                                    dimensions
-%                                                    [\texttt{Nsites},\texttt{Nb}].
-%                                                    \texttt{Field,
-%                                                    Sign} are dble
-%                                                    constant.                                                     
-%                                                    \texttt{save} is a logical
-%                                                    value used to optionally write
-%                                                    out the output bath.\\
-%   \hline
-
-
-
-%   \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf  BATH\_FIT}\\
-%   \hline
-%   \hline
-%   ?chi2\_fitgf(Func,Bath,Hloc,ispin[,iorb])   &  Optimizes the bath
-%                                                 \texttt{Bath}
-%                                                 according to the user-provided function
-%                                                 \texttt{Func}, using a  Conjugate
-%                                                 Gradient minimization
-%                                                 of the cost function
-%                                                 $\chi$, see
-%                                                 Sec.~\ref{SecBathFit}.
-%                                                 Argument: \texttt{Func}
-%                                                 is a rank-5 cmplx array
-%                                                 of dimensions 
-%                                                 [\texttt{Nspin,Nspin,Norb,Norb,:}].
-%                                                 For problems with
-%                                                 \texttt{Nsites}
-%                                                 inequivalent atoms
-%                                                 \texttt{Func} is a rank-6 cmplx array
-%                                                 of dimensions
-%                                                 [\texttt{Nsites,Nspin,Nspin,Norb,Norb,:}]. 
-%                                                 \texttt{Bath} is a rank-1 dble array
-%                                                 of dimension
-%                                                 \texttt{Nb=?get\_bath\_dimension}.
-%                                                 or  a rank-2 dble array of 
-%                                                 dimensions
-%                                                 [\texttt{Nsites},\texttt{Nb}].
-%                                                 \texttt{Hloc} is a rank-4 dble array of
-%                                                 dimensions [\texttt{Nspin,Nspin,Norb,Norb}] or
-%                                                 a rank-5 of dimensions
-%                                                 [\texttt{Nsites,Nspin,Nspin,Norb,Norb}].
-%                                                 \texttt{ispin} is an
-%                                                 int constant
-%                                                 indicating the spin
-%                                                 components to fit.
-%                                                 The optional argument
-%                                                 \texttt{iorb} indicate
-%                                                 the orbital components
-%                                                 to fit. If not passed
-%                                                 all orbitals are
-%                                                 fitted.  \\   
-%   \hline
-
-%    \hline
-%   \hline
-%   \multicolumn{2}{c}{\bf  AUX\_FUNX}\\
-%   \hline
-%   \hline
-%   ?set\_suffix(ilat,pads)   &  Sets an additional suffix for the
-%                               output files of the \NAME\ library.
-%                               Arguments: \texttt{ilat} is an integer
-%                               constant. \texttt{pads} is an integer
-%                               constant indicating the number of zero
-%                               padding of the integer \texttt{ilat} in
-%                               the suffix.\\
-%   \hline
-%   ?reset\_suffix()   &  Resets the suffix for the output
-%                                    files of \NAME\ to the default value \\
-%   \hline
-%   ?search\_variable(var,ntmp,bool)   &  Varies the variable
-%                                          \texttt{var} so that the
-%                                        conjugated variable
-%                                        \texttt{ntmp} is equal to the
-%                                        input value \texttt{nread} up
-%                                        to an error \texttt{nerr}.
-%                                        Arguments: \texttt{var, ntmp}
-%                                        are dble
-%                                        constants. \texttt{bool} is a
-%                                        logical constant indicating the success of the variation.\\
-%   \hline
-%   \label{TableProcedures}
-% \end{tabularx}
-
-
-
-
-
-
-
-
-
 
 
 
