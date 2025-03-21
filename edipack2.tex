@@ -237,12 +237,106 @@ superconducting or spin-non-conserving regimes
 
 bla bla bla
 
-\section{Structure}\label{SecStruct}
-\subsection{EDIpack2}
-\subsection{EDIpack2ineq}
-\subsection{EDIpack2 C-bindings}
-\subsection{EDIpack2Triqs}
 
+
+
+
+
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
+\section{Structure and derived software}\label{SecStruct}
+\NAME is a modular library which contains three principal structures.
+At the core is the exact diagonalization solver: \NAME.
+Next there is a {\tt EDIpack2ineq} which extends application to the case of multiple
+inequivalent impurity problems. Finally, there we provide a Fortran-C
+interface, which enables development of additional API or
+inter-operability with external libraries.  
+
+\begin{itemize}
+\item{\bf EDIpack2.}
+This constitutes the  building block of the whole software. This part
+implement the  with the Lanczos-based solver for generic quantum
+impurity systems encoding different symmetries, i.e. quantum number
+conservations and apt to solve multi-orbital problems, also in
+presence of coupling to local phonons.  
+The \NAME solver has a hierarchical and modular structure: different
+sections of the library communicate through a shared memory layer. The
+top module of the library is {\tt EDIPACK2} which, once loaded,
+enables access to the Fortran API in terms of suitable procedures to
+initialize, execute and finalize the solver or to retrieve internal
+quantities while making opaque to the user the internal structure of
+the library. 
+A detailed presentation of the library can be found in
+Sec.\ref{SecEDIpack}. 
+
+
+\item{\bf EDIpack2ineq.}
+This part of the software, leveraging on the object oriented concepts
+available in modern Fortran, aims to extend the \NAME library to the
+case of multiple inequivalent and independent impurity problems. This
+is particularly useful while using \NAME as a solver for DMFT in
+presence of unit cells with inequivalent atoms, for systems with
+somehow broken translational symmetry (e.g. heterostructures, large
+supercells, etc.).
+
+
+\item{\bf EDIpack2 C-bindings.}
+\NAME includes a single module implementing a Fortran-C interface of the main
+library procedures. The module is developed around the implicit {\tt
+  ISO\_C\_BINDING} capabilities of the most recent Fortran
+distributions, which enable to translate Fortran procedures directly
+to C. In order to overcome all the difficulties related to the internal
+structure of the library,  we interfaced all and just the
+procedures and the variables exposed to the user. 
+This module aims to foster interoperability of \NAME  with different
+third party softwares as well as to support development of additional
+API. 
+
+
+% \subsection{Dependent software}
+% As a concrete example illustrating the interoperability of the
+% software we here illustrate the case of EDIpy2, i.e. the Python API for
+% \NAME and present an interface layer to Triqs (Toolbox
+% for Reasearch In Quantum Systems). 
+
+\item{\bf EDIpy2.}
+This is a simple Python module which provides Python API to the
+\NAME Fortran library. This interface is built around the Python
+support to C-types, which allows to import the dynamic C-binding
+library generated upon building \NAME. The module contains a specific
+class, whose methods mirrors through  duck-typing all the available
+procedures of \NAME as well as it gives access to relevant shared
+control variables.
+
+
+
+
+\item{\bf EDIpack2Triqs.}
+This is a thin interface layer from \NAME to Triqs,
+built around the Python API of the \NAME library. The exact
+diagonalization solver is encapsulated in a dedicated class,
+containing the necessary methods to initialize and run a single
+instance of the solver. The interface also includes a specific class
+encompassing the effective discretized bath structure as well as their 
+optimization methods.  
+
+  
+\end{itemize}
+
+
+
+
+
+
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
 
 \section{Installation}\label{SecInstall}
 The installation of \NAME is available through CMake which ensures
@@ -415,13 +509,18 @@ pip install .
 
 
 
-\section{Usage}\label{SecUsage}
-\subsection{Bethe lattice DMFT (Fortran API)}
-\subsection{Attractive Hubbard model (Python API)}
-\subsection{Multi-orbital Hubbard (Triqs)}
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
 
 
 \section{Implementation}\label{SecEDIpack}
+Here we present an overview of the implementation of the
+different parts of the \NAME library. 
 
 \subsection{The quantum impurity problem}\label{sSecQIM}
 
@@ -431,17 +530,17 @@ pip install .
 
 \subsection{Krylov based Diagonalization}\label{sSecHam}
 
-\subsection{Dynamical correlation functions}
+\subsection{Dynamical correlation functions}\label{sSecGF}
 
-\subsection{Observables}
+\subsection{Observables}\label{sSecObc}
 
-\subsection{Reduced impurity density matrix}
+\subsection{Reduced impurity density matrix}\label{sSecRDM}
 
-\subsection{Bath parametrization}
+\subsection{Bath parametrization}\label{sSecBath}
 
-\subsection{Bath Optimization}
+\subsection{Bath Optimization}\label{sSecFit}
 
-\subsection{Input/Output}
+\subsection{Input/Output}\label{sSecIO}
 
 
 
@@ -455,8 +554,44 @@ pip install .
 \section{Triqs interface}\label{SecEDI2Triqs}
 
 
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+\section{Usage}\label{SecUsage}
+\subsection{Bethe lattice DMFT (Fortran API)}
+\subsection{Attractive Hubbard model (Python API)}
+\subsection{Multi-orbital Hubbard (Triqs)}
+
+
+
+
+
+
+
+
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
+
 
 \section{Conclusions}
+
+
+
+
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
 
 
 \section*{Acknowledgements}
