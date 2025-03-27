@@ -29,10 +29,34 @@
   stringstyle=\ttfamily,
   commentstyle=\itshape,
   fontadjust=true,
-  keywordstyle=\color{magenta},
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
   mathescape,
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
+
+\lstdefinestyle{mybash}{
+  frame=lines,
+  language=bash,
+  basicstyle=\footnotesize,
+  captionpos=b,
+  stringstyle=\color{mymauve},%\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\bfseries,
+  morekeywords={*,git,mkdir,cmake,make},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+
+% % MINTED:
+% % \usepackage[cache=true,cachedir=minted-cache]{minted}
+% % \usepackage[finalizecache=true,cachedir=minted-cache]{minted}
+% \usepackage[frozencache=true,cachedir=minted-cache]{minted}
+% \setminted[fortran]{linenos,mathescape,frame=lines,style=bw,framesep=1mm,
+%   baselinestretch=1,fontsize=\footnotesize}
+
 
 
 \usepackage{array}
@@ -172,24 +196,51 @@
 
 \begin{frontmatter}
 
-\title{EDIpack2: interoperable Lanczos-based exact diagonalization solver for
-  generic quantum impurity problems.}
-% \author[]{L.~Crippa}
-% \author[]{I.~Krivenko}
-% \author[]{S.~Giuli}
-% \author[]{G.~Bellomia}
-% \author[]{....}
-% % \author[]{A.~Scazzola}
-% % \author[]{F.~Petocchi}
-% % \author[]{G.~Mazza}
-% % \author[]{L.~de Medici}
-% % \author[]{M.~Capone}
-% \author[a]{A.~Amaricci\corref{author}}
+\title{EDIpack2: interoperable Lanczos-based solver for generic quantum impurity problems}
+\author[a,b,c]{L.~Crippa\corref{AA}}
+\author[a]{I.~Krivenko}
+\author[d]{S.~Giuli\corref{BB}}
+\author[d]{G.~Bellomia\corref{CC}}
+\author[e]{A.~Scazzola}
+\author[f]{F.~Petocchi}
+\author[g]{G.~Mazza}
+\author[h]{L.~de Medici}
+\author[d]{M.~Capone}
+\author[i]{A.~Amaricci}
 
 % \cortext[author] {Corresponding author.\\\textit{E-mail address:} amaricci@iom.cnr.it}
+\newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
+  Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
+  Trieste, Italy}
+\newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati (SISSA),
+  Via Bonomea 265, 34136 Trieste, Italy}
+\newcommand{\ITPHamburg}{I. Institute of Theoretical Physics,
+  University of Hamburg, Notkestrasse 9, 22607 Hamburg, Germany}
+\newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
+  Astrophysik,Universit\"at W\"urzburg, 97074 W\"urzburg, Germany}
+\newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, 01062 Dresden, Germany}
+\newcommand{\Geneve}{Department of Quantum Matter Physics, University of
+  Geneva, Quai Ernest-Ansermet 24, 1211 Geneva, Switzerland}
+\newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
+  Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
+\newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
 
-% \address[a]{CNR-IOM, Istituto Officina dei Materiali,
-%     Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136 Trieste, Italy}
+\address[a]{\ITPHamburg}
+\address[b]{\CTQMAT}
+\address[c]{\WZBURG}
+\address[d]{\SISSA}
+\address[e]{Torino}
+\address[f]{\Geneve}
+\address[g]{\UPISA}
+\address[h]{\ESPCI}
+\address[i]{\CNRIOM}
+\cortext[AA] {Corresponding author \textit{E-mail address:}
+  lorenzo.crippa@uni-hamburg.de}
+\cortext[BB] {Corresponding author \textit{E-mail address:}
+  giuli@sissa.it}
+\cortext[CC] {Corresponding author \textit{E-mail address:}
+  bellomia@sissa.it}
+
 \begin{abstract}
   
 \end{abstract}
@@ -341,15 +392,15 @@ optimization methods.
 \section{Installation}\label{SecInstall}
 The installation of \NAME is available through CMake which ensures
 multi-platforms compabitility and dependencies resolution.  
-The software builds into two distinct libraries: {\tt
-  libedipack.a} and {\tt libedipack\_cbinding.so}.
-The former, alongside the generated Fortan modules files,
-wraps the \NAME software. The latter enables interoperability through
-bindings to the C language.    
+The software builds into two distinct libraries.
+The main one is {\tt  libedipack.a} which, alongside the generated Fortan
+modules, wraps the \NAME software possibly including support for  
+inequivalent impurities.
+A second dynamic library, {\tt libedipack\_cbinding.so}, enables interoperability through
+specific bindings to the C programming language.    
 
 \subsection{Dependencies}
-Although \NAME is as much self-contained as possible its development
-hinges on two external libraries.
+\NAME essentially depends on two external libraries.
 \begin{itemize}
 \item {\bf SciFortran}: an open-source Fortran library to support
   mathematical and scientific software development. 
@@ -368,7 +419,7 @@ which speed up calculations for large dimensional systems.
 \subsubsection{Source}
 The software can be installed from source as follows. The source can
 be retrieved directly from its GitHub repository, for instance using:
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 git clone https://github.com/edipack/EDIpack2.0 EDIpack2
 \end{lstlisting}
 Then, assuming to be in the software directoru, a conventional
@@ -378,7 +429,7 @@ backends.
 \begin{itemize}
   \item {\bf GNU Make}\\
 This is the default CMake workflow:
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 mkdir build
 cd build
 cmake ..
@@ -392,7 +443,7 @@ make install
 An alternative workflow employs the Ninja building backend with
 Fortran support. Ninja is generally faster and automatically supports
 multi-threaded building:
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 mkdir build
 cd build
 cmake -GNinja ..
@@ -428,7 +479,7 @@ installation through Anaconda packages into a virtual
 environment containing Python ($>3.10$).
 
 The Conda package installation procedure reads:
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 conda create -n edipack
 conda activate edipack
 conda install -c conda-forge -c edipack edipack2
@@ -469,7 +520,7 @@ module which depends on both \NAME and SciFortran. The package can be
 obtained from the repository
 \href{https://github.com/EDIpack/EDIpy2.0}{EDIpy2}.
 
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 git clone https://github.com/edipack/EDIpy2 EDIpy2
 cd EDIpy2
 pip install . 
@@ -483,7 +534,7 @@ As for EDIpack2, also the Python API in EDIpy2 are available through
 Anaconda packaging. In this case the resolution of the dependencies is
 taken care from Conda itself:
 
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 conda create -n edipack
 conda activate edipack
 conda install -c conda-forge -c edipack edipack2
@@ -499,7 +550,7 @@ the C-bindings and Python API. The corresponding module depends on
 Assuming the two software are correctly installed in the OS, the
 EDIpack2Triqs interface is installed as follows:
 
-\begin{lstlisting}[language=Bash]
+\begin{lstlisting}[style=mybash]
 git clone https://github.com/krivenko/edipack2triqs
 cd edipack2triqs
 pip install .
@@ -515,7 +566,8 @@ pip install .
 % ##################################################################
 
 
-
+% $H_{e-ph}= \sum_{\a\sigma} g_\a
+% d^+_{\a\sigma}d_{\a\sigma}(b+b^+)$. 
 
 
 \section{Implementation}\label{SecEDIpack}
@@ -523,10 +575,244 @@ Here we present an overview of the implementation of the
 different parts of the \NAME library. 
 
 \subsection{The quantum impurity problem}\label{sSecQIM}
+We consider a general quantum impurity problem defined by the
+following Hamiltonian:
+$$
+\hat{H} = \hat{H}_{imp} + \hat{H}_{bath} + \hat{H}_{hyb} + \hat{H}_{ph} + \hat{H}_{e-ph}
+$$
+which describes a  multi-orbital interacting quantum
+impurity coupled to an electronic bath and to local, i.e. Holstein,
+phonons. We assuming for the moment that no particular symmetry
+holds. The impurity part of the Hamiltonian reads: 
+\begin{equation}\label{Himp}
+  \begin{split}
+    \hat{H}_{imp} & = \hat{H}^0_{imp} + \hat{H}^{int}_{imp}\\
+    \hat{H}^0_{imp} & =
+    \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}d_{\b\sigma'}\\
+    %
+    \hat{H}^{int}_{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
+    &{\phantom =}- J_X\sum_{\a\neq
+      \b}d^{+}_{\a\uparrow}d_{\a\downarrow}d^{+}_{\b\downarrow}d_{\b\uparrow}+J_P\sum_{\a
+      \neq
+      \b}d^{+}_{\a\uparrow}d^{+}_{\a\downarrow}d_{\b\downarrow}d_{\b\uparrow}\\
+    % 
+\end{split}
+\end{equation}
 
-\subsection{The  basis states}\label{sSecBasis}
+where $d_{\a\sigma}$ ($d^+_{\a\sigma}$) are the destruction (creation)
+second-quantization operators for impurity electrons in the
+orbital $\alpha=1,\dots,N_\a$, with $N_\a$ the number of orbitals,
+with spin $\sigma=\up,\dw$ and whose occupation is described
+by the  operator  
+$n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$. 
+The non-interacting internal structure of the impurity is described by
+the $h^{0}_{\a\b\sigma\sigma'}$ matrix. 
+$\hat{H}^{int}$ describes the  local multi-orbital
+interaction~\cite{Georges2013ACMP} which, for simplicity, we take as a
+generalized Hubbard-Kanamori form.  
+The first three terms represent the density-density part of the
+interaction, where $U$ is the local intra-orbital Coulomb repulsion,
+$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Georges2013ACMP}.  
+The  remaining two terms are, respectively, the spin-exchange and
+pair-hopping which we considered with their respective independent
+couplings $J_X$ and $J_P$.
+In the case $N_\a=3$ a fully symmetric $SU(3)_{orbital}\times SU(2)_{spin}\times
+U(1)_{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
+$J_X=J_P=J$~\cite{Georges2013ACMP}. Different choices, preserving part
+of the combined symmetry group, can be made for other values of
+$N_\a$~\cite{Georges2013ACMP}. 
+
+
+The bath part and its coupling to the impurity has the form: 
+\begin{equation}\label{Hbath}
+  \begin{split}
+    \hat{H}_{bath} &=
+    \sum_p\sum_{\a\b\sigma\sigma'}h^p_{\a\b\sigma\sigma'}a^{+}_{p\a\sigma}a_{p\b\sigma'}\\
+    %
+    \hat{H}_{hyb} &= \sum_p\sum_{\a\b\sigma\sigma'}V^p_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}a_{p\b\sigma'}+H.c. \\
+\end{split}
+\end{equation}
+where $p=1,\dots,N_{bath}$ is an index running over a finite number of
+bath elements, $a_{p\alpha\sigma}$ ($a^+_{p\alpha\sigma}$) are the destruction (creation) operators for
+the bath electrons with index $p$, with orbital $\alpha$ and
+spin $\sigma$.
+The  properties of each bath level are described by the
+matrices $h^p_{\a\b\sigma\sigma'}$. As such any bath element can be
+composed of several electronic levels according the bath topology,
+which will be discussed further in the following.
+Each bath level couples to the impurity with an amplitude
+$V^p_{\a\b\s\sigma'}$ which we allow to couple different orbital and
+opposite spins.   
+
+Finally, the electron-phonon part of the quantum impurity problems is
+described by the Hamiltonian terms: 
+\begin{equation}\label{Hph}
+  \begin{split}
+    \hat{H}_{ph}&=\sum_q \omega_{0q} b_q^+b_q\\
+    % 
+    \hat{H}_{e-ph} &= \sum_q\sum_{\a\b\sigma} g_{\a\b} d^+_{\a\sigma}d_{\b\sigma}(b_q+b_q^+)
+\end{split}
+\end{equation}
+where $q=1,\dots,N_q$ indexes the number of local phonons, $b_q$
+($b_q^+$) are the destruction (creation) operators for the phonon $q$
+with frequency $\omega_{0q}$. The matrix  $g_{\a\b}$ expresses is the electron-phonon coupling. 
+Although feasible, dealing with more than one phonon mode becomes
+quickly computationally very demanding, thus in the rest of the this
+work we shall consider $N_q=1$. 
+
+
+In the following we consider a bath discretized into a  number
+of bath degrees of freedom and a finite number of available phonons,
+to cut-off the unbounded dimensions of the local phonons Hilbert space.
+
+
+More specifically, we consider a system composed of $N_{imp}=1$
+impurities, i.e. a single impurity problem, $N_{bath}$ bath elements
+and $N_{ph}$ phonons. The size of the system is determined by
+the number of phonons (fixed) and that of {\it electronic} levels, i.e. levels with a local
+electronic Hilbert space
+$\HH_e=\{\ket{0},\ket{\up},\ket{\dw},\ket{\up\dw} \}$. 
+Due to is internal structure, the single impurity contains
+$N_i= N_\a$ electronic levels.
+The total number of levels is then determined by
+the electronic levels in the bath $N_b$. This is a function of the bath topology and $N_{bath}$,
+i.e. the number of bath elements. In the simplest case each bath
+element corresponds to an independent electronic levels coupled to the
+impurity, thus $N_b\equiv N_{bath}$. 
+We indicate with $N_s=N_i + N_b$ the total number of electronic levels. 
+
+
+\subsection{The Fock basis states}\label{sSecBasis}
+The Fock space of the quantum impurity problems is defined as
+$\FF=\FF_e\otimes \FF_{ph}$, with $\FF_e=\bigoplus_{n=0}^{N_s}
+S_-\HH_e^{\otimes n}$ the electronic Fock space,  $\FF_{ph}=\bigoplus_{n=0}^{N_q}S_+\HH_{ph}^{\otimes n}$ the
+phonon Fock space,  $\HH_{ph}=\{\ket{0},\ket{1},\dots,\ket{N_{ph}}\}$ is the local phonon Hilbert space
+and ($S_-$)  $S_+$ the (anti-)symmetrization operator.  
+The total dimension of the Fock space is
+$D=D_e\cdot D_{ph}=4^{N_s}\cdot (N_{ph}+1)$ making the exponential
+growth with the number of electron levels transparent. 
+The quantum states in the space $\FF$ are naturally represented in
+terms of occupation number formalism of the second quantization,
+i.e. the Fock basis. For a system of $N_s$ electrons each Fock state
+reads $\ket{p}\ket{\vec{n}}$ with $\ket{\vec{n}}=\ket{\vec{n}_\up}\ket{\vec{n}_\dw}=\ket{n_{1\up},\dots,n_{N_s\up},n_{1\dw},\dots,n_{N_s\dw}}$, 
+where $p=1,\dots,N_{ph}$ is the number of local phonons while $n_{a\sigma}=0,1$ signals the absence or the
+presence of an electron with spin $\sigma$ at the level $a$.
+Remarkably, the electronic part of the Fock state $\ket{\vec{n}}$ is represented as a string of
+zeros and ones of length $2N_s$. Thus, any such state can  be encoded
+in a computer using a sequence of $2N_s$ bits or, analogously, as a
+given integer $I=0,\dots 2^{2N_s}-1$ so that $\ket{\vec{n}}=\ket{I}$.  
+Together with the basis states one defines  destruction and creation 
+operators, respectively $c_{a\s}$ and $c^+_{a\s}$, which acts on the
+Fock space as: 
+$\ket{\vec{n}}$ as:  
+\begin{align*}
+  c_{a\sigma}\ket{\vec{n}} &=
+    \begin{cases}
+      (-1)^{\#_{a\sigma}}\ket{\dots,n_{a\sigma}\!-\!1,\dots}
+      &\text{if $n_{a\sigma}\!=\! 1$}\\
+      0 &\text{otherwise}
+    \end{cases};\qquad
+    c^{+}_{a\sigma}\ket{\vec{n}} &=
+     \begin{cases}
+      (-1)^{\#_{a\sigma}}\ket{\dots,n_{a\sigma}\!+\!1,\dots}
+      & \text{if $n_{a\sigma}\!=\! 0$}\\
+      0 & \text{otherwise}
+    \end{cases}    
+\end{align*}
+where $\#_{a\sigma}=\sum_{b\sigma'<a\sigma} n_{b\sigma'}$ takes care
+of the fermionic sign imposed by Pauli principle. 
 
 \subsection{Conserved quantum numbers}\label{sSecQNs}
+In order to circumvent the exponential scaling of the dimensions of
+the problem scales it is necessary to take into account suitable symmetries.
+Indeed, considering operators ${\cal Q}$ such that $[H, {\cal Q}]=0$
+reduces of the Fock space into several symmetry sectors
+labelled by given quantum numbers $\vec{Q}$. 
+In the context of quantum impurity problems two symmetries are often considered: i)
+conservation of the total occupation $N$ and ii) the
+conservation of the total magnetization $S_z$. Although the total spin
+operator $S^2$ can also be conserved, the difficult  implementation
+and the marginal gain makes it often non convenient to include this symmetry.
+
+In \NAME we consider three different cases:
+\begin{itemize}
+\item{\bf normal:}  $\vec{Q}=[N,S_z]\equiv[N_\up,N_\dw]$
+\item{\bf superc:}  $\vec{Q}=S_z$
+\item{\bf nonsu2:} $\vec{Q}=N$
+\end{itemize}
+
+The {\bf normal} case consider independent conservation of the total occupation $N$
+and the total magnetization $S_z$ or, equivalently, the total number of electrons with spin up $N_\up$ and down
+$N_\dw$. Optionally, we consider the case in which the symmetry
+applies separately for each orbital and spin,
+i.e. $\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This special case has been
+extensively discussed in \onlinecite{Amaricci2022} so it won't be covered in
+this work.
+
+The {\bf superc} case deals with the conservation of the total
+magnetization only, so that total charge may not be conserved. This
+case includes a description of $s$-wave superconductivity, featuring
+intra- and inter-orbital components.
+
+Finally, the {\bf nonsu2} case consider the conservation of the total
+charge, whereas the spin symmetry group is not fully
+conserved. Although there many possible realization of this scenario,
+this particularly applies to the presence of local spin-orbit coupling
+$\vec{L}\cdot\vec{S}$~\cite{something}, the emergence of in-plane spin ordering~\cite{KM} or
+in-plane spin-triplet exciton condensation~\cite{ExcitonPRB,Amaricci,Blason}.  
+
+From a computational point of view the construction of a symmetry
+sector corresponds to the determination of a injective map
+$\MM:\SS_{\vec{Q}}\rightarrow \FF$ relating the states $\ket{i}$
+belonging to the sector $\SS_{\vec{Q}}$ to the states $\ket{I}$ in the
+Fock space. Operatively, the map corresponds to an integer rank-1
+array of dimension $D_\SS$ which is the {\it dimension} of the
+sector. According to the previously introduced symmetries we
+have:
+\begin{itemize}
+\item{\bf normal:}  $D_\SS = \binom{N_s}{N_\up}\binom{N_s}{N_\dw}$ 
+\item{\bf superc:}  $D_\SS = \sum_m 2^{N_s-S_z-2m}\binom{N_s}{N_s-S_z-2m}\binom{S_z+2m}{m}$
+\item{\bf nonsu2:} $D_\SS=\binom{2N_s}{N}$
+\end{itemize}
+
+The {\bf normal} case requires a brief remark. Because of the
+independent conservation of $N_\up$ and $N_\dw$, the sector can be further factorized into $\SS_{\vec{Q}} = \SS_{N_\up}\otimes
+\SS_{N_\dw}$ and, correspondingly, the sector map reads $\MM = \MM_\up
+\otimes \MM_\dw$.
+As such, each state $\ket{i}=\ket{i_\up}\ket{i_\dw}$ of the
+sector is labelled by two integers $[i_\up,i_\dw]$, 
+$i_\sigma=1,\dots,D_{\SS_\sigma}$ such that $i=i_\up + i_\dw
+D_{\SS_\dw}$. The map $\MM$ connects any such state to a Fock state
+$\ket{I}=\ket{I_\up}\ket{I_\dw}$ labelled by two integers
+$[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_s}$. For a thorough
+discussion about Fock basis organization in this case see
+\onlinecite{amaricci2022}. 
+
+
+
+The symmetry sector reduction of the Fock space induces a block
+digonal form to the Hamiltonian matrix. Each block, labelled by a
+value of the quantum numbers $\vec{Q}$ has dimension
+$D_{\SS(\vec{Q}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
+basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix. In the {\bf
+  normal} case $H_\SS$ takes a particularly symmetric form thanks to
+the product structure of the sector and its map~\cite{amaricci2022}.
+The analysis of the spectrum is then reconducted to the inspection of
+the Hamiltonian in each symmetry sector. Should particular constraint
+holds the search can be limited to only particular sector, further
+reducing the computational cost. 
+
+Although the sectors have dimensions much smaller than the full Fock
+space, for large systems storing the Hamiltonian matrix in the memory
+can still be highly inefficient.
+In such cases, Krylov or Lanczos methods~\cite{Lanczos1950JRNBSB,Lin1993CIP,Lehoucq1998,Maschhoff1996} can
+be implemented using a storage-free algorithm, performing the
+necessary linear operations on-the-fly.
+This solution has generally a negative impact on the execution
+time, however this can be well compensated by scaling in a distributed 
+parallel framework.
+
+
 
 \subsection{Krylov based Diagonalization}\label{sSecHam}
 
