@@ -9,7 +9,9 @@
 \usepackage{makecell}
 
 
-
+\usepackage{stackengine}
+\newlength\llength
+\llength=1.38ex\relax
 \usepackage{xcolor}
 
 
@@ -197,10 +199,10 @@
 \begin{frontmatter}
 
 \title{EDIpack2: interoperable Lanczos-based solver for generic quantum impurity problems}
-\author[a,b,c]{L.~Crippa\corref{AA}}
+\author[a,b,c]{L.~Crippa}
 \author[a]{I.~Krivenko}
-\author[d]{S.~Giuli\corref{BB}}
-\author[d]{G.~Bellomia\corref{CC}}
+\author[d]{S.~Giuli}
+\author[d]{G.~Bellomia}
 \author[e]{A.~Scazzola}
 \author[f]{F.~Petocchi}
 \author[g]{G.~Mazza}
@@ -229,17 +231,14 @@
 \address[b]{\CTQMAT}
 \address[c]{\WZBURG}
 \address[d]{\SISSA}
-\address[e]{Torino}
+\address[e]{Politecnico di Torino, Turin, Italy}
 \address[f]{\Geneve}
 \address[g]{\UPISA}
 \address[h]{\ESPCI}
 \address[i]{\CNRIOM}
-\cortext[AA] {Corresponding author \textit{E-mail address:}
-  lorenzo.crippa@uni-hamburg.de}
-\cortext[BB] {Corresponding author \textit{E-mail address:}
-  giuli@sissa.it}
-\cortext[CC] {Corresponding author \textit{E-mail address:}
-  bellomia@sissa.it}
+% \cortext[AA]{Corresponding author:lorenzo.crippa@uni-hamburg.de}
+\cortext[BB] {Corresponding author:giuli@sissa.it}
+\cortext[CC]{Corresponding author:bellomia@sissa.it}
 
 \begin{abstract}
   
@@ -270,6 +269,9 @@
 {\em Nature of problem:}. \\
 {\em Solution method:} .\\
 \end{small}
+
+
+\tableofcontents
 
 \section{Introduction and Motivation}\label{SecIntro}
 
@@ -681,6 +683,22 @@ element corresponds to an independent electronic levels coupled to the
 impurity, thus $N_b\equiv N_{bath}$. 
 We indicate with $N_s=N_i + N_b$ the total number of electronic levels. 
 
+The setup of the general quantum impurity problem is implemented in
+different parts of the \NAME software. The dimensions of the system
+are controlled by input variables {\tt Nspin}$=N_\sigma$,
+{\tt Norb}$=N_\a$ and {\tt Nbath}$=N_{bath}$ in {\tt
+  ED\_INPUT\_VARS}. These are used to
+determine the variables {\tt Ns}$=N_s$ and $N_b$, defined in the global
+memory pool {\tt ED\_VARS\_GLOBAL}, using the functions contained
+in {\tt ED\_SETUP}. 
+The user can define the local non-interacting Hamiltonian
+$h^0_{\a\b\s\s'}$ using the function {\tt ed\_set\_hloc} in {\tt ED\_AUX\_FUNX}.
+The matrix is then stored in the internal memory and shared throughout the
+code.
+On the other hand the setup of the bath matrices $h^p_{\a\b\s\s'}$
+requires a more involved procedure which will be illustrated in
+\secu{sSecBath}. 
+
 
 \subsection{The Fock basis states}\label{sSecBasis}
 The Fock space of the quantum impurity problems is defined as
@@ -693,11 +711,15 @@ $D=D_e\cdot D_{ph}=4^{N_s}\cdot (N_{ph}+1)$ making the exponential
 growth with the number of electron levels transparent. 
 The quantum states in the space $\FF$ are naturally represented in
 terms of occupation number formalism of the second quantization,
-i.e. the Fock basis. For a system of $N_s$ electrons each Fock state
-reads $\ket{p}\ket{\vec{n}}$ with $\ket{\vec{n}}=\ket{\vec{n}_\up}\ket{\vec{n}_\dw}=\ket{n_{1\up},\dots,n_{N_s\up},n_{1\dw},\dots,n_{N_s\dw}}$, 
+i.e. the Fock basis.
+For a system of $N_s$ electrons each Fock state
+reads $\ket{p}\ket{\vec{n}}$ with
+$$
+\ket{\vec{n}}=\ket{\vec{n}_\up}{\vec{n}_\dw}=\ket{n_{1\up},\dots,n_{N_s\up},n_{1\dw},\dots,n_{N_s\dw}}
+$$ 
 where $p=1,\dots,N_{ph}$ is the number of local phonons while $n_{a\sigma}=0,1$ signals the absence or the
 presence of an electron with spin $\sigma$ at the level $a$.
-Remarkably, the electronic part of the Fock state $\ket{\vec{n}}$ is represented as a string of
+The electronic part of the Fock state $\ket{\vec{n}}$ is represented as a string of
 zeros and ones of length $2N_s$. Thus, any such state can  be encoded
 in a computer using a sequence of $2N_s$ bits or, analogously, as a
 given integer $I=0,\dots 2^{2N_s}-1$ so that $\ket{\vec{n}}=\ket{I}$.  
@@ -721,6 +743,12 @@ $\ket{\vec{n}}$ as:
 \end{align*}
 where $\#_{a\sigma}=\sum_{b\sigma'<a\sigma} n_{b\sigma'}$ takes care
 of the fermionic sign imposed by Pauli principle. 
+
+The Fock states and operators implementation can be found in {\tt
+  ED\_AUX\_FUNX}. There we define the bitwise action of generic fermionic creation
+and annihilation operators {\tt CDG} and {\tt C}, the binary
+decomposition {\tt bdecomp} required to reconstruct the Fock state as
+bits sequence and other accessory functions. 
 
 \subsection{Conserved quantum numbers}\label{sSecQNs}
 In order to circumvent the exponential scaling of the dimensions of
@@ -776,10 +804,14 @@ have:
 \end{itemize}
 
 The {\bf normal} case requires a brief remark. Because of the
-independent conservation of $N_\up$ and $N_\dw$, the sector can be further factorized into $\SS_{\vec{Q}} = \SS_{N_\up}\otimes
-\SS_{N_\dw}$ and, correspondingly, the sector map reads $\MM = \MM_\up
+independent conservation of $N_\up$ and $N_\dw$, the local Hilbert
+space and the electronic Fock can be factorizes as, respectively,
+$\HH=\HH_\up\otimes\HH_\dw$, $\FF_e = \FF_{e\up}\otimes \FF_{e\dw}$.  
+Accordingly any Fock state is written as $\ket{\vec{n}_\up}\ket{\vec{n}_\dw}$, the symmetry sector can be written as  $\SS_{\vec{Q}} = \SS_{N_\up}\otimes
+\SS_{N_\dw}$ and, correspondingly, the sector map splits in two
+mutually exclusive ones $\MM = \MM_\up
 \otimes \MM_\dw$.
-As such, each state $\ket{i}=\ket{i_\up}\ket{i_\dw}$ of the
+Thus, each state $\ket{i}=\ket{i_\up}\ket{i_\dw}$ of the
 sector is labelled by two integers $[i_\up,i_\dw]$, 
 $i_\sigma=1,\dots,D_{\SS_\sigma}$ such that $i=i_\up + i_\dw
 D_{\SS_\dw}$. The map $\MM$ connects any such state to a Fock state
@@ -787,8 +819,6 @@ $\ket{I}=\ket{I_\up}\ket{I_\dw}$ labelled by two integers
 $[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_s}$. For a thorough
 discussion about Fock basis organization in this case see
 \onlinecite{amaricci2022}. 
-
-
 
 The symmetry sector reduction of the Fock space induces a block
 digonal form to the Hamiltonian matrix. Each block, labelled by a
@@ -813,8 +843,187 @@ time, however this can be well compensated by scaling in a distributed
 parallel framework.
 
 
+The object {\tt sector}, defined globally in {\tt
+  ED\_VARS\_GLOBAL}, contains all the informations characterizing the
+symmetry sector, its dimensions, its quantum numbers and an
+implementation of the map $\MM$. The constructor/destructor are defined {\tt
+  ED\_SECTORS} module with the function {\tt build\_sector}/{\tt
+  delete\_sector} using different algorithms according to the nature
+of the quantum numbers $\vec{Q}$ as reported in the following code
+snippet.
+\setbox0=\hbox{%
+  \begin{minipage}{0.3\linewidth}
+    \center{\bf normal}
+\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+i=0
+do Iup=0,2**Nbit-1     
+  nup_ = popcnt(Iup) 
+  if(nup_ /= Nups(1))cycle
+  i = i+1
+  H(iud)%map(i) = lup
+enddo
+i=0
+do Idw=0,2**Nbit-1
+  ndw_= popcnt(Idw)
+  if(ndw_ /= Ndws(1))cycle
+  i = i+1
+  H(iud+Ns)%map(i) = Idw
+enddo
+\end{lstlisting}
+\end{minipage}
+}
+\savestack{\listingA}{\box0}
 
-\subsection{Krylov based Diagonalization}\label{sSecHam}
+\setbox0=\hbox{%
+  \begin{minipage}{0.3\linewidth}
+    \center{\bf superc}
+\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+i=0
+do Idw=0,2**Ns-1
+  ndw_= popcnt(idw)
+  do Iup=0,2**Ns-1
+    nup_ = popcnt(iup)
+    sz_  = nup_ - ndw_
+    if(sz_ /= self%Sz)cycle
+    i=i+1
+    self%H(1)%map(i) = &
+        Iup+Idw*2**N
+  enddo
+enddo
+
+\end{lstlisting}
+\end{minipage}
+}
+\savestack{\listingB}{\box0}
+
+\setbox0=\hbox{%
+  \begin{minipage}{0.3\linewidth}
+    \center{\bf nonsu2}
+\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+i=0
+do Idw=0,2**Ns-1
+  ndw_= popcnt(Idw)
+  do Iup=0,2**Ns-1
+    nup_ = popcnt(Iup)
+    nt_  = nup_ + ndw_
+    if(nt_ /= self%Ntot)cycle
+    i=i+1
+    self%H(1)%map(i) = &
+        Iup+Idw*2**Ns
+  enddo
+enddo
+\end{lstlisting}
+\end{minipage}
+}
+\savestack{\listingC}{\box0}
+
+\begin{tabular}{c|c|c}\label{list1}
+  \stackinset{l}{}{t}{}{}{\listingA} &
+\stackinset{l}{}{t}{}{}{\listingB} &
+\stackinset{l}{}{t}{}{}{\listingC} \\
+\end{tabular}
+%
+Alongside these definitions, this module additional functions to
+retrieve sector index or quantum number informations. Another set of
+key functions concern the application of arbitrary linear combinations
+of Fock operators  to a given vector $\ket{v}\in\SS$, i.e.
+$\OO\ket{v} = \sum_i a_i C^{\dagger(p_i)}_{\a_i,\s_i}\ket{v}$ with
+$a_i\in\CCC$ and $p_i=0,1$. These important operations which depend on
+the sector informations are implemented
+in the {\tt apply\_op\_C}, {\tt apply\_op\_CDG}, {\tt
+apply\_Cops} functions within {\tt ED\_SECTORS}. 
+
+
+
+
+
+\subsection{Classes}
+The use of suitable objects enormously simplifies the  implementation
+of crucial mathematical concepts aking to the diagonalization of the
+quantum impurity problems. Here we discuss three main classes which
+are used in the code.    
+{\color{red} Text to be revised}
+
+\subsubsection{Sparse matrix}\label{CodeSparseMatrix}
+A sparse matrix storage is performed using a
+dedicated custom class, contained in the \texttt{SPARSE\_MATRIX} module. 
+The class defines a \texttt{sparse\_matrix\_csr} object as a 
+simplified hash-table. The keys corresponds to the rows of the matrix
+while the value is associated to a pair dynamical arrays, containing values and
+columns location of the non-zero elements of the sparse matrix.
+The \texttt{sparse\_matrix\_csr} object can be stored either serially,
+i.e. one copy per process, or be parallel distributed assigning a number of keys/values to each
+process.
+The elements are progressively stored in the dynamic arrays using
+\texttt{sp\_insert\_element} procedure, ultimately making use of the Fortran intrinsic
+\texttt{move\_alloc}.
+This ensures a faster execution compared to implicit  
+reallocation, i.e. \texttt{vec=[vec,new\_element]}.
+This solution enables to deal with the a priori unknown number of
+non-zero elements on each row, to optimize the memory footprint and
+to guarantee $O(1)$ access  to any element of the matrix, which are
+crucial aspect to speed-up the execution of the MVP. 
+
+\subsubsection{Eigenspace}\label{CodeEigenspace}
+This class, contained in \texttt{ED\_EIGENSPACE} implements a
+dedicated storage for the eigenvalues and eigenvectors of the quantum impurity Hamiltonian
+The class defines the object \texttt{sparse\_espace}, an  
+ordered linked list storing the eigenvalue (the sorting key), the
+eigenvector and the corresponding QNs. To save memory the eigenvectors
+are automatically distributed to all processors in shares of the right
+size according to the nature of the quantum numbers $\vec{Q}$. 
+
+For zero temperature calculations only the groundstates (with degeneracies) are stored
+in the list.
+For a finite temperature the excited states need to be stored too.
+In order to avoid unbounded growth of the list we adopt an 
+truncation mechanism. In the first call we collect a number 
+\texttt{lanc\_nstates\_sector} of states from each sector, up to a
+given maximum number \texttt{lanc\_nstates\_total}, both set on input.  
+The list is truncated by keeping the states which
+fulfil the condition $e^{-\beta(E_i-E_0)} < \mathtt{cutoff}$, where
+$E_i$ is the energy of the $i^{\rm th}$ state in the list, $E_0$ is the
+groundstate energy,  $\beta=1/T$ is the inverse temperature ($k_B=1$) and \texttt{cutoff}
+is an input parameter fixing an a priori energy threshold.
+%  
+Annealing is achieved by successive diagonalization of the problem.
+The numbers of states required to any sector $\SS$ contributing to the list is increased by
+\texttt{lanc\_nstates\_step} or it is reduced otherwise. After few calls
+(of the order of ten) the distribution among the sectors of the
+numbers of states reaches a steady state.
+The corresponding annealed list contains all and just the states
+contributing to the spectrum up to the required energy threshold.
+A histogram of the number of states for each sector is produced after
+each diagonalization to check the evolution of their distribution.
+
+
+
+\subsubsection{GFmatrix}
+One of the main goal of the code is to evaluate dynamical correlations
+functions $\ibra \TT_\pm[ A(t)
+A^+ ]\iket$. As we shall see in the following, using Krylov method it is
+possible to express the dynamical correlations in terms of a suitably
+truncated Kallen-Lehmann spectral sum of the form
+$\tfrac{1}{Z}\sum_n e^{-\beta E_n} \sum_{m=1}^{N} \tfrac{|w_{mn}|^2}{ z
+  - dE_{mn}}\equiv $ where $w_{mn}$ is a weight set by the 
+projection of the $m^{\rm th}$ eigenstate onto the $n^{\rm th}$
+component of the Krylov basis (which reduce the sector Hamiltonian
+into a partial tri-diagonal form) while $dE_{mn}=E_m-E_n$ is an excitation energy. 
+The {\tt ED\_GFMATRIX} module contains a class efficiently storing all
+the {\it weights} $w_{mn}$ and {\it poles} $dE_{mn}$ contributing to
+a specific dynamical correlation functions. Specifically, the {\tt
+  gfmatrix} object implements a dynamical multi-layer data structure
+gatering weights and poles from any initial state and for any
+combination of operators contributing to the dynamical correlation
+function.
+
+The use of this class enables the istantan
+
+  
+  
+  \subsection{Lanczos based Diagonalization}\label{sSecHam}
+
+  
 
 \subsection{Dynamical correlation functions}\label{sSecGF}
 
