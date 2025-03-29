@@ -8,7 +8,6 @@
 \usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{makecell}
 
-
 \usepackage{stackengine}
 \newlength\llength
 \llength=1.38ex\relax
@@ -761,47 +760,61 @@ conservation of the total occupation $N$ and ii) the
 conservation of the total magnetization $S_z$. Although the total spin
 operator $S^2$ can also be conserved, the difficult  implementation
 and the marginal gain makes it often non convenient to include this symmetry.
+In \NAME we consider three different cases which are controlled by the
+input variable {\tt ed\_mode}={\bf normal}, {\bf superc}, {\bf
+  nonsu2}. 
 
-In \NAME we consider three different cases:
-\begin{itemize}
-\item{\bf normal:}  $\vec{Q}=[N,S_z]\equiv[N_\up,N_\dw]$
-\item{\bf superc:}  $\vec{Q}=S_z$
-\item{\bf nonsu2:} $\vec{Q}=N$
-\end{itemize}
-
-The {\bf normal} case consider independent conservation of the total occupation $N$
+The {\bf normal} case deals with independent conservation of the total occupation $N$
 and the total magnetization $S_z$ or, equivalently, the total number of electrons with spin up $N_\up$ and down
 $N_\dw$. Optionally, we consider the case in which the symmetry
 applies separately for each orbital and spin,
 i.e. $\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This special case has been
 extensively discussed in \onlinecite{Amaricci2022} so it won't be covered in
 this work.
-
+%
 The {\bf superc} case deals with the conservation of the total
 magnetization only, so that total charge may not be conserved. This
 case includes a description of $s$-wave superconductivity, featuring
 intra- and inter-orbital components.
-
+%
 Finally, the {\bf nonsu2} case consider the conservation of the total
 charge, whereas the spin symmetry group is not fully
 conserved. Although there many possible realization of this scenario,
 this particularly applies to the presence of local spin-orbit coupling
 $\vec{L}\cdot\vec{S}$~\cite{something}, the emergence of in-plane spin ordering~\cite{KM} or
 in-plane spin-triplet exciton condensation~\cite{ExcitonPRB,Amaricci,Blason}.  
-
+%
 From a computational point of view the construction of a symmetry
 sector corresponds to the determination of a injective map
 $\MM:\SS_{\vec{Q}}\rightarrow \FF$ relating the states $\ket{i}$
 belonging to the sector $\SS_{\vec{Q}}$ to the states $\ket{I}$ in the
 Fock space. Operatively, the map corresponds to an integer rank-1
 array of dimension $D_\SS$ which is the {\it dimension} of the
-sector. According to the previously introduced symmetries we
-have:
-\begin{itemize}
-\item{\bf normal:}  $D_\SS = \binom{N_s}{N_\up}\binom{N_s}{N_\dw}$ 
-\item{\bf superc:}  $D_\SS = \sum_m 2^{N_s-S_z-2m}\binom{N_s}{N_s-S_z-2m}\binom{S_z+2m}{m}$
-\item{\bf nonsu2:} $D_\SS=\binom{2N_s}{N}$
-\end{itemize}
+sector. 
+The table~\ref{TabSector} summarizes the properties of the symmetry
+sectors. 
+
+\begin{table}%[ht]
+  \label{TabSector}
+\begin{center}
+\begin{tabularx}{\linewidth}{ |X|X|X| } 
+ \hline
+  {\tt ed\_mode} & {\it Quantum Numbers} & {\it Sector Dimension} \\
+  \hline
+  {\bf normal} & $[N,S_z]\equiv[N_\up,N_\dw]$ &
+                                                $\binom{N_s}{N_\up}\binom{N_s}{N_\dw}$
+  \\
+  \hline
+  {\bf superc} & $S_z\equiv N_\up-N_\dw$ &  $\sum_m 2^{N_s-S_z-2m}\binom{N_s}{N_s-S_z-2m}\binom{S_z+2m}{m}$
+  \\
+  \hline
+  {\bf nonsu2} & $N \equiv[N_\up+N_\dw$ & $\binom{2N_s}{N}$ \\ 
+ \hline
+\end{tabularx}
+\end{center}
+\caption{Ciao}
+\end{table}
+
 
 The {\bf normal} case requires a brief remark. Because of the
 independent conservation of $N_\up$ and $N_\dw$, the local Hilbert
@@ -820,10 +833,10 @@ $[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_s}$. For a thorough
 discussion about Fock basis organization in this case see
 \onlinecite{amaricci2022}. 
 
-The symmetry sector reduction of the Fock space induces a block
-digonal form to the Hamiltonian matrix. Each block, labelled by a
-value of the quantum numbers $\vec{Q}$ has dimension
-$D_{\SS(\vec{Q}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
+The presence of a symmetry induces a factorization of the Fock space,
+in turn inducing a block diagonal form to the Hamiltonian matrix.
+Each block, labelled by the quantum numbers $\vec{Q}$, has dimension
+$D_{\SS(\vec{Q})}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix. In the {\bf
   normal} case $H_\SS$ takes a particularly symmetric form thanks to
 the product structure of the sector and its map~\cite{amaricci2022}.
@@ -1000,28 +1013,126 @@ each diagonalization to check the evolution of their distribution.
 
 \subsubsection{GFmatrix}
 One of the main goal of the code is to evaluate dynamical correlations
-functions $\ibra \TT_\pm[ A(t)
-A^+ ]\iket$. As we shall see in the following, using Krylov method it is
+functions (DCF) $\ibra \TT[ A(t) A^+ ]\iket$. As we shall see in the following, using Krylov method it is
 possible to express the dynamical correlations in terms of a suitably
 truncated Kallen-Lehmann spectral sum of the form
 $\tfrac{1}{Z}\sum_n e^{-\beta E_n} \sum_{m=1}^{N} \tfrac{|w_{mn}|^2}{ z
-  - dE_{mn}}\equiv $ where $w_{mn}$ is a weight set by the 
+  - dE_{mn}}$ where $w_{mn}$ is a weight set by the 
 projection of the $m^{\rm th}$ eigenstate onto the $n^{\rm th}$
 component of the Krylov basis (which reduce the sector Hamiltonian
 into a partial tri-diagonal form) while $dE_{mn}=E_m-E_n$ is an excitation energy. 
-The {\tt ED\_GFMATRIX} module contains a class efficiently storing all
+The {\tt ED\_GFMATRIX} module contains a class which efficiently store all
 the {\it weights} $w_{mn}$ and {\it poles} $dE_{mn}$ contributing to
-a specific dynamical correlation functions. Specifically, the {\tt
+a specific correlation function. Specifically, the {\tt
   gfmatrix} object implements a dynamical multi-layer data structure
-gatering weights and poles from any initial state and for any
-combination of operators contributing to the dynamical correlation
-function.
-
-The use of this class enables the istantan
-
+storing any DCF as the set of all the weights and poles,
+from any contributing eigenstate  and for any
+combination of operators appearing in its definition.
+The use of this class enables the istantantaneous evaluation of a
+given  DCF  $\GG(z)$ for any $z\in\CCC$ the complex frequency plane
+using a suitable compressed form. 
   
-  
-  \subsection{Lanczos based Diagonalization}\label{sSecHam}
+\subsection{Bath parametrization}\label{sSecBath}
+The bath parametrization is a key feature in determining the properties
+of the quantum impurity problem.
+Following the structure of Eq.~\ref{Hbath} the bath can be
+parametrized by two terms: the Hamiltonian matrices $h^p$ and the
+amplitudes $V^p$, for $p=1,\dots,N_{bath}$.
+Internally, the bath is represented by a dedicated object {\tt
+  effective\_bath} defined in {\tt ED\_VARS\_GLOBAL}. 
+On the
+user side all parameters are packed into a rank-1 array of
+doubles handled using reverse communication strategy.
+This ensures that a local array is always conserved by the user, while
+it prevents direct access to the internal copy.
+
+
+The bath topology, i.e. the links between the $N_b$ electronic levels
+assigned to the bath, is determined by the input variable {\tt
+  bath\_type} among 4 different choices: {\bf normal}, {\bf hybrid},
+{\bf replica} and {\bf general} (see Fig.\ref{figBaths}).  
+%
+\paragraph{{\tt bath\_type}={\bf normal}} The bath is formed out of $N_{bath}$
+electronic levels coupled to each of the impurity orbital. The total
+count of bath levels is $N_b = N_\a N_{bath}$. The bath Hamiltonan
+matrices include a parametrization diagonal in the orbital and spin space: 
+$h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
+If {\tt ed\_mode}={\bf superc} one needs to account for anomalous
+amplitudes connecting bath levels with opposite spins. So we consider
+an additional set of parameters, diagonal in orbital space but
+off-diagonal in the spins:
+$h^p_{\a\b\s\s'}=\Delta^p_{\a}\delta_{\a\b}\delta_{\s \overline{\s}}$.
+This choice corresponds to consider, for every orbital component,
+bath matrices with the following structure in the Nambu space:
+$\hat{h}^p_{\a\b} = \e_{\a}\delta_{\a\b}\tau_0 +
+\Delta_{\a}\delta_{\a\b}\tau_x$. 
+The hybridization amplitudes between the impurity and the bath levels
+include, for any value of {\tt ed\_mode} a set of parameters diagonal in both
+spin and orbital space: $V^p_{\a\b\s\s'}=V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
+If {\tt ed\_mode}={\bf nonsu2} the an additional set including terms
+describing spin-flip processes (as total magnetization is not
+conserved) should be included $V^p_{\a\b\s\s'} =
+W^p_{\a}\delta_{\a\b}\delta_{\s \overline{\s}}$. 
+
+
+
+\paragraph{{\tt bath\_type}={\bf hybrid}} The bath is formed out of
+$N_{bath}$ coupled to all the impurity levels, correspondingly
+$N_b\equiv N_{bath}$ is the total count of electronic bath levels. 
+The main parametrization of the bath Hamiltonian matrices is still
+diagonal in both orbital and spin space, i.e.
+$h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
+As for the previous case, the {\bf superc} mode requires the inclusion
+of a further set of parameters taking care of the anomalous components:
+$h^p_{\a\b\s\s'}=\Delta^p_{\a}\delta_{\a\b}\delta_{\s
+  \overline{\s}}$.
+The key difference with respect to the {\bf normal} case lies in the
+off-diagonal nature of the hybridization amplitudes:
+$V^p_{\a\b\s\s'}=V^p_{\a\b\s}\delta_{\s\s'}$. If total magnetization
+is not conserved, i.e. for {\tt ed\_mode}={\bf nonsu2}, an additional
+set of parameters should be included to describe spin-flip processes:
+$V^p_{\a\b\s\s'} = W^p_{\a\b}\delta_{\s \overline{\s}}$. 
+These sets of hybridization parameters allow to capture the effects of locally
+hybridized impurity orbitals. This comes at the cost of a
+slightly harder optimization process (see \secu{sSecFit}) specially
+for systems with reduced number of available bath levels with respect
+to the impurity. 
+
+\paragraph{{\tt bath\_type}={\bf replica}/{\bf general}} A more flexible
+parametrization of the bath is represented by this topology. The
+original idea of this approach is to give to each bath element a structure which {\it replicates}
+that of the impurity while keeping a diagonal coupling between bath
+elements and impurity. This offloads the difficulties related to the
+representation and optimization of strucured quantum impurities to the
+bath Hamiltonan rather than the hybridizations.
+Taking a sligthly more general point of view we consider a user
+defined matrix basis $\{ \Gamma^\nu \}_{\nu=1,\dots,N_{sym}}$ in the (Nambu-)spin-orbital
+space and parametrize any bath Hamiltonian as:
+$$
+h^p_{\a\b\s\s'} = \sum_{\nu=1}^{N_{sym}} \lambda^p_\nu \Gamma^\nu_{\a\b\s\s'}
+$$
+where $\lambda^p_\nu\in\RRR$ are suitable variational parameters. 
+The choice of the matrix basis can be inspired either by the internal structure
+of the quantum impurity, i.e. $\hat{h}^0$, or be determined
+case-by-case by the properties of the problem.
+The total number of electronic levels used to describe the bath is in
+this case: $N_b = N_{sym} N_{bath}$. 
+For the {\bf replica}  topology the coupling between the impurity and
+each bath elements is diagonal in the spin, orbital and internal bath
+structure: $V^p_{\a\b\s\s'} = V^p$. The
+{\bf general} setup introduces a generalization introducing a
+dependence on the internal spin and orbital indices: $V^p_{\a\b\s\s'}
+= V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$. 
+
+
+All the procedures concerning the bath are grouped into a set of
+modules wrapped by {\tt ED\_BATH}.
+
+* get dimension
+
+* replica/general bath setup
+
+\subsection{Lanczos based Diagonalization}\label{sSecHam}
 
   
 
@@ -1031,7 +1142,8 @@ The use of this class enables the istantan
 
 \subsection{Reduced impurity density matrix}\label{sSecRDM}
 
-\subsection{Bath parametrization}\label{sSecBath}
+
+\subsection{Bath Functions}\label{sSecFunc}
 
 \subsection{Bath Optimization}\label{sSecFit}
 
