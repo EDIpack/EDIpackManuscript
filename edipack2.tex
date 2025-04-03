@@ -1,6 +1,6 @@
 %% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or
 %% 5p,twocolumn, preprint, review
-\documentclass[final,3p,10pt]{elsarticle}
+\documentclass[preprint,3p,10pt]{elsarticle}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -13,6 +13,8 @@
 \llength=1.38ex\relax
 \usepackage{xcolor}
 \usepackage{makecell}
+
+
 
 %% natbib.sty is loaded by default. natbib options with \biboptions{...}
 \biboptions{sort&compress,super}
@@ -83,6 +85,8 @@
 \newcommand {\new}[1]{{\color{blue}\it #1}}
 %\newcommand {\new}[1]{{#1}}
 % \DeclareMathAlphabet\mathbfcal{OMS}{cmsy}{b}{n}
+
+\usepackage[inline]{showlabels}
 
 
 %Reference to a given labelled equation
@@ -1698,14 +1702,15 @@ $$
 \rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_s}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_s}} \rho_{nm} \ket{n}\bra{m} 
 $$
 The iRDM is obtained from this by tracing out the bath degrees of
-freedom: $\rho_{imp}=Tr_{bath}\rho$. The summation appearing in the
+freedom: $\rho^{i}=Tr_{b}\rho$. The summation appearing in the
 previous expressions becomes quickly unmaneagable with the system
-size. To overcome this issue we proceed in three steps. 
-We use quantum numbers conservation which
-reduces extrema of the summation to the size $D_S$ of the sector $S$
-to which the groundstate belongs;
-Next we split the bits representation of any state $\ket{n}$ into
-their spin-dependent impurity and bath parts as $\ket{n} = \ket{
+size. To overcome this issue we implemented a fast algorithm
+leveraging on symmetry sector and map sparsity.
+Using quantum number conservation the summation extrema get reducedto
+the size $D_S$ of the sector $S$ to which the groundstate (or in
+general any eigenstate) belongs. 
+Next we analyze the groundstate expansion on the Fock states, splitting the bit representation of any state $\ket{I}$ into
+their spin-dependent impurity and bath parts as $\ket{I} = \ket{
   i_\uparrow\,  b_\uparrow\, i_\downarrow \, b_\downarrow}$. Each bit
 set span a space of dimension $D^\a_{imp}$ or $D^\s_{bath}$. 
 Finally, we store into the {\tt sparse\_map} ${\cal S}$, for every impurity configuration 
@@ -1713,60 +1718,271 @@ $i_\s =1,\dots,D^\s_{imp}$ (key) the corresponding bath states $j\in[1,\dots,D^\
 (values) which contribute to that key, as detailed in
 \secu{CodeSparseMap}.
 We indicate with ${\cal D}^\s_{i}$ the number of values for the key $i_\s$.
-The fast algorithm for the evaluation of the iRDM are outlined below
-for the two cases {\bf normal} and {\bf superc/nonsu2}.
+The fast summation algorithm for the evaluation of the iRDM takes on a
+different form for the two cases {\bf normal} and {\bf superc/nonsu2},
+as outlined below.
 
 \paragraph{{\bf normal}}
-
+In this case we take advantage of the Fock and sector spin resolved
+factorization discussed in \secu{sSecQNs}. As such we can also split
+impurity and bath bits independently for each spin configuration:
+$$
+\ket{\vec{n}} =
+\ket{\vec{n}_\up}\otimes \ket{\vec{n}_\dw} =
+\ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}
+$$
+In addition it should be noted that creation (destruction) operators at
+position $p$ for spin $\sigma$  $c^+_{p\sigma}$ ($c^+_{p\sigma}$) do
+not operate on the opposite spin so that they pass through without
+taking any fermionic sign. Finally, we observe that local iRDM admits
+only diagonal terms in the {\bf normal} case. Thus we obtain for the iRDM:
+\begin{equation}
+  \label{iRDMnormal}
+  \begin{aligned}
+  \rho^i &=
+  \sum_{\sigma=\up\dw}\sum_{b_\sigma=1}^{D_{b_\sigma}}
+  \bra{b_\up}\otimes\bra{b_\dw}
+    \rho
+    \ket{b_\dw}\otimes\ket{b_\up}    \cr
+    %
+    &=\sum_{\sigma=\up\dw}
+    \sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \sum_{i_\sigma=1}^{D_{i_\sigma}}
+    \sum_{p_\sigma=1}^{D_{p_\sigma}}
+    \sum_{j_\sigma=1}^{D_{j_\sigma}} 
+    \sum_{q_\sigma=1}^{D_{q_\sigma}}
+    C_{i,p}\,C_{j,q}\,a_{i_\up p_\up i_\dw p_\dw} a^*_{j_\up q_\up j_\dw q_\dw}
+    \langle b_\up| p_\up\rangle| i_\up\rangle\langle j_\up |\langle q_\up| b_\up\rangle   \otimes \langle b_\dw| p_\dw \rangle|i_\dw\rangle \langle j_\dw  |\langle q_\dw| b_\dw\rangle
+    \cr
+&=
+    \sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \sum_{i_\sigma=1}^{D_{i_\sigma}}
+    a_{i_\up b_\up i_\dw b_\dw} a^*_{i_\up b_\up i_\dw b_\dw}
+    \ket{i_\up}\bra{i_\up}\otimes \ket{i_\dw}\bra{i_\dw}
+  \end{aligned}
+\end{equation}
+where the constant $C_{i,b}$ take care of the sign change due to
+exchanging bath and impurity bit sets. As effect of the Kronecker
+delta symbols for bath and impurity these constants are identically 1.  
+The numerical implementation relies on the use of the {\tt
+  sparse\_map} ($\%sp$) for the groundstate sector as reported in the
+listing below:  
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+do IimpUp=0,2**Norb-1
+  do JimpUp=0,2**Norb-1
+    !Finding the unique bath states connecting IimpUp and JimpUp
+    call sp_return_intersection(sectorI%H(1)%sp,IimpUp,JimpUp,BATHup,lenBATHup)
+    if(lenBATHup==0)cycle
+    do IimpDw=0,2**Norb-1
+      do JimpDw=0,2**Norb-1
+        !Finding the unique bath states connecting IimpDw and JimpDw -> BATHdw(:)
+        call sp_return_intersection(sectorI%H(2)%sp,IimpDw,JimpDw,BATHdw,lenBATHdw)
+        if(lenBATHdw==0)cycle
+        do ibUP=1,lenBATHup
+          IbathUp = BATHup(ibUP)
+          do ibDW=1,lenBATHdw
+            IbathDw = BATHdw(ibDW)
+            !Allowed spin Fock space Istates:
+            !Iup = IimpUp +  2^Norb * IbathUp
+            !Idw = IimpDw +  2^Norb * IbathDw
+            iUP= binary_search(sectorI%H(1)%map,IimpUp + 2**Norb*IbathUp)
+            iDW= binary_search(sectorI%H(2)%map,IimpDw + 2**Norb*IbathDw)
+            i  = iUP + (iDW-1)*sectorI%DimUp
+            !Allowed spin Fock space Jstates:
+            !Jup = JimpUp +  2^Norb * IbathUp
+            !Jdw = JimpDw +  2^Norb * IbathDw
+            jUP= binary_search(sectorI%H(1)%map,JimpUp + 2**Norb*IbathUp)
+            jDW= binary_search(sectorI%H(2)%map,JimpDw + 2**Norb*IbathDw)
+            j  = jUP + (jDW-1)*sectorI%DimUp
+            ! 
+            io = (IimpUp + 2**Norb*IimpDw) + 1
+            jo = (JimpUp + 2**Norb*JimpDw) + 1
+            irdm(io,jo) = irdm (io,jo) + psi(i)*psi(j)*weight
+          enddo
+        enddo
+      enddo
+    enddo
+  enddo
+enddo
+\end{lstlisting}
 
 \paragraph{{\bf superc/nonsu2}}
-
+In presence of these symmetries suitable modifications related to the
+absence of Fock space factorization have to be taken into account. To
+start with a generic Fock state appearing in the groundstate
+decomposition has the form:
+$$
+\ket{\vec{n}} =\ket{\vec{i}_\up\vec{b}_\up\vec{i}_\dw\vec{b}_\dw}
+%
+$$
+% where the second is just a formal identity.  
+Inserting this latter in the definition of iRDM we obtain:
+\begin{equation}
+  \begin{aligned}
+    \Tr_{b_\up, b_\dw}{\rho} &=
+    \sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \bra{b_\up\, b_\dw}
+    \rho
+    \ket{b_\dw\, b_\up}    \cr
+    &=
+    \sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \sum_{i_\sigma=1}^{D_{i_\sigma}}
+    \sum_{p_\sigma=1}^{D_{p_\sigma}}
+    \sum_{j_\sigma=1}^{D_{j_\sigma}} 
+    \sum_{q_\sigma=1}^{D_{q_\sigma}}
+    a_{i_\up p_\up i_\dw p_\dw} a^*_{j_\up q_\up j_\dw q_\dw}% \cr
+    % &{\phantom =}
+    \langle{b_\up\, b_\dw}|{i_\up\, p_\up\, i_\dw\, p_\dw}\rangle
+    \langle{q_\dw \,  j_\dw \, q_\up\, j_\up }|{b_\dw\, b_\up}\rangle\, .
+  \end{aligned}
+\end{equation}
+In order to simplify this expression we should get rid of the sum with
+respect to the bath indices $p_\sigma$ and $q_\sigma$, ideally
+contracting them with the outer indices $b_\sigma$.
+However, this requires to bring all the bath bits so to preced the
+impurity ones:
+$$
+\ket{i_\up\, p_\up\, i_\dw\, p_\dw} \rightarrow C_{p_\up,i_\dw} \ket{i_\up\, i_\dw \,p_\up\,p_\dw}
+$$
+where $C_{p_\up,i_\dw}  = (-1)^{\#\vec{n}_{p\up} \cdot
+  \#\vec{n}_{i\dw}}$ with   $\#\vec{n}=\sum_i n_i$ is an overall
+fermionic sign which depends on the occupation of the $p_\up$ and the
+$i_\dw$ bit configurations. Inserting this relation in the equation
+for the iRDM we obtain:
+\begin{equation}
+  \begin{aligned}
+    \Tr_{b_\up, b_\dw}{\rho} &=
+    \sum_{i_\sigma=1}^{D_{i_\sigma}}
+    \sum_{j_\sigma=1}^{D_{j_\sigma}}
+    \left[\sum_{b_\sigma=1}^{D_{b_\sigma}}
+    a_{i_\up b_\up i_\dw b_\dw} a^*_{j_\up b_\up j_\dw b_\dw}
+    C_{b_\up,i_\dw}C_{b_\up,j_\dw}\right]
+    \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up}\cr
+&=
+    \sum_{i_\sigma=1}^{D_{i_\sigma}}
+    \sum_{j_\sigma=1}^{D_{j_\sigma}}
+    \rho^{i}_{i_\up i_\dw j_\dw j_\up}
+    \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up} 
+  \end{aligned}
+\end{equation}
+The numerical implementation requires few modifications with respect
+to the previous case. In particular it is important to recall that the
+ordering of the key-value pairs in the {\tt sparse\_map} in this case
+follow a contiguous ordering and that their decomposition is necessary
+to reconstruct the correct Fock state index, see the following
+listing:
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+do IimpUp=0,2**Norb-1
+  do IimpDw=0,2**Norb-1
+    do JimpUp=0,2**Norb-1
+      do JimpDw=0,2**Norb-1
+        !Build indices of the RDM in 1:4**Norb
+        iImp = iImpUp + iImpDw*2**Norb
+        jImp = jImpUp + jImpDw*2**Norb
+        call sp_return_intersection(sectorI%H(1)%sp,iImp,jImp,Bath,lenBath)
+        if(lenBATH==0)cycle
+        do ib=1,lenBath
+          iBath = Bath(ib)
+          !Decompose iBath into B_Up, B_dw to reconstruct B bit set. 
+          !B --> {B_up,B_dw}
+          iBathUp = mod(iBath,2**Nbath)
+          iBathDw = (iBath)/2**Nbath
+          !Reconstruct the Fock state Ii map back to sector state i
+          ii= iImpUp + iImpDw*2**Ns + 2**Norb*(IBathUp + IBathDw*2**Ns)
+          i = binary_search(sectorI%H(1)%map,ii)
+          !Reconstruct the Fock state Jj map back to sector state j
+          jj= jImpUp + jImpDw*2**Ns + 2**Norb*(IBathUp + IBathDw*2**Ns)
+          j = binary_search(sectorI%H(1)%map,jj)
+          !Build the signs of each components of RDM(io,jo)
+          nBup  = popcnt(Ibits(ii,Norb,Norb*Nbath))
+          nIdw  = popcnt(Ibits(ii,Ns,Norb))
+          nJdw  = popcnt(Ibits(jj,Ns,Norb))
+          signI = (-1)**(nIdw*nBup)
+          signJ = (-1)**(nJdw*nBup)
+          sgn   = signI*signJ
+          !  
+          io = (iImpUp+1) + 2**Norb*iImpDw
+          jo = (jImpUp+1) + 2**Norb*jImpDw
+          rdm(io,jo) = rdm(io,jo) + psi(i)*conjg(psi(j))*weight*sgn
+        enddo
+      enddo
+    enddo
+  enddo
+enddo
+\end{lstlisting}
 
 
 
 \subsection{Bath Functions}\label{sSecFunc}
+The module {\tt ED\_BATH\_FUNCTIONS} implements on-the-fly
+calculations of the hybridization function $\Delta_{\a\b\s\s'}(z)=\sum_\nu
+{V^\nu_{\a\s}}(z\11-h^\nu_{\a\b\s\s'})^{-1}V^\nu_{\b\s'}$ and the
+non-interacting Green's functions $G^0_{\a\b\s\s'}(z) =
+[(z + \mu)\delta_{\a\b\s\s'} - h^0_{\a\b\s\s'} -
+\Delta_{\a\b\s\s'}(z)]^{-1}$ for any frequency $z\in\CCC$. 
+The module contains implementations for any case according to the
+values of {\tt ed\_mode} and {\tt bath\_type}, either with supplied
+user bath (a rank-1 array of doubles) or using the allocated {\tt
+  effective\_bath} instance {\tt dmft\_bath}. 
+We provide different functions to get either $\Delta$, $G^0$ and its
+directly its inverse $[G^0]^{-1}$, which are used to evaluate the
+self-energy functions upon request, see \secu{sSecIO}.
+In the superconductive case {\tt ed\_mode}={\bf superc} different
+procedures can be used to retrieve the anomalous components of any
+function defined above in the Nambu basis. 
+
+
 
 \subsection{Bath Optimization}\label{sSecFit}
-In the DMFT context the bath is updated using a suitable 
-optimization of the bath parameters against a given realization of the Weiss field
-${\GG^{-1}_{0}}_{\a\b}(z)$, or the corresponding Delta function
-$\Delta_{\a\b}(z)= (z + \mu)\delta_{\a\b} - H^{loc}_{\a\b}-
-{\GG^{-1}_0}_{\a\b}(z)$, $z\in\CCC$, determined by the self-consistency procedure~\cite{Georges1996RMP}.
-This step corresponds to a projection of the Weiss
-field (or the Delta function) onto the space of the Anderson quantum
-impurity model functions
-$\GG^{And}_0(z) =
-[(z + \mu)\delta_{\a\b} - H^{loc}_{\a\b} -
-\Delta_{\a\b}(z)]^{-1}$, with $\Delta^{And}_{\a\b}(z)=\sum_\nu
-{V^\nu_{\a}}(z-h^\nu_{\a\b})^{-1}V^\nu_{\b}$, spanned by the
-variational paramaters $\{V,h\}$.
+{\color{red} to be revised, copy\&paste from edipack paper: well it is
+  essentiall the same shit} 
+In the DMFT context the bath needs to be optimized
+against a given realization of the Weiss field
+${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or the corresponding {\it hybridization} function
+$\Theta = (z + \mu)\11 - H^{loc} -\GG_0^{-1}](z)$. While the Weiss
+field is obtained from the DMFT self-consistency
+equation~\cite{Georges1996RMP}, bath discretization impose to  find an optimal
+description of the continuous Weiss field in terms of the finite
+number of parameters of the bath (see \secu{sSecBath}.
+Although different algorithms can be envisaged to perform this
+step~\cite{Garcia2004PRL,Taranto2012PRB} which are perfectly valid in
+some physical contexts.
+In order to enable the users to use their preferred 
+method in \NAME we keep the optimization implementation independent
+from the rest of the code. Yet, we offer a fully fledged optimization
+strategy based on the  conjugate gradient (CG) minimization of the cost function:
+$$
+\chi = \sum_{n=1}^{L_{fit}}\frac{1}{W_n}||X(i\omega_n) - X^{QIM}(i\omega_n;\{V,h\})||_q
+$$
+where the symbol $|| \cdot ||_q$ is a suitably defined $q$-norm in the
+matrix function space, $X_{\a\b}={\GG_{0}}_{\a\b\s\s'},\,\Theta_{\a\b\s\s'}$ are the user
+supplied local functions and
+$X_{\a\b}^{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
+quantum impurity model functions, defined above.
+Notably, more sophisticated optimization algorithms have been
+recently implemented to better undertake the minimization of similar
+cost functions. However, these developments are designed to work with truncated
+algorithms, e.g. sCI or DMRG, describing systems with a larger number of
+bath levels.   
+In the ED context however, where the efficient and wise selection of
+the relatively few bath levels becomes crucial, the CG minimization of
+the local functions proved to be the most efficient and
+flexible optimization scheme so far. 
 
-This  optimization can be performed using different
-  algorithms~\cite{Garcia2004PRL,Taranto2012PRB}. 
-  In \NAME\ we offer to perform this task using a  
-conjugate gradient (CG) minimization of the cost function:
-$$
-\chi = \sum_{n=1}^{L_{fit}}\frac{1}{W_n}\sum_{\a\b}|X_{\a\b}(i\omega_n) - X_{\a\b}^{And}(i\omega_n;\{V,h\})|^q
-$$
-where $X_{\a\b}={\GG_{0}}_{\a\b},\,\Delta_{\a\b}$ are the user
-supplied local functions  and
-$X_{\a\b}^{And}={\GG_0}^{And}_{\a\b},\,\Delta^{And}_{\a\b}$ the
-Anderson impurity model function, defined above.
-The fit procedures are contains in the module \texttt{BATH\_FIT}.  
+The fit procedure is entirely wrapped by the single function {\tt
+  ed\_chi2\_fitgf} contained in the module \texttt{ED\_BATH\_FIT}.   
 In order to exploit regularity of the functions the fit is 
 performed using imaginary Matsubara frequency. 
-The actual form of $X_{\a\b}$ is controlled by the input parameter
+The actual form of $X_{\a\b\s\s'}$ is controlled by the input parameter
 \texttt{cg\_Scheme=Weiss,Delta}. 
 
-Given the importance of the fit for the convergence of DMFT calculations, in \NAME\ we
-introduced different specific control parameters. This aims to give
-the user the possibility of fine tuning the fit and adapt its behavior to
-specific situations.
-Two distinct CG algorithms can be used in the library, as controlled by the input variable
+In order to fine tune the optimization step in \NAME\ we
+introduced a number of control parameters. To start with, we include
+two distinct CG algorithms in the library, controlled by the input variable
 \texttt{cg\_method=0,1}. The value \texttt{0} corresponds to a
 Fletcher-Reeves-Polak-Ribiere minimisation algorithm, adapted from
-Numerical Recipes~\cite{NumRec77}. In order to guarantee
-back-compatibility with respect to the literature, we also provide the
+Numerical Recipes~\cite{NumRec77}. Yet, in order to guarantee
+back-compatibility with respect to the past literature, we also provide the
 possibility of using the minimization procedure published in
 Ref.\onlinecite{Georges1996RMP} which has been largely used in the DMFT
 community.
@@ -1805,9 +2021,36 @@ is the cost function evaluated at the $n^{\rm th}$-step and $x_n$
 the corresponding argument. Increasing the value of the stop
 parameter generally loosens up the exit conditions of the minimization.   
 
+{\bf REMARK TODO}
+Notes on the norm function: a) the definition for conventional
+matrices, ;b) the definition for the replica/general case where you
+can choose between different norm defition.
+
 
 
 \subsection{Input/Output}\label{sSecIO}
+The module {\tt ED\_IO} provides access to the results of the Lanczos
+diagonalization of the quantum impurity problem.
+As any single instance of the code is preserved in the memory until a
+new call is made, access to the memory pool is only possible through
+specific functions implemented in {\tt ED\_IO}. For instance, dynamical response functions, self-energy components or impurity
+observables can all be retrieved using dedicated functionalities.
+Additionally we provide procedures to perform on-the-fly
+re-calculation of the impurity Green's functions and self-energy on a
+given arbitrary set of points in the complex frequency domain
+exploiting their storage in terms of {\tt gfmatrix} objects.
+A long list of available functions is contained in the on-line
+documentation (see
+\href{https://edipack.github.io/EDIpack2.0/edipack2/13_io.html#ed-io}{https://edipack.github.io/EDIpack2.0/edipack2/13\_io.html\#ed$-$io})
+Here we limit the discussion to two paradigmatic examples.
+The first is the function {\tt ed\_get\_dens} which write on the
+provided input array the value of the orbital impurity occupations
+$\langle n_{\a\s}\rangle$. Analogously {\tt ed\_get\_sigma} is used to
+retrieve the normal or anomaous components of the Matsubara or
+Real-axis self-energy function $\Sigma(z)$. This latter represents the
+key output of the calculation in 
+any DMFT application. 
+
 
 
 

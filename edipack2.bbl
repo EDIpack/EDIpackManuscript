@@ -37,4 +37,38 @@ K.~J. "Maschhoff, D.~C. Sorensen, P{\_}arpack: An efficient portable large
   Parallel Computing Industrial Computation and Optimization, Springer Berlin
   Heidelberg, Berlin, Heidelberg, 1996, pp. 478--486.
 
+\bibitem{Georges1996RMP}
+A.~Georges, G.~Kotliar, W.~Krauth, M.~J. Rozenberg,
+  \href{https://link.aps.org/doi/10.1103/RevModPhys.68.13}{Dynamical mean-field
+  theory of strongly correlated fermion systems and the limit of infinite
+  dimensions}, Rev. Mod. Phys. 68 (1996) 13--125.
+\newblock \href {https://doi.org/10.1103/RevModPhys.68.13}
+  {\path{doi:10.1103/RevModPhys.68.13}}.
+\newline\urlprefix\url{https://link.aps.org/doi/10.1103/RevModPhys.68.13}
+
+\bibitem{Garcia2004PRL}
+D.~J. Garc\'{\i}a, K.~Hallberg, M.~J. Rozenberg,
+  \href{https://link.aps.org/doi/10.1103/PhysRevLett.93.246403}{Dynamical mean
+  field theory with the density matrix renormalization group}, Phys. Rev. Lett.
+  93 (2004) 246403.
+\newblock \href {https://doi.org/10.1103/PhysRevLett.93.246403}
+  {\path{doi:10.1103/PhysRevLett.93.246403}}.
+\newline\urlprefix\url{https://link.aps.org/doi/10.1103/PhysRevLett.93.246403}
+
+\bibitem{Taranto2012PRB}
+C.~Taranto, G.~Sangiovanni, K.~Held, M.~Capone, A.~Georges, A.~Toschi,
+  \href{https://link.aps.org/doi/10.1103/PhysRevB.85.085124}{Signature of
+  antiferromagnetic long-range order in the optical spectrum of strongly
+  correlated electron systems}, Phys. Rev. B 85 (2012) 085124.
+\newblock \href {https://doi.org/10.1103/PhysRevB.85.085124}
+  {\path{doi:10.1103/PhysRevB.85.085124}}.
+\newline\urlprefix\url{https://link.aps.org/doi/10.1103/PhysRevB.85.085124}
+
+\bibitem{NumRec77}
+W.~H. Press, B.~P. Flannery, S.~A. Teukolsky, W.~T. Vetterling,
+  \href{http://www.worldcat.org/isbn/052143064X}{Numerical Recipes in FORTRAN
+  77: The Art of Scientific Computing}, 2nd Edition, Cambridge University
+  Press, 1992.
+\newline\urlprefix\url{http://www.worldcat.org/isbn/052143064X}
+
 \end{thebibliography}
