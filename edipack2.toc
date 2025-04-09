@@ -45,8 +45,8 @@
 \contentsline {subsubsection}{\numberline {3.13.4}Input/Output}{20}{subsubsection.3.13.4}%
 \contentsline {section}{\numberline {4}Interoperability}{20}{section.4}%
 \contentsline {subsection}{\numberline {4.1}C-bindings}{20}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}EDIpy, the Python API}{20}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}Build from source}{20}{subsubsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2}EDIpy, the Python API}{21}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Build from source}{21}{subsubsection.4.2.1}%
 \contentsline {subsubsection}{\numberline {4.2.2}Anaconda}{21}{subsubsection.4.2.2}%
 \contentsline {subsection}{\numberline {4.3}TRIQS interface}{21}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}W2Dynamics interface}{21}{subsection.4.4}%
