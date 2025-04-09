@@ -1,0 +1,76 @@
+\section{Interoperability}
+The recent growing availability of state-of-the-art software dedicated
+to the solution of quantum impurity problems using different methods
+poses a serious challenge to test accuracy and realiability of the
+results.
+As such, complex softwares are requested to develop a higher level of
+interoperability, i.e. the possibility to operate with other software
+possibly using different programming language.
+Modern Fortran, which is the language of choice for \NAME, since many
+years supports the standardized generation of procedures and
+variables that are interoperable with C.
+
+
+\subsection{C-bindings}\label{sSecCbind}
+The interoperability with C language is encoded in the
+{\tt ISO\_C\_BINDING} module part of Fortran
+standard since 2003. The module contains definitions of named
+constants, types and procedures for C interoperability.
+Alongside, the second key feature essential to expose to C any Fortran
+entity is the {\tt BIND(C)} intrinsic function.
+
+
+
+\subsection{EDIpy, the Python API}\label{SecPyAPI}
+
+\subsubsection{Build from source}
+EDIpy2 is available as a stand-alone
+module which depends on both \NAME and SciFortran. The package can be
+obtained from the repository
+\href{https://github.com/EDIpack/EDIpy2.0}{EDIpy2}.
+
+\begin{lstlisting}[style=mybash]
+git clone https://github.com/edipack/EDIpy2 EDIpy2
+cd EDIpy2
+pip install . 
+\end{lstlisting}
+In some more recent Python distribution the flag {\tt
+  --break-system-packages} might be required to complete
+installation or a virtual environment should be used instead. 
+
+\subsubsection{Anaconda}
+As for EDIpack2, also the Python API in EDIpy2 are available through
+Anaconda packaging. In this case the resolution of the dependencies is
+taken care from Conda itself:
+
+\begin{lstlisting}[style=mybash]
+conda create -n edipack
+conda activate edipack
+conda install -c conda-forge -c edipack edipack2
+\end{lstlisting}
+
+
+
+
+
+\subsection{TRIQS interface}\label{SecEDI2Triqs}
+A purely Python \NAME to Triqs interface is available, leveraging on
+the C-bindings and Python API. The corresponding module depends on
+\NAME (which ultimately depends on SciFortran) and Triqs.
+Assuming the two software are correctly installed in the OS, the
+EDIpack2Triqs interface is installed as follows:
+
+\begin{lstlisting}[style=mybash]
+git clone https://github.com/krivenko/edipack2triqs
+cd edipack2triqs
+pip install .
+\end{lstlisting}
+
+
+
+\subsection{W2Dynamics interface}\label{SecEDI2W2Dyn}
+
+
+
+
+\subsection{EDIjl, the Julia API}\label{SecJlAPI}
