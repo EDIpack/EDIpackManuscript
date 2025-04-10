@@ -9,7 +9,7 @@ A second dynamic library, {\tt libedipack\_cbinding.so}, enables interoperabilit
 specific bindings to the C programming language.    
 
 
-\subsection{Structure}\label{SSecStruct}
+\subsection{Structure}\label{sSecInstallStructure}
 \NAME is a modular library which contains three principal structures.
 At the core is the exact diagonalization solver: \NAME.
 Next there is a {\tt EDIpack2ineq} which extends application to the case of multiple
@@ -88,7 +88,7 @@ API.
 
 
 
-\subsection{Dependencies}
+\subsection{Dependencies}\label{sSecInstallDependencies}
 \NAME essentially depends on two external libraries.
 \begin{itemize}
 \item {\bf SciFortran}: an open-source Fortran library to support
@@ -104,7 +104,7 @@ The use of distributed memory parallel environment, although optional,
 is required to access scalable parallel diagonalization algorithms
 which speed up calculations for large dimensional systems. 
 
-\subsection{Build and Install}
+\subsection{Build and Install}\label{sSecInstallBuildInstall}
 \subsubsection{Source}
 The software can be installed from source as follows. The source can
 be retrieved directly from its GitHub repository, for instance using:
@@ -179,7 +179,7 @@ specific {\tt pkg-config} configurations files which can be used to
 retrieve compilation and linking flags. 
 
 
-\subsection{OS Loading}
+\subsection{OS Loading}\label{sSecInstallOSloading}
 In oder to avoid possible conflicts or require administrative
 privileges, the building step results get installed by default in a user home
 directory, specified by the CMake variable {\tt PREFIX}.

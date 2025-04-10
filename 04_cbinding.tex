@@ -1,4 +1,4 @@
-\section{Interoperability}
+\section{Interoperability}\label{SecInterop}
 The recent growing availability of state-of-the-art software dedicated
 to the solution of quantum impurity problems using different methods
 poses a serious challenge to test accuracy and realiability of the
@@ -11,22 +11,116 @@ years supports the standardized generation of procedures and
 variables that are interoperable with C.
 
 
-\subsection{C-bindings}\label{sSecCbind}
-The interoperability with C language is encoded in the
-{\tt ISO\_C\_BINDING} module part of Fortran
+\subsection{C-bindings}\label{sSecInteropCbindings}
+The interoperability with C language is provided by the
+{\tt ISO\_C\_BINDING} module, which is part of the Fortran
 standard since 2003. The module contains definitions of named
 constants, types and procedures for C interoperability.
-Alongside, the second key feature essential to expose to C any Fortran
+Alongside, a second key feature essential to expose to C any Fortran
 entity is the {\tt BIND(C)} intrinsic function.
+In \NAME we exploit these features of the language to provide a
+complete interface from the Fortran code to C/C++, i.e. {\tt
+  EDIpack2C}. 
+
+
+\subsubsection{Installation}\label{sSecInteropCbindingsInstallation}
+The C-binding module in included in the build process of \NAME and
+compiled into a dynamical library {\tt
+  libedipack2\_cbinding.so/.dylib}. As dicussed in the
+\secu{sSecInstallBuildInstall}, the support for inequivalent
+impurities is configured at the build level and propagates to the
+C-bindings library as well. An exported variable {\tt has\_ineq} is
+defined and export to C/C++ as a way to query the presence of
+inequivalent impurities support. 
+The generated library and header files get installed in the include
+directory at the prefix location, specified during configuration
+step. The corresponding path is added to the environment variable {\tt
+  LD\_LIBRARY\_PATH}, valid of any Unix/Linux system, via any of the
+loading methods outlines in \secu{sSecInstallOSloading}. 
 
 
 
-\subsection{EDIpy, the Python API}\label{SecPyAPI}
+\subsubsection{Implementation}\label{sSecInteropCbindingsImplementation}
+The interface layer is contained in the Fortran module {\tt
+  EDIpack2\_C}. This contains a common part and two set of functions,
+one to interface the procedures from \NAME and a second
+one to extend the interface to the inequivalent impurities case.
+Specifically, the implemented interface functions expose to C through
+{\tt bind(C)} statement a number of
+procedures composing the Fortran API of \NAME, i.e. contained in {\tt
+  ED\_MAIN}. The procedures and shared variables can be divided in four main groups:
 
-\subsubsection{Build from source}
+\paragraph{{\bf Variables}}
+A number of relevant input and shared variables which are normally
+required to setup or to control the calculation are interfaced to C
+directly in the \NAME modules {\tt ED\_INPUT\_VARIABLES} using {\tt
+  bind(C)} constructs. These are implicitly loaded into the C-binding module {\tt
+  EDIpack2\_C} through the Fortran {\tt USE EDIPACK2} statement and
+then further interfaced in the C++ header file. 
+
+
+\paragraph{{\bf Main}} This group contains interface to the exact
+digonalization solver, interfacing the solver itself {\tt
+  solve\_site/ineq} as well as its initialization
+{\tt init\_solver\_site/ineq} and finalization {\tt
+  finalize\_solver} procedures. It also includes the functions used to
+set the non-interacting part of the impurity Hamiltonian
+$h^0_{\a\b\s\s'}$ through the functions {\tt set\_Hloc}.
+
+
+\paragraph{{\bf Bath}} In this group we implement a number of
+procedures dealing with bath initialization, symmetry operations and
+optimization. In particular it contains the function returning the
+dimension of the bath array on the user side {\tt
+  get\_bath\_dimension} as well as the setup of the matrix basis
+$\vec{\Gamma}$ for the replica/general bath via different instances of
+{\tt set\_Hreplica/general\_{site,lattice}\_d{3,5}}. 
+The crucial part in a DMFT framework is the optimization of the bath
+through conjugate-gradient algorithm. To this end we interfaced a
+number of functions {\tt
+  chi2\_fitgf\_{single,lattice}\_{normal,superc}\_n{3,4,5,6}} which
+cover all the cases supported in \NAME. Note that, because the actual
+optimization is still performed through the Fortran code, no changes
+apply to the outcome of this step.    
+
+\paragraph{{\bf Input/Output}}
+The input and output part of the software is interfaced in this group
+of functions. In particular, {\tt read\_input} expose to C the input
+reading procedure of \NAME which set essentially set all the internal
+variables of \NAME.
+Next, in {\tt edipack{2ineq}\_c\_binding\_io} we interface all the
+functions implementing the communication from the \NAME instance to
+the user, namely those to retrieve static observables (e.g. {\tt
+  get\_dens}), the impurity Green's functions and self-energies
+(e.g. {\tt get\_Sigma\_{site,lattice}\_n{3,5}}), the
+impurity susceptibilities (e.g. {\tt get\_spinChi}), the impurity reduced density matrix as well
+as the non-interacting Green's and hybridization functions starting from the
+user bath array.   
+
+
+Finally, in order to ensure compatibility to C and C++ language the
+entire set of C-binding functions and variables is enclosed into a
+header file {\tt edipack2\_cbinding.h}. 
+ 
+
+% ##################################################################
+% ##################################################################
+
+
+
+
+\subsection{EDIpy2, the Python API}\label{sSecInteropEDIpy}
+As a first application of the \NAME C-bindings we implemented a
+complete Python interface, i.e. EDIpy2. This is a Python module which
+enables access to all the library features and unlock implementation of
+further interfaces of \NAME as a plug-in solver for external Python
+based software.    
+
+
+\subsubsection{Installation}\label{sSecInteropEDIpyInstallation}
 EDIpy2 is available as a stand-alone
-module which depends on both \NAME and SciFortran. The package can be
-obtained from the repository
+module which only depends on \NAME and SciFortran.
+The Python package can be obtained from the repository
 \href{https://github.com/EDIpack/EDIpy2.0}{EDIpy2}.
 
 \begin{lstlisting}[style=mybash]
@@ -38,11 +132,25 @@ In some more recent Python distribution the flag {\tt
   --break-system-packages} might be required to complete
 installation or a virtual environment should be used instead. 
 
-\subsubsection{Anaconda}
-As for EDIpack2, also the Python API in EDIpy2 are available through
-Anaconda packaging. In this case the resolution of the dependencies is
-taken care from Conda itself:
 
+\paragraph{PyPi}
+The EDIpy2 package is also available in PyPi at
+\href{https://pypi.org/project/edipy2/}{pypi.org/edipy2}. As such
+EDIpy2 can be conveniently installed in any system supporting {\tt pip} as:
+
+\begin{lstlisting}[style=mybash]
+pip install edipy2
+\end{lstlisting}
+
+
+\paragraph{Anaconda}
+As for \NAME, the Python API in EDIpy2 is available through
+Anaconda packaging for Unix/Linux systems. Packages are available for
+Python version $>3.10$. The EDIpack2.0 package contains the {\tt
+  edipy2} Python module as well as the EDIpack2.0 and SciFortran
+libraries. In this case the resolution of the dependencies is
+taken care from Conda itself. 
+Using conda the installation reads:
 \begin{lstlisting}[style=mybash]
 conda create -n edipack
 conda activate edipack
@@ -50,10 +158,73 @@ conda install -c conda-forge -c edipack edipack2
 \end{lstlisting}
 
 
+Once installed, any loading of the {\tt edipy2} module resolves in the
+attempt to load the dynamic library {\tt
+  libedipack2\_cbinding.so/.dylib} containing the Fortran-C bindings
+for \NAME. By default the library is searched proceeds as follow: 
+\begin{enumerate}
+\item First the user can override the location of the library
+  (determined during \NAME build configuration) by exporting an
+  environment variable called {\tt EDIPACK\_PATH} .
+\item By default, the Python module detects the position of the
+  Fortran libraries via {\tt pkg-config}. Any of the OS loading method
+  outlined in \secu{sSecInstallOSloading} automatically push the
+  correct configuration to the {\tt PKG\_CONFIG\_PATH}. 
+\item As a last resort the environment variables {\tt
+    LD\_LIBRARY\_PATH} and {\tt DYLD\_LIBRARY\_PATH} are analyzed to
+  retrieve the correct position. 
+\end{enumerate}
+If none of the previous attempts succeeds, the module will not not load correctly and an error message will be printed. 
 
 
 
-\subsection{TRIQS interface}\label{SecEDI2Triqs}
+\subsubsection{Implementation}\label{sSecInteropEDIpyImplementation}
+The Python API provided in the edipy2 module consists essentially of a
+suitable class called for convenience {\tt global\_env}.
+The class incorporates all the global variables inherited from \NAME
+C-bindings library and implements a number of interface functions
+leveraging the Python duck typing to \NAME.  
+The variables and the functions of \NAME are exposed to the user and
+are accessed as properties and
+methods of the {\tt global\_env} claass, which needs to be imported at the beginning
+of the python script, along with other useful modules. For instance Numpy is
+necessary, while mpi4py is strongly recommended.
+
+\begin{lstlisting}[language=python,  frame=lines]
+import numpy as np
+import mpi4py
+from mpi4py import MPI
+from edipy2 import global_env as ed
+import os,sys
+\end{lstlisting}
+
+The EDIpy2 supports the solution of problems with independent
+impurities, interfacing with the the EDIpack2ineq extension of the
+library, if present. Should the inequivalent impurities package not be
+built, the Python module silently disable the support to it, so that
+invoking any related procedure  will result in a {\tt RuntimeError}.
+The user can check the availability of the inequivalent impurities
+interface by querying the value of  {\tt edipy2.global\_env.has\_ineq}.
+
+The implementation of the Python API includes two main parts, namely
+the global variables and a number of functions.
+
+
+\paragraph{{\bf Global variables}}
+
+\paragraph{{\bf Functions}}
+
+
+% ##################################################################
+% ##################################################################
+
+
+
+
+
+
+\subsection{TRIQS interface}\label{sSecInteropTRIQS}
+{\color{red} Igor }
 A purely Python \NAME to Triqs interface is available, leveraging on
 the C-bindings and Python API. The corresponding module depends on
 \NAME (which ultimately depends on SciFortran) and Triqs.
@@ -68,9 +239,10 @@ pip install .
 
 
 
-\subsection{W2Dynamics interface}\label{SecEDI2W2Dyn}
+\subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
+{\color{red} Giorgio, Alexander,?}
 
 
 
-
-\subsection{EDIjl, the Julia API}\label{SecJlAPI}
+\subsection{EDIjl, the Julia API}\label{sSecInteropEDIjl}
+{\color{red} Lorenzo?}

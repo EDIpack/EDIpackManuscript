@@ -1,12 +1,12 @@
 \babel@toc {english}{}
 \contentsline {section}{\numberline {1}Introduction and Motivation}{2}{section.1}%
-\contentsline {section}{\numberline {2}Installation}{2}{section.2}%
+\contentsline {section}{\numberline {2}Installation}{3}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Structure}{3}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Dependencies}{3}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Build and Install}{3}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Source}{3}{subsubsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3}Build and Install}{4}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Source}{4}{subsubsection.2.3.1}%
 \contentsline {subsubsection}{\numberline {2.3.2}Anaconda}{4}{subsubsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.4}OS Loading}{4}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.4}OS Loading}{5}{subsection.2.4}%
 \contentsline {section}{\numberline {3}Implementation}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}The quantum impurity problem}{5}{subsection.3.1}%
 \contentsline {paragraph}{\bf Remark}{6}{section*.2}%
@@ -45,15 +45,25 @@
 \contentsline {subsubsection}{\numberline {3.13.4}Input/Output}{20}{subsubsection.3.13.4}%
 \contentsline {section}{\numberline {4}Interoperability}{20}{section.4}%
 \contentsline {subsection}{\numberline {4.1}C-bindings}{20}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}EDIpy, the Python API}{21}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}Build from source}{21}{subsubsection.4.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.2}Anaconda}{21}{subsubsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}TRIQS interface}{21}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}W2Dynamics interface}{21}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}EDIjl, the Julia API}{21}{subsection.4.5}%
-\contentsline {section}{\numberline {5}Examples}{21}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT (Fortran API)}{21}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{21}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Multi-orbital Hubbard (Triqs)}{21}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Conclusions}{21}{section.6}%
-\contentsline {section}{\numberline {7}Appendix A: Monicelli interface}{21}{section.7}%
+\contentsline {subsubsection}{\numberline {4.1.1}Installation}{21}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Implementation}{21}{subsubsection.4.1.2}%
+\contentsline {paragraph}{\bf Variables}{21}{section*.16}%
+\contentsline {paragraph}{\bf Main}{21}{section*.17}%
+\contentsline {paragraph}{\bf Bath}{21}{section*.18}%
+\contentsline {paragraph}{\bf Input/Output}{21}{section*.19}%
+\contentsline {subsection}{\numberline {4.2}EDIpy2, the Python API}{21}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Installation}{22}{subsubsection.4.2.1}%
+\contentsline {paragraph}{PyPi}{22}{section*.20}%
+\contentsline {paragraph}{Anaconda}{22}{section*.21}%
+\contentsline {subsubsection}{\numberline {4.2.2}Implementation}{22}{subsubsection.4.2.2}%
+\contentsline {paragraph}{\bf Global variables}{23}{section*.22}%
+\contentsline {paragraph}{\bf Functions}{23}{section*.23}%
+\contentsline {subsection}{\numberline {4.3}TRIQS interface}{23}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}W2Dynamics interface}{23}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}EDIjl, the Julia API}{23}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Examples}{23}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT (Fortran API)}{23}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{23}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Multi-orbital Hubbard (Triqs)}{23}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Conclusions}{23}{section.6}%
+\contentsline {section}{\numberline {7}Appendix A: Monicelli interface}{23}{section.7}%
