@@ -206,13 +206,110 @@ invoking any related procedure  will result in a {\tt RuntimeError}.
 The user can check the availability of the inequivalent impurities
 interface by querying the value of  {\tt edipy2.global\_env.has\_ineq}.
 
-The implementation of the Python API includes two main parts, namely
-the global variables and a number of functions.
-
+The implementation of the Python API is divided in two main parts. The
+first is a set of global variables, the second includes 4 groups of
+functions: solver, bath, input/output, auxiliary. 
 
 \paragraph{{\bf Global variables}}
+This includes a subset of the input variables available in \NAME which
+are used to control the calculation.
+The variables are loaded globally in {\tt EDIpy2} and can be accessed
+or set locally as properties of the class {\tt
+  global\_env}. Differently these are initialized, alongside the remaining
+default input variables, through a call to procedure {\tt
+  edipy2.global\_env.read\_input} which interface the {\tt
+  ed\_read\_input} function in \NAME. 
+A given example is reported in the following code extract:
 
-\paragraph{{\bf Functions}}
+\begin{lstlisting}[language=python,  frame=lines]
+import numpy as np
+from edipy2 import global_env as ed
+ed.Nspin = 1            # set a global variable
+mylocalvar = ed.Nspin   # assign to a local variable
+print(ed.Nspin)         # all functions can have global variables as arguments
+np.arange(ed.Nspin)
+\end{lstlisting}
+
+
+\paragraph{{\bf Solver functions}}
+This group includes a number of functions enabling initialization,
+execution and finalization  functionalities for the diagonalization
+solver.
+\begin{itemize}
+  \item {\tt init\_solver} and {\tt set\_Hloc}. The first 
+    initializes the \NAME environment for the quantum impurity problem
+    solution, sets the effective bath either reading it from a file or
+    initializing it from flat band model. Once this function is
+    called, it is not possible to allocate a second instance of the solver.
+    {\tt set\_Hloc} sets the
+    non-interacting part of the impurity Hamiltonian $\h^0_{\a\b\s\s'}$. 
+    Either function take different argument combinations there
+    including support for inequivalent impurities.
+
+  \item {\tt solve} This function solves the quantum impurity problem,
+    calculates the observables and any dynamical correlation
+    function. All results remain stored in the memory and get accessed
+    through input/output functions.
+
+  \item {\tt finalize\_solver} This function cleans up the \NAME
+    environment, free the memory deallocating all relevant arrays or
+    data structure. A call to this functions enables a new
+    initialization of the solver, i.e. a new call to {\tt
+      init\_solver}.  
+  \end{itemize}
+
+
+\paragraph{{\bf Bath functions}}
+This set covers the implementation of utility functions handling the
+effective bath on the user side as well as interfaces to specific
+\NAME procedures, either setting bath properties or applying
+conventional symmetry transformation. Here we discuss 
+a pair of crucial functions in this group.
+\begin{itemize}
+\item {\tt bath\_inspect}This function translates between the
+  user-accessible continuous bath array and the bath components
+  (energy level, hybridization and so on). It functions in both ways,
+  given the array returns the components and vice-versa. It
+  autonomously determines the type of bath and ED mode.
+
+\item {\tt chi2\_fitgf}
+  This function fits the Weiss field or Hybridization function (delta)
+  with a discrete set of level. The fit parameters are the bath
+  parameters contained in the user-accessible array. Depending on the
+  type of system we are considering (normal, superconductive,
+  non-SU(2)) a different set of inputs has to be passed. The specifics
+  of the numerical fitting routines are controlled in the input file.
+  \end{itemize}
+
+Additionally, the group includes the function {\tt
+  get\_bath\_dimension}, returning the correct
+dimension for the user bath array to be allocated and {\tt
+  set\_H{replica/general}} which set the matrix basis
+$\vec{\Gamma}$ and init the bath variational parameters
+$\vec{\lambda}$ for {\tt bath\_type=replica,general}. 
+
+
+
+
+  
+\paragraph{{\bf Input/Output functions}}
+This group includes functions which return to the userspace
+observables or dynamical correlation functions evaluated in \NAME and
+conserved in the corresponding memory instance. Each function
+provides a general interface which encompass all dimension of the
+input array there including inequivalent impurities support.
+For instance, the function {\tt get\_sigma} returns the self-energy
+function array (evaluated on-the-fly) for a specified supported shape,
+normal or anomlous type and on a specific axis or frequency domain. 
+    
+
+\paragraph{{\bf Auxiliary functions}}
+This group include some auxiliary functions, either interfacing \NAME
+procedures or defined locally in Python to provide specific new
+functionalities. Among the latter we include {\tt get\_ed\_mode} which
+return the value of the variable {\tt ed\_mode=normal,superc,nosu2}
+and {\tt get\_bath\_type} which similarly returns the value of {\tt bath\_type}.
+
 
 
 % ##################################################################
