@@ -1,8 +1,8 @@
 HERE   = `pwd`
-EXE=ed_hm_bethe
+EXE=ed_ahm_2d
 FC=mpif90
 PLAT=gnu
-DIREXE   = $(HERE)/test
+DIREXE   = $(HERE)
 
 
 define colorecho	

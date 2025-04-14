@@ -66,7 +66,10 @@
 \contentsline {subsection}{\numberline {4.5}EDIjl, the Julia API}{24}{subsection.4.5}%
 \contentsline {section}{\numberline {5}Examples}{24}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT (Fortran API)}{24}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{25}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Multi-orbital Hubbard (Triqs)}{25}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Conclusions}{25}{section.6}%
-\contentsline {section}{\numberline {7}Appendix A: Monicelli interface}{25}{section.7}%
+\contentsline {subsubsection}{\numberline {5.1.1}Results}{26}{subsubsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{26}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Multi-orbital Hubbard (Triqs)}{27}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Some model (W2Dynamics)}{27}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Interacting Bernevig-Hughes-Zhang (Fortran)}{27}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Conclusions}{27}{section.6}%
+\contentsline {section}{\numberline {7}Appendix A: Monicelli interface}{27}{section.7}%
