@@ -6,7 +6,7 @@ Specifically, we show how the quantum impurity solver in \NAME can be used
 to address problems of different nature within the framework of DMFT. 
 
 
-\subsection{Bethe lattice DMFT (Fortran API)}
+\subsection{Bethe lattice DMFT (Fortran API)}\label{SecExamplesBetheDMFT}
 The description of the Mott or metal to insulator transition (MIT)
 within the Bethe lattice, i.e. Cayley tree with connection
 $z\to\infty$ is conventionally considered the test bed of any DMFT
@@ -17,7 +17,11 @@ We consider a Fermi-Hubbard model:
 $$
 H = -t \sum_{\langle ij\rangle\s}c^+_{i\s}c_{j\s} + U \sum_i n_{i\up}n_{i\dw}
 $$
-defined on a Bethe lattice with density of states
+where $c^+_{i\s}$ ($c_{i\s}$) is the creation (destruction) operator for an electron at site $i$
+and with spin $\s$, $n_{i\s}=c^+_{i\s}c_{i\s}$ is the occupation
+operator and the first sum is over the nearest neighbor sites $\langle
+ij\rangle$. 
+The system is defined on a Bethe lattice with density of states
 $\rho(x)=\frac{1}{2D}\sqrt{D^2-x^2}$, where $D=2t$ is the
 half-bandwidth~\cite{Georges1996}.
 In DMFT this model is mapped
@@ -118,7 +122,7 @@ iloop=0;converged=.false.
 \end{lstlisting}
 
 
-\subsubsection{Results}
+\paragraph{Results}
 In the following we present some results obtained by executing this
 simple program varying the interaction strenght :f:var:`uloc`.
 Differently from the previous case of a quantum impurity embedded in a
@@ -180,10 +184,183 @@ particle-hole symmetry. The corresponding real part shows a
 discontinuity visibile in the panel (C). 
 
 
-\subsection{Attractive Hubbard model (Python API)}
+\subsection{Attractive Hubbard model (Python API)}\label{SecExamplesAHM}
 The second application has the twofold aim to demonstrate the
 superconductivity support of the \NAME library as well as to
-illustrate the Python API through a working example.
+illustrate the use of the Python API through a working example.
+We consider the simple, yet non-trivial, case of the attractive
+Hubbard model on a two-dimensional square lattice:
+
+$$
+H = \sum_{\ka\s} \e(\ka)c^+_{\ka\s}c_{\ka\s} -U\sum_i n_{i\up}n_{i\dw}
+$$
+where $U>0$, $c^+_{\ka\s}=\tfrac{1}{\sqrt{N}}\sum_i e^{-i\ka\cdot R_i} c^+_{i\s}$
+and $c^+_{i\s}$ is the creation operator for an electron at site $i$
+and with spin $\s$, $n_{i\s}=c^+_{i\s}c_{i\s}$ is the occupation
+operator and $\e(\ka)=-2t[\cos{(k_x a)}+ \cos{(k_y a)}]$ is the
+energy dispersion relation. In the following we the lattice distance
+$a=1$  and the energy unit as $4t=D=1$.
+
+The DMFT workflow for this case is very similar to the previous one
+provided works in the Nambu basis defined by the spinor
+$\psi_i=[c_{i\up}, c^+_{i\dw}]^t$.
+In this basis any correlation functions, e.g. the Green's function, takes the matrix form:
+\begin{equation}
+  G =
+  \begin{pmatrix}
+    \hat{G}_{\uparrow\uparrow} & \hat{F}_{\uparrow\downarrow}\\
+    \hat{\bar{F}}_{\downarrow\uparrow}  &    \hat{\bar{G}}_{\downarrow\downarrow} \\
+   \end{pmatrix}
+\end{equation}
+where the symbol $\hat{A}$ indicates the possible multi-orbital
+character which reduced to a scalar in the present case of a single
+orbital. The symbol $\hat{\bar{A}}$ indicates that the components in
+the second row are connect by particle-hole and time-reversal
+symmetries to the first row one. The specific relation depends on the
+symmetry of the order parameter (here $s$-wave) and the nature of the
+complex argument of the functions, i.e. Matsubara or real-axis:
+\begin{equation}
+\begin{array}{cc}
+  \hat{\bar{G}}(i\omega) = -\hat{G}^*(i\omega)\;; &  \hat{\bar{F}}(i\omega) = \hat{F}(i\omega)\\
+  \hat{\bar{G}}(\omega)  = -\hat{G}^*(-\omega) \;; & \hat{\bar{F}}(\omega) = \hat{F}^*(i\omega)\\
+\end{array}
+\end{equation}  
+The code implementation closely follows the previous structure, with
+some notable exceptions related to the Nambu structure for which,
+using the symmetries above, we only need to deal with the first row
+independent components. In the first part of the code we initialize
+the lattice structure and the solver:
+\begin{lstlisting}[style=mypython,numbers=none,basicstyle={\scriptsize\ttfamily}]
+import numpy as np
+from edipy2 import global_env as ed
+import mpi4py
+from mpi4py import MPI
+import os,sys
+from aux_funx import * #include function to build $G_{loc}$ and Weiss fields
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+master = (rank==0)
+
+#Functions
+def generate_kgrid(Nk):
+    b1=2*np.pi*np.array([1.0,0.0])
+    b2=2*np.pi*np.array([0.0,1.0])
+    n1, n2 = np.meshgrid(np.arange(Nk), np.arange(Nk))
+    n1=n1/Nk;n2=n2/Nk
+    gridout = np.stack([n1.ravel(), n2.ravel()], axis=-1)
+    return np.dot(gridout,[b1,b2])
+
+def h_square2d(k,t):
+  return -2*t*(np.cos(k[...,0,np.newaxis,np.newaxis])+np.cos(k[...,1,np.newaxis,np.newaxis]))*np.eye(ed.Norb)
+    
+
+ed.read_input("inputAHM.conf")
+
+kgrid = generate_kgrid(Nk)
+
+#Generate hk and hloc
+Hk   = h_square2d(kgrid,t_hop)
+HkNambu   = np.array([h_square2d(kgrid,t_hop),-np.conj(h_square2d(-kgrid,t_hop))])
+Hloc = np.sum(Hk,axis=0)/Nk**2
+Hloc = Hloc.astype(complex)
+ed.set_hloc(Hloc)
+
+#SETUP SOLVER
+Nb=ed.get_bath_dimension()
+bath = ed.init_solver()
+bath_prev = np.copy(bath)
+\end{lstlisting}
+
+
+
+
+The iterative scheme for the solution of DMFT closely follows the
+sequence discussed in \secu{SecExamplesBetheDMFT}:   
+\begin{enumerate}
+\item Call the exact diagonalization {\bf impurity solver} {\tt
+    ed\_solve} providing the set of parameters $\vec{x}$ as input. 
+\item Retrieve the self-energy functions
+  $\hat{\Sigma}_{\a\b\up\up}(i\omega)$ and $\hat{S}_{\a\b\up\dw}(i\omega)$ on the 
+  Matsubara axis using {\tt ed\_get\_sigma}.
+\item
+  Evaluate the interacting local Green's functions $\hat{G}_{loc}$ and
+  $\hat{F}_{loc}$:
+  \begin{equation}
+  G_{loc}(i\omega) =
+  \int_\RRR d\e \rho(\e)
+  \begin{pmatrix}
+    (i\omega +\mu)\hat{\11} - \hat{h}^0 - \hat{\Sigma}(i\omega) -\e & -\hat{S}(i\omega) \\
+    -\hat{S}(i\omega) & (i\omega +\mu)\hat{\11} + \hat{h}^0 +
+    \hat{\Sigma}^*(i\omega) +\e\\
+  \end{pmatrix}^{-1}
+\end{equation}
+\item Update the normal and anomalous Weiss fields, respectively 
+  $\GG^{-1}$ and $\Theta^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
+    relation: $\GG^{-1}_0(i\omega) = G_{loc}(i\omega) +
+    \Sigma(i\omega)$ in Nambu space. 
+  \item Optimize the bath parameters $\vec{x}$ to best describe the  updated
+    Weiss fields. 
+\end{enumerate}
+which is implemented in Python as follows:
+\begin{lstlisting}[style=mypython,numbers=none,basicstyle={\scriptsize\ttfamily}]
+#DMFT CYCLE
+converged=False;iloop=0
+while (not converged and iloop<ed.Nloop ):
+    iloop=iloop+1
+    #Solve the EFFECTIVE IMPURITY PROBLEM (first w/ a guess for the bath)
+    ed.solve(bath)
+    print(ed.get_phi())
+    
+    #Use aux_funx procedures:
+    Smats = np.array([ed.get_sigma(axis="m",typ="n"),ed.get_sigma(axis="m",typ="a")])    
+    Gmats = get_gloc(wm*1j       ,ed.xmu,HkNambu,Smats,axis="m") 
+    Weiss = dmft_weiss_field(Gmats,Smats)                  
+          
+    #Print...
+
+    #Fit
+    bath = ed.chi2_fitgf(Weiss[0],Weiss[1],bath)
+        
+    if(iloop>1):
+        bath = wmixing*bath + (1.0-wmixing)*bath_prev
+    bath_prev=np.copy(bath) 
+    err,converged=ed.check_convergence(Weiss,ed.dmft_error)
+
+ed.finalize_solver()
+\end{lstlisting}
+
+
+\paragraph{Results}
+We showcase here some results for the attractive Hubbard model to
+illustrate the capabilities of \NAME to solve $s$-wave superconducting
+impurity problems at zero and finite temperatures. 
+In figure...
+\begin{figure}[t!]
+  \includegraphics[width=\linewidth]{figures/figAHM.pdf}
+    \caption{\label{fig2}%
+      \textbf{The BCS to BEC crossover.}
+      (a) Evolution of the spectral functions
+      $-\Im{G_{loc}(\omega)}/\pi$ as a function of increasing
+      attraction $U$. 
+      (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
+      function of the attraction $U$. Data for BCS (gray) is compared
+      to DMFT results (blue line and symbols). 
+      (c) The correlation strength
+      $\Theta=\frac{|S(0)-S(\infty)|}{S(\infty)}$ as a function of the
+      attraction $U$ across the BCS-BEC crossover. 
+      (d) Comparison of the double occupation $D=\langle n_\up
+      n_\dw\rangle$ as a function of attraction $U$ between BCS (gray
+      solid line) and DMFT (blue solid line and symbols). 
+      (e) Superconducting order
+      parameter $\phi$ as a function of temperature across the
+      superconductor-to-normal phase transition. Data for $U=4$. The
+      fit highlights the critical behavior with a mean-field exponent
+      $\beta=1/2$ (red dashed line).       
+        }
+\end{figure}
+
+
 
 
 

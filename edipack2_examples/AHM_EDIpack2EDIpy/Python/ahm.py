@@ -12,8 +12,6 @@ print("I am process",rank,"of",comm.Get_size())
 master = (rank==0)
 
 #Functions
-
-
 def generate_kgrid(Nk):
     b1=2*np.pi*np.array([1.0,0.0])
     b2=2*np.pi*np.array([0.0,1.0])

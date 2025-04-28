@@ -7,7 +7,7 @@ program ed_ahm_2d
   real(8),parameter                         :: D=1
   integer                                   :: iloop,i
   integer                                   :: Nb,Nso
-  logical                                   :: converged
+  logical                                   :: converged,get_sigma
   !Bath:
   real(8),allocatable,dimension(:)          :: Bath,Bath_Prev
   !The local functions:
@@ -26,6 +26,7 @@ program ed_ahm_2d
   !
   call parse_cmd_variable(finput,"FINPUT",default='inputAHM.conf')
   call parse_input_variable(wmixing,"wmixing",finput,default=0.5d0,comment="Mixing bath parameter")
+  call parse_input_variable(get_sigma,"get_sigma",finput,default=.false.)
   !
   call ed_read_input(trim(finput))
 
@@ -52,7 +53,7 @@ program ed_ahm_2d
   allocate(Sreal(2,Nso,Nso,Lreal))
 
 
-  
+
   !> Allocate the 2d DOS and dispersion for the Nambu structure in DMFT_TOOLS
   !  we ask for separate dispersions (or two H(k)) for the two elements on the diagonal
   allocate(Edos(2,1,Le))  
@@ -64,14 +65,26 @@ program ed_ahm_2d
   enddo
   Ddos= Ddos/simps(Ddos(1,:),-D,D)*de
 
-  
+
   !> Get local Hamiltonian (used in DMFT_TOOLS)
-  allocate(H0(2,1))
+  allocate(H0(2,Nso))
   H0=0d0
+  call ed_set_Hloc(zeros(Nso,Nso))
 
 
 
+  if(get_sigma)then
+     call ed_get_sigma(Smats(1,:,:,:),axis='m',type='n')
+     call ed_get_sigma(Smats(2,:,:,:),axis='m',type='a')
+     call write_gf(Smats(1,:,:,:),"Sigma",axis='mats',iprint=1)
+     call write_gf(Smats(2,:,:,:),"Self",axis='mats',iprint=1)
+     stop
+  end if
 
+  
+
+
+  
   !> Get bath dimension and allocate user bath to this size
   Nb=ed_get_bath_dimension()
   allocate(Bath(Nb))
@@ -79,7 +92,6 @@ program ed_ahm_2d
 
   !> Initialize the ED solver (bath is guessed or read from file) 
   call ed_init_solver(bath)
-
 
   !DMFT loop
   iloop=0;converged=.false.

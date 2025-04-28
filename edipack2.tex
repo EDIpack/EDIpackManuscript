@@ -7,7 +7,7 @@
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{makecell}
-
+\usepackage{array}
 \usepackage{stackengine}
 \newlength\llength
 \llength=1.38ex\relax
@@ -37,6 +37,20 @@
   mathescape,
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
+
+\lstdefinestyle{mypython}{
+  frame=lines,
+  language=python,
+  basicstyle=\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
 
 \lstdefinestyle{mybash}{
   frame=lines,
