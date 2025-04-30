@@ -65,6 +65,7 @@ program ed_ahm_2d
   enddo
   Ddos= Ddos/simps(Ddos(1,:),-D,D)*de
 
+  call splot("DOS2d.dat",Edos(1,1,:),Ddos(1,:)/de)
 
   !> Get local Hamiltonian (used in DMFT_TOOLS)
   allocate(H0(2,Nso))

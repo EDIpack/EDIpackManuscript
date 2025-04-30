@@ -6,7 +6,7 @@ Specifically, we show how the quantum impurity solver in \NAME can be used
 to address problems of different nature within the framework of DMFT. 
 
 
-\subsection{Bethe lattice DMFT (Fortran API)}\label{SecExamplesBetheDMFT}
+\subsection{Bethe lattice DMFT}\label{SecExamplesBetheDMFT}
 The description of the Mott or metal to insulator transition (MIT)
 within the Bethe lattice, i.e. Cayley tree with connection
 $z\to\infty$ is conventionally considered the test bed of any DMFT
@@ -124,7 +124,7 @@ iloop=0;converged=.false.
 
 \paragraph{Results}
 In the following we present some results obtained by executing this
-simple program varying the interaction strenght :f:var:`uloc`.
+simple program varying the interaction strenght $U$. 
 Differently from the previous case of a quantum impurity embedded in a
 given bath describing the progressive formation of a
 strongly renormalized Fermi liquid state, here the DMFT
@@ -144,8 +144,21 @@ Hubbard bands for $U>U_c$, with $U_c\simeq 2.8D$.
 
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{figures/figBethe.pdf}
-    \caption{\label{fig1}%
-        \textbf{The Mott transition.}
+    \caption{\label{figEx1}%
+      \textbf{The Metal-Insulator Mott transition.}
+      (a) Evolution of the spectral function $-\Im{G}(\omega)/\pi$ as
+      a function of increasing interaction $U$. The critical
+      interaction $U_c\simeq 2.8D$ separates the correlated metal $U<U_c$ from
+      the Mott insulator $U>U_c$.
+      (b)-(c) The corresponding evolution of the Matsubara self-energy
+      $\Im\Sigma(i\omega)$ (b) and
+      real-axis one $\Re\Sigma(\omega)$ across the Mott
+      transition. For a particle-hole symmetric case both allow to
+      estimate the renormalization constant $Z$ (see main text), using
+      linear order expansion in frequency (blue solid lines). The
+      values of $Z$ are reported in the legend.
+      The Mott insulating solution is associated to a singularity at
+      $\omega=0$ of $\Im\Sigma$. 
         }
 \end{figure}
 
@@ -206,7 +219,7 @@ provided works in the Nambu basis defined by the spinor
 $\psi_i=[c_{i\up}, c^+_{i\dw}]^t$.
 In this basis any correlation functions, e.g. the Green's function, takes the matrix form:
 \begin{equation}
-  G =
+  {\mathbf G} =
   \begin{pmatrix}
     \hat{G}_{\uparrow\uparrow} & \hat{F}_{\uparrow\downarrow}\\
     \hat{\bar{F}}_{\downarrow\uparrow}  &    \hat{\bar{G}}_{\downarrow\downarrow} \\
@@ -279,15 +292,16 @@ The iterative scheme for the solution of DMFT closely follows the
 sequence discussed in \secu{SecExamplesBetheDMFT}:   
 \begin{enumerate}
 \item Call the exact diagonalization {\bf impurity solver} {\tt
-    ed\_solve} providing the set of parameters $\vec{x}$ as input. 
-\item Retrieve the self-energy functions
-  $\hat{\Sigma}_{\a\b\up\up}(i\omega)$ and $\hat{S}_{\a\b\up\dw}(i\omega)$ on the 
-  Matsubara axis using {\tt ed\_get\_sigma}.
+    ed.solve} providing the set of bath parameters as input. 
+\item Using the dedicated
+  input/output procedures {\tt ed.get\_sigma} we retrieve the self-energy functions  
+  $\hat{\Sigma}(i\omega)$ and $\hat{S}(i\omega)$ on the 
+  Matsubara axis.
 \item
   Evaluate the interacting local Green's functions $\hat{G}_{loc}$ and
   $\hat{F}_{loc}$:
   \begin{equation}
-  G_{loc}(i\omega) =
+  {\mathbf G}_{loc}(i\omega) =
   \int_\RRR d\e \rho(\e)
   \begin{pmatrix}
     (i\omega +\mu)\hat{\11} - \hat{h}^0 - \hat{\Sigma}(i\omega) -\e & -\hat{S}(i\omega) \\
@@ -296,35 +310,32 @@ sequence discussed in \secu{SecExamplesBetheDMFT}:
   \end{pmatrix}^{-1}
 \end{equation}
 \item Update the normal and anomalous Weiss fields, respectively 
-  $\GG^{-1}$ and $\Theta^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
-    relation: $\GG^{-1}_0(i\omega) = G_{loc}(i\omega) +
-    \Sigma(i\omega)$ in Nambu space. 
-  \item Optimize the bath parameters $\vec{x}$ to best describe the  updated
-    Weiss fields. 
+  $\GG_0^{-1}$ and $\FF_0^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
+    relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}_{loc}(i\omega) +
+    {\mathbf \Sigma}(i\omega)$ in Nambu space. 
+  \item Optimize the bath parameters  to best describe the  updated
+    Weiss fields using \NAME provided conjugate gradient  fit
+    procedure {\tt ed.chi2\_fitgf}.
 \end{enumerate}
 which is implemented in Python as follows:
 \begin{lstlisting}[style=mypython,numbers=none,basicstyle={\scriptsize\ttfamily}]
 #DMFT CYCLE
 converged=False;iloop=0
 while (not converged and iloop<ed.Nloop ):
-    iloop=iloop+1
-    #Solve the EFFECTIVE IMPURITY PROBLEM (first w/ a guess for the bath)
+iloop=iloop+1
+
+    #Solve impurity problem
     ed.solve(bath)
-    print(ed.get_phi())
     
-    #Use aux_funx procedures:
+    #Self-consistency with aux_funx procedures:
     Smats = np.array([ed.get_sigma(axis="m",typ="n"),ed.get_sigma(axis="m",typ="a")])    
     Gmats = get_gloc(wm*1j       ,ed.xmu,HkNambu,Smats,axis="m") 
     Weiss = dmft_weiss_field(Gmats,Smats)                  
           
-    #Print...
-
     #Fit
     bath = ed.chi2_fitgf(Weiss[0],Weiss[1],bath)
-        
-    if(iloop>1):
-        bath = wmixing*bath + (1.0-wmixing)*bath_prev
-    bath_prev=np.copy(bath) 
+
+    #Error check
     err,converged=ed.check_convergence(Weiss,ed.dmft_error)
 
 ed.finalize_solver()
@@ -332,13 +343,61 @@ ed.finalize_solver()
 
 
 \paragraph{Results}
-We showcase here some results for the attractive Hubbard model to
-illustrate the capabilities of \NAME to solve $s$-wave superconducting
-impurity problems at zero and finite temperatures. 
-In figure...
+We showcase here some results for the DMFT solution of the attractive
+Hubbard model across the BCS to BEC regime, with the aim of
+illustrating the capabilities of \NAME to deal with $s$-wave
+superconductivity at zero and finite temperatures.
+
+To beging with, we report in  panel (A) of \figu{figEx2} the
+evolution of the spectral density, obtained from the local normal
+Green's function $-\tfrac{1}{\pi}\Im{G}_{loc}(\omega)$, as a function
+of the attraction $U$. For any finite value of  $U$ the Van Hove peak
+at $\omega=0$ of the 2D square lattice (see $U=0$
+solution) gets split by the formation of a superconductive gap of
+width which increases with $U$.
+The existence of a gap is associated to the formation of a finite
+order parameter $\phi=\langle c_\up c_\dw\rangle$. The behavior of
+this quantity, shown in panel (B), highlights crossover from the BCS
+regime at weak coupling to a BEC one for large $U$.
+The former regime is characterized by the well known exponential increase of
+$\phi$, which is computationally the hardest regime to adress. At
+strong coupling or BEC regime the order parameter saturates to its
+limiting value $\phi\to 1/2$. The comparison with mean-field result
+(gray) underlines the effect of local quantum fluctuations in slightly
+suppressing the order parameter. This effect is particularly active in
+the intermediate regime, as captured by the behavior of the
+correlation strength
+$\theta=\frac{|S(i\omega\to9)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
+reported in panel (C). Assuming a monotonic behavior of the anomalous
+self-energy function, this quantity estimates the ``strength'' of
+quantum fluctuations comparing the mean-field-like behavior at high
+energy scale with that near the Fermi level. A large value of $\theta$
+indicates a more correlated system.
+Our results show that both weak and strong coupling regime are
+relatively weakly correlated, i.e. very near a mean-field solution. On
+the contrary, the inter-mediate regime is characterized by a large
+correlation, making the solution very different from that obtained in
+BCS description.  
+To further corroborate the distance between the DMFT and mean-field
+solution we report in panel (D) the evolution of the double occupancy
+$d=\langle n_\up n_\dw\rangle$. At half-filling the mean-field value is
+determined solely by the order parameter as $d=1/4 + \phi^2$.
+Our results show that the inclusion of quantum fluctuations in DMFT
+slightly increase the value of $d$ in the weak coupling
+regime. However, increasing the attraction the double occupations
+quickly get reduced below the mean-field value up to the BEC regime.
+
+Finally, we illustrate the capability of \NAME in
+exploring finite temperature physics. In panel (E) we show the
+temperature evolution of the order parameter $\phi(T)$ across the
+superconductor-to-normal transition. The mean-field nature of this
+transition is underlined by the scaling of  the solution near
+the critical point $\phi \simeq (T_c-T)^\beta$ with $\beta=1/2$ as
+predicted by mean-field calculations. 
+
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{figures/figAHM.pdf}
-    \caption{\label{fig2}%
+    \caption{\label{figEx2}%
       \textbf{The BCS to BEC crossover.}
       (a) Evolution of the spectral functions
       $-\Im{G_{loc}(\omega)}/\pi$ as a function of increasing
@@ -347,7 +406,7 @@ In figure...
       function of the attraction $U$. Data for BCS (gray) is compared
       to DMFT results (blue line and symbols). 
       (c) The correlation strength
-      $\Theta=\frac{|S(0)-S(\infty)|}{S(\infty)}$ as a function of the
+      $\Theta=\frac{|S(i\omega\to0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$ as a function of the
       attraction $U$ across the BCS-BEC crossover. 
       (d) Comparison of the double occupation $D=\langle n_\up
       n_\dw\rangle$ as a function of attraction $U$ between BCS (gray
@@ -356,7 +415,7 @@ In figure...
       parameter $\phi$ as a function of temperature across the
       superconductor-to-normal phase transition. Data for $U=4$. The
       fit highlights the critical behavior with a mean-field exponent
-      $\beta=1/2$ (red dashed line).       
+      $\beta=1/2$ (red dashed line) and parameters $A\simeq 3.7$, $T_c=0.61$.       
         }
 \end{figure}
 

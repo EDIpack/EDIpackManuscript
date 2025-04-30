@@ -69,7 +69,7 @@
 \contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT (Fortran API)}{25}{subsection.5.1}%
 \contentsline {paragraph}{Results}{26}{section*.27}%
 \contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{27}{subsection.5.2}%
-\contentsline {paragraph}{Results}{28}{section*.28}%
+\contentsline {paragraph}{Results}{29}{section*.28}%
 \contentsline {subsection}{\numberline {5.3}Multi-orbital Hubbard (Triqs)}{29}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}Some model (W2Dynamics)}{29}{subsection.5.4}%
 \contentsline {subsection}{\numberline {5.5}Interacting Bernevig-Hughes-Zhang (Fortran)}{29}{subsection.5.5}%
