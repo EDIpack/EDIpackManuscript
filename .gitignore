@@ -5,3 +5,7 @@ edipack2.out
 edipack2.spl
 edipack2.synctex.gz
 repo
+.DS_Store
+*/*/.DS_Store
+edipack2_examples/AHM_EDIpack2EDIpy/data/.DS_Store
+edipack2_examples/Bethe_EDIpack/data/.DS_Store

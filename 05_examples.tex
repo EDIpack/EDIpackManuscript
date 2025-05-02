@@ -22,7 +22,7 @@ and with spin $\s$, $n_{i\s}=c^+_{i\s}c_{i\s}$ is the occupation
 operator and the first sum is over the nearest neighbor sites $\langle
 ij\rangle$. 
 The system is defined on a Bethe lattice with density of states
-$\rho(x)=\frac{1}{2D}\sqrt{D^2-x^2}$, where $D=2t$ is the
+$\rho(\e)=\frac{1}{2D}\sqrt{D^2-\e^2}$, where $D=2t$ is the
 half-bandwidth~\cite{Georges1996}.
 In DMFT this model is mapped
 onto a quantum impurity problem with an effective electronic bath
@@ -123,23 +123,20 @@ iloop=0;converged=.false.
 
 
 \paragraph{Results}
-In the following we present some results obtained by executing this
-simple program varying the interaction strenght $U$. 
-Differently from the previous case of a quantum impurity embedded in a
-given bath describing the progressive formation of a
-strongly renormalized Fermi liquid state, here the DMFT
-self-consistency allows to describe the transition from a correlated
-metal to a Mott insulating state.
+In the following we present some results obtained for the model
+introduced above. Specifically we focus on the testbed case of the interaction
+driven Mott transition, descriving the progressive
+transformation of a partially-filled band metallic state into a correlated insulator. 
 
-
-To illustrate this point, in panel **A** we report the evolution of
-the spectral function $-{\rm Im}G(\omega)/\pi$ as a function of
-$U$. Despite the *spiky* nature of the spectrum, due to the
+To illustrate this point, we report in panel (A) the evolution of
+the spectral function $-{\rm Im}G_{loc}(\omega)/\pi$ as a function of
+the interaction strenght $U$. Despite the {\it spiky} nature of the spectrum, due to the
 finite size (i.e. number of poles) of the discretized effective bath,
-one can clearly distinguish the renormalization of the central
-quasi-particle peak at low-energy and the concomitant formation of
-rather incoherent  high-energy features which will develop into
-Hubbard bands for $U>U_c$, with $U_c\simeq 2.8D$. 
+it is possible to clearly distinguish the characteristic features of
+the Mott transition. At low energy, we observe the renormalization of the 
+quasi-particle peak at the Fermi level ($\omega=0$). Concomitantly the
+system shows the formation of incoherent  high-energy features which
+will then develop into Hubbard bands in the Mott insulating state for $U>U_c$, with $U_c\simeq 2.8D$. 
 
 
 \begin{figure}[t!]
@@ -162,39 +159,53 @@ Hubbard bands for $U>U_c$, with $U_c\simeq 2.8D$.
         }
 \end{figure}
 
-
-
-In the panels (B) and (C) we further discuss the metal-insulator
-transition by showing the evolution of the self-energy functions.
-In panel (B) we report the self-energy ${\rm Im}\Sigma(i\omega)$
+The formation of a spectral gap separating the Hubbard bands in the
+Mott insulator is supported by the divergence, at the Fermi level, of the imaginary part of
+the self-energy function. Causality imposes that the real-part of
+this quantity becomes large near the singularity making it impossible
+to satisfy the quasi-particles poles equations
+$\omega+\mu-h^0-\e-\Re{\Sigma}(\omega)=0$, i.e. preventing coherent
+quasi-particles excitations near the Fermi level. 
+In the panels (B) and (C) we discuss this point  showing the evolution
+of the self-energy functions $\Sigma$.
+Specifically, in panel (B) we report the self-energy ${\rm Im}\Sigma(i\omega)$
 on the Matsubara axis in the low energy regime. Increasing $U$
-we observe the progressive growth of this function until it takes a
-diverging behavior crossing the critical interaction strenght. We
-recall that this behavior can be observed on the Matsubara axis
-because of the particle-hole symmetry of the problem.
+we observe the progressive growth of this function until a
+diverging behavior is acheived crossing the critical interaction
+strenght $U>U_c$.
+We recall that this behavior can be observed on the Matsubara axis
+because of the particle-hole symmetry of the problem which pins the
+$\Im{\Sigma}$ singularity at $\omega=0$.
+In panel (C), we report the corresponding behavior of the
+$\Re{\Sigma}(\omega)$ in small energy regime around the Fermi
+level. Augmenting the interaction strength $U$ leads to a sudden
+increase of this self-energy component until a discontinuous behavior
+is reached, associated to the divergence of the corresponding
+imaginary part.   
 
+A quantitative description of the transition is obtained from the
+quasi-particle renormalization constant $Z$, which correlates with the degree of
+localization of the electrons being equal to 1 for a non-interacting
+metal and 0 for the Mott insulator. This quantity is obtained from the
+linear term in the Fermi liquid expansion of the self-energy as
+$Z=(1-\tfrac{\partial\Re\Sigma}{\partial\omega}_{|_{\omega\rightarrow
+    0}})^{-1}$.
 Using the relation:
-
 $$
    \frac{\Im\Sigma(i\omega_n)}{\omega_n}_{|_{\omega_n\rightarrow 0}}=
    \frac{1}{\pi}\int_{\mathbb R}d\epsilon \frac{\Re\Sigma(\epsilon)}{\epsilon^2}=
    \frac{\partial\Re\Sigma}{\partial\omega}_{|_{\omega\rightarrow 0}}.
 $$
-we can extract the quasi-particle renormalization constant :math:`Z`
-from the linear behavior of ${\rm Im}\Sigma(i\omega)$ near
-$\omega=0$ in the metallic regime. The results are highlighted
-in the figure and the values of $Z$ are reported in the legend.
+we can extract $Z$ also from the linear behavior of ${\rm Im}\Sigma(i\omega)$ for 
+$\omega\to0$ in the metallic regime.
 
-Using the right hand side of the previous relation, we show in
-panel (C) the behavior of  ${\rm Re}\Sigma(\omega)$
-on the real axis around the Fermi level. Again, increasing $U$
-we observe the slope of the linear behavior to increase until the
-critical point is crossed and an insulating state is reached. On the
-real-axis this is signaled by the divergence of the imaginary part of
-the self-energy   ${\rm Im}\Sigma(\omega) \rightarrow -\infty$
-near the chemical potential, which here is set to zero by
-particle-hole symmetry. The corresponding real part shows a
-discontinuity visibile in the panel (C). 
+The linear fit highlighted in the panels (B)-(C) and the corresponding values of $Z$ are reported in the legend.
+In both cases we observe that increasing $U$ the slope of the linear behavior of the
+self-energy at low-energy increases upon increasing $U$, either on the
+Matsubara or real-axis. At the transition point the slope becomes
+infinite according to the divergence of the imaginary part of
+the self-energy  ${\rm Im}\Sigma(\omega) \rightarrow -\infty$,
+corresponding to $Z\to 0$. 
 
 
 \subsection{Attractive Hubbard model (Python API)}\label{SecExamplesAHM}
@@ -292,7 +303,7 @@ The iterative scheme for the solution of DMFT closely follows the
 sequence discussed in \secu{SecExamplesBetheDMFT}:   
 \begin{enumerate}
 \item Call the exact diagonalization {\bf impurity solver} {\tt
-    ed.solve} providing the set of bath parameters as input. 
+    ed.solve} providing the set of bath parameters $\vec{x}=\{V,h\}$  as input. 
 \item Using the dedicated
   input/output procedures {\tt ed.get\_sigma} we retrieve the self-energy functions  
   $\hat{\Sigma}(i\omega)$ and $\hat{S}(i\omega)$ on the 
@@ -313,7 +324,7 @@ sequence discussed in \secu{SecExamplesBetheDMFT}:
   $\GG_0^{-1}$ and $\FF_0^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
     relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}_{loc}(i\omega) +
     {\mathbf \Sigma}(i\omega)$ in Nambu space. 
-  \item Optimize the bath parameters  to best describe the  updated
+  \item Optimize the bath parameters $\vec{x}$ to best describe the  updated
     Weiss fields using \NAME provided conjugate gradient  fit
     procedure {\tt ed.chi2\_fitgf}.
 \end{enumerate}
@@ -342,6 +353,30 @@ ed.finalize_solver()
 \end{lstlisting}
 
 
+\begin{figure}[t!]
+  \includegraphics[width=\linewidth]{figures/figAHM.pdf}
+    \caption{\label{figEx2}%
+      \textbf{The BCS to BEC crossover.}
+      (a) Evolution of the spectral functions
+      $-\Im{G_{loc}(\omega)}/\pi$ as a function of increasing
+      attraction $U$. 
+      (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
+      function of the attraction $U$. Data for BCS (gray) is compared
+      to DMFT results (blue line and symbols). 
+      (c) The correlation strength
+      $\Theta=\frac{|S(i\omega\to0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$ as a function of the
+      attraction $U$ across the BCS-BEC crossover. 
+      (d) Comparison of the double occupation $D=\langle n_\up
+      n_\dw\rangle$ as a function of attraction $U$ between BCS (gray
+      solid line) and DMFT (blue solid line and symbols). 
+      (e) Superconducting order
+      parameter $\phi$ as a function of temperature across the
+      superconductor-to-normal phase transition. Data for $U=4$. The
+      fit highlights the critical behavior with a mean-field exponent
+      $\beta=1/2$ (red dashed line) and parameters $A\simeq 3.7$, $T_c=0.61$.       
+        }
+\end{figure}
+
 \paragraph{Results}
 We showcase here some results for the DMFT solution of the attractive
 Hubbard model across the BCS to BEC regime, with the aim of
@@ -367,7 +402,7 @@ limiting value $\phi\to 1/2$. The comparison with mean-field result
 suppressing the order parameter. This effect is particularly active in
 the intermediate regime, as captured by the behavior of the
 correlation strength
-$\theta=\frac{|S(i\omega\to9)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
+$\theta=\frac{|S(i\omega\to 0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
 reported in panel (C). Assuming a monotonic behavior of the anomalous
 self-energy function, this quantity estimates the ``strength'' of
 quantum fluctuations comparing the mean-field-like behavior at high
@@ -394,30 +429,6 @@ superconductor-to-normal transition. The mean-field nature of this
 transition is underlined by the scaling of  the solution near
 the critical point $\phi \simeq (T_c-T)^\beta$ with $\beta=1/2$ as
 predicted by mean-field calculations. 
-
-\begin{figure}[t!]
-  \includegraphics[width=\linewidth]{figures/figAHM.pdf}
-    \caption{\label{figEx2}%
-      \textbf{The BCS to BEC crossover.}
-      (a) Evolution of the spectral functions
-      $-\Im{G_{loc}(\omega)}/\pi$ as a function of increasing
-      attraction $U$. 
-      (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
-      function of the attraction $U$. Data for BCS (gray) is compared
-      to DMFT results (blue line and symbols). 
-      (c) The correlation strength
-      $\Theta=\frac{|S(i\omega\to0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$ as a function of the
-      attraction $U$ across the BCS-BEC crossover. 
-      (d) Comparison of the double occupation $D=\langle n_\up
-      n_\dw\rangle$ as a function of attraction $U$ between BCS (gray
-      solid line) and DMFT (blue solid line and symbols). 
-      (e) Superconducting order
-      parameter $\phi$ as a function of temperature across the
-      superconductor-to-normal phase transition. Data for $U=4$. The
-      fit highlights the critical behavior with a mean-field exponent
-      $\beta=1/2$ (red dashed line) and parameters $A\simeq 3.7$, $T_c=0.61$.       
-        }
-\end{figure}
 
 
 

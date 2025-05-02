@@ -13,20 +13,38 @@ def dens_bethe(x,d):
   dens_bethe=(2/(np.pi*d))*root
   return dens_bethe.real
 
-    
+
+
+def zimS(x,z):
+  y = (1.0-1.0/z)*x#-1/z*x
+  return y
+
+
 plt.rcParams["font.family"] = "Times"
 plt.rcParams['text.usetex'] = True
 plt.rc('text.latex', preamble=r'\usepackage{amsmath,xcolor,amssymb,latexsym}')
 plt.rcParams.update({'font.size': 24})
-plt.rcParams['figure.figsize'] = [21, 10]
+plt.rcParams['figure.figsize'] = [35, 10]
 
 
 fig = plt.figure()
+axs = plt.figure(layout="constrained").subplot_mosaic(
+    """
+    AABC
+    """
+)
+
+
+axs["A"].text(0.94, 0.04, r"(A)",transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
+axs["B"].text(0.94, 0.04, r"(B)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
+axs["C"].text(0.94, 0.04, r"(C)",transform=axs["C"].transAxes,fontsize=24, va='top', color='black')
+
+
 
 
 
 ##################################################################
-ax  = plt.gca()
+ax=axs["A"]
 
 print("Read Data DOS")
 rho1 = np.genfromtxt('U1.00/Gloc_realw.dat',skip_header=0);x1=rho1[:,0];y1=-rho1[:,1]/np.pi
@@ -59,34 +77,14 @@ ax.plot(x4    ,  y4+3*s    ,  lw=5, ls='solid',  c=c[3], label=r"$U=2.75$")
 ax.plot(x5    ,  y5+4*s    ,  lw=5, ls='solid',  c=c[4], label=r"$U=3.00$")
 
 ax.legend(loc='upper center', fontsize = '22', handlelength=1.5, framealpha=1,ncol=6);
-
-plt.savefig("figBetheDOS.pdf", bbox_inches='tight')
-plt.clf()
-plt.cla()
-plt.close()
 ##################################################################
 
 
 
 
 
-def zimS(x,z):
-  y = (1.0-1.0/z)*x#-1/z*x
-  return y
-
-
-axs = plt.figure(layout="constrained").subplot_mosaic(
-    """
-    AB
-    """
-)
-
-axs["A"].text(0.94, 0.04, r"(a)", transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
-axs["B"].text(0.94, 0.04, r"(b)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
-
 ##################################################################
-
-ax=axs["A"]
+ax=axs["B"]
 print("Read Data imSigma_iw")
 rho1 = np.genfromtxt('U1.00/impSigma_l11_s1_iw.ed',skip_header=0);x1=rho1[:,0];y1=rho1[:,1]
 rho2 = np.genfromtxt('U2.00/impSigma_l11_s1_iw.ed',skip_header=0);x2=rho2[:,0];y2=rho2[:,1]
@@ -124,12 +122,12 @@ ax.plot(xz    ,  zimS(xz,z4)    ,  lw=8, ls='solid',  c='blue', alpha=0.3)
 
 
 ax.legend(loc='lower left', fontsize = '22', handlelength=1, framealpha=1,ncol=1);
+##################################################################
 
 
 
-
-
-ax=axs["B"]
+##################################################################
+ax=axs["C"]
 print("Read Data imSigma_w")
 rho1 = np.genfromtxt('U1.00/impSigma_l11_s1_realw.ed',skip_header=0);x1=rho1[:,0];y1=rho1[:,2]
 rho2 = np.genfromtxt('U2.00/impSigma_l11_s1_realw.ed',skip_header=0);x2=rho2[:,0];y2=rho2[:,2]
@@ -160,10 +158,6 @@ fit,cov = optimize.curve_fit(zimS,x4[mask],y4[mask],1);z4=fit[0]
 yz4 = zimS(xz, z4)
 
 
-
-
-
-
 ax.set_xlim([-0.2, 0.2])
 ax.set_ylim([-0.53, 0.53])
 ax.set_xlabel(r'$\omega$')
@@ -187,20 +181,17 @@ ax.plot(xz    ,  zimS(xz,z4)    ,  lw=8, ls='solid',  c='blue', alpha=0.3)
 
 
 ax.legend(loc='lower left', fontsize = '22', handlelength=1, framealpha=1,ncol=1);
+##################################################################
 
 
-plt.savefig("figBetheImSigma.pdf", bbox_inches='tight')
+
+
+
+##################################################################
+##################################################################
+plt.savefig("figBethe.pdf", bbox_inches='tight')
 plt.clf()
 plt.cla()
 plt.close()
 ##################################################################
 ##################################################################
-##################################################################
-
-
-
-
-
-
-
-
