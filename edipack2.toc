@@ -1,4 +1,4 @@
-\babel@toc {english}{}
+\babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction and Motivation}{2}{section.1}%
 \contentsline {section}{\numberline {2}Installation}{3}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Structure}{3}{subsection.2.1}%
@@ -13,60 +13,60 @@
 \contentsline {subsection}{\numberline {3.2}The Fock basis states}{6}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Conserved quantum numbers}{7}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Interaction setup}{8}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Classes}{8}{subsection.3.5}%
-\contentsline {subsubsection}{\numberline {3.5.1}Sparse matrix}{8}{subsubsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5}Classes}{9}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Sparse matrix}{9}{subsubsection.3.5.1}%
 \contentsline {subsubsection}{\numberline {3.5.2}Sparse map}{9}{subsubsection.3.5.2}%
-\contentsline {subsubsection}{\numberline {3.5.3}Eigenspace}{9}{subsubsection.3.5.3}%
+\contentsline {subsubsection}{\numberline {3.5.3}Eigenspace}{10}{subsubsection.3.5.3}%
 \contentsline {subsubsection}{\numberline {3.5.4}GFmatrix}{10}{subsubsection.3.5.4}%
-\contentsline {subsection}{\numberline {3.6}Bath parametrization}{10}{subsection.3.6}%
-\contentsline {paragraph}{{\tt bath\_type}={\bf normal}}{10}{section*.3}%
+\contentsline {subsection}{\numberline {3.6}Bath parametrization}{11}{subsection.3.6}%
+\contentsline {paragraph}{{\tt bath\_type}={\bf normal}}{11}{section*.3}%
 \contentsline {paragraph}{{\tt bath\_type}={\bf hybrid}}{11}{section*.4}%
 \contentsline {paragraph}{{\tt bath\_type}={\bf replica}/{\bf general}}{11}{section*.5}%
-\contentsline {paragraph}{Bath Auxiliary Tools}{11}{section*.6}%
-\contentsline {paragraph}{Bath Replica (General)}{11}{section*.7}%
-\contentsline {paragraph}{Effective Bath}{11}{section*.8}%
+\contentsline {paragraph}{Bath Auxiliary Tools}{12}{section*.6}%
+\contentsline {paragraph}{Bath Replica (General)}{12}{section*.7}%
+\contentsline {paragraph}{Effective Bath}{12}{section*.8}%
 \contentsline {subsection}{\numberline {3.7}Lanczos based Diagonalization}{12}{subsection.3.7}%
-\contentsline {paragraph}{\bf normal}{12}{section*.9}%
-\contentsline {paragraph}{\bf superc/nonsu2}{12}{section*.10}%
+\contentsline {paragraph}{\bf normal}{13}{section*.9}%
+\contentsline {paragraph}{\bf superc/nonsu2}{13}{section*.10}%
 \contentsline {subsection}{\numberline {3.8}Dynamical correlation functions}{13}{subsection.3.8}%
-\contentsline {paragraph}{\bf normal}{14}{section*.11}%
+\contentsline {paragraph}{\bf normal}{15}{section*.11}%
 \contentsline {paragraph}{\bf superc}{15}{section*.12}%
 \contentsline {paragraph}{\bf nonsu2}{15}{section*.13}%
 \contentsline {subsection}{\numberline {3.9}Observables}{15}{subsection.3.9}%
-\contentsline {subsection}{\numberline {3.10}Reduced impurity density matrix}{15}{subsection.3.10}%
+\contentsline {subsection}{\numberline {3.10}Reduced impurity density matrix}{16}{subsection.3.10}%
 \contentsline {paragraph}{\bf normal}{16}{section*.14}%
 \contentsline {paragraph}{\bf superc/nonsu2}{17}{section*.15}%
 \contentsline {subsection}{\numberline {3.11}Bath Functions}{18}{subsection.3.11}%
 \contentsline {subsection}{\numberline {3.12}Bath Optimization}{18}{subsection.3.12}%
 \contentsline {subsection}{\numberline {3.13}Input/Output}{19}{subsection.3.13}%
-\contentsline {subsection}{\numberline {3.14}EDIpack2ineq: inequivalent impurities}{19}{subsection.3.14}%
-\contentsline {subsubsection}{\numberline {3.14.1}Structure}{19}{subsubsection.3.14.1}%
+\contentsline {subsection}{\numberline {3.14}EDIpack2ineq: inequivalent impurities}{20}{subsection.3.14}%
+\contentsline {subsubsection}{\numberline {3.14.1}Structure}{20}{subsubsection.3.14.1}%
 \contentsline {subsubsection}{\numberline {3.14.2}Core routines}{20}{subsubsection.3.14.2}%
 \contentsline {subsubsection}{\numberline {3.14.3}Inequivalent Baths}{20}{subsubsection.3.14.3}%
-\contentsline {subsubsection}{\numberline {3.14.4}Input/Output}{20}{subsubsection.3.14.4}%
-\contentsline {section}{\numberline {4}Interoperability}{20}{section.4}%
+\contentsline {subsubsection}{\numberline {3.14.4}Input/Output}{21}{subsubsection.3.14.4}%
+\contentsline {section}{\numberline {4}Interoperability}{21}{section.4}%
 \contentsline {subsection}{\numberline {4.1}C-bindings}{21}{subsection.4.1}%
 \contentsline {subsubsection}{\numberline {4.1.1}Installation}{21}{subsubsection.4.1.1}%
 \contentsline {subsubsection}{\numberline {4.1.2}Implementation}{21}{subsubsection.4.1.2}%
 \contentsline {paragraph}{\bf Variables}{21}{section*.16}%
 \contentsline {paragraph}{\bf Main}{21}{section*.17}%
-\contentsline {paragraph}{\bf Bath}{21}{section*.18}%
-\contentsline {paragraph}{\bf Input/Output}{21}{section*.19}%
+\contentsline {paragraph}{\bf Bath}{22}{section*.18}%
+\contentsline {paragraph}{\bf Input/Output}{22}{section*.19}%
 \contentsline {subsection}{\numberline {4.2}EDIpy2, the Python API}{22}{subsection.4.2}%
 \contentsline {subsubsection}{\numberline {4.2.1}Installation}{22}{subsubsection.4.2.1}%
 \contentsline {paragraph}{PyPi}{22}{section*.20}%
 \contentsline {paragraph}{Anaconda}{22}{section*.21}%
-\contentsline {subsubsection}{\numberline {4.2.2}Implementation}{22}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.2}Implementation}{23}{subsubsection.4.2.2}%
 \contentsline {paragraph}{\bf Global variables}{23}{section*.22}%
 \contentsline {paragraph}{\bf Solver functions}{23}{section*.23}%
-\contentsline {paragraph}{\bf Bath functions}{23}{section*.24}%
+\contentsline {paragraph}{\bf Bath functions}{24}{section*.24}%
 \contentsline {paragraph}{\bf Input/Output functions}{24}{section*.25}%
 \contentsline {paragraph}{\bf Auxiliary functions}{24}{section*.26}%
 \contentsline {subsection}{\numberline {4.3}TRIQS interface}{24}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}W2Dynamics interface}{24}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}EDIjl, the Julia API}{24}{subsection.4.5}%
-\contentsline {section}{\numberline {5}Examples}{24}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT (Fortran API)}{25}{subsection.5.1}%
+\contentsline {section}{\numberline {5}Examples}{25}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Bethe lattice DMFT}{25}{subsection.5.1}%
 \contentsline {paragraph}{Results}{26}{section*.27}%
 \contentsline {subsection}{\numberline {5.2}Attractive Hubbard model (Python API)}{27}{subsection.5.2}%
 \contentsline {paragraph}{Results}{29}{section*.28}%
