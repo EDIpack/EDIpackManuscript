@@ -1,3 +1,6 @@
+\documentclass[edipack2.tex]{subfiles}
+\begin{document}
+
 \section{Implementation}\label{SecEDIpack}
 Here we present an overview of the implementation of the
 different parts of the \NAME library. 
@@ -10,20 +13,28 @@ $$
 $$
 which describes a  multi-orbital interacting quantum
 impurity coupled to an electronic bath and to local, i.e. Holstein,
-phonons. We assuming for the moment that no particular symmetry
-holds. The impurity part of the Hamiltonian reads: 
+phonons. 
 \begin{equation}\label{Himp}
   \begin{split}
     \hat{H}_{imp} & = \hat{H}^0_{imp} + \hat{H}^{int}_{imp}\\
     \hat{H}^0_{imp} & =
     \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}d_{\b\sigma'}\\
-    %
+\end{split}
+\end{equation}
+
+We assume for the moment that no particular symmetry
+holds. The impurity part of the Hamiltonian can, in principle, consist of any set of
+two-body quantum operators of the form $U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$.
+
+A set of such operators is the celebrated Hubbard-Kanamori Hamiltonian: 
+
+\begin{equation}\label{Hint}
+  \begin{split}
     \hat{H}^{int}_{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
     &{\phantom =}- J_X\sum_{\a\neq
       \b}d^{+}_{\a\uparrow}d_{\a\downarrow}d^{+}_{\b\downarrow}d_{\b\uparrow}+J_P\sum_{\a
       \neq
       \b}d^{+}_{\a\uparrow}d^{+}_{\a\downarrow}d_{\b\downarrow}d_{\b\uparrow}\\
-    % 
 \end{split}
 \end{equation}
 
@@ -386,8 +397,27 @@ apply\_Cops} functions within {\tt ED\_SECTORS}.
 
 
 \subsection{Interaction setup}
-\NAME offers two distinct ways to setup the interaction term
-\equ{Himp}. 
+\NAME offers two distinct ways to setup the interaction term in \equ{Himp}. 
+The Hubbard-Kanamori interaction \equ{Hint} is supported natively, via the user-accessible
+variables {\tt ULOC}$=U$, {\tt UST}$=U^{'}$, {\tt JH}$=J$, {\tt JX}$=J_{x}$ and {\tt JP
+}$=J_{p}$.These parameters can be specified in the input file, and they will be read and 
+set if the flag {\tt ED\_USE\_KANAMORI} is set to {\tt T}. This is the default option.
+If the interaction Hamiltonian is provided via {\tt ED\_USE\_KANAMORI}, {\tt NORB} is limited to a maximum of {\tt 5}.
+
+Alternatively, the list of two-body operators can be provided by the user in a properly
+formatted text file, the name of which is specified in the {\tt UMATRIX\_FILE} input variable. The file has to have the suffix {\tt \\.restart}.
+Such file needs to be formatted in the following way
+
+\begin{lstlisting}[style=mybash]
+NORB BANDS
+i1 j1 k1 l1 U_i1j1k1l1
+i2 j2 k2 l2 U_i2j2k2l2
+...
+\end{lstlisting}
+
+where {\tt NORB} is the numer of orbitals. Empty lines and lines starting with {\tt \#, \%, !} are ignored. Notice the swapped indices in the coefficient with respect to the standard 2-body operator formulation $U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$. To enable reading an interaction matrix file, the flag {\tt ED\_READ\_UMATRIX} needs to be set in the input file. {\tt ED\_READ\_UMATRIX} and {\tt ED\_USE\_KANAMORI} are mutually exclusive, but they can be both false.
+Before the impurity problem is solved, the used can also provide interaction terms in the program or script. Extensive documentation is available at (\textcolor{red}{how should we do this?})
+All the interaction operators used in each call of the solver are listed and written in an output file. called {\tt UMATRIX\_FILE.used}.
 
 \subsection{Classes}
 The use of suitable objects enormously simplifies the  implementation
@@ -1575,3 +1605,5 @@ The module {\tt E2I\_IO} implements numerous functions which retrieve
 or evaluate on-the-fly any quantity accessible in \NAME for any given
 impurity (or all of them) using the same naming original convention
 defined in \NAME.       
+
+\end{document}
