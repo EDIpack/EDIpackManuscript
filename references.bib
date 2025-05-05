@@ -1714,13 +1714,6 @@ In non-stoechiometric ZnO vacant oxygen lattice points are assumed (figure 3); i
 	bdsk-url-1 = {https://link.aps.org/doi/10.1103/PhysRevB.75.045125},
 	bdsk-url-2 = {https://doi.org/10.1103/PhysRevB.75.045125}}
 
-@phdthesis{Civelli2007,
-	author = {Marcello Civelli},
-	date-added = {2021-04-30 15:50:56 +0200},
-	date-modified = {2021-04-30 15:51:19 +0200},
-	title = {Investigation of Strongly Correlated Electron Systems with Cellular Dynamical Mean Field Theory},
-	year = {2007}}
-
 @inbook{Volovik2007,
 	abstract = {Many quantum condensed matter systems are strongly correlated and strongly interacting fermionic systems, which cannot be treated perturbatively. However, physics which emerges in the low-energy corner does not depend on the complicated details of the system and is relatively simple.},
 	address = {Berlin, Heidelberg},
@@ -4205,6 +4198,21 @@ Program title: w2dynamics Program Files doi: http://dx.doi.org/10.17632/rjs7kmjm
 	school = {Universit\`a degli studi di Trieste},
 	title = {Chern invariant and orbital magnetization as local quantities},
 	year = {2014}}
+
+@phdthesis{BellomiaPhD,
+  title={Quantum information insights into strongly correlated electrons},
+  author={Bellomia, Gabriele},
+  year={2024},
+  school={SISSA},
+  journal={},
+  url={https://iris.sissa.it/handle/20.500.11767/138250}
+}
+
+@misc{BellomiaKMH,
+  title        = {Mottness, magnetism and topology of interacting Dirac fermions: a dynamical mean-field theory study of intra-orbital correlations},
+  author       = {Bellomia, Gabriele and Baumann, Karla and Amaricci, Adriano and Capone, Massimo},
+  note         = {in preparation}
+} %GBtodo placeholder: update as soon as it is announced on arxiv
 
 @article{Katsnelson2006NP,
 	abstract = {The so-called Klein paradox - unimpeded penetration of relativistic particles through high and wide potential barriers - is one of the most exotic and counterintuitive consequences of quantum electrodynamics (QED). The phenomenon is discussed in many contexts in particle, nuclear and astro- physics but direct tests of the Klein paradox using elementary particles have so far proved impossible. Here we show that the effect can be tested in a conceptually simple condensed-matter experiment by using electrostatic barriers in single- and bi-layer graphene. Due to the chiral nature of their quasiparticles, quantum tunneling in these materials becomes highly anisotropic, qualitatively different from the case of normal, nonrelativistic electrons. Massless Dirac fermions in graphene allow a close realization of Klein's gedanken experiment whereas massive chiral fermions in bilayer graphene offer an interesting complementary system that elucidates the basic physics involved.},
@@ -16430,3 +16438,49 @@ Program title: w2dynamics Program Files doi: http://dx.doi.org/10.17632/rjs7kmjm
 	year = {2014},
 	bdsk-url-1 = {https://science.sciencemag.org/content/346/6215/1344},
 	bdsk-url-2 = {https://doi.org/10.1126/science.1256815}}
+
+@article{Amaricci2022,
+title = {EDIpack: A parallel exact diagonalization package for quantum impurity problems},
+journal = {Computer Physics Communications},
+volume = {273},
+pages = {108261},
+year = {2022},
+issn = {0010-4655},
+doi = {https://doi.org/10.1016/j.cpc.2021.108261},
+url = {https://www.sciencedirect.com/science/article/pii/S0010465521003738},
+author = {A. Amaricci and L. Crippa and A. Scazzola and F. Petocchi and G. Mazza and L. {de Medici} and M. Capone},
+keywords = {Exact diagonalization, Quantum impurity models, Strongly correlated electrons, Dynamical mean-field theory},
+abstract = {We present EDIpack, an exact diagonalization package to solve generic quantum impurity problems. The algorithm includes a generalization of the look-up method introduced in Ref. [1] and enables a massively parallel execution of the matrix-vector linear operations required by Lanczos and Arnoldi algorithms. We show that a suitable Fock basis organization is crucial to optimize the inter-processors communication in a distributed memory setup and to reach sub-linear scaling in sufficiently large systems. We discuss the algorithm in details indicating how to deal with multiple orbitals and electron-phonon coupling. Finally, we outline the download, installation and functioning of the package.
+Program summary
+Program title: EDIpack CPC Library link to program files: https://doi.org/10.17632/2hxhw9zjg9.1 Code Ocean capsule: https://codeocean.com/capsule/3537659 Licensing provisions: GPLv3 Programming language: Fortran, Python External dependencies: CMake (>=3.0.0), Scifortran, MPI Nature of problem: The solution of multi-orbital quantum impurity systems at zero or low temperatures, including the effective description of lattice models of strongly correlated electrons, are difficult to determine. Solution method: Use parallel exact diagonalization algorithm to compute the low lying spectrum and evaluate dynamical correlation functions.}
+}
+
+@article{Blason,
+  title = {Exciton topology and condensation in a model quantum spin Hall insulator},
+  author = {Blason, Andrea and Fabrizio, Michele},
+  journal = {Phys. Rev. B},
+  volume = {102},
+  issue = {3},
+  pages = {035146},
+  numpages = {10},
+  year = {2020},
+  month = {7},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevB.102.035146},
+  url = {https://link.aps.org/doi/10.1103/PhysRevB.102.035146}
+}
+
+@article{Amaricci2023_excitons,
+  title = {Exciton condensation in strongly correlated quantum spin Hall insulators},
+  author = {Amaricci, A. and Mazza, G. and Capone, M. and Fabrizio, M.},
+  journal = {Phys. Rev. B},
+  volume = {107},
+  issue = {11},
+  pages = {115117},
+  numpages = {8},
+  year = {2023},
+  month = {Mar},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevB.107.115117},
+  url = {https://link.aps.org/doi/10.1103/PhysRevB.107.115117}
+}

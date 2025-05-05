@@ -104,7 +104,7 @@ to cut-off the unbounded dimensions of the local phonons Hilbert space.
 
 
 \paragraph{{\bf Remark}} As extensively discussed in
-\onlinecite{amaricci2022}, the inclusion of local phonons with
+\onlinecite{Amaricci2022}, the inclusion of local phonons with
 truncated dimensions ultimately amounts to a sequential application of
 the procedures defined for the electronic part, i.e. one per phonon
 mode. This includes a linear scaling of the dimensions with $N_{ph}$
@@ -229,8 +229,8 @@ Finally, the {\bf nonsu2} case consider the conservation of the total
 charge, whereas the spin symmetry group is not fully
 conserved. Although there many possible realization of this scenario,
 this particularly applies to the presence of local spin-orbit coupling
-$\vec{L}\cdot\vec{S}$~\cite{something}, the emergence of in-plane spin ordering~\cite{KM} or
-in-plane spin-triplet exciton condensation~\cite{ExcitonPRB,Amaricci,Blason}.  
+$\vec{L}\cdot\vec{S}$~\cite{something}, the emergence of in-plane spin ordering~\cite{BellomiaKMH} or
+in-plane spin-triplet exciton condensation~\cite{Amaricci2023_excitons,Blason}.  
 %
 From a computational point of view the construction of a symmetry
 sector corresponds to the determination of a injective map
@@ -279,7 +279,7 @@ D_{\SS_\dw}$. The map $\MM$ connects any such state to a Fock state
 $\ket{I}=\ket{I_\up}\ket{I_\dw}$ labelled by two integers
 $[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_s}$. For a thorough
 discussion about Fock basis organization in this case see
-\onlinecite{amaricci2022}. 
+\onlinecite{Amaricci2022}. 
 
 The presence of a symmetry induces a factorization of the Fock space,
 in turn inducing a block diagonal form to the Hamiltonian matrix.
@@ -287,7 +287,7 @@ Each block, labelled by the quantum numbers $\vec{Q}$, has dimension
 $D_{\SS(\vec{Q})}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix. In the {\bf
   normal} case $H_\SS$ takes a particularly symmetric form thanks to
-the product structure of the sector and its map~\cite{amaricci2022}.
+the product structure of the sector and its map~\cite{Amaricci2022}.
 The analysis of the spectrum is then reconducted to the inspection of
 the Hamiltonian in each symmetry sector. Should particular constraint
 holds the search can be limited to only particular sector, further
@@ -826,10 +826,10 @@ $$
 
 This operations easily takes over more than 80\% of the computation
 time, so its optimization is a crucial aspect in any diagonalization
-algorithms. In \onlinecite{amaricci2022} we covered in full details
+algorithms. In \onlinecite{Amaricci2022} we covered in full details
 some distrubuted memory massively parallel algorithms to address this
 specific issue.
-Here, using the same naming convention introduced in \cite{amaricci}, 
+Here, using the same naming convention introduced in \cite{Amaricci2022}, 
 we briefly outline the main strategy for the implementation of the MVP
 according to the value of {\tt ed\_mode}.
 
@@ -877,7 +877,7 @@ In an MPI setup the first three terms contains elements local in the
 memory of each node. These are stored separately from the non-local
 ones in any {\tt sparse\_matrix} representing $H_\SS$. 
 The MVP is carried out using the {\tt MPI\_AllGatherV} algorithm
-which, as discussed in \onlinecite{amaricci2022}, requires the
+which, as discussed in \onlinecite{Amaricci2022}, requires the
 reconstruction of the distributed input array any node producing a
 overflow in the MPI communication.  
 
@@ -1137,10 +1137,10 @@ where $E_n$ and $\ket{\psi_n}$ are the low lying eigenstates of the
 system stored in the {\tt state\_list}. 
 
 
-
+%GBtodo placeholder: revise this subsection
 \subsection{Reduced impurity density matrix}\label{sSecRDM}
 This version of the \NAME library features the calculation of the
-impurity Reduced Density Matrix (iRDM), enabling the analysis of
+impurity Reduced Density Matrix (iRDM), extending the algorithm introduced in \onlinecite{BellomiaPhD} so to enable the analysis of
 entanglement properties of the quantum impurity for any value of {\tt
   ed\_mode}.
 To simplify the discussion in this section we take the zero
@@ -1478,6 +1478,8 @@ parameter generally loosens up the exit conditions of the minimization.
 Notes on the norm function: a) the definition for conventional
 matrices, ;b) the definition for the replica/general case where you
 can choose between different norm defition.
+{\color{red} I (GB) can take care of this, as I introduced the "elemental" norm in the code.}
+%GBtodo placeholder
 
 
 
