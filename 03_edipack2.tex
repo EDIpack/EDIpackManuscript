@@ -1141,66 +1141,76 @@ Local observables and correlations are defined by the thermal average  $\ibra \O
 \Tr{\left[e^{-\beta H}\OO\right]}/Z$. This can be efficiently evaluated at zero and
 low temperature using the stored low energy part of the spectrum
 leveraging on the exponential cutoff from the Boltzmann factor:
-$$
-\ibra \OO\iket  = \tfrac{1}{Z}\sum_n e^{-\beta
-  E_n}\bra{\psi_n}\OO\ket{\psi_n}
-$$
+\begin{equation}
+    \ibra \OO\iket  = \tfrac{1}{Z}\sum_n e^{-\beta
+  E_n}\bra{\psi_n}\OO\ket{\psi_n},
+  \label{eq:thermal_average}
+\end{equation}
 where $E_n$ and $\ket{\psi_n}$ are the low lying eigenstates of the
 system stored in the {\tt state\_list}. 
 
 
-%GBtodo placeholder: revise this subsection
 \subsection{Reduced impurity density matrix}\label{sSecRDM}
 This version of the \NAME library features the calculation of the
-impurity Reduced Density Matrix (iRDM), extending the algorithm introduced in \onlinecite{BellomiaPhD} so to enable the analysis of
-entanglement properties of the quantum impurity for any value of {\tt
-  ed\_mode}.
+impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), extending 
+the algorithm introduced in \onlinecite{BellomiaPhD} so to enable the
+analysis of entanglement properties of the quantum impurity for any value
+of {\tt ed\_mode}.
 To simplify the discussion in this section we take the zero
 temperature limit and consider the presence of a non-degenerate
 groundstate $\ket{\psi}$ populating the {\tt state\_list}.
 The generalization to the presence of degenerate states or the finite
-temperature regime are straightforward.
-The groundstate belongs to a given symmetry sector $\SS$ and it
-represented in the Fock basis as:  $\ket{\psi} = \sum_I a_I \ket{I}$. 
-The density matrix $\rho$ is defined as:
+temperature regime are straightforward, as it amounts to defining an
+average over degenerate/thermal states $\ibra\rho^\mathrm{imp}\iket$, 
+akin to \equ{eq:thermal_average}.
+The given pure state belongs to a unique symmetry sector $\SS$ and it
+is represented in the Fock basis as $\ket{\psi} = \sum_I a_I \ket{I}$. 
+The corresponding pure density matrix $\rho$ is thus explicitly decomposed as:
 $$
-\rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_\mathrm{s}}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_\mathrm{s}}} \rho_{nm} \ket{n}\bra{m} 
+\rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_\mathrm{s}}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_\mathrm{s}}} \rho_{nm} \ket{n}\bra{m}.
 $$
-The iRDM is obtained from this by tracing out the bath degrees of
-freedom: $\rho^{i}=Tr_{b}\rho$. The summation appearing in the
-previous expressions becomes quickly unmaneagable with the system
-size. To overcome this issue we implemented a fast algorithm
-leveraging on symmetry sector and map sparsity.
-Using quantum number conservation the summation extrema get reducedto
-the size $D_S$ of the sector $S$ to which the groundstate (or in
+The iRDM is obtained from $\rho$ by tracing out the bath degrees of
+freedom: $\rho^\mathrm{imp}=\Tr_\mathrm{bath}\rho$. The summations appearing in the
+previous expressions become quickly unmanageable with the system
+size, as their extrema scale exponentially with $N_\mathrm{s}$. 
+To overcome this issue we implemented a fast algorithm
+leveraging on the decomposition of the Fock space into symmetry sectors
+and the subsequent map sparsity.
+Using quantum number conservation the summation extrema get reduced to
+the size $D_\SS$ of the sector $\SS$ to which the groundstate (or in
 general any eigenstate) belongs. 
 Next we analyze the groundstate expansion on the Fock states, splitting the bit representation of any state $\ket{I}$ into
 their spin-dependent impurity and bath parts as $\ket{I} = \ket{
-  i_\uparrow\,  b_\uparrow\, i_\downarrow \, b_\downarrow}$. Each bit
-set span a space of dimension $D^\a_{imp}$ or $D^\s_{bath}$. 
-Finally, we store into the {\tt sparse\_map} ${\cal S}$, for every impurity configuration 
-$i_\s =1,\dots,D^\s_{imp}$ (key) the corresponding bath states $j\in[1,\dots,D^\s_{bath}]$
-(values) which contribute to that key, as detailed in
-\secu{CodeSparseMap}.
+  i_\uparrow\,  b_\uparrow\, i_\downarrow \, b_\downarrow}$. Each bitset 
+span a space of dimension $D^\a_{imp}$ or $D^\s_{bath}$. 
+Finally, as detailed in \secu{CodeSparseMap}, we store into the {\tt sparse\_map} ${\cal S}$, 
+for every impurity configuration 
+$i_\s =1,\dots,D^\s_{imp}$ (\emph{key}), the bath states 
+$j\in[1,\dots,D^\s_{bath}]$ (\emph{values}) that satisfy the conservation law defined
+by the \texttt{ed\_mode} variable.
 We indicate with ${\cal D}^\s_{i}$ the number of values for the key $i_\s$.
 The fast summation algorithm for the evaluation of the iRDM takes on a
 different form for the two cases {\bf normal} and {\bf superc/nonsu2},
 as outlined below.
 
+%GBtodo placeholder: revise this subsection from this point onwards
 \paragraph{{\bf normal}}
-In this case we take advantage of the Fock and sector spin resolved
-factorization discussed in \secu{sSecQNs}. As such we can also split
-impurity and bath bits independently for each spin configuration:
+In this case we take advantage of the Fock space and sector spin-resolved
+factorization, discussed in depth in \secu{sSecQNs}. We can indeed split the
+global bitset in spin-resolved impurity and bath states, as
 $$
 \ket{\vec{n}} =
 \ket{\vec{n}_\up}\otimes \ket{\vec{n}_\dw} =
-\ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}
+\ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}.
 $$
-In addition it should be noted that creation (destruction) operators at
+We note that creation (destruction) operators at
 position $p$ for spin $\sigma$  $c^+_{p\sigma}$ ($c^+_{p\sigma}$) do
-not operate on the opposite spin so that they pass through without
-taking any fermionic sign. Finally, we observe that local iRDM admits
-only diagonal terms in the {\bf normal} case. Thus we obtain for the iRDM:
+not operate on the opposite spin $\bar{\sigma}$ so that they pass through 
+the $\ket{n_{\bar{\sigma}}}$ bitset without taking any fermionic sign. 
+Finally, we observe that local iRDM admits
+only {\color{red} diagonal} terms in the {\bf normal} case. {\color{red} [GB: this is a wrong statement: do you mean \emph{spin-}diagonal?]}
+
+Thus we obtain for the iRDM:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
@@ -1332,9 +1342,9 @@ for the iRDM we obtain:
 \end{equation}
 The numerical implementation requires few modifications with respect
 to the previous case. In particular it is important to recall that the
-ordering of the key-value pairs in the {\tt sparse\_map} in this case
-follow a contiguous ordering and that their decomposition is necessary
-to reconstruct the correct Fock state index, see the following
+ordering of the \emph{key-value} pairs in the {\tt sparse\_map} in this case
+follows a contiguous ordering and that their decomposition is necessary
+to reconstruct the correct Fock state index. See the following
 listing:
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 do IimpUp=0,2**Norb-1
