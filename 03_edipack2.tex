@@ -9,7 +9,7 @@ different parts of the \NAME library.
 We consider a general quantum impurity problem defined by the
 following Hamiltonian:
 $$
-\hat{H} = \hat{H}_{imp} + \hat{H}_{bath} + \hat{H}_{hyb} + \hat{H}_{ph} + \hat{H}_{e-ph}
+\hat{H} = \hat{H}_{imp} + \hat{H}_{bath} + \hat{H}_{hyb} + \hat{H}_\mathrm{ph} + \hat{H}_{e-ph}
 $$
 which describes a  multi-orbital interacting quantum
 impurity coupled to an electronic bath and to local, i.e. Holstein,
@@ -71,7 +71,7 @@ The bath part and its coupling to the impurity has the form:
     \hat{H}_{hyb} &= \sum_p\sum_{\a\b\sigma\sigma'}V^p_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}a_{p\b\sigma'}+H.c. \\
 \end{split}
 \end{equation}
-where $p=1,\dots,N_{bath}$ is an index running over a finite number of
+where $p=1,\dots,N_\mathrm{bath}$ is an index running over a finite number of
 bath elements, $a_{p\alpha\sigma}$ ($a^+_{p\alpha\sigma}$) are the destruction (creation) operators for
 the bath electrons with index $p$, with orbital $\alpha$ and
 spin $\sigma$.
@@ -87,7 +87,7 @@ Finally, the electron-phonon part of the quantum impurity problems is
 described by the Hamiltonian terms: 
 \begin{equation}\label{Hph}
   \begin{split}
-    \hat{H}_{ph}&=\sum_q \omega_{0q} b_q^+b_q\\
+    \hat{H}_\mathrm{ph}&=\sum_q \omega_{0q} b_q^+b_q\\
     % 
     \hat{H}_{e-ph} &= \sum_q\sum_{\a\b\sigma} g_{\a\b} d^+_{\a\sigma}d_{\b\sigma}(b_q+b_q^+)
 \end{split}
@@ -99,7 +99,7 @@ Although feasible, dealing with more than one phonon mode becomes
 quickly computationally very demanding, thus in the rest of the this
 work we shall consider $N_q=1$. 
 In the following we consider a bath discretized into a  number
-of bath degrees of freedom and a finite number of available phonons $N_{ph}$,
+of bath degrees of freedom and a finite number of available phonons $N_\mathrm{ph}$,
 to cut-off the unbounded dimensions of the local phonons Hilbert space.
 
 
@@ -107,7 +107,7 @@ to cut-off the unbounded dimensions of the local phonons Hilbert space.
 \onlinecite{Amaricci2022}, the inclusion of local phonons with
 truncated dimensions ultimately amounts to a sequential application of
 the procedures defined for the electronic part, i.e. one per phonon
-mode. This includes a linear scaling of the dimensions with $N_{ph}$
+mode. This includes a linear scaling of the dimensions with $N_\mathrm{ph}$
 and of course largely limit the available degrees of freedom to
 describe electronic states. In the rest of the paper we focus
 specifically on the electronic part of the quantum impurity problem,
@@ -115,27 +115,27 @@ referring to the phonons in specific sections when their presence
 introduces non-trivial modifications.  
 
 
-More specifically, we consider a system composed of $N_{imp}=1$
-impurities, i.e. a single impurity problem, $N_{bath}$ bath elements
-and $N_{ph}$ phonons. The size of the system is determined by
+More specifically, we consider a system composed of $N_\mathrm{imp}=1$
+impurities, i.e. a single impurity problem, $N_\mathrm{bath}$ bath elements
+and $N_\mathrm{ph}$ phonons. The size of the system is determined by
 the number of phonons (fixed) and that of {\it electronic} levels, i.e. levels with a local
 electronic Hilbert space
-$\HH_e=\{\ket{0},\ket{\up},\ket{\dw},\ket{\up\dw} \}$. 
+$\HH_\mathrm{e}=\{\ket{0},\ket{\up},\ket{\dw},\ket{\up\dw} \}$. 
 Due to is internal structure, the single impurity contains
 $N_i= N_\a$ electronic levels.
 The total number of levels is then determined by
-the electronic levels in the bath $N_b$. This is a function of the bath topology and $N_{bath}$,
+the electronic levels in the bath $N_\mathrm{b}$. This is a function of the bath topology and $N_\mathrm{bath}$,
 i.e. the number of bath elements. In the simplest case each bath
 element corresponds to an independent electronic levels coupled to the
-impurity, thus $N_b\equiv N_{bath}$. 
-We indicate with $N_s=N_i + N_b$ the total number of electronic levels. 
+impurity, thus $N_\mathrm{b}\equiv N_\mathrm{bath}$. 
+We indicate with $N_\mathrm{s}=N_i + N_\mathrm{b}$ the total number of electronic levels. 
 
 The setup of the general quantum impurity problem is implemented in
 different parts of the \NAME software. The dimensions of the system
 are controlled by input variables {\tt Nspin}$=N_\sigma$,
-{\tt Norb}$=N_\a$ and {\tt Nbath}$=N_{bath}$ in {\tt
+{\tt Norb}$=N_\a$ and {\tt Nbath}$=N_\mathrm{bath}$ in {\tt
   ED\_INPUT\_VARS}. These are used to
-determine the variables {\tt Ns}$=N_s$ and $N_b$, defined in the global
+determine the variables {\tt Ns}$=N_\mathrm{s}$ and $N_\mathrm{b}$, defined in the global
 memory pool {\tt ED\_VARS\_GLOBAL}, using the functions contained
 in {\tt ED\_SETUP}. 
 The user can define the local non-interacting Hamiltonian
@@ -149,27 +149,28 @@ requires a more involved procedure which will be illustrated in
 
 \subsection{The Fock basis states}\label{sSecBasis}
 The Fock space of the quantum impurity problems is defined as
-$\FF=\FF_e\otimes \FF_{ph}$, with $\FF_e=\bigoplus_{n=0}^{N_s}
-S_-\HH_e^{\otimes n}$ the electronic Fock space,  $\FF_{ph}=\bigoplus_{n=0}^{N_q}S_+\HH_{ph}^{\otimes n}$ the
-phonon Fock space,  $\HH_{ph}=\{\ket{0},\ket{1},\dots,\ket{N_{ph}}\}$ is the local phonon Hilbert space
+$\FF=\FF_\mathrm{e}\otimes \FF_\mathrm{ph}$, with $\FF_\mathrm{e}=\bigoplus_{n=0}^{N_\mathrm{s}}
+S_-\HH_\mathrm{e}^{\otimes n}$ the electronic Fock space,  $\FF_\mathrm{ph}=\bigoplus_{n=0}^{N_q}S_+\HH_\mathrm{ph}^{\otimes n}$ the
+phonon Fock space,  $\HH_\mathrm{ph}=\{\ket{0},\ket{1},\dots,\ket{N_\mathrm{ph}}\}$ is the local phonon Hilbert space
 and ($S_-$)  $S_+$ the (anti-)symmetrization operator.  
 The total dimension of the Fock space is
-$D=D_e\cdot D_{ph}=4^{N_s}\cdot (N_{ph}+1)$ making the exponential
+$D=D_\mathrm{e}\cdot D_\mathrm{ph}=4^{N_\mathrm{s}}\cdot (N_\mathrm{ph}+1)$ making the exponential
 growth with the number of electron levels transparent. 
 The quantum states in the space $\FF$ are naturally represented in
 terms of occupation number formalism of the second quantization,
 i.e. the Fock basis.
-For a system of $N_s$ electrons each Fock state
+For a system of $N_\mathrm{s}$ electrons each Fock state
 reads $\ket{p}\ket{\vec{n}}$ with
-$$
-\ket{\vec{n}}=\ket{\vec{n}_\up}{\vec{n}_\dw}=\ket{n_{1\up},\dots,n_{N_s\up},n_{1\dw},\dots,n_{N_s\dw}}
-$$ 
-where $p=1,\dots,N_{ph}$ is the number of local phonons while $n_{a\sigma}=0,1$ signals the absence or the
+\begin{equation}
+    \ket{\vec{n}}=\ket{\vec{n}_\up}\ket{\vec{n}_\dw}=\ket{n_{1\up},\dots,n_{N_\mathrm{s}\up},n_{1\dw},\dots,n_{N_\mathrm{s}\dw}},
+    \label{eq:FockState_|nupndw>}
+\end{equation}
+where $p=1,\dots,N_\mathrm{ph}$ is the number of local phonons while $n_{a\sigma}=0,1$ signals the absence or the
 presence of an electron with spin $\sigma$ at the level $a$.
 The electronic part of the Fock state $\ket{\vec{n}}$ is represented as a string of
-zeros and ones of length $2N_s$. Thus, any such state can  be encoded
-in a computer using a sequence of $2N_s$ bits or, analogously, as a
-given integer $I=0,\dots 2^{2N_s}-1$ so that $\ket{\vec{n}}=\ket{I}$.  
+zeros and ones of length $2N_\mathrm{s}$. Thus, any such state can  be encoded
+in a computer using a sequence of $2N_\mathrm{s}$ bits or, analogously, as a
+given integer $I=0,\dots 2^{2N_\mathrm{s}}-1$ so that $\ket{\vec{n}}=\ket{I}$.  
 Together with the basis states one defines  destruction and creation 
 operators, respectively $c_{a\s}$ and $c^+_{a\s}$, which acts on the
 Fock space as: 
@@ -250,13 +251,13 @@ sectors.
   {\tt ed\_mode} & {\it Quantum Numbers} & {\it Sector Dimension} \\
   \hline
   {\bf normal} & $[N,S_z]\equiv[N_\up,N_\dw]$ &
-                                                $\binom{N_s}{N_\up}\binom{N_s}{N_\dw}$
+                                                $\binom{N_\mathrm{s}}{N_\up}\binom{N_\mathrm{s}}{N_\dw}$
   \\
   \hline
-  {\bf superc} & $S_z\equiv N_\up-N_\dw$ &  $\sum_m 2^{N_s-S_z-2m}\binom{N_s}{N_s-S_z-2m}\binom{S_z+2m}{m}$
+  {\bf superc} & $S_z\equiv N_\up-N_\dw$ &  $\sum_m 2^{N_\mathrm{s}-S_z-2m}\binom{N_\mathrm{s}}{N_\mathrm{s}-S_z-2m}\binom{S_z+2m}{m}$
   \\
   \hline
-  {\bf nonsu2} & $N \equiv[N_\up+N_\dw$ & $\binom{2N_s}{N}$ \\ 
+  {\bf nonsu2} & $N \equiv N_\up+N_\dw$ & $\binom{2N_\mathrm{s}}{N}$ \\ 
  \hline
 \end{tabularx}
 \end{center}
@@ -267,7 +268,7 @@ sectors.
 The {\bf normal} case requires a brief remark. Because of the
 independent conservation of $N_\up$ and $N_\dw$, the local Hilbert
 space and the electronic Fock can be factorizes as, respectively,
-$\HH=\HH_\up\otimes\HH_\dw$, $\FF_e = \FF_{e\up}\otimes \FF_{e\dw}$.  
+$\HH=\HH_\up\otimes\HH_\dw$, $\FF_\mathrm{e} = \FF_{e\up}\otimes \FF_{e\dw}$.  
 Accordingly any Fock state is written as $\ket{\vec{n}_\up}\ket{\vec{n}_\dw}$, the symmetry sector can be written as  $\SS_{\vec{Q}} = \SS_{N_\up}\otimes
 \SS_{N_\dw}$ and, correspondingly, the sector map splits in two
 mutually exclusive ones $\MM = \MM_\up
@@ -277,7 +278,7 @@ sector is labelled by two integers $[i_\up,i_\dw]$,
 $i_\sigma=1,\dots,D_{\SS_\sigma}$ such that $i=i_\up + i_\dw
 D_{\SS_\dw}$. The map $\MM$ connects any such state to a Fock state
 $\ket{I}=\ket{I_\up}\ket{I_\dw}$ labelled by two integers
-$[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_s}$. For a thorough
+$[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_\mathrm{s}}$. For a thorough
 discussion about Fock basis organization in this case see
 \onlinecite{Amaricci2022}. 
 
@@ -416,8 +417,8 @@ i2 j2 k2 l2 U_i2j2k2l2
 \end{lstlisting}
 
 where {\tt NORB} is the numer of orbitals. Empty lines and lines starting with {\tt \#, \%, !} are ignored. Notice the swapped indices in the coefficient with respect to the standard 2-body operator formulation $U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$. To enable reading an interaction matrix file, the flag {\tt ED\_READ\_UMATRIX} needs to be set in the input file. {\tt ED\_READ\_UMATRIX} and {\tt ED\_USE\_KANAMORI} are mutually exclusive, but they can be both false.
-Before the impurity problem is solved, the used can also provide interaction terms in the program or script. Extensive documentation is available at (\textcolor{red}{how should we do this?})
-All the interaction operators used in each call of the solver are listed and written in an output file. called {\tt UMATRIX\_FILE.used}.
+Before the impurity problem is solved, the user can also provide interaction terms in the program or script. Extensive documentation is available at (\textcolor{red}{how should we do this?})
+All the interaction operators used in each call of the solver are listed and written in an output file, called {\tt UMATRIX\_FILE.used}.
 
 \subsection{Classes}
 The use of suitable objects enormously simplifies the  implementation
@@ -445,56 +446,65 @@ non-zero elements on each row, to optimize the memory footprint and
 to guarantee $O(1)$ access  to any element of the matrix, which are
 crucial aspect to speed-up the execution of the MVP. 
 
+%GBtodo placeholder: I passed on this already (except I don't like the minipage of the listings)
 \subsubsection{Sparse map}\label{CodeSparseMap}
 As it will be evident in the following \secu{sSecRDM}, there are cases in
 which the sector construction requires to store, for any sector state,
 disjoint information about the corresponding Fock state.
 Let's consider a Fock state $\ket{I}$. Its bit decomposition
-$\ket{\vec{n}}$ can be further split into chunks of bit corresponding,
-for instance to impurity and bath degrees of freedom as 
-$\ket{\vec{n}}=\ket{\vec{i}_\up\,\vec{b}_\up\,\vec{i}_\dw\,\vec{b}_\dw}$.  
-The module {\tt ED\_SPARSE\_MAP} implements an hash-table {\tt
-  sparse\_map}, which is included as an element in the {\tt sector} object and  
-which stores  for every impurity configurations $\vec{i}_\s$ (key) the
-bath states $\vec{b}_\s$ (values) corresponding to it.
-The {\tt sparse\_map} ${\cal S}$ elements are constructed upon call in {\tt
-  build\_sector} for any value of {\tt ed\_mode} using different
-algorithms.
+$\ket{\vec{n}}$ can be further split into arbitrarily grouped chunks of bits.
+For instance, we can choose to group the bits into impurity and bath degrees of freedom,
+as $\ket{\vec{n}}=\ket{\vec{i}_\up\,\vec{b}_\up\,\vec{i}_\dw\,\vec{b}_\dw}$, where we 
+highlight the overall ordering in spin-up and spin-down parts underlying the whole
+codebase (see \equ{eq:FockState_|nupndw>} and the subsequent discussion).  
+The module {\tt ED\_SPARSE\_MAP} implements an hash-table {\tt sparse\_map}, 
+as a component of the {\tt sector} object, which stores for every impurity 
+configuration $\vec{i}_\s$ (\emph{key}) all the possible bath states $\vec{b}_\s$ (\emph{values})
+that are compatible with the given conserved quantum numbers (see \secu{sSecQNs}).
+The {\tt sparse\_map} ${\cal S}$ objects are constructed upon call of the {\tt
+  build\_sector} subroutine, automatically dispatched to a different algorithm 
+for each value of {\tt ed\_mode}.
 In the {\bf normal} case, the sector object contains two {\tt
   sparse\_maps} ${\cal S}_{\s=\up,\dw}$, in line with the
 spin dependent factorization of the Fock and sector states: 
 $\ket{J}=\ket{J_\up}\otimes\ket{J_\dw} \xleftarrow{\MM}
 \ket{j_\up}\otimes\ket{j_\dw}=\ket{j}$.
-The sparse maps are build as follows. 
-For any spin state $\ket{J_\s}=\ket{{vec{i}_{\s}\vec{b}_{\s}}$ of the sector
-the key is determined by the integer $I_\s$ corresponding to the
-impurity bit set $\vec{i}_\s$. The values are given by any 
-integer $B_\s$ corresponding to any bath bit set
-$\vec{b_\s}$ associated with $\vec{i}_\s$.
-Thus, any given combination of key-value
-reconstructs an integer $J_\s$ representing the Fock states in the
+The sparse maps are built as follows. 
+For any spin state of the sector $\ket{J_\s}=\ket{{\vec{i}_{\s}\vec{b}_{\s}}}$,
+the \emph{key} is determined by the integer $I_\s$ corresponding to the
+impurity bitset $\vec{i}_\s$. The \emph{values} are given by any
+integer $B_\s$ corresponding to any bath bitset
+$\vec{b_\s}$ associated with $\vec{i}_\s$ by the conservation law of the 
+given sector: $\mathtt{sum}(\vec{i}_\s) + \mathtt{sum}(\vec{b}_\s) = \mathtt{popcnt}(I_\s) + \mathtt{popcnt}(B_\s)= N_\s$.
+Thus, any given \emph{key-value} combination 
+reconstructs an integer $J_\s$ representing a Fock state in the
 given spin sector according to the rule $J_s = I_\s +
-2^{N_{imp}}B_\s$, where $N_{imp}$ is the number of impurity bits. 
+2^{N_\mathrm{imp}}B_\s$, where $N_\mathrm{imp}$ is the number of impurity bits. 
 
 In the {\bf superc/nonsu2} case the construction of the unique sparse
 map is similar. For any Fock state $\ket{J}$ corresponding to sector
 state $\ket{j}$ we consider the four integers $I_\up, B_\up, I_\dw,
-B_\dw$ corresponding, respectively, to the bit sets
-$\vec{i}_\up,\vec{b}_\up,\vec{i}_\dw,\vec{b}_\dw}$ decomposition the
+B_\dw$ corresponding, respectively, to the bitset
+$\ket{\vec{i}_\up,\vec{b}_\up,\vec{i}_\dw,\vec{b}_\dw}$ decomposition the
 state. These integers fulfill the relation
 $
-J =I_\up +  B_\up2^{N_{imp}} + (I_\dw +  B_\dw2^{N_{imp}})2^{N_s}
+J =I_\up +  B_\up2^{N_\mathrm{imp}} + (I_\dw +  B_\dw2^{N_\mathrm{imp}})2^{N_\mathrm{s}}
 $
-To obtain a contiguous memory pattern we define as a key of the sparse
-map the combination $I_\up + I_\dw2^{N_{imp}}$ and as corresponding
-  values the integer $B_\up + B_\dw2^{N_b}$. Where needed the correct
-  bit sets and Fock state can be reconstructed with simple algebra at
-  no additional cost.   
+To obtain a contiguous memory pattern we define as a \emph{key} of the sparse
+map the combination $I_\up + I_\dw2^{N_\mathrm{imp}}$ and as corresponding
+\emph{values} the integers $B_\up + B_\dw2^{N_\mathrm{b}}$, fulfilling the
+corresponding conservation laws: 
+$\mathtt{popcnt}(I_\up + I_\dw2^{N_\mathrm{imp}}) + \mathtt{popcnt}(B_\up + B_\dw2^{N_\mathrm{b}}) = N_\up + N_\dw$
+for the \textbf{nonsu2} case and
+$\mathtt{popcnt}(I_\up + B_\up2^{N_\mathrm{imp}}) - \mathtt{popcnt}(I_\dw + B_\dw2^{N_\mathrm{imp}}) = S_z$
+for the \textbf{superc} case.
+Where needed, the corresponding bitset and Fock state can be reconstructed 
+with simple algebra at no additional cost.
 
 
 
 \setbox0=\hbox{%
-  \begin{minipage}{0.5\linewidth}
+  \begin{minipage}{0.48\linewidth}
     \center{\bf normal}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 i=0
@@ -523,7 +533,7 @@ enddo
 \savestack{\listingA}{\box0}
 
 \setbox0=\hbox{%
-  \begin{minipage}{0.5\linewidth}
+  \begin{minipage}{0.52\linewidth}
     \center{\bf superc/nonsu2}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 i=0
@@ -531,12 +541,14 @@ do Idw=0,2**Ns-1
   ndw_= popcnt(idw)
   do Iup=0,2**Ns-1
     nup_ = popcnt(iup)
-    !superc 
-    sz_  = nup_ - ndw_
-    if(sz_ /= self%Sz)cycle
-    !nonsu2 
-    !nt_  = nup_ + ndw_
-    !if(nt_ /= self%Ntot)cycle 
+    select case (ed_mode)
+      case('superc') 
+        sz_  = nup_ - ndw_
+        if(sz_ /= self%Sz)cycle
+      case('nonsu2') 
+        nt_  = nup_ + ndw_
+        if(nt_ /= self%Ntot)cycle 
+    end select
     i=i+1 
     !...
     iImpUp  = ibits(iup,0,Norb)
@@ -626,7 +638,7 @@ The bath parametrization is a key feature in determining the properties
 of the quantum impurity problem.
 Following the structure of Eq.~\ref{Hbath} the bath can be
 parametrized by two terms: the Hamiltonian matrices $h^p$ and the
-amplitudes $V^p$, for $p=1,\dots,N_{bath}$.
+amplitudes $V^p$, for $p=1,\dots,N_\mathrm{bath}$.
 Internally, the bath is represented by a dedicated object {\tt
   effective\_bath} defined in {\tt ED\_VARS\_GLOBAL}. 
 On the
@@ -636,14 +648,14 @@ This ensures that a local array is always conserved by the user, while
 it prevents direct access to the internal copy.
 
 
-The bath topology, i.e. the links between the $N_b$ electronic levels
+The bath topology, i.e. the links between the $N_\mathrm{b}$ electronic levels
 assigned to the bath, is determined by the input variable {\tt
   bath\_type} among 4 different choices: {\bf normal}, {\bf hybrid},
 {\bf replica} and {\bf general} (see Fig.\ref{figBaths}).  
 %
-\paragraph{{\tt bath\_type}={\bf normal}} The bath is formed out of $N_{bath}$
+\paragraph{{\tt bath\_type}={\bf normal}} The bath is formed out of $N_\mathrm{bath}$
 electronic levels coupled to each of the impurity orbital. The total
-count of bath levels is $N_b = N_\a N_{bath}$. The bath Hamiltonan
+count of bath levels is $N_\mathrm{b} = N_\a N_\mathrm{bath}$. The bath Hamiltonan
 matrices include a parametrization diagonal in the orbital and spin space: 
 $h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
 If {\tt ed\_mode}={\bf superc} one needs to account for anomalous
@@ -666,8 +678,8 @@ W^p_{\a}\delta_{\a\b}\delta_{\s \overline{\s}}$.
 
 
 \paragraph{{\tt bath\_type}={\bf hybrid}} The bath is formed out of
-$N_{bath}$ coupled to all the impurity levels, correspondingly
-$N_b\equiv N_{bath}$ is the total count of electronic bath levels. 
+$N_\mathrm{bath}$ coupled to all the impurity levels, correspondingly
+$N_\mathrm{b}\equiv N_\mathrm{bath}$ is the total count of electronic bath levels. 
 The main parametrization of the bath Hamiltonian matrices is still
 diagonal in both orbital and spin space, i.e.
 $h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
@@ -706,7 +718,7 @@ The choice of the matrix basis can be inspired either by the internal structure
 of the quantum impurity, i.e. $\hat{h}^0$, or be determined
 case-by-case by the properties of the problem.
 The total number of electronic levels used to describe the bath is in
-this case: $N_b = N_{sym} N_{bath}$. 
+this case: $N_\mathrm{b} = N_{sym} N_\mathrm{bath}$. 
 For the {\bf replica}  topology the coupling between the impurity and
 each bath elements is diagonal in the spin, orbital and internal bath
 structure: $V^p_{\a\b\s\s'} = V^p$. The
@@ -775,17 +787,17 @@ The class also contains procedures to transform the instance
 %   \hline
 %   c  & {\bf normal} & {\bf superc} & {\bf  nonsu2} \\
 %   \hline
-%   {\bf normal} $[N_b\!=\!N_{bath}N_\a]$ & $\vec{\e}[N_b],\vec{V}[N_b]$ 
-%                     & $\vec{\e}[N_b], \vec{\Delta}[N_b],\vec{V}[N_b]$
-%                                    &  $\vec{\e}[N_b], \vec{V}[N_b],\vec{W}[N_b]$ \\
+%   {\bf normal} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_\a]$ & $\vec{\e}[N_\mathrm{b}],\vec{V}[N_\mathrm{b}]$ 
+%                     & $\vec{\e}[N_\mathrm{b}], \vec{\Delta}[N_\mathrm{b}],\vec{V}[N_\mathrm{b}]$
+%                                    &  $\vec{\e}[N_\mathrm{b}], \vec{V}[N_\mathrm{b}],\vec{W}[N_\mathrm{b}]$ \\
 %   \hline
-%   {\bf hybrid} $[N_b\!=\!N_{bath}N_\a]$ & $\vec{\e}[N_{bath}],\vec{V}[N_b]$ 
-%                     & $\vec{\e}[N_{bath}], \vec{\Delta}[N_{bath}],\vec{V}[N_b]$
-%                                    &  $\vec{\e}[N_{bath}], \vec{V}[N_b],\vec{W}[N_b]$ \\
+%   {\bf hybrid} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_\a]$ & $\vec{\e}[N_\mathrm{bath}],\vec{V}[N_\mathrm{b}]$ 
+%                     & $\vec{\e}[N_\mathrm{bath}], \vec{\Delta}[N_\mathrm{bath}],\vec{V}[N_\mathrm{b}]$
+%                                    &  $\vec{\e}[N_\mathrm{bath}], \vec{V}[N_\mathrm{b}],\vec{W}[N_\mathrm{b}]$ \\
 %   \hline
-%   {\bf replica} $[N_b\!=\!N_{bath}N_{sym}]$ & \multicolumn{3}{*{\hat{h} } \cr
+%   {\bf replica} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_{sym}]$ & \multicolumn{3}{*{\hat{h} } \cr
 %   \hline
-%   {\bf general} $[N_b\!=\!N_{bath}N_{sym}]$ & \cline{2-4} & b&  c  \cr
+%   {\bf general} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_{sym}]$ & \cline{2-4} & b&  c  \cr
 %   \hline
 % \end{tabularx}
 % \end{center}
@@ -806,7 +818,7 @@ $$
 Although the dimension of any such sector $\SS$ are much smaller than the
 total Fock space dimension $D_\SS \ll D_\FF$ still the complete solution of
 the related eigenvalue problem represents an unsurmountable problem
-already with $N_s\simeq 8$. 
+already with $N_\mathrm{s}\simeq 8$. 
 In order to outwit this issue a number of
 algorithms have been developed leveraging on the sparse nature of
 $H_\SS$, e.g. Krylov or similar sub-space methods \cite{Lanczos,Arnoldi,Feast}.   
@@ -1152,7 +1164,7 @@ The groundstate belongs to a given symmetry sector $\SS$ and it
 represented in the Fock basis as:  $\ket{\psi} = \sum_I a_I \ket{I}$. 
 The density matrix $\rho$ is defined as:
 $$
-\rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_s}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_s}} \rho_{nm} \ket{n}\bra{m} 
+\rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_\mathrm{s}}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_\mathrm{s}}} \rho_{nm} \ket{n}\bra{m} 
 $$
 The iRDM is obtained from this by tracing out the bath degrees of
 freedom: $\rho^{i}=Tr_{b}\rho$. The summation appearing in the
@@ -1192,7 +1204,7 @@ only diagonal terms in the {\bf normal} case. Thus we obtain for the iRDM:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
-  \rho^i &=
+  \rho^\mathrm{imp} &=
   \sum_{\sigma=\up\dw}\sum_{b_\sigma=1}^{D_{b_\sigma}}
   \bra{b_\up}\otimes\bra{b_\dw}
     \rho
@@ -1215,7 +1227,7 @@ only diagonal terms in the {\bf normal} case. Thus we obtain for the iRDM:
   \end{aligned}
 \end{equation}
 where the constant $C_{i,b}$ take care of the sign change due to
-exchanging bath and impurity bit sets. As effect of the Kronecker
+exchanging bath and impurity bitsets. As effect of the Kronecker
 delta symbols for bath and impurity these constants are identically 1.  
 The numerical implementation relies on the use of the {\tt
   sparse\_map} ($\%sp$) for the groundstate sector as reported in the
@@ -1336,7 +1348,7 @@ do IimpUp=0,2**Norb-1
         if(lenBATH==0)cycle
         do ib=1,lenBath
           iBath = Bath(ib)
-          !Decompose iBath into B_Up, B_dw to reconstruct B bit set. 
+          !Decompose iBath into B_Up, B_dw to reconstruct B bitset. 
           !B --> {B_up,B_dw}
           iBathUp = mod(iBath,2**Nbath)
           iBathDw = (iBath)/2**Nbath
@@ -1405,12 +1417,12 @@ method in \NAME we keep the optimization implementation independent
 from the rest of the code. Yet, we offer a fully fledged optimization
 strategy based on the  conjugate gradient (CG) minimization of the cost function:
 $$
-\chi = \sum_{n=1}^{L_{fit}}\frac{1}{W_n}||X(i\omega_n) - X^{QIM}(i\omega_n;\{V,h\})||_q
+\chi = \sum_{n=1}^{L_\mathrm{fit}}\frac{1}{W_n}||X(i\omega_n) - X^\mathrm{QIM}(i\omega_n;\{V,h\})||_q
 $$
 where the symbol $|| \cdot ||_q$ is a suitably defined $q$-norm in the
 matrix function space, $X_{\a\b}={\GG_{0}}_{\a\b\s\s'},\,\Theta_{\a\b\s\s'}$ are the user
 supplied local functions and
-$X_{\a\b}^{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
+$X_{\a\b}^\mathrm{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
 quantum impurity model functions, defined above.
 Notably, more sophisticated optimization algorithms have been
 recently implemented to better undertake the minimization of similar
@@ -1444,12 +1456,12 @@ The gradient $\nabla\chi$ required by the CG algorithm can be
 evaluated either analytically or numerically as
 controlled by the value of the input parameter \texttt{cg\_grad=0,1}. For
 \texttt{cg\_method=1} only numerical gradient can be used.
-The number of Matsubara frequency $L_{fit}$ used in the fit procedure
+The number of Matsubara frequency $L_\mathrm{fit}$ used in the fit procedure
 is controlled  by the input parameter \texttt{cg\_Lfit}.
 This parameter can be used to restrict the fit to the low frequency
 part as the large frequency tails of the local Matsubara functions
 have universal behavior.
-Similarly, the weight  $W_n=1,1/L_{fit},1/\omega_n$ is used to
+Similarly, the weight  $W_n=1,1/L_\mathrm{fit},1/\omega_n$ is used to
 enhance the weight of low energy part with respect to the
 intermediate-to-large energy one in the cost function.
 This is controlled by the input parameter \texttt{cg\_Weight=0,1,2}.
