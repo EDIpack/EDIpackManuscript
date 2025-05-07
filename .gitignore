@@ -13,3 +13,5 @@ repo
 */*/.DS_Store
 edipack2_examples/AHM_EDIpack2EDIpy/data/.DS_Store
 edipack2_examples/Bethe_EDIpack/data/.DS_Store
+03_edipack2.bbl
+edipack2.bbl
