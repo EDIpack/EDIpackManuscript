@@ -85,10 +85,10 @@ The iterative algorithm proceeds as follows:
 \item Retrieve at least the self-energy functions $\Sigma_{\a\b\s\s'}(i\omega)$ on the
   Matsubara axis using {\tt ed\_get\_sigma}.
 \item Evaluate the local interacting Green's function
-  $G_{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e$ with
+  $G_\mathrm{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e$ with
   $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$.
   \item Update the Weiss field through the {\bf self-consistency}
-    relation: $\GG^{-1}_0(i\omega) = G_{loc}(i\omega) + \Sigma(i\omega)$. 
+    relation: $\GG^{-1}_0(i\omega) = G_\mathrm{loc}(i\omega) + \Sigma(i\omega)$. 
   \item Optimize the bath parameters $\vec{x}$ against the updated
     Weiss field using, for instance, {\tt ed\_chi2\_fitgf}. Restart at 1.
 \end{enumerate}
@@ -132,14 +132,14 @@ driven Mott transition, descriving the progressive
 transformation of a partially-filled band metallic state into a correlated insulator. 
 
 To illustrate this point, we report in panel (A) the evolution of
-the spectral function $-{\rm Im}G_{loc}(\omega)/\pi$ as a function of
+the spectral function $-{\rm Im}G_\mathrm{loc}(\omega)/\pi$ as a function of
 the interaction strenght $U$. Despite the {\it spiky} nature of the spectrum, due to the
 finite size (i.e. number of poles) of the discretized effective bath,
 it is possible to clearly distinguish the characteristic features of
 the Mott transition. At low energy, we observe the renormalization of the 
 quasi-particle peak at the Fermi level ($\omega=0$). Concomitantly the
 system shows the formation of incoherent  high-energy features which
-will then develop into Hubbard bands in the Mott insulating state for $U>U_c$, with $U_c\simeq 2.8D$. 
+will then develop into Hubbard bands in the Mott insulating state for $U>U_\mathrm{c}$, with $U_\mathrm{c}\simeq 2.8D$. 
 
 
 \begin{figure}[t!]
@@ -148,8 +148,8 @@ will then develop into Hubbard bands in the Mott insulating state for $U>U_c$, w
       \textbf{The Metal-Insulator Mott transition.}
       (a) Evolution of the spectral function $-\Im{G}(\omega)/\pi$ as
       a function of increasing interaction $U$. The critical
-      interaction $U_c\simeq 2.8D$ separates the correlated metal $U<U_c$ from
-      the Mott insulator $U>U_c$.
+      interaction $U_\mathrm{c}\simeq 2.8D$ separates the correlated metal $U<U_\mathrm{c}$ from
+      the Mott insulator $U>U_\mathrm{c}$.
       (b)-(c) The corresponding evolution of the Matsubara self-energy
       $\Im\Sigma(i\omega)$ (b) and
       real-axis one $\Re\Sigma(\omega)$ across the Mott
@@ -175,7 +175,7 @@ Specifically, in panel (B) we report the self-energy ${\rm Im}\Sigma(i\omega)$
 on the Matsubara axis in the low energy regime. Increasing $U$
 we observe the progressive growth of this function until a
 diverging behavior is acheived crossing the critical interaction
-strenght $U>U_c$.
+strenght $U>U_\mathrm{c}$.
 We recall that this behavior can be observed on the Matsubara axis
 because of the particle-hole symmetry of the problem which pins the
 $\Im{\Sigma}$ singularity at $\omega=0$.
@@ -263,7 +263,7 @@ from edipy2 import global_env as ed
 import mpi4py
 from mpi4py import MPI
 import os,sys
-from aux_funx import * #include function to build $G_{loc}$ and Weiss fields
+from aux_funx import * #include function to build $G_\mathrm{loc}$ and Weiss fields
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -312,10 +312,10 @@ sequence discussed in \secu{SecExamplesBetheDMFT}:
   $\hat{\Sigma}(i\omega)$ and $\hat{S}(i\omega)$ on the 
   Matsubara axis.
 \item
-  Evaluate the interacting local Green's functions $\hat{G}_{loc}$ and
-  $\hat{F}_{loc}$:
+  Evaluate the interacting local Green's functions $\hat{G}_\mathrm{loc}$ and
+  $\hat{F}_\mathrm{loc}$:
   \begin{equation}
-  {\mathbf G}_{loc}(i\omega) =
+  {\mathbf G}_\mathrm{loc}(i\omega) =
   \int_\RRR d\e \rho(\e)
   \begin{pmatrix}
     (i\omega +\mu)\hat{\11} - \hat{h}^0 - \hat{\Sigma}(i\omega) -\e & -\hat{S}(i\omega) \\
@@ -325,7 +325,7 @@ sequence discussed in \secu{SecExamplesBetheDMFT}:
 \end{equation}
 \item Update the normal and anomalous Weiss fields, respectively 
   $\GG_0^{-1}$ and $\FF_0^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
-    relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}_{loc}(i\omega) +
+    relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}_\mathrm{loc}(i\omega) +
     {\mathbf \Sigma}(i\omega)$ in Nambu space. 
   \item Optimize the bath parameters $\vec{x}$ to best describe the  updated
     Weiss fields using \NAME provided conjugate gradient  fit
@@ -361,7 +361,7 @@ ed.finalize_solver()
     \caption{\label{figEx2}%
       \textbf{The BCS to BEC crossover.}
       (a) Evolution of the spectral functions
-      $-\Im{G_{loc}(\omega)}/\pi$ as a function of increasing
+      $-\Im{G_\mathrm{loc}(\omega)}/\pi$ as a function of increasing
       attraction $U$. 
       (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
       function of the attraction $U$. Data for BCS (gray) is compared
@@ -376,7 +376,7 @@ ed.finalize_solver()
       parameter $\phi$ as a function of temperature across the
       superconductor-to-normal phase transition. Data for $U=4$. The
       fit highlights the critical behavior with a mean-field exponent
-      $\beta=1/2$ (red dashed line) and parameters $A\simeq 3.7$, $T_c=0.61$.       
+      $\beta=1/2$ (red dashed line) and parameters $A\simeq 3.7$, $T_\mathrm{c}=0.61$.       
         }
 \end{figure}
 
@@ -388,7 +388,7 @@ superconductivity at zero and finite temperatures.
 
 To beging with, we report in  panel (A) of \figu{figEx2} the
 evolution of the spectral density, obtained from the local normal
-Green's function $-\tfrac{1}{\pi}\Im{G}_{loc}(\omega)$, as a function
+Green's function $-\tfrac{1}{\pi}\Im{G}_\mathrm{loc}(\omega)$, as a function
 of the attraction $U$. For any finite value of  $U$ the Van Hove peak
 at $\omega=0$ of the 2D square lattice (see $U=0$
 solution) gets split by the formation of a superconductive gap of
@@ -403,24 +403,25 @@ strong coupling or BEC regime the order parameter saturates to its
 limiting value $\phi\to 1/2$. The comparison with mean-field result
 (gray) underlines the effect of local quantum fluctuations in slightly
 suppressing the order parameter. This effect is particularly active in
-the intermediate regime, as captured by the behavior of the
-correlation strength
-$\theta=\frac{|S(i\omega\to 0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
+the intermediate regime, as captured by the behavior of the so-called
+\emph{correlation strength}
+$\Theta=\frac{|S(i\omega\to 0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
 reported in panel (C). Assuming a monotonic behavior of the anomalous
-self-energy function, this quantity estimates the ``strength'' of
-quantum fluctuations comparing the mean-field-like behavior at high
-energy scale with that near the Fermi level. A large value of $\theta$
-indicates a more correlated system.
+self-energy function, this quantity estimates the ``strength'' of its
+dynamical fluctuations, comparing the mean-field-like behavior found
+at high energy scale, with the features at the Fermi level. 
+A large value of $\Theta$ indicates a more dynamical self-energy, hence
+a more correlated system.
 Our results show that both weak and strong coupling regime are
 relatively weakly correlated, i.e. very near a mean-field solution. On
 the contrary, the inter-mediate regime is characterized by a large
 correlation, making the solution very different from that obtained in
 BCS description.  
-To further corroborate the distance between the DMFT and mean-field
-solution we report in panel (D) the evolution of the double occupancy
+To further corroborate the distance between the DMFT and the mean-field
+solutions, we report in panel (D) the evolution of the double occupancy
 $d=\langle n_\up n_\dw\rangle$. At half-filling the mean-field value is
 determined solely by the order parameter as $d=1/4 + \phi^2$.
-Our results show that the inclusion of quantum fluctuations in DMFT
+Our results show that the inclusion of dynamical fluctuations in DMFT
 slightly increase the value of $d$ in the weak coupling
 regime. However, increasing the attraction the double occupations
 quickly get reduced below the mean-field value up to the BEC regime.
@@ -429,8 +430,8 @@ Finally, we illustrate the capability of \NAME in
 exploring finite temperature physics. In panel (E) we show the
 temperature evolution of the order parameter $\phi(T)$ across the
 superconductor-to-normal transition. The mean-field nature of this
-transition is underlined by the scaling of  the solution near
-the critical point $\phi \simeq (T_c-T)^\beta$ with $\beta=1/2$ as
+transition is underlined by the scaling of the solution near
+the critical point $\phi \simeq (T_\mathrm{c}-T)^\beta$ with $\beta=1/2$ as
 predicted by mean-field calculations. 
 
 

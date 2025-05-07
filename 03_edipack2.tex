@@ -9,15 +9,15 @@ different parts of the \NAME library.
 We consider a general quantum impurity problem defined by the
 following Hamiltonian:
 $$
-\hat{H} = \hat{H}_{imp} + \hat{H}_{bath} + \hat{H}_{hyb} + \hat{H}_\mathrm{ph} + \hat{H}_{e-ph}
+\hat{H} = \hat{H}_\mathrm{imp} + \hat{H}_\mathrm{bath} + \hat{H}_\mathrm{hyb} + \hat{H}_\mathrm{ph} + \hat{H}_\mathrm{e-ph}
 $$
 which describes a  multi-orbital interacting quantum
 impurity coupled to an electronic bath and to local, i.e. Holstein,
 phonons. 
 \begin{equation}\label{Himp}
   \begin{split}
-    \hat{H}_{imp} & = \hat{H}^0_{imp} + \hat{H}^{int}_{imp}\\
-    \hat{H}^0_{imp} & =
+    \hat{H}_\mathrm{imp} & = \hat{H}^0_\mathrm{imp} + \hat{H}^{int}_\mathrm{imp}\\
+    \hat{H}^0_\mathrm{imp} & =
     \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}d_{\b\sigma'}\\
 \end{split}
 \end{equation}
@@ -30,7 +30,7 @@ A set of such operators is the celebrated Hubbard-Kanamori Hamiltonian:
 
 \begin{equation}\label{Hint}
   \begin{split}
-    \hat{H}^{int}_{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
+    \hat{H}^\mathrm{int}_\mathrm{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
     &{\phantom =}- J_X\sum_{\a\neq
       \b}d^{+}_{\a\uparrow}d_{\a\downarrow}d^{+}_{\b\downarrow}d_{\b\uparrow}+J_P\sum_{\a
       \neq
@@ -46,7 +46,7 @@ by the  operator
 $n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$. 
 The non-interacting internal structure of the impurity is described by
 the $h^{0}_{\a\b\sigma\sigma'}$ matrix. 
-$\hat{H}^{int}$ describes the  local multi-orbital
+$\hat{H}^\mathrm{int}$ describes the  local multi-orbital
 interaction~\cite{Georges2013ACMP} which, for simplicity, we take as a
 generalized Hubbard-Kanamori form.  
 The first three terms represent the density-density part of the
@@ -55,8 +55,8 @@ $U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Georges2013ACMP}.
 The  remaining two terms are, respectively, the spin-exchange and
 pair-hopping which we considered with their respective independent
 couplings $J_X$ and $J_P$.
-In the case $N_\a=3$ a fully symmetric $SU(3)_{orbital}\times SU(2)_{spin}\times
-U(1)_{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
+In the case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
+U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
 $J_X=J_P=J$~\cite{Georges2013ACMP}. Different choices, preserving part
 of the combined symmetry group, can be made for other values of
 $N_\a$~\cite{Georges2013ACMP}. 
@@ -65,10 +65,10 @@ $N_\a$~\cite{Georges2013ACMP}.
 The bath part and its coupling to the impurity has the form: 
 \begin{equation}\label{Hbath}
   \begin{split}
-    \hat{H}_{bath} &=
+    \hat{H}_\mathrm{bath} &=
     \sum_p\sum_{\a\b\sigma\sigma'}h^p_{\a\b\sigma\sigma'}a^{+}_{p\a\sigma}a_{p\b\sigma'}\\
     %
-    \hat{H}_{hyb} &= \sum_p\sum_{\a\b\sigma\sigma'}V^p_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}a_{p\b\sigma'}+H.c. \\
+    \hat{H}_\mathrm{hyb} &= \sum_p\sum_{\a\b\sigma\sigma'}V^p_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}a_{p\b\sigma'}+H.c. \\
 \end{split}
 \end{equation}
 where $p=1,\dots,N_\mathrm{bath}$ is an index running over a finite number of
@@ -89,7 +89,7 @@ described by the Hamiltonian terms:
   \begin{split}
     \hat{H}_\mathrm{ph}&=\sum_q \omega_{0q} b_q^+b_q\\
     % 
-    \hat{H}_{e-ph} &= \sum_q\sum_{\a\b\sigma} g_{\a\b} d^+_{\a\sigma}d_{\b\sigma}(b_q+b_q^+)
+    \hat{H}_\mathrm{e-ph} &= \sum_q\sum_{\a\b\sigma} g_{\a\b} d^+_{\a\sigma}d_{\b\sigma}(b_q+b_q^+)
 \end{split}
 \end{equation}
 where $q=1,\dots,N_q$ indexes the number of local phonons, $b_q$
@@ -203,7 +203,7 @@ In order to circumvent the exponential scaling of the dimensions of
 the problem scales it is necessary to take into account suitable symmetries.
 Indeed, considering operators ${\cal Q}$ such that $[H, {\cal Q}]=0$
 reduces of the Fock space into several symmetry sectors
-labelled by given quantum numbers $\vec{Q}$. 
+labeled by given quantum numbers $\vec{Q}$. 
 In the context of quantum impurity problems two symmetries are often considered: i)
 conservation of the total occupation $N$ and ii) the
 conservation of the total magnetization $S_z$. Although the total spin
@@ -274,17 +274,17 @@ Accordingly any Fock state is written as $\ket{\vec{n}_\up}\ket{\vec{n}_\dw}$, t
 mutually exclusive ones $\MM = \MM_\up
 \otimes \MM_\dw$.
 Thus, each state $\ket{i}=\ket{i_\up}\ket{i_\dw}$ of the
-sector is labelled by two integers $[i_\up,i_\dw]$, 
+sector is labeled by two integers $[i_\up,i_\dw]$, 
 $i_\sigma=1,\dots,D_{\SS_\sigma}$ such that $i=i_\up + i_\dw
 D_{\SS_\dw}$. The map $\MM$ connects any such state to a Fock state
-$\ket{I}=\ket{I_\up}\ket{I_\dw}$ labelled by two integers
+$\ket{I}=\ket{I_\up}\ket{I_\dw}$ labeled by two integers
 $[I_\up,I_\dw]$ as $I=I_\up +   I_\dw 2^{N_\mathrm{s}}$. For a thorough
 discussion about Fock basis organization in this case see
 \onlinecite{Amaricci2022}. 
 
 The presence of a symmetry induces a factorization of the Fock space,
 in turn inducing a block diagonal form to the Hamiltonian matrix.
-Each block, labelled by the quantum numbers $\vec{Q}$, has dimension
+Each block, labeled by the quantum numbers $\vec{Q}$, has dimension
 $D_{\SS(\vec{Q})}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix. In the {\bf
   normal} case $H_\SS$ takes a particularly symmetric form thanks to
@@ -475,7 +475,7 @@ the \emph{key} is determined by the integer $I_\s$ corresponding to the
 impurity bitset $\vec{i}_\s$. The \emph{values} are given by any
 integer $B_\s$ corresponding to any bath bitset
 $\vec{b_\s}$ associated with $\vec{i}_\s$ by the conservation law of the 
-given sector: $\mathtt{sum}(\vec{i}_\s) + \mathtt{sum}(\vec{b}_\s) = \mathtt{popcnt}(I_\s) + \mathtt{popcnt}(B_\s)= N_\s$.
+given sector: $\#\vec{i}_\s + \#\vec{b}_\s = \mathtt{popcnt}(I_\s) + \mathtt{popcnt}(B_\s)= N_\s$.
 Thus, any given \emph{key-value} combination 
 reconstructs an integer $J_\s$ representing a Fock state in the
 given spin sector according to the rule $J_s = I_\s +
@@ -838,10 +838,10 @@ $$
 
 This operations easily takes over more than 80\% of the computation
 time, so its optimization is a crucial aspect in any diagonalization
-algorithms. In \onlinecite{Amaricci2022} we covered in full details
-some distrubuted memory massively parallel algorithms to address this
-specific issue.
-Here, using the same naming convention introduced in \cite{Amaricci2022}, 
+algorithm. In \onlinecite{Amaricci2022} we covered in full detail
+the distrubuted memory massively parallel algorithms we implement 
+to address this specific issue.
+Here, using the same naming convention introduced in \onlinecite{Amaricci2022}, 
 we briefly outline the main strategy for the implementation of the MVP
 according to the value of {\tt ed\_mode}.
 
@@ -851,8 +851,8 @@ This case relies on the tensor structure of the Fock space and the
 symmetry sectors. In any given sector the electronic part of the
 Hamiltonian matrix reads:
 \begin{equation}
-H_\SS = H_d  + H_\up\otimes \mathbb{I}_\dw + \mathbb{I}_\up\otimes
-H_\dw + H_{nd}\,.
+H_\SS = H_\mathrm{d}  + H_\up\otimes \mathbb{I}_\dw + \mathbb{I}_\up\otimes
+H_\dw + H_\mathrm{nd}\,.
 \label{HssNormal}
 \end{equation}
 where $H_d$ is a diagonal term containing the local part of the
@@ -877,13 +877,13 @@ $\dw$ configurations ultimately suppressing the benefits arising from
 Fock space factorization.
 The electronic part of the Hamiltonian matrix is usually organized in this structure:
 $$
-H_\SS = H_{imp} + H_{int} + H_{bath} + H_{imp-bath} 
+H_\SS = H_\mathrm{imp} + H_\mathrm{int} + H_\mathrm{bath} + H_\mathrm{imp-bath} 
 $$
-where, with almost obvious meaning of the labels, $H_{imp}$ encodes
+where, with almost obvious meaning of the labels, $H_\mathrm{imp}$ encodes
 the non-interacting part of the impurity Hamiltonian determined by
-$h^0_{\a\b\s\s'}$, $H_{int}$ the interaction term, $H_{bath}$ the
+$h^0_{\a\b\s\s'}$, $H_\mathrm{int}$ the interaction term, $H_\mathrm{bath}$ the
 effective bath terms related to $h^p_{\a\b\s\s'}$ and finally
-$H_{imp-bath}$ describes the coupling between impurity and bath
+$H_\mathrm{imp-bath}$ describes the coupling between impurity and bath
 proportional to $V^p_{\a\b\s\s'}$. 
 In an MPI setup the first three terms contains elements local in the
 memory of each node. These are stored separately from the non-local
@@ -927,7 +927,7 @@ dimension of the vector to be used in the
 MVP. In serial execution this number is just $D_\SS$ the dimension of
 the sector, whereas in a parallel mode the returned value is the
 dimension $d_i$ of the vector chunk per each node such that
-$\sum_{i=1}^{N_{nodes}}d_i = D_\SS$. Yet, the specific value of $d_i$
+$\sum_{i=1}^{N_\mathrm{nodes}}d_i = D_\SS$. Yet, the specific value of $d_i$
 depends on the MPI algorithm used for the MVP function, which in turn
 is determined by the symmetry of the problem, i.e. {\tt ed\_mode}.
 
@@ -1151,7 +1151,7 @@ system stored in the {\tt state\_list}.
 
 
 \subsection{Reduced impurity density matrix}\label{sSecRDM}
-This version of the \NAME library features the calculation of the
+The new \NAME version of the library features the calculation of the
 impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), extending 
 the algorithm introduced in \onlinecite{BellomiaPhD} so to enable the
 analysis of entanglement properties of the quantum impurity for any value
@@ -1167,7 +1167,7 @@ The given pure state belongs to a unique symmetry sector $\SS$ and it
 is represented in the Fock basis as $\ket{\psi} = \sum_I a_I \ket{I}$. 
 The corresponding pure density matrix $\rho$ is thus explicitly decomposed as:
 $$
-\rho = \ket{\psi}\bra{\psi} = \sum_{nm=1}^{4^{N_\mathrm{s}}} a^*_ma_n \ket{n}\bra{m} =\sum_{nm=1}^{4^{N_\mathrm{s}}} \rho_{nm} \ket{n}\bra{m}.
+\rho = \ket{\psi}\bra{\psi} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} a^*_J a_I \ket{I}\bra{J} =\sum_{IJ=1}^{4^{N_\mathrm{s}}} \rho_{IJ} \ket{I}\bra{J}.
 $$
 The iRDM is obtained from $\rho$ by tracing out the bath degrees of
 freedom: $\rho^\mathrm{imp}=\Tr_\mathrm{bath}\rho$. The summations appearing in the
@@ -1181,19 +1181,19 @@ the size $D_\SS$ of the sector $\SS$ to which the groundstate (or in
 general any eigenstate) belongs. 
 Next we analyze the groundstate expansion on the Fock states, splitting the bit representation of any state $\ket{I}$ into
 their spin-dependent impurity and bath parts as $\ket{I} = \ket{
-  i_\uparrow\,  b_\uparrow\, i_\downarrow \, b_\downarrow}$. Each bitset 
-span a space of dimension $D^\a_{imp}$ or $D^\s_{bath}$. 
+  i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow \, b_\downarrow}$. Each bitset 
+span a space of dimension $D^\a_\mathrm{imp}$ or $D^\s_\mathrm{bath}$. 
 Finally, as detailed in \secu{CodeSparseMap}, we store into the {\tt sparse\_map} ${\cal S}$, 
 for every impurity configuration 
 $i_\s =1,\dots,D^\s_{imp}$ (\emph{key}), the bath states 
-$j\in[1,\dots,D^\s_{bath}]$ (\emph{values}) that satisfy the conservation law defined
+$b_\s\in[1,\dots,D^\s_\mathrm{bath}]$ (\emph{values}) that satisfy the conservation law defined
 by the \texttt{ed\_mode} variable.
-We indicate with ${\cal D}^\s_{i}$ the number of values for the key $i_\s$.
+We indicate with ${\cal D}_{i\s}$ the number of keys $i_\s$ and with 
+${\cal D}_{b\s}$ the number of values $b_\s$.
 The fast summation algorithm for the evaluation of the iRDM takes on a
 different form for the two cases {\bf normal} and {\bf superc/nonsu2},
 as outlined below.
 
-%GBtodo placeholder: revise this subsection from this point onwards
 \paragraph{{\bf normal}}
 In this case we take advantage of the Fock space and sector spin-resolved
 factorization, discussed in depth in \secu{sSecQNs}. We can indeed split the
@@ -1208,37 +1208,69 @@ position $p$ for spin $\sigma$  $c^+_{p\sigma}$ ($c^+_{p\sigma}$) do
 not operate on the opposite spin $\bar{\sigma}$ so that they pass through 
 the $\ket{n_{\bar{\sigma}}}$ bitset without taking any fermionic sign. 
 Finally, we observe that local iRDM admits
-only {\color{red} diagonal} terms in the {\bf normal} case. {\color{red} [GB: this is a wrong statement: do you mean \emph{spin-}diagonal?]}
-
+only {spin-diagonal} blocks in the {\bf normal} case. This can be understood
+by observing that the conserved quantum numbers in the whole impurity model 
+are \emph{additive} $N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$ and so the
+corresponding generator of the symmetry group is factorized as 
+$U_{N_\s} = U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}}$. 
+Hence, as the iRDM acts by definition only on the impurity
+Fock space, we have 
+$$
+U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} = 
+U_{N_\s^\mathrm{bath}}^\dagger \otimes U_{N_\s^\mathrm{imp}}^\dagger
+\rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}} =
+U_{N_\s^\mathrm{imp}}^\dagger
+\rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} =
+\rho^\mathrm{imp},
+$$
+i.e. $U_{N_\s^\mathrm{imp}}$ defines a symmetry of $\rho^\mathrm{imp}$, making it
+block diagonal with respect to the impurity quantum numbers $N_\s^\mathrm{imp}$.
 Thus we obtain for the iRDM:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
-  \rho^\mathrm{imp} &=
-  \sum_{\sigma=\up\dw}\sum_{b_\sigma=1}^{D_{b_\sigma}}
+  \rho^\mathrm{imp} &= \Tr_{b_\up b_\dw}{\rho} = 
+  \sum_{b_\up=1}^{D_{b_\up}}
+  \sum_{b_\dw=1}^{D_{b_\dw}}
   \bra{b_\up}\otimes\bra{b_\dw}
     \rho
     \ket{b_\dw}\otimes\ket{b_\up}    \cr
     %
-    &=\sum_{\sigma=\up\dw}
-    \sum_{b_\sigma=1}^{D_{b_\sigma}}
-    \sum_{i_\sigma=1}^{D_{i_\sigma}}
-    \sum_{p_\sigma=1}^{D_{p_\sigma}}
-    \sum_{j_\sigma=1}^{D_{j_\sigma}} 
-    \sum_{q_\sigma=1}^{D_{q_\sigma}}
+    &=
+    \sum_{b_\up=1}^{D_{b_\up}}
+    \sum_{i_\up=1}^{D_{i_\up}}
+    \sum_{p_\up=1}^{D_{p_\up}}
+    \sum_{j_\up=1}^{D_{j_\up}} 
+    \sum_{q_\up=1}^{D_{q_\up}}
+    \Bigg( \cr
+    %
+    &\qquad
+    \sum_{b_\dw=1}^{D_{b_\dw}}
+    \sum_{i_\dw=1}^{D_{i_\dw}}
+    \sum_{p_\dw=1}^{D_{p_\dw}}
+    \sum_{j_\dw=1}^{D_{j_\dw}} 
+    \sum_{q_\dw=1}^{D_{q_\dw}}
     C_{i,p}\,C_{j,q}\,a_{i_\up p_\up i_\dw p_\dw} a^*_{j_\up q_\up j_\dw q_\dw}
-    \langle b_\up| p_\up\rangle| i_\up\rangle\langle j_\up |\langle q_\up| b_\up\rangle   \otimes \langle b_\dw| p_\dw \rangle|i_\dw\rangle \langle j_\dw  |\langle q_\dw| b_\dw\rangle
+    \langle b_\up| p_\up\rangle| i_\up\rangle\langle j_\up |\langle q_\up| b_\up\rangle   \otimes \langle b_\dw| p_\dw \rangle|i_\dw\rangle \langle j_\dw  |\langle q_\dw| b_\dw\rangle \Bigg)
     \cr
 &=
-    \sum_{b_\sigma=1}^{D_{b_\sigma}}
-    \sum_{i_\sigma=1}^{D_{i_\sigma}}
-    a_{i_\up b_\up i_\dw b_\dw} a^*_{i_\up b_\up i_\dw b_\dw}
-    \ket{i_\up}\bra{i_\up}\otimes \ket{i_\dw}\bra{i_\dw}
+    \sum_{i_\up=1}^{D_{i_\up}}
+    \sum_{j_\up=1}^{D_{j_\up}}
+    \sum_{i_\dw=1}^{D_{i_\dw}}
+    \sum_{j_\dw=1}^{D_{j_\dw}}
+    \underbrace{\left(
+    \sum_{b_\up=1}^{D_{b_\up}}
+    \sum_{b_\dw=1}^{D_{b_\dw}}
+    a_{i_\up b_\up i_\dw b_\dw} a^*_{j_\up b_\up j_\dw b_\dw}
+    \right)}_{\rho^\mathrm{imp}_{i_\up j_\up} \otimes\, \rho^\mathrm{imp}_{i_\dw j_\dw} }
+    \ket{i_\up}\bra{j_\up}\otimes \ket{i_\dw}\bra{j_\dw},
   \end{aligned}
 \end{equation}
-where the constant $C_{i,b}$ take care of the sign change due to
-exchanging bath and impurity bitsets. As effect of the Kronecker
-delta symbols for bath and impurity these constants are identically 1.  
+where we recall that $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the expansion coefficients of the state $\ket{\psi}$ on the Fock basis 
+$\ket{I} = \ket{i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow \, b_\downarrow}$
+and the constants $C_{i,b}$, accounting for the fermionic sign associated to
+exchanging bath and impurity bitsets, are identically 1 as effect of the 
+Kronecker deltas for bath and impurity indices.  
 The numerical implementation relies on the use of the {\tt
   sparse\_map} ($\%sp$) for the groundstate sector as reported in the
 listing below:  
@@ -1282,22 +1314,27 @@ enddo
 \end{lstlisting}
 
 \paragraph{{\bf superc/nonsu2}}
-In presence of these symmetries suitable modifications related to the
-absence of Fock space factorization have to be taken into account. To
-start with a generic Fock state appearing in the groundstate
-decomposition has the form:
-$$
-\ket{\vec{n}} =\ket{\vec{i}_\up\vec{b}_\up\vec{i}_\dw\vec{b}_\dw}
-%
-$$
-% where the second is just a formal identity.  
-Inserting this latter in the definition of iRDM we obtain:
+To treat these lowered-symmetry cases, some modifications related to the
+absence of Fock space factorization have to be taken into account. In particular, 
+the correct evaluation of the off-diagonal terms connecting the 
+$[N^\mathrm{imp}_\up,\,N^\mathrm{imp}_\dw]$ blocks, relies on 
+computing explicitly the fermionic permutation signs.
+
+Let us consider a generic Fock basis in the form
+$\ket{I} =\ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}$, defining the target
+ground state again as $\ket{\psi} = \sum_I a_I \ket{I}$.
+From the definitions of pure density matrix $\rho = \ket{\psi}\bra{\psi}$ 
+and of iRDM we have:
 \begin{equation}
   \begin{aligned}
-    \Tr_{b_\up, b_\dw}{\rho} &=
+    \rho^\mathrm{imp} &= \Tr_{b_\up b_\dw}{\rho} =
     \sum_{b_\sigma=1}^{D_{b_\sigma}}
     \bra{b_\up\, b_\dw}
-    \rho
+    \,\rho\,
+    \ket{b_\dw\, b_\up} =
+    \sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \ibra{b_\up\, b_\dw}
+    \ket{\psi}\ibra{\psi}
     \ket{b_\dw\, b_\up}    \cr
     &=
     \sum_{b_\sigma=1}^{D_{b_\sigma}}
@@ -1312,33 +1349,31 @@ Inserting this latter in the definition of iRDM we obtain:
   \end{aligned}
 \end{equation}
 In order to simplify this expression we should get rid of the sum with
-respect to the bath indices $p_\sigma$ and $q_\sigma$, ideally
+respect to the internal bath indices $p_\sigma$ and $q_\sigma$, ideally
 contracting them with the outer indices $b_\sigma$.
-However, this requires to bring all the bath bits so to preced the
-impurity ones:
+However, this requires to bring all the bath bitsets so to precede the
+impurity states:
 $$
 \ket{i_\up\, p_\up\, i_\dw\, p_\dw} \rightarrow C_{p_\up,i_\dw} \ket{i_\up\, i_\dw \,p_\up\,p_\dw}
 $$
 where $C_{p_\up,i_\dw}  = (-1)^{\#\vec{n}_{p\up} \cdot
-  \#\vec{n}_{i\dw}}$ with   $\#\vec{n}=\sum_i n_i$ is an overall
-fermionic sign which depends on the occupation of the $p_\up$ and the
-$i_\dw$ bit configurations. Inserting this relation in the equation
-for the iRDM we obtain:
+\#\vec{n}_{i\dw}}$, with $\#\vec{n}_{\alpha\sigma}$ counting the bits set to
+1 in the occupation number vector $\vec{n}_{\alpha\sigma}$, is an overall
+fermionic sign depending on the $\ket{p_\up}$ and $\ket{i_\dw}$ bit configurations. 
+Inserting this relation in the equation for the iRDM we obtain:
 \begin{equation}
-  \begin{aligned}
-    \Tr_{b_\up, b_\dw}{\rho} &=
-    \sum_{i_\sigma=1}^{D_{i_\sigma}}
-    \sum_{j_\sigma=1}^{D_{j_\sigma}}
-    \left[\sum_{b_\sigma=1}^{D_{b_\sigma}}
+    \rho^\mathrm{imp} =
+    \sum_{i_\up=1}^{D_{i_\up}}
+    \sum_{j_\up=1}^{D_{j_\up}}
+    \sum_{i_\dw=1}^{D_{i_\dw}}
+    \sum_{j_\dw=1}^{D_{j_\dw}}
+    \underbrace{\left(
+    \sum_{b_\up=1}^{D_{b_\up}}
+    \sum_{b_\dw=1}^{D_{b_\dw}}
     a_{i_\up b_\up i_\dw b_\dw} a^*_{j_\up b_\up j_\dw b_\dw}
-    C_{b_\up,i_\dw}C_{b_\up,j_\dw}\right]
-    \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up}\cr
-&=
-    \sum_{i_\sigma=1}^{D_{i_\sigma}}
-    \sum_{j_\sigma=1}^{D_{j_\sigma}}
-    \rho^{i}_{i_\up i_\dw j_\dw j_\up}
-    \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up} 
-  \end{aligned}
+    C_{b_\up,i_\dw}C_{b_\up,j_\dw}\right)}_{
+    \rho^\mathrm{imp}_{i_\up i_\dw j_\dw j_\up}}
+    \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up}
 \end{equation}
 The numerical implementation requires few modifications with respect
 to the previous case. In particular it is important to recall that the
@@ -1385,7 +1420,7 @@ do IimpUp=0,2**Norb-1
   enddo
 enddo
 \end{lstlisting}
-
+%GBtodo placeholder: I checked and heavily edited all the iRDM section
 
 
 \subsection{Bath Functions}\label{sSecFunc}
@@ -1500,7 +1535,7 @@ parameter generally loosens up the exit conditions of the minimization.
 Notes on the norm function: a) the definition for conventional
 matrices, ;b) the definition for the replica/general case where you
 can choose between different norm defition.
-{\color{red} I (GB) can take care of this, as I introduced the "elemental" norm in the code.}
+{\color{red} I (GB) can take care of this, as I introduced the ``elemental" norm in the code.}
 %GBtodo placeholder
 
 
