@@ -2,8 +2,8 @@
 \begin{document}
 
 \section{Implementation}\label{SecEDIpack}
-Here we present an overview of the implementation of the
-different parts of the \NAME library. 
+In this section we introduce the generic quantum impurity system and
+present a detailed overview of the \NAME library implementation. 
 
 \subsection{The quantum impurity problem}\label{sSecQIM}
 We consider a general quantum impurity problem defined by the
@@ -13,21 +13,30 @@ $$
 $$
 which describes a  multi-orbital interacting quantum
 impurity coupled to an electronic bath and to local, i.e. Holstein,
-phonons. 
+phonons. We assume for the moment that no particular symmetry
+holds. We separate the impurity part of the Hamiltonian into a
+quadratic and interacting term: 
 \begin{equation}\label{Himp}
   \begin{split}
-    \hat{H}_\mathrm{imp} & = \hat{H}^0_\mathrm{imp} + \hat{H}^{int}_\mathrm{imp}\\
+    \hat{H}_\mathrm{imp} & = \hat{H}^0_\mathrm{imp} + \hat{H}^\mathrm{int}_\mathrm{imp}\\
     \hat{H}^0_\mathrm{imp} & =
     \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}d_{\b\sigma'}\\
 \end{split}
 \end{equation}
-
-We assume for the moment that no particular symmetry
-holds. The impurity part of the Hamiltonian can, in principle, consist of any set of
-two-body quantum operators of the form $U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$.
-
-A set of such operators is the celebrated Hubbard-Kanamori Hamiltonian: 
-
+where $d_{\a\sigma}$ ($d^+_{\a\sigma}$) are the destruction (creation)
+second-quantization operators for impurity electrons in the
+orbital $\alpha=1,\dots,N_\a$, with $N_\a$ the number of orbitals,
+with spin $\sigma=\up,\dw$ and whose occupation is described
+by the  operator  
+$n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$. 
+The internal structure of the non-interacting part is described by the
+$h^{0}_{\a\b\sigma\sigma'}$ matrix. 
+%
+The
+interaction term $\hat{H}^{\mathrm{int}}$ of the Hamiltonian can, in principle, consist of any set
+of two-body quantum operators of the form
+$U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$. However, we also
+consider the  local multi-orbital Hubbard-Kanamori interaction~\cite{Georges2013ACMP}:   
 \begin{equation}\label{Hint}
   \begin{split}
     \hat{H}^\mathrm{int}_\mathrm{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
@@ -37,32 +46,19 @@ A set of such operators is the celebrated Hubbard-Kanamori Hamiltonian:
       \b}d^{+}_{\a\uparrow}d^{+}_{\a\downarrow}d_{\b\downarrow}d_{\b\uparrow}\\
 \end{split}
 \end{equation}
-
-where $d_{\a\sigma}$ ($d^+_{\a\sigma}$) are the destruction (creation)
-second-quantization operators for impurity electrons in the
-orbital $\alpha=1,\dots,N_\a$, with $N_\a$ the number of orbitals,
-with spin $\sigma=\up,\dw$ and whose occupation is described
-by the  operator  
-$n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$. 
-The non-interacting internal structure of the impurity is described by
-the $h^{0}_{\a\b\sigma\sigma'}$ matrix. 
-$\hat{H}^\mathrm{int}$ describes the  local multi-orbital
-interaction~\cite{Georges2013ACMP} which, for simplicity, we take as a
-generalized Hubbard-Kanamori form.  
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
 $U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Georges2013ACMP}.  
-The  remaining two terms are, respectively, the spin-exchange and
+The remaining two terms are, respectively, the spin-exchange and
 pair-hopping which we considered with their respective independent
 couplings $J_X$ and $J_P$.
 In the case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
 U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
 $J_X=J_P=J$~\cite{Georges2013ACMP}. Different choices, preserving part
-of the combined symmetry group, can be made for other values of
-$N_\a$~\cite{Georges2013ACMP}. 
+of the combined symmetry group, can be made for other number of orbitals~\cite{Georges2013ACMP}. 
 
 
-The bath part and its coupling to the impurity has the form: 
+The bath part and its coupling to the impurity have the form: 
 \begin{equation}\label{Hbath}
   \begin{split}
     \hat{H}_\mathrm{bath} &=
@@ -73,15 +69,13 @@ The bath part and its coupling to the impurity has the form:
 \end{equation}
 where $p=1,\dots,N_\mathrm{bath}$ is an index running over a finite number of
 bath elements, $a_{p\alpha\sigma}$ ($a^+_{p\alpha\sigma}$) are the destruction (creation) operators for
-the bath electrons with index $p$, with orbital $\alpha$ and
+the bath electrons with index $p$, orbital $\alpha$ and
 spin $\sigma$.
 The  properties of each bath level are described by the
-matrices $h^p_{\a\b\sigma\sigma'}$. As such any bath element can be
-composed of several electronic levels according the bath topology,
-which will be discussed further in the following.
+matrix $h^p_{\a\b\sigma\sigma'}$. As such any bath element can be
+composed of several electronic levels according the bath topology, which will be discussed further in the following.
 Each bath level couples to the impurity with an amplitude
-$V^p_{\a\b\s\sigma'}$ which we allow to couple different orbital and
-opposite spins.   
+$V^p_{\a\b\s\sigma'}$ which we assume to depend on all orbital and spins.   
 
 Finally, the electron-phonon part of the quantum impurity problems is
 described by the Hamiltonian terms: 
@@ -103,32 +97,30 @@ of bath degrees of freedom and a finite number of available phonons $N_\mathrm{p
 to cut-off the unbounded dimensions of the local phonons Hilbert space.
 
 
-\paragraph{{\bf Remark}} As extensively discussed in
-\onlinecite{Amaricci2022}, the inclusion of local phonons with
-truncated dimensions ultimately amounts to a sequential application of
-the procedures defined for the electronic part, i.e. one per phonon
-mode. This includes a linear scaling of the dimensions with $N_\mathrm{ph}$
-and of course largely limit the available degrees of freedom to
-describe electronic states. In the rest of the paper we focus
-specifically on the electronic part of the quantum impurity problem,
-referring to the phonons in specific sections when their presence
-introduces non-trivial modifications.  
+% \paragraph{{\bf Remark}} As extensively discussed in
+% \onlinecite{Amaricci2022}, the inclusion of local phonons with
+% truncated dimensions ultimately amounts to a sequential application of
+% the procedures defined for the electronic part, i.e. one per phonon
+% mode. This includes a linear scaling of the dimensions with $N_\mathrm{ph}$
+% and of course largely limit the available degrees of freedom to
+% describe electronic states. In the rest of the paper we focus
+% specifically on the electronic part of the quantum impurity problem,
+% referring to the phonons in specific sections when their presence
+% introduces non-trivial modifications.  
 
 
-More specifically, we consider a system composed of $N_\mathrm{imp}=1$
+In the rest of this work we consider a system composed of $N_\mathrm{imp}=1$
 impurities, i.e. a single impurity problem, $N_\mathrm{bath}$ bath elements
 and $N_\mathrm{ph}$ phonons. The size of the system is determined by
-the number of phonons (fixed) and that of {\it electronic} levels, i.e. levels with a local
-electronic Hilbert space
-$\HH_\mathrm{e}=\{\ket{0},\ket{\up},\ket{\dw},\ket{\up\dw} \}$. 
-Due to is internal structure, the single impurity contains
-$N_i= N_\a$ electronic levels.
+the number of phonons (fixed) and that of electronic levels. 
+The single impurity contains $N_\a$ electronic levels.
 The total number of levels is then determined by
-the electronic levels in the bath $N_\mathrm{b}$. This is a function of the bath topology and $N_\mathrm{bath}$,
+the number of electronic levels $N_\mathrm{b}$ assigned to the bath.
+The latter number is a function of the bath topology and $N_\mathrm{bath}$,
 i.e. the number of bath elements. In the simplest case each bath
-element corresponds to an independent electronic levels coupled to the
+element corresponds to an independent electronic level coupled to the
 impurity, thus $N_\mathrm{b}\equiv N_\mathrm{bath}$. 
-We indicate with $N_\mathrm{s}=N_i + N_\mathrm{b}$ the total number of electronic levels. 
+We indicate with $N_\mathrm{s}=N_\a + N_\mathrm{b}$ the total number of electronic levels. 
 
 The setup of the general quantum impurity problem is implemented in
 different parts of the \NAME software. The dimensions of the system
@@ -151,11 +143,14 @@ requires a more involved procedure which will be illustrated in
 The Fock space of the quantum impurity problems is defined as
 $\FF=\FF_\mathrm{e}\otimes \FF_\mathrm{ph}$, with $\FF_\mathrm{e}=\bigoplus_{n=0}^{N_\mathrm{s}}
 S_-\HH_\mathrm{e}^{\otimes n}$ the electronic Fock space,  $\FF_\mathrm{ph}=\bigoplus_{n=0}^{N_q}S_+\HH_\mathrm{ph}^{\otimes n}$ the
-phonon Fock space,  $\HH_\mathrm{ph}=\{\ket{0},\ket{1},\dots,\ket{N_\mathrm{ph}}\}$ is the local phonon Hilbert space
+phonon Fock space,
+$\HH_\mathrm{e}$ is the local electronic Hilbert space, 
+$\HH_\mathrm{ph}=\{\ket{0},\ket{1},\dots,\ket{N_\mathrm{ph}}\}$ is the local phonon Hilbert space
 and ($S_-$)  $S_+$ the (anti-)symmetrization operator.  
 The total dimension of the Fock space is
-$D=D_\mathrm{e}\cdot D_\mathrm{ph}=4^{N_\mathrm{s}}\cdot (N_\mathrm{ph}+1)$ making the exponential
-growth with the number of electron levels transparent. 
+$D=4^{N_\mathrm{s}}\cdot (N_\mathrm{ph}+1)=D_\mathrm{e}\cdot
+D_\mathrm{ph}$, which spotligths the exponential
+growth with the number of electron levels. 
 The quantum states in the space $\FF$ are naturally represented in
 terms of occupation number formalism of the second quantization,
 i.e. the Fock basis.
