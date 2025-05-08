@@ -335,12 +335,22 @@ and {\tt get\_bath\_type} which similarly returns the value of {\tt bath\_type}.
 
 
 \subsection{TRIQS interface}\label{sSecInteropTRIQS}
-{\color{red} Igor }
-A purely Python \NAME to Triqs interface is available, leveraging on
-the C-bindings and Python API. The corresponding module depends on
-\NAME (which ultimately depends on SciFortran) and Triqs.
-Assuming the two software are correctly installed in the OS, the
-EDIpack2Triqs interface is installed as follows:
+A thin compatibility layer between \NAME and the Toolbox for Research on 
+Interacting Quantum Systems (TRIQS)\cite{Parcollet2015CPC} called edipack2triqs 
+is available as a stand-alone project. It is a pure Python package that is 
+built upon \NAME's Python API  (Sec.~\ref{sSecInteropEDIpy}) and provides a 
+limited object-oriented interface to the most important features of \NAME. 
+edipack2triqs strives to offer seamless interoperability with other 
+tools based on TRIQS by adopting the data storage formats, conventions and 
+usage patterns common to other TRIQS-based impurity solvers, such as 
+TRIQS/CTHYB\cite{Seth2016CPC}.
+
+\subsubsection{Installation}\label{sSecInteropTRIQSInstallation}
+The package depends on \NAME (which ultimately depends on SciFortran), EDIpy2
+and TRIQS version 3.1 or newer. Assuming the three prerequisites are correctly 
+installed in the OS, the current development version of edipack2triqs can be 
+installed with {\tt pip} from its 
+\href{https://github.com/krivenko/edipack2triqs}{GitHub repository} as follows:
 
 \begin{lstlisting}[style=mybash]
 git clone https://github.com/krivenko/edipack2triqs
@@ -348,7 +358,18 @@ cd edipack2triqs
 pip install .
 \end{lstlisting}
 
+\paragraph{Anaconda}
+Another option for installing the package is by using the Anaconda package 
+manager on Unix/Linux systems.
+The following commands will create a new {\tt conda} environment named 
+`edipack' and install the most recently released version of edipack2triqs along 
+with its dependencies (\NAME, EDIpy2 and the TRIQS libraries).
 
+\begin{lstlisting}[style=mybash]
+conda create -n edipack
+conda activate edipack
+conda install -c conda-forge -c edipack edipack2triqs
+\end{lstlisting}
 
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
 \NAME is supported as alternative impurity solver by the w2dynamics DMFT package\cite{Wallerberger2019CPC}. The only prerequisite to use this option is the presence of a functioning EDIpy2 installation, which w2dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter.
