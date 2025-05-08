@@ -16,6 +16,7 @@
 \usepackage{subfiles}
 \usepackage{comment}
 \newcommand{\fixme}[1]{{\color{BrickRed} #1}}
+\usepackage{xspace}
 
 %% natbib.sty is loaded by default. natbib options with \biboptions{...}
 \biboptions{sort&compress,super}
@@ -62,7 +63,9 @@
   commentstyle=\itshape,
   fontadjust=true,
   keywordstyle=\bfseries,
-  morekeywords={*,git,mkdir,cmake,make},
+  % It would be nice to have 'conda' here,
+  % but then 'conda-forge' gets highlighted too.
+  morekeywords={*,git,mkdir,cmake,make,pip},
   mathescape,
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
@@ -219,7 +222,7 @@
 \usepackage{bbold}
 \def\11{\mathbb{1}}
 \def\00{\mathbf{0}}
-\def\NAME{{\rm EDIpack2 }}
+\def\NAME{{\rm EDIpack2}\xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
