@@ -11,11 +11,11 @@
 \usepackage{stackengine}
 \newlength\llength
 \llength=1.38ex\relax
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{makecell}
 \usepackage{subfiles}
-
-
+\usepackage{comment}
+\newcommand{\fixme}[1]{{\color{BrickRed} #1}}
 
 %% natbib.sty is loaded by default. natbib options with \biboptions{...}
 \biboptions{sort&compress,super}
