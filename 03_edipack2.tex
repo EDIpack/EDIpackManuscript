@@ -995,163 +995,165 @@ representation and the user-defined bath arrays via
 % \caption{Ciao}
 % \end{table}
 
+
+
+
+
+
 \subsection{Lanczos based Diagonalization}\label{sSecHam}
 In presence of symmetries (see \secu{sSecQNs}) the matrix representing
-the Hamiltonian operator $\hat{H}$ takes a block diagonal form. Each block
-contains the Hamiltonian matrix $H_{\SS_{\vec{Q}}}$ for a
-given symmetry sector with quantum number $\vec{Q}$.
-The analysis of the energy spectrum of the quantum impurity problems
-thus reduces to the sequential solution of the sector secular problem
+the Hamiltonian operator $\hat{H}$ can be reduced to a block-diagonal form. Each block corresponds to a symmetry sector
+with a fixed set of quantum numbers $\vec{Q}$ and is represented by
+a Hamiltonian matrix $H_{\SS_{\vec{Q}}}$. 
+Consequently, the analysis of the quantum impurity energy spectrum reduces to solving
+the secular equation within each individual symmetry sector:
 $$
 H_{\SS_{\vec{Q}}}\ket{v}=E_{\SS_{\vec{Q}}}\ket{v}.
 $$
 
-Although the dimension of any such sector $\SS$ are much smaller than the
-total Fock space dimension $D_\SS \ll D_\FF$ still the complete solution of
-the related eigenvalue problem represents an unsurmountable problem
-already with $N_\mathrm{s}\simeq 8$. 
-In order to outwit this issue a number of
-algorithms have been developed leveraging on the sparse nature of
-$H_\SS$, e.g. Krylov or similar sub-space methods \cite{Lanczos,Arnoldi,Feast}.   
-In \NAME the alghoritm of choice is P-ARPACK, which represents the
-state-of-the-art Lanczos-based eigensolver with distributed memory
-support~\cite{P-Arpack}. This method includes re-orthogonalization
-within a block Lanczos algorithm which ensures convergence of the
-requred eigenpairs. Using the input variable {\tt lanc\_method} it is
-however possible to select a simple, but not as efficient, parallel
-Lanczos algorithm.
-The core of Krylov-based diagonalization algorithms is the Matrix-Vector Product
-(MVP), i.e. the application of the Hamiltonian to a given input
-vector:
-$$
-H_\SS \ket{v} \to \ket{w}\qquad \ket{v},\ket{w}\in \SS_{\vec{Q}}
-$$
+Even though the dimension of a given sector $\SS$ is much smaller than the
+total Fock space dimension $D_\SS \ll D_\FF$, solving completely the
+corresponding eigenvalue problem remains a formidable challenge
+already for $N_\mathrm{s}\simeq 8$.
+To outwit this, various
+algorithms have been developed exploiting the sparse nature of
+$H_\SS$, including Krylov subspace methods and related approaches
+\cite{Lanczos,Arnoldi,Feast}.
 
-This operations easily takes over more than 80\% of the computation
-time, so its optimization is a crucial aspect in any diagonalization
-algorithm. In \onlinecite{Amaricci2022} we covered in full detail
-the distrubuted memory massively parallel algorithms we implement 
-to address this specific issue.
-Here, using the same naming convention introduced in \onlinecite{Amaricci2022}, 
-we briefly outline the main strategy for the implementation of the MVP
-according to the value of {\tt ed\_mode}.
+In \NAME, the preferred algorithm is P-ARPACK, a state-of-the-art
+Lanczos-based eigensolver with distributed memory support
+\cite{P-Arpack}. This method incorporates re-orthogonalization within
+a block Lanczos routine, ensuring the accurate convergence of the
+desired eigenpairs. However, it is also possible to select a simpler,
+though less efficient, parallel Lanczos algorithm using the input
+variable {\tt lanc\_method}.
 
-
-\paragraph{{\bf normal}}
-This case relies on the tensor structure of the Fock space and the
-symmetry sectors. In any given sector the electronic part of the
-Hamiltonian matrix reads:
+The core computational task in any Krylov-based diagonalization
+algorithm is the Matrix-Vector Product (MVP), i.e., the application
+of the Hamiltonian to a given input vector:
 \begin{equation}
-H_\SS = H_\mathrm{d}  + H_\up\otimes \mathbb{I}_\dw + \mathbb{I}_\up\otimes
-H_\dw + H_\mathrm{nd}\,.
+H_\SS \ket{v} \to \ket{w}\qquad \ket{v},\ket{w}\in \SS_{\vec{Q}}.
+\end{equation}
+This operation easily accounts for more than 80\% of the overall
+computational effort, making its optimization a critical aspect of
+high-performance diagonalization algorithms. In \onlinecite{Amaricci2022},
+the distributed-memory, massively parallel strategies employed in \NAME
+to optimize this step are discussed in full detail. Here, we provide
+a brief outline of the main ideas, following the notation introduced
+in \onlinecite{Amaricci2022}, and focusing on the impact of the choice
+of {\tt ed\_mode}.
+
+
+
+
+\paragraph{\bf normal}
+In this case, the tensor structure of the Fock space and the sector
+symmetries are fully leveraged. Within a given sector, the electronic
+part of the Hamiltonian can be expressed as:
+\begin{equation}
+H_\SS = H_\mathrm{d} + H_\up\otimes \mathbb{I}\dw + \mathbb{I}\up\otimes
+H_\dw + H_\mathrm{nd},
 \label{HssNormal}
 \end{equation}
-where $H_d$ is a diagonal term containing the local part of the
-Hamiltonian, there including the density-density terms of the
-interaction,  $H_\sigma$ describes the hopping processes of the
-electrons with spin $\sigma=\up,\dw$.
-The term $H_{nd}$ contains all the remaining non-diagonal
-elements which do not fit in the previous two components,
-e.g. the spin-exchange and pair-hopping interaction terms.
-Correspondingly, the any sector state $\ket{v}$ can be expressed in a matrix
-basis $\hat{v}$ with rows (columns) running over spin $\up$ ($\down$)
-configurations. Leveraging on this setup it is possible the MVP using the 
-{\tt MPI\_All2AllV} which aims at optimizing locality in the memory
-locality. Additional terms contained in $H_{nd}$ are treated using the
-{\tt MPI\_AllGatherV} algorithm which includes a slight communication
-overload ultimately reducing the parallel efficiency.  
+where $H_\mathrm{d}$ represents the diagonal (local) part of the
+Hamiltonian, including density-density interactions, while
+$H_\sigma$ captures hopping processes for electrons with spin
+$\sigma=\up,\dw$. The term $H_\mathrm{nd}$ encompasses all remaining
+non-diagonal contributions, such as spin-exchange and pair-hopping
+terms.
 
-
-\paragraph{{\bf superc/nonsu2}}
-In this two cases the symmetry enforce a specific relation between $\up$ and
-$\dw$ configurations ultimately suppressing the benefits arising from
-Fock space factorization.
-The electronic part of the Hamiltonian matrix is usually organized in this structure:
-$$
-H_\SS = H_\mathrm{imp} + H_\mathrm{int} + H_\mathrm{bath} + H_\mathrm{imp-bath} 
-$$
-where, with almost obvious meaning of the labels, $H_\mathrm{imp}$ encodes
-the non-interacting part of the impurity Hamiltonian determined by
-$h^0_{\a\b\s\s'}$, $H_\mathrm{int}$ the interaction term, $H_\mathrm{bath}$ the
-effective bath terms related to $h^p_{\a\b\s\s'}$ and finally
-$H_\mathrm{imp-bath}$ describes the coupling between impurity and bath
-proportional to $V^p_{\a\b\s\s'}$. 
-In an MPI setup the first three terms contains elements local in the
-memory of each node. These are stored separately from the non-local
-ones in any {\tt sparse\_matrix} representing $H_\SS$. 
-The MVP is carried out using the {\tt MPI\_AllGatherV} algorithm
-which, as discussed in \onlinecite{Amaricci2022}, requires the
-reconstruction of the distributed input array any node producing a
-overflow in the MPI communication.  
+In this formulation, a sector state $\ket{v}$ can be
+represented in a matrix basis $\hat{v}$ with rows (columns)
+corresponding to $\up$ ($\dw$) configurations. This structure allows
+for efficient MVP operations using {\tt MPI\_All2AllV}, which aims to
+optimize memory locality. However, terms in $H_\mathrm{nd}$ that
+break this structure require {\tt MPI\_AllGatherV}, introducing a
+slight communication overhead and reducing parallel efficiency.
 
 
 
-The diagonalization procedure is divided in two main steps: a global
-setup and the actual diagonalization.
-%
-The setup step takes care of allocating the required memory,
-setup the MPI environment and allocate the correct 
-Matrix-Vector Product (MVP) procedure according to the symmetries of
-the problem. 
-This part is implemented in a set of independent modules  {\tt
-  ED\_HAMILTONIAN\_?}, where {\tt ed\_mode=?}.
-Specifically, any such module includes two functions.
-The first, {\tt  build\_Hv\_sector\_?}, builds the required sector and
-allocate the MVP function, i.e. point the abstract function {\tt
-  sphtimesv\_p} to the correct procedure determined by the value of
-{\tt ed\_sparse\_H=True/False}.
-If {\tt True} the Hamiltonian terms in $H_\SS$
-get evaluated and stored in a {\tt sparse\_matrix} instance, possibly
-using automatic parallel storage, and then used to perform
-the MVP. This part is implemented in the modules {\tt
+
+
+\paragraph{\bf superc/nonsu2}
+For these modes, symmetries enforce specific constraints between
+$\up$ and $\dw$ configurations, preventing the direct use of the
+factorized Fock space representation. The electronic
+part of the Hamiltonian is typically structured as:
+\begin{equation}
+H_\SS = H_\mathrm{imp} + H_\mathrm{int} + H_\mathrm{bath} + H_\mathrm{imp-bath},
+\end{equation}
+where $H_\mathrm{imp}$ encodes the local impurity Hamiltonian
+determined by $h^0_{\a\b\s\s'}$,
+$H_\mathrm{int}$ contains the interaction terms, $H_\mathrm{bath}$
+describes the effective bath contributions corresponding to
+$h^p_{\a\b\s\s'}$, and $H_\mathrm{imp-bath}$ accounts for the
+impurity-bath couplings $V^p_{\a\b\s\s'}$.
+In an MPI setup, the first three terms contains also elements local to each node and
+stored separately within each {\tt sparse\_matrix} instance representing $H_\SS$.
+The MVP is carried out using the {\tt MPI\_AllGatherV} algorithm which, as noted in
+\onlinecite{Amaricci2022}, requires reconstruction of distributed
+arrays and incurs significant communication overhead.
+
+
+
+
+The diagonalization process itself is divided into two primary phases:
+
+\paragraph{\bf Global Setup}. This phase allocates the required memory, initializes
+the MPI environment, and configures the appropriate MVP procedure
+based on the symmetries of the problem. This logic is implemented in
+a set of independent modules, {\tt ED\_HAMILTONIAN\_?}, where
+{\tt ed\_mode=?}. Any module includes two functions: {\tt build\_Hv\_sector\_?} and  {\tt vecDim\_Hv\_sector\_?}.
+
+The {\tt build\_Hv\_sector\_?} function builds the symmetry sector and
+allocates the MVP function but setting the shared abstract function pointer {\tt
+  sphtimesv\_p}. This latter step is controlled by the value of
+{\tt ed\_sparse\_H=True/False}. If {\tt True} the Hamiltonian $H_\SS$
+gets stored in a {\tt sparse\_matrix} instance and used to perform
+the MVPs. The corresponding algorithms are implemented in the modules {\tt
   ED\_HAMILTONIAN\_?\_STORED\_HxV}
 If {\tt ed\_sparse\_H} is {\tt False} the MVP is operated on-the-fly,
-i.e. each element of $H_\SS$ is direcrtly applied to the given input
-vector $\ket{v}$ to determine the outgoing vector $H_\SS\ket{v}$,
-either in serial or parallel mode as implemented in {\tt
+i.e. each element of $H_\SS$ is directly applied to the input
+vector $\ket{v}$, either in serial or parallel mode as implemented in {\tt
   ED\_HAMILTONIAN\_?\_DIRECT\_HxV}.  
 
-
-
 The function {\tt vecDim\_Hv\_sector\_?} returns the 
-dimension of the vector to be used in the
-MVP. In serial execution this number is just $D_\SS$ the dimension of
-the sector, whereas in a parallel mode the returned value is the
+dimension of the vector used in the
+MVP. In a MPI-parallel execution the returned value is the
 dimension $d_i$ of the vector chunk per each node such that
 $\sum_{i=1}^{N_\mathrm{nodes}}d_i = D_\SS$. Yet, the specific value of $d_i$
-depends on the MPI algorithm used for the MVP function, which in turn
-is determined by the symmetry of the problem, i.e. {\tt ed\_mode}.
+depends on the MPI algorithm used for the MVP function.
 
-
-The sector-by-sector diagonalization for each
-value of {\tt ed\_mode} is implemented in the modules {\tt
-  ED\_DIAG\_?} through the main functions {\tt
-  diagonalize\_impurity\_?}. The diagonalization proceeds in three main
-steps: i) setup the diagonalization by selecting all or a sub-set of the
-sectors to analyze; ii) sequential diagonalization cycle over all the suitable symmetry
-sectors; iii) analysis of the resulting {\tt state\_list} containins
-all the eigensolutions to be conserved.
+\paragraph{\bf Diagonalization}
+This step is managed by the {\tt ED\_DIAG\_?}
+modules, which contain the main functions {\tt diagonalize\_impurity\_?}.
+This phase includes: (i) selecting sectors for diagonalization, (ii)
+performing diagonalization within each sector, and (iii) analyzing
+the resulting {\tt state\_list} of conserved eigenstates.
 
 
 
 
 \subsection{Dynamical correlation functions}\label{sSecGF}
 The determination of the low energy part of the Hamiltonian spectrum
-enables the evaluation of dynamical correlation functions using Krylov
+enables the evaluation of Dynamical Correlation Functions (DCF) using Krylov
 sub-space algorithm.
-This is a key part of the library when using \NAME as an impurity
-solver within DMFT framework. 
+This capability is central to the library when using \NAME as an
+impurity solver within the DMFT framework.
 
-Before entering into the implementation details we briefly outline the
-generic algorithm. Let us consider the dynamical correlation function:
+Before delving into the implementation specifics, we outline the
+generic approach. Consider the generic DCF:
 \begin{equation}
   \label{eqGaa}
   C_\AA = \ibra \TT_\pm[ \AA(t) \AA^+ ]\iket
-  \end{equation}
-where $\AA(t)=e^{iHt}\AA e^{-iHt}$, $\TT_\pm$ is the time-ordering operator for fermions or
-bosons and $\ibra \AA \iket=\frac{1}{Z}\Tr{ \left[ e^{-\beta
-      H}\AA \right]}$,  $Z=\sum_ne^{-\beta E_n}$, is the thermodynamic
-average. Using spectral decomposition, the expression \equ{eqGaa} is reduced into Kallen-Lehman form:
+\end{equation}
+where $\AA(t)=e^{iHt}\AA e^{-iHt}$, $\TT_\pm$ is the time-ordering
+operator for fermions ($-$) or
+bosons ($-$), and $\ibra \AA \iket=\frac{1}{Z}\Tr{ \left[ e^{-\beta
+      H}\AA \right]}$, with $Z=\sum_ne^{-\beta E_n}$, the thermodynamic
+average.
+Using spectral decomposition, the expression \equ{eqGaa} reduces to a
+K\"all\`en-Lehmann form:
 \begin{equation}\label{KLgf}
   \begin{split}
     C_\AA(z) 
@@ -1164,33 +1166,30 @@ average. Using spectral decomposition, the expression \equ{eqGaa} is reduced int
   \frac{ |\bra{\psi_m}\AA \ket{\psi_n}|^2 }  {z+(E_m-E_n)}\cr
 \end{split}
 \end{equation}
-where $z\in\CCC$, 
-$\ket{\psi_n}$, $E_n$ are the eigenpairs of the
-Hamiltonian $H$ and $E_0$ is the groundstate energy.
-While appealing, the previous expression requires the knowledge of the
-entire Hamiltonian spectrum. A key simplification is obtained looking
-at the first line in \equ{KLgf},
-showing that the $C_\AA$ essentially corresponds to a given element of the inverse operator $(z-H)^{-1}$, i.e. the
-resolvant. The Krylov sub-space method provides a controlled
-approximation for this element, leveraging over the
-reduction of the (sector) Hamiltonian to a partial tri-diagonal
-form and returning an arbitrary number of amplitudes to (unknown)
-excited states. To illustrate the algorithm let's consider the normalized initial state: 
+where $z\in\CCC$,  $\ket{\psi_n}$, $E_n$ are the eigensolutions of the
+Hamiltonian $H$. 
+This form is appealing but computationally prohibitive, as it requires
+the full Hamiltonian spectrum. However, the first line in \equ{KLgf}
+highlights that the $C_\AA$ essentially corresponds to a specific
+matrix element of the resolvant operator $(z-H)^{-1}$, which can be
+efficiently approximated using the Krylov sub-space method.
+
+To illustrate this approach, consider the normalized initial state: 
 $$
 \ket{\phi_n}=\AA^+\ket{\psi_n}/\NN_n
 $$
 where  $\ket{\psi_n}\in\SS$ and $\NN_n=\sqrt{\bra{\psi_n}\AA
   \AA^+\ket{\psi_n}}$.
-We can construct the Krylov basis $$\mathcal{K}_{N} (\ket{\phi_n})=\{\ket{\phi_n}, H\ket{\phi_n}, \dots,
+The Krylov basis is then constructed as $$\mathcal{K}_{N} (\ket{\phi_n})=\{\ket{\phi_n}, H\ket{\phi_n}, \dots,
 H^N\ket{\phi_n}\}\equiv \{\ket{v^n_0}, \ket{v^n_1},\dots, \ket{v^n_N}
-\}$$ with $1 \ll N \ll \DD_\SS$ by iteratively applying the (sector)
-Hamiltonian through MVP functions. 
-Any given eigenstate $\ket{\psi_n}$ has components along the Krylov basis $\mathcal{K}_{N} (\ket{\phi_n})$ which read: $\ket{\psi_n} =
-\sum_i  \ibra v^n_i|\psi_n \iket  \ket{ v^n_i} =
-\sum_i a^n_i \ket{v^n_i}$.   We can evaluate the operator components
-$=\bra{\psi_m}\AA^+ \ket{\psi_n}\equiv \langle\psi_m| \phi_n\rangle =
-\NN_n {a^{n*}_m}$. Inserting this expression into \equ{KLgf} we
-obtain the following approximation to $C_\AA$:
+\}$$ with $1 \ll N \ll \DD_\SS$, obtainaed by repeated applications of
+the (sector) Hamiltonian via MVP functions.
+
+Given that any eigenstate $\ket{\psi_n}$ can be expressed within the
+Krylov basis as
+$\ket{\psi_n} = \sum_i  \ibra v^n_i|\psi_n \iket  \ket{ v^n_i} =
+\sum_i a^n_i \ket{v^n_i}$. we can approximate the expression
+\equ{KLgf} as:  
 \begin{equation}
   \label{eqGKrylov}
   \begin{split}
@@ -1204,79 +1203,91 @@ obtain the following approximation to $C_\AA$:
     \sum_{m=1}^{N} \sum_{\nu=\pm} g_\AA(\nu, w^{\nu}_{mn},  dE^\nu_{mn}) \cr
   \end{split}
 \end{equation}
-where we introduced the notation $g(\nu, w(\AA)^{\nu}_{mn},  dE(\AA)^\nu_{mn})$
+where the terms are grouped as a sum over spectral weights and
+poles. We introduced the notation $g(\nu, w(\AA)^{\nu}_{mn},  dE(\AA)^\nu_{mn})$
 for the {\tt gfmatrix} object containing the weights $w(\AA)^{\nu}_{mn}$ and
 poles $dE(\AA)^{\nu}_{mn}$ for the operator $\AA$, for every initial state $\ket{\psi_n}$
 contributing to the low energy spectrum, for every order $m$ of the
-Krylov sub-space algorithm and for channel $\nu$. 
+Krylov sub-space algorithm and for channel $\nu$.
+This approach significantly reduces the computational burden, as it
+relies on a much smaller set of basis states.
 
-A stringent limitation of this procedure is to get applied to diagonal
-dynamical correlation functions of the form \equ{eqGaa}. However, as
-we will show in the following, many practical application requires to
-evaluate off-diagonal functions of the form:
+
+However, this method is typically limited to diagonal DCF like
+\equ{eqGaa}. In practice, many applications requires also to build off-diagonal
+functions of the form:
 $C_{\AA\BB}(z) = \ibra T_{\pm}[\AA(t) \BB^+]\iket$.
-A direct extensin of the method is obtained considering suitable
-auxiliary operators prepared with independent linear combination of
-$\AA$ and $\BB$.
-A notable example is to consider the two auxiiary operators $\OO=\AA +\BB$ and
-$\PP=\AA-i\BB$. Using simple algebra it is then straightforward to
-obtain the desired function $C_{\AA \BB}$ from the evaluation of
-$C_\OO$ and $C_\PP$:
+This can addressed by introducing auxiliary operators, such as $\OO=\AA +\BB$ and
+$\PP=\AA-i\BB$, enabling the extraction of the desired function via
+simple algebraic combinations:
 $$
 C_{\AA\BB} = \frac{1}{2}\left[C_\OO + C_\PP - (1-i)C_\AA -(1-i)C_\BB\right]
 $$
 
 
-In \NAME the impurity Green's functions $G_{\a\b\s\s'}=\ibra \TT_\pm[ c_{\a\s}(t)
-c_{\b\s'}^+ ]\iket$,
-is contained in \texttt{ED\_GREENS\_NORMAL}. This wraps more
-specific methods according to the symmetry of the problem expressed by
-{\tt ed\_mode}. In the {\bf normal} mode also spin,
-charge, pair and excitonic susceptibilities functions. 
-Computationally, the construction of the Krylov basis
-$\mathcal{K}_N(\OO\ket{\psi_n})$ for any eigenstate of the low energy
-spectrum is the most time consuming step. As for the diagonalization
-part, here a crucial speed-up is obtained by the parallel execution of
-the MVP lying at the earth of the Hamiltonian tri-diaagonalization
-process. The input variable {\tt lanc\_gfniter} controls the largest order of
-the Krylov basis, i.e. the maximum number of excitations in
-\equ{eqGKrylov}.  
-Operationally, each symmetry mode {\tt ed\_mode=?} requires a different construction of
-the Green's functions implemented in {\tt ED\_GF\_?}
+In \NAME, the computation of impurity Green's functions, such as
+$G_{\a\b\s\s'}=\ibra \TT_\pm[ c_{\a\s}(t) c_{\b\s'}^+ ]\iket$,
+is handled by the \texttt{ED\_GREENS\_FUNCTIONS} module.
+This
+module integrates more specialized methods based on the symmetry
+classification defined by the \texttt{ed\_mode} parameter.
+Moreove, in the {\bf normal} mod, it also includes spin, charge, pair, and excitonic
+susceptibility functions, providing a comprehensive framework for
+dynamical response calculations.
+From a computational perspective, the construction of the Krylov basis
+$\mathcal{K}_N(\OO\ket{\psi_n})$ for each eigenstate within the low-energy
+spectrum is typically the most resource-intensive step.
+As with the
+diagonalization process, a significant performance gain is achieved through
+the parallel execution of the Matrix-Vector Product (MVP) at the core of
+the Hamiltonian tri-diagonalization algorithm.
+The input variable
+\texttt{lanc\_gfniter} regulates the maximum order of the Krylov basis,
+determining the upper limit on the number of excitations considered in
+\equ{eqGKrylov}.
+Operationally, each symmetry mode (\texttt{ed\_mode=?}) requires a distinct
+strategy for Green's function construction, implemented in the corresponding
+\texttt{ED\_GF\_?} modules.
+
 
 \paragraph{{\bf normal}}
-In this case the all the orbital dependent and spin-diagonal Green's
-functions $G_{\a\b\s\s}$ needs to be evaluated. The orbital diagonal case
-$\a=\b$ proceeds as discussed above considering $\AA=c_{\a\s}$. This
-step makes use of the {\tt apply\_op\_C/CDG} functions in {\tt
-  ED\_AUX\_FUNX} on any eigenstate $\ket{\psi_n}$ in the {\tt
-  state\_list}, i.e. a global instance of {\tt sparse\_espace}
-containing the low energy spectrum of the problem.
-The sector Hamiltonian matrix in this mode is assumed to be real
-symmetric. This brings a simplification in the evaluation of the
-off-diagonal components $G_{\a\b\s\s}=G_{\b\a\s\s}$.
-These components are thus evaluated considering the auxiliary operator
-$\OO=(c_{\a\s} + c_{\b\s})$ and using the relation
+In this mode, all orbital-dependent and spin-diagonal Green's 
+functions, $G_{\a\b\s\s}$, must be evaluated. The diagonal 
+case, where $\a=\b$, is straightforward and involves applying 
+the operator $\AA=c_{\a\s}$ to any eigenstate $\ket{\psi_n}$ 
+from the global {\tt state\_list} of the low-energy spectrum, 
+which is represented by the {\tt sparse\_espace} object. This 
+operation relies on the functions {\tt apply\_op\_C/CDG} in 
+{\tt ED\_AUX\_FUNX}. 
+
+
+
+The sector Hamiltonian matrix in this mode is typically assumed 
+to be real symmetric, which significantly simplifies the evaluation 
+of the off-diagonal terms. In this case, the relation 
+$G_{\a\b\s\s}=G_{\b\a\s\s}$ holds, allowing the computation of 
+off-diagonal components using an auxiliary operator 
+$\OO = c_{\a\s} + c_{\b\s}$ and the identity:
 $G_{\a\b\s\s}=\tfrac{1}{2}(C_\OO - G_{\a\a\s\s} - G_{\b\b\s\s})$.
 
 The diagonal spin, charge and pair susceptibility terms
-$\chi^{S^z}_{\a\a}$, $\chi^N_{\a\a}$ and $\chi^\Delta_{\a\a}$ are
-evaluated employing, respectively, the operators $\AA=\sum_{\s\s'}c^+_{\a\s}\tau^z_{\s\s'}c_{\a\s'}\equiv
-S^z_\a$, $\AA=\sum_{\s\s'}c^+_{\a\s}\tau^0_{\s\s'}c_{\a\s'}\equiv
-N_\a$) and $\AA=c_{\a\dw}c_{\a\up}\equiv
-\Delta_\a$, where
-$\tau^{a=0,x,y,z}$ are the Pauli matrices.
-Similarly, yhe off-diagonal terms are obtained by considering the operator $\AA=S^z_\a
-+ S^z_\b$, $\AA=N_\a + N_\b$ or $\AA=\Delta_\a + \Delta_\b$. 
-The excitonic susceptibility $\chi^T_{\a\b}$ is defined with respect
-to the vector operator: $T^i_{\a\b} = \sum_{\s\s'}
-c^+_{\a\s}\tau^i_{\s\s'}c_{\b\s'}$, respectively, the spin-singlet
-($i=0$) and the spin-triplet excitons ($i=x,y,z$) operators.
+$\chi^{S^z}_{\a\a}$, $\chi^N_{\a\a}$ and $\chi^\Delta_{\a\a}$
+are constructed using the operators $\AA = \sum_{\s\s'} c^+_{\a\s}
+\tau^z_{\s\s'} c_{\a\s'} \equiv S^z_\a, $, 
+$\AA = \sum_{\s\s'} c^+_{\a\s} \tau^0_{\s\s'} c_{\a\s'} \equiv N_\a, $
+and $\AA = c_{\a\dw}c_{\a\up} \equiv \Delta_\a$,
+where $\tau^{a=0,x,y,z}$ are the Pauli matrices.
+Off-diagonal terms are similarly evaluated using the operators
+$\AA=S^z_\a + S^z_\b$, $\AA=N_\a + N_\b$ or $\AA=\Delta_\a + \Delta_\b$. 
+Excitonic susceptibilities, $\chi^T_{\a\b}$, are defined with 
+respect to the vector operator: $T^i_{\a\b} = \sum_{\s\s'}
+c^+_{\a\s}\tau^i_{\s\s'}c_{\b\s'}$, where $i=0$ represents the
+spin-singlet exciton, and $i=x,y,z$  correspond to the spin-triplet excitons.
 
 
 \paragraph{{\bf superc}}
-In the supercondutive case the Nambu orbital
-dependent $s$-wave Green's function reads:
+In the supercondutive case, the Nambu orbital-dependent $s$-wave
+Green's function reads:
 \begin{equation}
   \label{GFnambu}
   \hat{G}_{\a\b} =
@@ -1285,56 +1296,99 @@ dependent $s$-wave Green's function reads:
     \bar{F}_{\a\b\dw\up} & \bar{G}_{\a\b\dw\dw}
   \end{bmatrix}  
 \end{equation}
-However, leveraging on the symmetries holding between the different
-components we can reduce to evaluate only the top row components plus
-auxiliary functions.
-The calculation of the diagonal normal component $G_{\a\a\up\up}$ follows the
-very same scheme of the {\bf normal} case. For the off-diagonal terms
-however we do not rely on any symmetry relation but we consider 
-two auxiliary functions $C_\OO$, $C_\PP$ with $\OO=c_{\a\up} +
-c_{\b\up}$, $\PP=c_{\a\up} -ic_{\b\up}$ so that:
+Exploiting symmetries between matrix components, it is 
+sufficient to compute only the top row elements along with 
+a few auxiliary functions.
+
+The diagonal normal component $G_{\a\a\up\up}$ can be 
+evaluated using the same approach as in the {\bf normal} 
+case. However, for the off-diagonal terms $G_{\a\b\up\up}$, 
+we forgo symmetry arguments and instead define two 
+auxiliary operators, $\OO = c_{\a\up} + c_{\b\up}$ and 
+$\PP = c_{\a\up} - i c_{\b\up}$. This allows us to express 
+the Green's function as::
 $G_{\a\b\up\up}=\tfrac{1}{2}[C_\OO + C_\PP -
 (1-i)(G_{\a\a\up\up}+G_{\b\b\up\up})$.
-The diagonal and off-diagonal anomalous terms $F_{\a\b\up\dw}$ need to
-be evaluated using different combinations of creation/destruction
-operators. First we evaluate the $\bar{G}_{\a\a\dw\dw}$ component as
-an auxiliary term considering $\AA=c^+_{\a\dw}$. 
-Next, we consider the two linear combinations:
-$\TT = c_{\a\up} + c^+_{\b\dw}$, $\RR=c_{\a\up} -i c^+_{\b\dw}$
-contributing, respectively, to the auxiliary functions $C_\TT$,
-$C_\RR$. The searched anomalous functions reads:
-$F_{\a\b\up\dw} = \tfrac{1}{2}[ C_\TT + C_\RR - (1-i)(G_{\a\a\up\up} +
-\bar{G}_{\b\b\dw\dw})]$. 
+
+Evaluating the diagonal and off-diagonal anomalous terms 
+$F_{\a\b\up\dw}$ requires distinct combinations of 
+creation and annihilation operators. First, the component 
+$\bar{G}_{\a\a\dw\dw}$ is evaluated as an auxiliary term 
+using $\AA = c^+_{\a\dw}$. Then, we construct two further 
+linear combinations:
+\begin{align*}
+\TT &= c_{\a\up} + c^+_{\b\dw}, \\
+\RR &= c_{\a\up} - i c^+_{\b\dw},
+\end{align*}
+which contribute to the auxiliary functions $C_\TT$ and 
+$C_\RR$, respectively. The final expression for the 
+anomalous function reads:
+\begin{equation}
+F_{\a\b\up\dw} = \tfrac{1}{2} \left[ C_\TT + C_\RR - 
+(1-i)(G_{\a\a\up\up} + \bar{G}_{\b\b\dw\dw}) \right].
+\end{equation}
+
 
 
 \paragraph{{\bf nonsu2}}
-In this case all the Green's functions components need
-to be evaluated. For the orbital and spin diagonal terms
-$G_{\a\a\s\s}$  we proceeds as in the {\bf normal} case.
-The remaining  off-diagonal components $G_{\a\b\s\s'}$ are
-evaluated using auxiliary operators $\OO=c_{\a\s}+c_{\b\s'}$,
-$\PP=c_{\a\s}-ic_{\b\s'}$ and the relation:
-$G_{\a\b\s\s'}=\tfrac{1}{2}[C_\OO+C_\PP -
-(1-i)(G_{\a\a\s\s}+G_{\b\b\s'\s'})]$.
+In the {\bf nonsu2} case, all Green's function components 
+must be explicitly evaluated, as the spin and orbital 
+symmetries are not conserved. For the diagonal terms 
+$G_{\a\a\s\s}$, the procedure follows the same approach 
+outlined in the {\bf normal} case. 
+
+The off-diagonal components $G_{\a\b\s\s'}$, however, 
+require a more general treatment. These are computed using 
+auxiliary operators defined as:
+\begin{align*}
+\OO &= c_{\a\s} + c_{\b\s'}, \\
+\PP &= c_{\a\s} - i c_{\b\s'},
+\end{align*}
+which allows the Green's function to be expressed as:
+\begin{equation}
+G_{\a\b\s\s'} = \tfrac{1}{2} \left[ C_\OO + C_\PP - 
+(1-i)(G_{\a\a\s\s} + G_{\b\b\s'\s'}) \right].
+\end{equation}
+This approach effectively reduces the complexity of 
+evaluating the off-diagonal terms by leveraging auxiliary 
+functions, despite the absence of full spin symmetry.
+
 
 
 
 
 \subsection{Observables}\label{sSecObc}
-A number of predefined impurity observable or local static
-correlations, e.g. occupation, total energy, pair amplitude, excitonic
-order parameter ,etc.   are calculated in the module
-\texttt{OBSERVABLES}. As for the previous cases, this module wraps the
-different implementations and quantities to evaluate from the
-operational modes {\tt ed\_mode=?} implemented in {\tt
-  ED\_OBSERVABLES\_?}. 
-Local observables and correlations are defined by the thermal average  $\ibra \OO\iket =
-\Tr{\left[e^{-\beta H}\OO\right]}/Z$. This can be efficiently evaluated at zero and
-low temperature using the stored low energy part of the spectrum
-leveraging on the exponential cutoff from the Boltzmann factor:
+A wide range of predefined impurity observables and local 
+static correlations, such as occupation numbers, total 
+energy, pair amplitudes, and excitonic order parameters, 
+are computed in the \texttt{OBSERVABLES} module. Similar to 
+previous cases, this module wraps different implementations 
+depending on the operational mode specified by 
+{\tt ed\_mode=?} and is distributed across the corresponding 
+files {\tt ED\_OBSERVABLES\_?}. 
+
+
+
+Local observables and correlations are generally defined 
+through the thermal average 
+$\ibra \OO\iket = \frac{\Tr\left[e^{-\beta H}\OO\right]}{Z}$, 
+where $Z = \sum_n e^{-\beta E_n}$ is the partition function. 
+At zero or low temperatures, this can be efficiently 
+evaluated using the stored low-energy part of the spectrum, 
+taking advantage of the exponential suppression provided by 
+the Boltzmann factor:
 \begin{equation}
-    \ibra \OO\iket  = \tfrac{1}{Z}\sum_n e^{-\beta
-  E_n}\bra{\psi_n}\OO\ket{\psi_n},
+\ibra \OO\iket = \frac{1}{Z}\sum_n e^{-\beta E_n}
+\bra{\psi_n} \OO \ket{\psi_n},
+\label{eq:thermal_average}
+\end{equation}
+where $E_n$ and $\ket{\psi_n}$ are the low-lying eigenstates 
+of the system stored in the {\tt state\_list}. This approach 
+greatly reduces computational overhead by focusing on the 
+relevant, low-energy sector.
+\begin{equation}
+  \ibra \OO\iket  = \tfrac{1}{Z}\sum_n e^{-\beta  E_n}
+  \bra{\psi_n}\OO\ket{\psi_n},
   \label{eq:thermal_average}
 \end{equation}
 where $E_n$ and $\ket{\psi_n}$ are the low lying eigenstates of the
@@ -1342,81 +1396,131 @@ system stored in the {\tt state\_list}.
 
 
 \subsection{Reduced impurity density matrix}\label{sSecRDM}
-The new \NAME version of the library features the calculation of the
-impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), extending 
-the algorithm introduced in \onlinecite{BellomiaPhD} so to enable the
-analysis of entanglement properties of the quantum impurity for any value
-of {\tt ed\_mode}.
-To simplify the discussion in this section we take the zero
-temperature limit and consider the presence of a non-degenerate
-groundstate $\ket{\psi}$ populating the {\tt state\_list}.
-The generalization to the presence of degenerate states or the finite
-temperature regime are straightforward, as it amounts to defining an
-average over degenerate/thermal states $\ibra\rho^\mathrm{imp}\iket$, 
-akin to \equ{eq:thermal_average}.
-The given pure state belongs to a unique symmetry sector $\SS$ and it
-is represented in the Fock basis as $\ket{\psi} = \sum_I a_I \ket{I}$. 
-The corresponding pure density matrix $\rho$ is thus explicitly decomposed as:
-$$
-\rho = \ket{\psi}\bra{\psi} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} a^*_J a_I \ket{I}\bra{J} =\sum_{IJ=1}^{4^{N_\mathrm{s}}} \rho_{IJ} \ket{I}\bra{J}.
-$$
-The iRDM is obtained from $\rho$ by tracing out the bath degrees of
-freedom: $\rho^\mathrm{imp}=\Tr_\mathrm{bath}\rho$. The summations appearing in the
-previous expressions become quickly unmanageable with the system
-size, as their extrema scale exponentially with $N_\mathrm{s}$. 
-To overcome this issue we implemented a fast algorithm
-leveraging on the decomposition of the Fock space into symmetry sectors
-and the subsequent map sparsity.
-Using quantum number conservation the summation extrema get reduced to
-the size $D_\SS$ of the sector $\SS$ to which the groundstate (or in
-general any eigenstate) belongs. 
-Next we analyze the groundstate expansion on the Fock states, splitting the bit representation of any state $\ket{I}$ into
-their spin-dependent impurity and bath parts as $\ket{I} = \ket{
-  i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow \, b_\downarrow}$. Each bitset 
-span a space of dimension $D^\a_\mathrm{imp}$ or $D^\s_\mathrm{bath}$. 
-Finally, as detailed in \secu{CodeSparseMap}, we store into the {\tt sparse\_map} ${\cal P}$, 
-for every impurity configuration 
-$i_\s =1,\dots,D^\s_{imp}$ (\emph{key}), the bath states 
-$b_\s\in[1,\dots,D^\s_\mathrm{bath}]$ (\emph{values}) that satisfy the conservation law defined
-by the \texttt{ed\_mode} variable.
-We indicate with ${\cal D}_{i\s}$ the number of keys $i_\s$ and with 
-${\cal D}_{b\s}$ the number of values $b_\s$.
-The fast summation algorithm for the evaluation of the iRDM takes on a
-different form for the two cases {\bf normal} and {\bf superc/nonsu2},
-as outlined below.
+The latest version of \NAME introduces the calculation of the 
+impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), 
+extending the algorithm initially proposed in 
+Ref.~\onlinecite{BellomiaPhD} to support the analysis of entanglement 
+properties of quantum impurities for any value of  {\tt ed\_mode}.
+
+For simplicity, this section focuses on the zero-temperature limit, 
+assuming a non-degenerate ground state $\ket{\psi}$ present in the 
+{\tt state\_list}. The generalization to the finite-temperature regime 
+or degenerate ground states is straightforward, requiring only the 
+replacement of the pure state average with the thermal or degenerate 
+ensemble average $\ibra \rho^\mathrm{imp} \iket$, as defined in 
+\equ{eq:thermal_average}.
+
+
+A pure quantum state $\ket{\psi}$ belonging to a unique symmetry 
+sector $\SS_{\vec{Q}}$ can be represented in the Fock basis as:
+$
+\ket{\psi} = \sum_I a_I \ket{I},
+$
+where the pure density matrix $\rho$ is then given by:
+\begin{equation}
+\rho = \ket{\psi}\bra{\psi} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
+a^*_J a_I \ket{I}\bra{J} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
+\rho_{IJ} \ket{I}\bra{J}.
+\end{equation}
+
+
+The iRDM is obtained by tracing out the bath degrees of freedom:
+\begin{equation}
+\rho^\mathrm{imp} = \Tr_\mathrm{bath}(\rho).
+\end{equation}
+However, the summations involved in this trace quickly become 
+computationally prohibitive, as their range scales exponentially 
+with the system size, i.e., $4^{N_\mathrm{s}}$.
+
+To address this, we implemented a fast algorithm that exploits the 
+block structure of the Fock space defined by the symmetry sectors and
+the subsequent map sparsity. 
+This approach significantly reduces the computational cost by limiting 
+the summation to the sector size $D_\SS$ of the symmetry sector 
+$\SS$ to which the ground state (or any eigenstate) belongs.
+
+
+Next, we decompose the Fock basis into spin-dependent impurity and 
+bath parts. Any Fock state $\ket{I}$ can be split as:
+$
+\ket{I} = \ket{i_\uparrow \, b_\uparrow} \otimes 
+\ket{i_\downarrow \, b_\downarrow},
+$
+where the impurity $i_\sigma$ and bath $b_\sigma$ states span subspaces of dimension 
+$D^\s_\mathrm{imp}$ and $D^\s_\mathrm{bath}$, respectively, for each 
+spin $\s = \uparrow, \downarrow$.
+
+
+To efficiently manage this decomposition, we introduce a 
+{\tt sparse\_map} ${\cal P}$, as detailed in \secu{CodeSparseMap}. 
+This structure stores, for each impurity configuration 
+$i_\s = 1, \dots, D^\s_\mathrm{imp}$ (the \emph{key}), the 
+corresponding bath configurations 
+$b_\s \in [1, \dots, D^\s_\mathrm{bath}]$ (the \emph{values}) that 
+satisfy the symmetry constraints over the sector quantum numbers
+imposed by the {\tt ed\_mode} variable.
+We denote the number of keys as ${\cal D}_{i\s}$ and the 
+number of values as ${\cal D}_{b\s}$.
+The fast summation algorithm for evaluating the iRDM differs 
+significantly between the {\bf normal} and {\bf superc/nonsu2} modes, 
+as outlined in the sections below.
+
+
+
+
 
 \paragraph{{\bf normal}}
-In this case we take advantage of the Fock space and sector spin-resolved
-factorization, discussed in depth in \secu{sSecQNs}. We can indeed split the
-global bitset in spin-resolved impurity and bath states, as
-$$
+In this case, we take advantage of the Fock space factorization and 
+sector spin-resolved decomposition, as discussed in detail in 
+\secu{sSecQNs}. 
+The global bitset can be split into spin-resolved 
+impurity and bath components as:
+\begin{equation}
 \ket{\vec{n}} =
 \ket{\vec{n}_\up}\otimes \ket{\vec{n}_\dw} =
 \ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}.
-$$
-We note that creation (destruction) operators at
-position $p$ for spin $\sigma$  $c^+_{p\sigma}$ ($c^+_{p\sigma}$) do
-not operate on the opposite spin $\bar{\sigma}$ so that they pass through 
-the $\ket{n_{\bar{\sigma}}}$ bitset without taking any fermionic sign. 
-Finally, we observe that local iRDM admits
-only {spin-diagonal} blocks in the {\bf normal} case. This can be understood
-by observing that the conserved quantum numbers in the whole impurity model 
-are \emph{additive} $N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$ and so the
-corresponding generator of the symmetry group is factorized as 
+\end{equation}
+Here, creation (destruction) operators  $c^+_{p\sigma}$
+($c^+_{p\sigma}$) at position $p$ and for a given spin $\sigma$
+act only on the corresponding 
+spin subspace, i.e., they commute with the opposite spin 
+subspace $\ket{\vec{n}_{\bar{\s}}}$ without introducing any 
+fermionic sign.
+
+In the {\bf normal} mode, the iRDM is restricted to 
+{spin-diagonal} blocks. This follows from the observation 
+that the conserved quantum numbers are 
+\emph{additive} quantities, given by:
+$N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$
+where the corresponding generator of the symmetry group factorizes as
 $U_{N_\s} = U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}}$. 
-Hence, as the iRDM acts by definition only on the impurity
-Fock space, we have 
-$$
-U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} = 
-U_{N_\s^\mathrm{bath}}^\dagger \otimes U_{N_\s^\mathrm{imp}}^\dagger
-\rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}} =
-U_{N_\s^\mathrm{imp}}^\dagger
-\rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} =
+Since the iRDM acts only on the impurity Fock space, this implies:
+% $$
+% U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} = 
+% U_{N_\s^\mathrm{bath}}^\dagger \otimes U_{N_\s^\mathrm{imp}}^\dagger
+% \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}} =
+% U_{N_\s^\mathrm{imp}}^\dagger
+% \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}} =
+% \rho^\mathrm{imp},
+% $$
+\begin{equation}
+\begin{aligned}
+U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} &= 
+U_{N_\s^\mathrm{bath}}^\dagger \otimes U_{N_\s^\mathrm{imp}}^\dagger 
+\rho^\mathrm{imp} 
+U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}} \\
+&= 
+U_{N_\s^\mathrm{imp}}^\dagger \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}}\\
+& = 
 \rho^\mathrm{imp},
-$$
-i.e. $U_{N_\s^\mathrm{imp}}$ defines a symmetry of $\rho^\mathrm{imp}$, making it
-block diagonal with respect to the impurity quantum numbers $N_\s^\mathrm{imp}$.
-Thus we obtain for the iRDM:
+\end{aligned}
+\end{equation}
+demonstrating that $U_{N_\s^\mathrm{imp}}$ defines a symmetry of 
+$\rho^\mathrm{imp}$, which is therefore block diagonal with respect to 
+the impurity quantum numbers $N_\s^\mathrm{imp}$.
+
+
+The resulting iRDM takes the form:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
@@ -1457,14 +1561,18 @@ Thus we obtain for the iRDM:
     \ket{i_\up}\bra{j_\up}\otimes \ket{i_\dw}\bra{j_\dw},
   \end{aligned}
 \end{equation}
-where we recall that $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the expansion coefficients of the state $\ket{\psi}$ on the Fock basis 
-$\ket{I} = \ket{i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow \, b_\downarrow}$
-and the constants $C_{i,b}$, accounting for the fermionic sign associated to
-exchanging bath and impurity bitsets, are identically 1 as effect of the 
-Kronecker deltas for bath and impurity indices.  
+where the coefficients $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the
+expansion coefficients of the state on the Fock basis
+$\ket{\psi} = \sum_I a_I \ket{i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow
+  \, b_\downarrow}$.
+Notably, the factors $C_{i,b}$, which account for the potential 
+fermionic sign from reordering bath and impurity components, are 
+trivially 1 due to the absence of cross-spin interference in this 
+mode, as enforced by the Kronecker deltas for bath and impurity 
+indices.
+
 The numerical implementation relies on the use of the {\tt
-  sparse\_map} ($\%sp$) for the groundstate sector as reported in the
-listing below:  
+  sparse\_map} ($\%sp$) for the groundstate sector as reported in the listing below:  
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 do IimpUp=0,2**Norb-1
   do JimpUp=0,2**Norb-1
@@ -1504,18 +1612,24 @@ do IimpUp=0,2**Norb-1
 enddo
 \end{lstlisting}
 
-\paragraph{{\bf superc/nonsu2}}
-To treat these lowered-symmetry cases, some modifications related to the
-absence of Fock space factorization have to be taken into account. In particular, 
-the correct evaluation of the off-diagonal terms connecting the 
-$[N^\mathrm{imp}_\up,\,N^\mathrm{imp}_\dw]$ blocks, relies on 
-computing explicitly the fermionic permutation signs.
 
-Let us consider a generic Fock basis in the form
-$\ket{I} =\ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}$, defining the target
-ground state again as $\ket{\psi} = \sum_I a_I \ket{I}$.
-From the definitions of pure density matrix $\rho = \ket{\psi}\bra{\psi}$ 
-and of iRDM we have:
+
+\paragraph{{\bf superc/nonsu2}}
+For these lower-symmetry cases, the absence of a clean Fock space 
+factorization introduces additional complexities. Specifically, the 
+correct evaluation of the off-diagonal iRDM terms, which connect 
+different $[N^\mathrm{imp}_\up,\,N^\mathrm{imp}_\dw]$ blocks, 
+requires an explicit computation of fermionic permutation signs.
+
+
+Consider a generic Fock basis state in the form 
+$\ket{I} =\ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}$, , and define the 
+ground state as $\ket{\psi} = \sum_I a_I \ket{I}$. 
+The pure density 
+matrix is then given by
+$\rho = \ket{\psi}\bra{\psi} = \sum_{IJ} a_I a^*_J \ket{I}\bra{J}$ 
+while the iRDM is obtained by tracing over the bath degrees of 
+freedom:
 \begin{equation}
   \begin{aligned}
     \rho^\mathrm{imp} &= \Tr_{b_\up b_\dw}{\rho} =
@@ -1539,19 +1653,26 @@ and of iRDM we have:
     \langle{q_\dw \,  j_\dw \, q_\up\, j_\up }|{b_\dw\, b_\up}\rangle\, .
   \end{aligned}
 \end{equation}
-In order to simplify this expression we should get rid of the sum with
-respect to the internal bath indices $p_\sigma$ and $q_\sigma$, ideally
-contracting them with the outer indices $b_\sigma$.
-However, this requires to bring all the bath bitsets so to precede the
-impurity states:
+where $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the expansion
+coefficient in the Fock basis.
+
+To further simplify this expression, it is essential to eliminate the 
+sums over the internal bath indices $p_\sigma$ and $q_\sigma$, ideally 
+contracting them with the outer bath indices $b_\sigma$. This requires 
+reorganizing the bit representation of the basis states to bring the 
+bath bitsets before the impurity states:
 $$
 \ket{i_\up\, p_\up\, i_\dw\, p_\dw} \rightarrow C_{p_\up,i_\dw} \ket{i_\up\, i_\dw \,p_\up\,p_\dw}
 $$
-where $C_{p_\up,i_\dw}  = (-1)^{\#\vec{n}_{p\up} \cdot
-\#\vec{n}_{i\dw}}$, with $\#\vec{n}_{\alpha\sigma}$ counting the bits set to
-1 in the occupation number vector $\vec{n}_{\alpha\sigma}$, is an overall
-fermionic sign depending on the $\ket{p_\up}$ and $\ket{i_\dw}$ bit configurations. 
-Inserting this relation in the equation for the iRDM we obtain:
+where the fermionic sign factor
+$C_{p_\up,i_\dw}  = (-1)^{\#\vec{n}_{p\up} \cdot
+  \#\vec{n}_{i\dw}}$
+accounts for the exchange of the bath $\ket{p_\up}$  and impurity
+$\ket{i_\dw}$ bit configurations.
+Here, $\#\vec{n}_{\alpha\sigma}$ denotes the number of set bits in the 
+occupation vector $\vec{n}_{\alpha\sigma}$. 
+
+Substituting this relation back into the iRDM expression yields:
 \begin{equation}
     \rho^\mathrm{imp} =
     \sum_{i_\up=1}^{D_{i_\up}}
@@ -1565,13 +1686,19 @@ Inserting this relation in the equation for the iRDM we obtain:
     C_{b_\up,i_\dw}C_{b_\up,j_\dw}\right)}_{
     \rho^\mathrm{imp}_{i_\up i_\dw j_\dw j_\up}}
     \ket{i_\up\, i_\dw}\bra{j_\dw \, j_\up}
-\end{equation}
-The numerical implementation requires few modifications with respect
-to the previous case. In particular it is important to recall that the
-ordering of the \emph{key-value} pairs in the {\tt sparse\_map} in this case
-follows a contiguous ordering and that their decomposition is necessary
-to reconstruct the correct Fock state index. See the following
-listing:
+  \end{equation}
+where the term 
+$C_{b_\up,i_\dw}C_{b_\up,j_\dw}$ accounts for the fermionic 
+signs associated with the bath-impurity bitset exchange.
+
+  
+In numerical implementations, this approach introduces a few 
+key differences with respect to the {\bf normal} mode.
+In particular, the 
+ordering of the \emph{key-value} pairs in the {\tt sparse\_map} 
+must reflect the contiguous bitset structure, which is critical 
+for correctly reconstructing the Fock state indices.
+See the following listing:
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 do IimpUp=0,2**Norb-1
   do IimpDw=0,2**Norb-1
@@ -1611,116 +1738,219 @@ do IimpUp=0,2**Norb-1
   enddo
 enddo
 \end{lstlisting}
-%GBtodo placeholder: I checked and heavily edited all the iRDM section
 
 
 \subsection{Bath Functions}\label{sSecFunc}
-The module {\tt ED\_BATH\_FUNCTIONS} implements on-the-fly
-calculations of the hybridization function $\Delta_{\a\b\s\s'}(z)=\sum_\nu
-{V^\nu_{\a\s}}(z\11-h^\nu_{\a\b\s\s'})^{-1}V^\nu_{\b\s'}$ and the
-non-interacting Green's functions $G^0_{\a\b\s\s'}(z) =
-[(z + \mu)\delta_{\a\b\s\s'} - h^0_{\a\b\s\s'} -
-\Delta_{\a\b\s\s'}(z)]^{-1}$ for any frequency $z\in\CCC$. 
-The module contains implementations for any case according to the
-values of {\tt ed\_mode} and {\tt bath\_type}, either with supplied
-user bath (a rank-1 array of doubles) or using the allocated {\tt
-  effective\_bath} instance {\tt dmft\_bath}. 
-We provide different functions to get either $\Delta$, $G^0$ and its
-directly its inverse $[G^0]^{-1}$, which are used to evaluate the
-self-energy functions upon request, see \secu{sSecIO}.
-In the superconductive case {\tt ed\_mode}={\bf superc} different
-procedures can be used to retrieve the anomalous components of any
-function defined above in the Nambu basis. 
+The module {\tt ED\_BATH\_FUNCTIONS} implements the on-the-fly 
+calculation of the hybridization function 
+$\Delta_{\a\b\s\s'}(z)$ and the non-interacting Green's functions 
+$G^0_{\a\b\s\s'}(z)$ for arbitrary complex frequencies $z \in \CCC$. 
+These are defined as
+\begin{equation}
+\Delta_{\a\b\s\s'}(z) = \sum_\nu V^\nu_{\a\s} 
+\left( z\11 - h^\nu_{\a\b\s\s'} \right)^{-1} V^\nu_{\b\s'},
+\end{equation}
+\begin{equation}
+G^0_{\a\b\s\s'}(z) = 
+\left[ (z + \mu)\delta_{\a\b\s\s'} - h^0_{\a\b\s\s'} - 
+\Delta_{\a\b\s\s'}(z) \right]^{-1},
+\end{equation}
+where $V^\nu_{\a\s}$ and $h^\nu_{\a\b\s\s'}$ are the bath coupling 
+and bath Hamiltonian matrices, respectively, and $\mu$ is the chemical 
+potential.
+
+The module supports all cases defined by the {\tt ed\_mode} and 
+{\tt bath\_type} variables, including both user-supplied baths (provided 
+as rank-1 arrays of doubles) and the internally allocated {\tt 
+effective\_bath} instance {\tt dmft\_bath}. This flexibility ensures 
+compatibility with a wide range of other solvers.
+
+Different routines are available for directly evaluating $\Delta$, 
+$G^0$, and its inverse $[G^0]^{-1}$, which are critical for computing 
+the self-energy functions on demand (see \secu{sSecIO}). 
+
+In the superconducting case, where {\tt ed\_mode}={\bf superc}, 
+special care is needed to properly handle the anomalous (off-diagonal) 
+components within the Nambu basis. In this case, the bath functions 
+must include both the normal and anomalous components, 
+which can significantly alter the form of the self-energy. 
+
 
 
 
 \subsection{Bath Optimization}\label{sSecFit}
-{\color{red} to be revised, copy\&paste from edipack paper: well it is
-  essentiall the same shit} 
-In the DMFT context the bath needs to be optimized
-against a given realization of the Weiss field
-${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or the corresponding {\it hybridization} function
-$\Theta = (z + \mu)\11 - H^{loc} -\GG_0^{-1}](z)$. While the Weiss
-field is obtained from the DMFT self-consistency
-equation~\cite{Georges1996RMP}, bath discretization impose to  find an optimal
-description of the continuous Weiss field in terms of the finite
-number of parameters of the bath (see \secu{sSecBath}.
-Although different algorithms can be envisaged to perform this
-step~\cite{Garcia2004PRL,Taranto2012PRB} which are perfectly valid in
-some physical contexts.
-In order to enable the users to use their preferred 
-method in \NAME we keep the optimization implementation independent
-from the rest of the code. Yet, we offer a fully fledged optimization
-strategy based on the  conjugate gradient (CG) minimization of the cost function:
-$$
-\chi = \sum_{n=1}^{L_\mathrm{fit}}\frac{1}{W_n}||X(i\omega_n) - X^\mathrm{QIM}(i\omega_n;\{V,h\})||_q
-$$
-where the symbol $|| \cdot ||_q$ is a suitably defined $q$-norm in the
-matrix function space, $X_{\a\b}={\GG_{0}}_{\a\b\s\s'},\,\Theta_{\a\b\s\s'}$ are the user
-supplied local functions and
-$X_{\a\b}^\mathrm{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
-quantum impurity model functions, defined above.
-Notably, more sophisticated optimization algorithms have been
-recently implemented to better undertake the minimization of similar
-cost functions. However, these developments are designed to work with truncated
-algorithms, e.g. sCI or DMRG, describing systems with a larger number of
-bath levels.   
-In the ED context however, where the efficient and wise selection of
-the relatively few bath levels becomes crucial, the CG minimization of
-the local functions proved to be the most efficient and
-flexible optimization scheme so far. 
+In the DMFT framework, the bath parameters must be optimized to 
+faithfully reproduce the Weiss field, 
+${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or its corresponding hybridization 
+function 
+\begin{equation}
+\Theta(z) = (z + \mu)\11 - H^\mathrm{loc} - \GG_0^{-1}(z),
+\end{equation}
+where $\mu$ is the chemical potential and $H^\mathrm{loc}$ is the 
+local non-interacting Hamiltonian. The Weiss field is obtained from the DMFT 
+self-consistency equation~\cite{Georges1996RMP}, while the bath 
+discretization requires a careful fitting of this continuous function 
+using a finite set of bath parameters (see \secu{sSecBath}).
 
-The fit procedure is entirely wrapped by the single function {\tt
-  ed\_chi2\_fitgf} contained in the module \texttt{ED\_BATH\_FIT}.   
-In order to exploit regularity of the functions the fit is 
-performed using imaginary Matsubara frequency. 
-The actual form of $X_{\a\b\s\s'}$ is controlled by the input parameter
-\texttt{cg\_Scheme=Weiss,Delta}. 
+Several algorithms have been proposed for this optimization 
+step~\cite{Garcia2004PRL,Taranto2012PRB}, each with strengths suited 
+to different physical contexts. To maintain flexibility in \NAME, 
+we provide a general optimization interface that is independent 
+from the core impurity solver. However, we also include a fully 
+integrated optimization routine based on the conjugate gradient (CG) 
+minimization of the cost function:
+\begin{equation}
+\chi = \sum_{n=1}^{L_\mathrm{fit}} 
+\frac{1}{W_n} \left\|X(i\omega_n) - 
+X^\mathrm{QIM}(i\omega_n; \{V, h\}) \right\|_q,
+\end{equation}
+where the $q$-norm is a suitably chosen distance metric in the 
+matrix function space. Here, $X_{\a\b} = {\GG_{0}}_{\a\b\s\s'}$ or 
+$\Theta_{\a\b\s\s'}$ are the user-supplied local functions, while 
+$X_{\a\b}^\mathrm{QIM} = G^0_{\a\b\s\s'}$ or 
+$\Delta_{\a\b\s\s'}$ are the corresponding functions for the quantum 
+impurity model, as defined in \secu{sSecFunc}.
 
-In order to fine tune the optimization step in \NAME\ we
-introduced a number of control parameters. To start with, we include
-two distinct CG algorithms in the library, controlled by the input variable
-\texttt{cg\_method=0,1}. The value \texttt{0} corresponds to a
-Fletcher-Reeves-Polak-Ribiere minimisation algorithm, adapted from
-Numerical Recipes~\cite{NumRec77}. Yet, in order to guarantee
-back-compatibility with respect to the past literature, we also provide the
-possibility of using the minimization procedure published in
-Ref.\onlinecite{Georges1996RMP} which has been largely used in the DMFT
-community.
+While more sophisticated optimization methods have been developed for 
+truncated algorithms like sCI or DMRG, which handle systems with a 
+larger number of bath levels, the CG minimization approach has proven 
+both efficient and flexible for the small to moderate bath sizes 
+typical in ED solvers. 
 
-The gradient $\nabla\chi$ required by the CG algorithm can be
-evaluated either analytically or numerically as
-controlled by the value of the input parameter \texttt{cg\_grad=0,1}. For
-\texttt{cg\_method=1} only numerical gradient can be used.
-The number of Matsubara frequency $L_\mathrm{fit}$ used in the fit procedure
-is controlled  by the input parameter \texttt{cg\_Lfit}.
-This parameter can be used to restrict the fit to the low frequency
-part as the large frequency tails of the local Matsubara functions
-have universal behavior.
-Similarly, the weight  $W_n=1,1/L_\mathrm{fit},1/\omega_n$ is used to
-enhance the weight of low energy part with respect to the
-intermediate-to-large energy one in the cost function.
-This is controlled by the input parameter \texttt{cg\_Weight=0,1,2}.
-Another  factor contributing to determine the behavior
-of the fit is the power $q$ of the cost function $\chi$. By tuning
-this parameter, controlled by input variable \texttt{cg\_pow}, it is
-possible to enhance or suppress the differences in the $\chi$ in order
-to improve (or simplify) the optimization procedure.  
+The entire fit procedure is encapsulated in the function 
+\texttt{ed\_chi2\_fitgf} provided by the module 
+\texttt{ED\_BATH\_FIT}. To exploit the regularity of the bath functions, 
+the fit is performed on the Matsubara frequency axis, where the functions 
+are smooth and rapidly decaying. The form of $X_{\a\b\s\s'}$ is controlled 
+by the input parameter \texttt{cg\_Scheme=Weiss,Delta}.
 
-Finally, we introduced few additional parameters which aim to
-control the quality of the fit. The first is the fit tolerance,
-controlled by the input parameter \texttt{cg\_Ftol}, which
-determines the convergence threshold of the minimization procedure.
-The second is the maximum number of iterations \texttt{cg\_Niter}
-allowed for the CG algorithm to determine the minimum.
-The last parameter \texttt{cg\_stop=0,1,2} selects the exit
-condition of the minimization procedure. We envisaged  three
-possible conditions: $C_1\cup C_2$, $C_1$, $C_2$ with 
-$C_1=|\chi^{n-1} -\chi^n|<\mathtt{cg\_Ftol}(1+\chi^n)$ and
-$C_2=||x_{n-1} -x_n||<\mathtt{cg\_Ftol}(1+||x_n||)$, where $\chi^n$
-is the cost function evaluated at the $n^{\rm th}$-step and $x_n$
-the corresponding argument. Increasing the value of the stop
-parameter generally loosens up the exit conditions of the minimization.   
+To provide maximum control over the fitting process, we include several 
+tunable parameters:
+\begin{itemize}
+\item \texttt{cg\_method=0,1} - Chooses the CG algorithm: 
+\texttt{0} for a Fletcher-Reeves-Polak-Ribiere variant adapted from 
+Numerical Recipes~\cite{NumRec77}, and \texttt{1} for the original 
+algorithm described in Ref.\onlinecite{Georges1996RMP}, commonly used 
+in the DMFT community.
+\item \texttt{cg\_grad=0,1} - Sets the gradient calculation method: 
+\texttt{0} for analytical gradients (when available), \texttt{1} for 
+numerical gradients (required if \texttt{cg\_method=1}).
+\item \texttt{cg\_Lfit} - Sets the number of Matsubara frequencies 
+$L_\mathrm{fit}$ used in the fit. This can be used to restrict the 
+fit to the low-frequency regime, where the function behavior is 
+most relevant.
+\item \texttt{cg\_Weight=0,1,2} - Determines the frequency weighting 
+scheme: \texttt{0} for uniform, \texttt{1} for inverse frequency 
+weighting, and \texttt{2} for inverse Matsubara index weighting, which 
+can emphasize low-energy contributions.
+\item \texttt{cg\_pow} - Sets the power $q$ of the cost function, 
+allowing the user to fine-tune the sensitivity of the optimization 
+to outliers.
+\item \texttt{cg\_Ftol} - Controls the fit tolerance, setting the 
+convergence threshold for the CG minimization.
+\item \texttt{cg\_Niter} - Specifies the maximum number of allowed 
+iterations for the CG minimization.
+\item \texttt{cg\_stop=0,1,2} - Defines the exit condition of the 
+minimization. The options are:
+\begin{align*}
+C_1 & = |\chi^{n-1} - \chi^n| < \mathtt{cg\_Ftol} (1+\chi^n), \\
+C_2 & = \left\|x_{n-1} - x_n\right\| < 
+\mathtt{cg\_Ftol} (1+\left\|x_n\right\|),
+\end{align*}
+where $\chi^n$ is the cost function at the $n^\mathrm{th}$ step, and 
+$x_n$ the corresponding parameter vector. The stop condition is a 
+logical OR between these criteria, with the parameter value selecting 
+which condition to apply.
+\end{itemize}
+
+Together, these parameters provide precise control over the fitting 
+process, allowing users to balance speed and accuracy according to 
+their specific needs.
+
+% In the DMFT context the bath needs to be optimized
+% against a given realization of the Weiss field
+% ${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or the corresponding {\it hybridization} function
+% $\Theta = (z + \mu)\11 - H^{loc} -\GG_0^{-1}](z)$. While the Weiss
+% field is obtained from the DMFT self-consistency
+% equation~\cite{Georges1996RMP}, bath discretization impose to  find an optimal
+% description of the continuous Weiss field in terms of the finite
+% number of parameters of the bath (see \secu{sSecBath}.
+% Although different algorithms can be envisaged to perform this
+% step~\cite{Garcia2004PRL,Taranto2012PRB} which are perfectly valid in
+% some physical contexts.
+% In order to enable the users to use their preferred 
+% method in \NAME we keep the optimization implementation independent
+% from the rest of the code. Yet, we offer a fully fledged optimization
+% strategy based on the  conjugate gradient (CG) minimization of the cost function:
+% $$
+% \chi = \sum_{n=1}^{L_\mathrm{fit}}\frac{1}{W_n}||X(i\omega_n) - X^\mathrm{QIM}(i\omega_n;\{V,h\})||_q
+% $$
+% where the symbol $|| \cdot ||_q$ is a suitably defined $q$-norm in the
+% matrix function space, $X_{\a\b}={\GG_{0}}_{\a\b\s\s'},\,\Theta_{\a\b\s\s'}$ are the user
+% supplied local functions and
+% $X_{\a\b}^\mathrm{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
+% quantum impurity model functions, defined above.
+% Notably, more sophisticated optimization algorithms have been
+% recently implemented to better undertake the minimization of similar
+% cost functions. However, these developments are designed to work with truncated
+% algorithms, e.g. sCI or DMRG, describing systems with a larger number of
+% bath levels.   
+% In the ED context however, where the efficient and wise selection of
+% the relatively few bath levels becomes crucial, the CG minimization of
+% the local functions proved to be the most efficient and
+% flexible optimization scheme so far. 
+
+% The fit procedure is entirely wrapped by the single function {\tt
+%   ed\_chi2\_fitgf} contained in the module \texttt{ED\_BATH\_FIT}.   
+% In order to exploit regularity of the functions the fit is 
+% performed using imaginary Matsubara frequency. 
+% The actual form of $X_{\a\b\s\s'}$ is controlled by the input parameter
+% \texttt{cg\_Scheme=Weiss,Delta}. 
+
+% In order to fine tune the optimization step in \NAME\ we
+% introduced a number of control parameters. To start with, we include
+% two distinct CG algorithms in the library, controlled by the input variable
+% \texttt{cg\_method=0,1}. The value \texttt{0} corresponds to a
+% Fletcher-Reeves-Polak-Ribiere minimisation algorithm, adapted from
+% Numerical Recipes~\cite{NumRec77}. Yet, in order to guarantee
+% back-compatibility with respect to the past literature, we also provide the
+% possibility of using the minimization procedure published in
+% Ref.\onlinecite{Georges1996RMP} which has been largely used in the DMFT
+% community.
+
+% The gradient $\nabla\chi$ required by the CG algorithm can be
+% evaluated either analytically or numerically as
+% controlled by the value of the input parameter \texttt{cg\_grad=0,1}. For
+% \texttt{cg\_method=1} only numerical gradient can be used.
+% The number of Matsubara frequency $L_\mathrm{fit}$ used in the fit procedure
+% is controlled  by the input parameter \texttt{cg\_Lfit}.
+% This parameter can be used to restrict the fit to the low frequency
+% part as the large frequency tails of the local Matsubara functions
+% have universal behavior.
+% Similarly, the weight  $W_n=1,1/L_\mathrm{fit},1/\omega_n$ is used to
+% enhance the weight of low energy part with respect to the
+% intermediate-to-large energy one in the cost function.
+% This is controlled by the input parameter \texttt{cg\_Weight=0,1,2}.
+% Another  factor contributing to determine the behavior
+% of the fit is the power $q$ of the cost function $\chi$. By tuning
+% this parameter, controlled by input variable \texttt{cg\_pow}, it is
+% possible to enhance or suppress the differences in the $\chi$ in order
+% to improve (or simplify) the optimization procedure.  
+
+% Finally, we introduced few additional parameters which aim to
+% control the quality of the fit. The first is the fit tolerance,
+% controlled by the input parameter \texttt{cg\_Ftol}, which
+% determines the convergence threshold of the minimization procedure.
+% The second is the maximum number of iterations \texttt{cg\_Niter}
+% allowed for the CG algorithm to determine the minimum.
+% The last parameter \texttt{cg\_stop=0,1,2} selects the exit
+% condition of the minimization procedure. We envisaged  three
+% possible conditions: $C_1\cup C_2$, $C_1$, $C_2$ with 
+% $C_1=|\chi^{n-1} -\chi^n|<\mathtt{cg\_Ftol}(1+\chi^n)$ and
+% $C_2=||x_{n-1} -x_n||<\mathtt{cg\_Ftol}(1+||x_n||)$, where $\chi^n$
+% is the cost function evaluated at the $n^{\rm th}$-step and $x_n$
+% the corresponding argument. Increasing the value of the stop
+% parameter generally loosens up the exit conditions of the minimization.   
 
 {\bf REMARK TODO}
 Notes on the norm function: a) the definition for conventional
@@ -1732,28 +1962,32 @@ can choose between different norm defition.
 
 
 \subsection{Input/Output}\label{sSecIO}
-The module {\tt ED\_IO} provides access to the results of the Lanczos
-diagonalization of the quantum impurity problem.
-As any single instance of the code is preserved in the memory until a
-new call is made, access to the memory pool is only possible through
-specific functions implemented in {\tt ED\_IO}. For instance, dynamical response functions, self-energy components or impurity
-observables can all be retrieved using dedicated functionalities.
-Additionally we provide procedures to perform on-the-fly
-re-calculation of the impurity Green's functions and self-energy on a
-given arbitrary set of points in the complex frequency domain
-exploiting their storage in terms of {\tt gfmatrix} objects.
-A long list of available functions is contained in the on-line
-documentation (see
-\href{https://edipack.github.io/EDIpack2.0/edipack2/13_io.html#ed-io}{https://edipack.github.io/EDIpack2.0/edipack2/13\_io.html\#ed$-$io})
-Here we limit the discussion to two paradigmatic examples.
-The first is the function {\tt ed\_get\_dens} which write on the
-provided input array the value of the orbital impurity occupations
-$\langle n_{\a\s}\rangle$. Analogously {\tt ed\_get\_sigma} is used to
-retrieve the normal or anomaous components of the Matsubara or
-Real-axis self-energy function $\Sigma(z)$. This latter represents the
-key output of the calculation in 
-any DMFT application. 
+The \texttt{ED\_IO} module provides comprehensive access to the 
+results of the Lanczos diagonalization of the quantum impurity 
+problem. Since each instance of the code persists in memory until a 
+new calculation is initiated, access to the relevant data is managed 
+through a set of dedicated functions. These include routines for 
+extracting dynamical response functions, self-energy components, and 
+impurity observables, as well as for performing on-the-fly 
+recalculation of the impurity Green's functions and self-energies at 
+arbitrary points in the complex frequency domain. The latter 
+capability is enabled through the efficient use of \texttt{gfmatrix} 
+objects for data storage.
 
+A full list of available functions, including parameter descriptions 
+and usage examples, can be found in the online documentation 
+Here, we highlight two representative examples:
+The first is the function \texttt{ed\_get\_dens}, which populates the 
+provided input array with the orbital impurity occupations 
+$\langle n_{\a\s}\rangle$. This function is essential for extracting 
+local density information, a key diagnostic in many DMFT studies.
+
+The second example is \texttt{ed\_get\_sigma}, which retrieves the 
+normal or anomalous components of the Matsubara or real-axis 
+self-energy function $\Sigma(z)$. This function represents a central 
+output of any DMFT calculation, as the self-energy encapsulates the 
+full set of local electronic correlations and their frequency 
+dependence.
 
 
 
