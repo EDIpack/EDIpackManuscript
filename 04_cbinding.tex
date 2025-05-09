@@ -26,7 +26,7 @@ complete interface from the Fortran code to C/C++, i.e. {\tt
   EDIpack2C}. 
 
 
-\subsubsection{Installation}\label{sSecInteropCbindingsInstallation}
+\subsubsection{Installation and inclusion}\label{sSecInteropCbindingsInstallation}
 The C-binding module in included in the build process of \NAME and
 compiled into a dynamical library {\tt
   libedipack2\_cbinding.so/.dylib}. As dicussed in the
@@ -41,7 +41,22 @@ step. The corresponding path is added to the environment variable {\tt
   LD\_LIBRARY\_PATH}, valid of any Unix/Linux system, via any of the
 loading methods outlines in \secu{sSecInstallOSloading}. 
 
-
+The C/C++ compatible functions and variables 
+are declared in the header file  {\tt edipack2\_cbinding.h}.
+Since {\tt ISO\_C\_BINDING} only provides, to date, C compatibility, the 
+functions and variables are declared with C linkage, which prevents name mangling.
+Function overloading is not supported, hence all interfaced Fortran functions,
+for example supporting multiple input variables combinations with different types
+and ranks, are here represented by multiple alternative functions.
+As an example, the {\tt ed\_chi2\_fitgf} Fortran function, which handles the fitting of bath parameters, is callable in C++ in the following variants
+\begin{itemize}
+    \item  {\tt chi2\_fitgf\_single\_normal\_n3}: for {\tt ED\_MODE=NORMAL/NONSU2}, single-site DMFT and rank-3 Weiss field/hybridization function arrays
+    \item  {\tt chi2\_fitgf\_single\_normal\_n5}: for {\tt ED\_MODE=NORMAL/NONSU2}, single-site DMFT and rank-5 Weiss field/hybridization function arrays
+    \item  {\tt chi2\_fitgf\_single\_superc\_n3}: for {\tt ED\_MODE=SUPERC}, single-site DMFT and rank-3 Weiss field/hybridization function arrays
+    \item  {\tt chi2\_fitgf\_single\_superc\_n5}: for {\tt ED\_MODE=SUPERC}, single-site DMFT and rank-5 Weiss field/hybridization function arrays
+\end{itemize}
+and analogous functions for the real-space DMFT case. All functions are listed and documented in the online manual.
+When using EDIpack2 functions in a C/C++ program, care must be taken in the way arrays are passed. Consistently with {\tt ISO\_C\_BINDING}, non-scalar parameters have to be passed as raw pointers. An array of integers containing the dimensions of the former need to be passed as well to allow for proper Fortran input parsing. A working C++ example is provided in the {\tt examples} folder of the EDIpack2 repository.
 
 \subsubsection{Implementation}\label{sSecInteropCbindingsImplementation}
 The interface layer is contained in the Fortran module {\tt
@@ -68,7 +83,8 @@ digonalization solver, interfacing the solver itself {\tt
 {\tt init\_solver\_site/ineq} and finalization {\tt
   finalize\_solver} procedures. It also includes the functions used to
 set the non-interacting part of the impurity Hamiltonian
-$h^0_{\a\b\s\s'}$ through the functions {\tt set\_Hloc}.
+$h^0_{\a\b\s\s'}$ through the functions {\tt set\_Hloc}, as well as the
+interaction Hamiltonian through {\tt add\_twobody\_operator}.
 
 
 \paragraph{{\bf Bath}} In this group we implement a number of
@@ -78,7 +94,7 @@ dimension of the bath array on the user side {\tt
   get\_bath\_dimension} as well as the setup of the matrix basis
 $\vec{\Gamma}$ for the replica/general bath via different instances of
 {\tt set\_Hreplica/general\_{site,lattice}\_d{3,5}}. 
-The crucial part in a DMFT framework is the optimization of the bath
+The crucial part in the DMFT-Lanczos self-consistency loop is the optimization of the bath
 through conjugate-gradient algorithm. To this end we interfaced a
 number of functions {\tt
   chi2\_fitgf\_{single,lattice}\_{normal,superc}\_n{3,4,5,6}} which
@@ -100,11 +116,6 @@ impurity susceptibilities (e.g. {\tt get\_spinChi}), the impurity reduced densit
 as the non-interacting Green's and hybridization functions starting from the
 user bath array.   
 
-
-Finally, in order to ensure compatibility to C and C++ language the
-entire set of C-binding functions and variables is enclosed into a
-header file {\tt edipack2\_cbinding.h}. 
- 
 
 % ##################################################################
 % ##################################################################
