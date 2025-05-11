@@ -9,83 +9,55 @@ The main one is {\tt  libedipack.a} which, alongside the generated Fortan
 modules, wraps the \NAME software possibly including support for  
 inequivalent impurities.
 A second dynamic library, {\tt libedipack\_cbinding.so}, enables interoperability through
-specific bindings to the C programming language.    
+specific bindings to the C/C++ programming language.    
 
 
 \subsection{Structure}\label{sSecInstallStructure}
-\NAME is a modular library which contains three principal structures.
-At the core is the exact diagonalization solver: \NAME.
-Next there is a {\tt EDIpack2ineq} which extends application to the case of multiple
-inequivalent impurity problems. Finally, there we provide a Fortran-C/C++
-interface, which enables development of additional API or
-interoperability with other, external, software.  
+\NAME is a modular library organized into three main components. At its 
+core is the exact diagonalization solver, which provides the primary 
+computational engine. Building on this, the library includes 
+{\tt EDIpack2ineq}, an extension for handling multiple inequivalent 
+impurity problems. Finally, a Fortran-C/C++ interface is provided for 
+seamless integration with external software and the development of 
+additional APIs.
+
 
 \begin{itemize}
 \item{\bf EDIpack2.}
-This constitutes the  building block of the whole software. This part
-implement the  with the Lanczos-based solver for generic quantum
-impurity systems encoding different symmetries, i.e. quantum number
-conservations and apt to solve multi-orbital problems, also in
-presence of coupling to local phonons.  
-The \NAME solver has a hierarchical and modular structure: different
-sections of the library communicate through a shared memory layer. The
-top module of the library is {\tt EDIPACK2} which, once loaded,
-enables access to the Fortran API in terms of suitable procedures to
-initialize, execute and finalize the solver or to retrieve internal
-quantities while making opaque to the user the internal structure of
-the library. 
-A detailed presentation of the library can be found in
-Sec.\ref{SecEDIpack}. 
-
-
+  This module forms the foundation of the library, implementing the 
+  Lanczos-based solver for general quantum impurity problems. It 
+  supports systems with a wide range of symmetries, including quantum 
+  number conservation, multi-orbital models, and even coupling to local 
+  phonons. The \NAME solver is structured hierarchically and modularly, 
+  with different sections of the library communicating through a shared 
+  memory layer. The top-level module, {\tt EDIPACK2}, provides access 
+  to the core Fortran API, exposing key procedures for initialization, 
+  execution, and finalization, while abstracting the underlying data 
+  structures. A detailed overview of this part of the library is 
+  provided in Sec.\ref{SecEDIpack}.
+  
 \item{\bf EDIpack2ineq.}
-This part of the software, leveraging on the object oriented concepts
-available in modern Fortran, aims to extend the \NAME library to the
-case of multiple inequivalent and independent impurity problems. This
-is particularly useful while using \NAME as a solver for DMFT in
-presence of unit cells with inequivalent atoms, for systems with
-somehow broken translational symmetry (e.g. heterostructures, large
-supercells, etc.).
+  This extension, developed using modern Fortran constructs,
+  enables the treatment of multiple, independent quantum 
+impurities. It is particularly useful in DMFT applications involving 
+unit cells with inequivalent atomic sites or systems with broken 
+translational symmetry, such as heterostructures, large supercells, 
+or disordered materials. This module provides flexible memory 
+management and supports the simultaneous solution of multiple impurity 
+problems, as discussed in Sec.\ref{sSecIneq}.
+
 
 
 \item{\bf EDIpack2 C-bindings.}
-\NAME includes a single module implementing a Fortran-C/C++ interface of the main
-library procedures. The module is developed around the implicit {\tt
-  ISO\_C\_BINDING} capabilities of the most recent Fortran
-distributions, which enable to translate Fortran procedures directly
-to C. In order to overcome all the difficulties related to the internal
-structure of the library,  we interfaced all and just the
-procedures and the variables exposed to the user. 
-This module aims to foster interoperability of \NAME  with different
-third party softwares as well as to support development of additional
-API. 
-
-
-% \subsection{Dependent software}
-% As a concrete example illustrating the interoperability of the
-% software we here illustrate the case of EDIpy2, i.e. the Python API for
-% \NAME and present an interface layer to Triqs (Toolbox
-% for Reasearch In Quantum Systems). 
-
-% \item{\bf EDIpy2.}
-% This is a simple Python module which provides Python API to the
-% \NAME Fortran library. This interface is built around the Python
-% support to C-types, which allows to import the dynamic C-binding
-% library generated upon building \NAME. The module contains a specific
-% class, whose methods mirrors through  duck-typing all the available
-% procedures of \NAME as well as it gives access to relevant shared
-% control variables.
-
-
-% \item{\bf EDIpack2Triqs.}
-% This is a thin interface layer from \NAME to Triqs,
-% built around the Python API of the \NAME library. The exact
-% diagonalization solver is encapsulated in a dedicated class,
-% containing the necessary methods to initialize and run a single
-% instance of the solver. The interface also includes a specific class
-% encompassing the effective discretized bath structure as well as their 
-% optimization methods.  
-
+  For enhanced interoperability, \NAME includes a dedicated module 
+implementing Fortran-C/C++ bindings for key library procedures. This 
+module relies on the {\tt ISO\_C\_BINDING} capabilities available in 
+modern Fortran, allowing direct translation of Fortran functions to C. 
+To ensure a straightforward user experience, only the functions and 
+variables directly exposed to the user are included in this binding, 
+shielding developers from the complexity of the library's internal 
+architecture. This interface is intended to facilitate integration 
+with third-party software and support the development of custom APIs.
 \end{itemize}
 
 

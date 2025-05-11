@@ -1996,30 +1996,32 @@ dependence.
 
 
 \subsection{EDIpack2ineq: inequivalent impurities}\label{sSecIneq}
-It is often necessary to solve systems with several, independent,
-quantum impurities. Paradigmatic examples arise in the DMFT
-framework when dealing with the effective description of lattices
-built out of unit cells hosting multiple inequivalent atoms or large
-super-cell systems with possibly broken translational symmetries,
-e.g. heterostructures of correlated materials, disordered systems,
-etc.
-As the structure of \NAME allows the presence of a single instance of
-the solver at any time, we implemented a suitable extension to deal
-with multiple impurities. Specifically {\tt EDIpack2Ineq} is a
-sub-library which complements \NAME, wrapping memory and procedures in
-order to enable simultaneous treatment of  inequivalent impurities. 
-Using standard Fortran interfaces it is possible to group all the
-\NAME and {\tt EDIpack2ineq} functions under the same name without
-compromising the software functionalities.  
-Here below we briefly discuss the main additions introduced by {\tt
-  EDIpack2ineq}. 
+In many contexts, it is necessary to solve systems with multiple, 
+independent quantum impurities. This situation frequently arises in 
+DMFT when modeling lattices with complex unit cells containing 
+inequivalent atomic sites, or in supercell calculations where 
+translational symmetry is broken, as in heterostructures, disordered 
+systems, or multiorbital setups. 
+
+Given that \NAME allows only a single instance of the solver at a 
+time, a dedicated extension is required to handle these more complex 
+cases. To address this, we developed the {\tt EDIpack2ineq} 
+sub-library, which extends the base functionality of \NAME by managing 
+memory and procedures for multiple impurities. This approach ensures 
+that all functions remain accessible through standard Fortran 
+interfaces, seamlessly integrating both \NAME and {\tt EDIpack2ineq} 
+without compromising overall software design.
+
+Below, we provide a brief overview of the main features introduced by 
+{\tt EDIpack2ineq}.
 
 \subsubsection{Structure}\label{ssSecIneqStructure}
-The sub-library is composed of a number of Fortran modules which are
-wrapped by {\tt EDIPACK2INEQ}. This latter represents the main user
-interface and gives access to all the available procedures and
-variables as needed to solve quantum impurity problems.
-The user needs to invoke use of this module alongside the \NAME one:
+The core of the {\tt EDIpack2ineq} sub-library consists of several 
+Fortran modules, all wrapped under the main interface module 
+{\tt EDIPACK2INEQ}. This module provides access to the full range of 
+procedures and variables required to solve inequivalent quantum 
+impurity problems. To use this extension, the user must include both 
+the main \NAME and the {\tt EDIpack2ineq} modules, as shown below:
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program test
   !Load EDIpack2 library 
@@ -2029,65 +2031,70 @@ program test
   ...
 \end{lstlisting}
 
-
-A major part of the {\tt EDIpack2ineq} library is to define global
-variables which wrap and conserve the memory pool of \NAME.
-For instance we implement a number of
-globally shared arrays with an increased rank to store the
-variables in any memory instance of \NAME and accessible through
-the input/output procedures (see \secu{sSecIO}).
-Specific objects, e.g. {\tt effective\_bath} or {\tt gfmatrix}, in
-principle require dedicated MPI
-communication when parallel execution of the solver among independent
-impurities. However, we opt for the much simpler and economic solution
-of reading these objects from the file in which they get saved
-anyway. 
+A significant part of the {\tt EDIpack2ineq} extension is the 
+definition of global variables that extend the memory pool of 
+\NAME. This includes higher-rank arrays for storing impurity-specific 
+data, ensuring that each impurity's state is maintained separately 
+during the computation. While dedicated MPI communication could be 
+used to manage specific objects in parallel, e.g. {\tt
+  effective\_bath} or {\tt gfmatrix}, we opted for a simpler and safer  
+file-based approach to maintain compatibility with the standard I/O 
+procedures described in \secu{sSecIO}.
 
 
 \subsubsection{Core routines}\label{ssSecIneqGlobal}
-The module {\tt E2I\_MAIN} wraps the extensions to the main algorithms
-of \NAME, namely: initialization, diagonalization and finalization,
-preserving the original naming convention.  
-The initialization process is handled by {\tt ed\_init} which is
-extended to accepts a bath array or rank-2 (as opposed to rank-1 array
-in the \NAME implementation). The leading dimension now determines the
-number of inequivalent impurity problems to be solved. This procedure
-initialize all the {\tt EDIpack2ineq} variables and prepare each bath
-for the diagonalization step. 
-In {\tt ed\_solve}, which accepts the same rank-2 bath array, performs the
-diagonalization of each quantum impurity problem in either serial of
-parallel mode. The parallel mode is further controlled by the input
-function {\tt mpi\_lanc=T/F}. If true Lanczos diagonalization is
-performed in parallel and inequivalent sites are treated
-sequentially. The inverse if false.   
-The finalization procedure with full memory release is performed in
-{\tt ed\_finalize}.
+The module {\tt E2I\_MAIN} wraps the key extensions to the main 
+algorithms of \NAME, including initialization, diagonalization, and 
+finalization, while preserving the original function names for 
+consistency. 
 
+\paragraph{\bf Initialization} The function {\tt ed\_init} is extended to 
+  accept a rank-2 bath array, where the leading dimension specifies 
+  the number of inequivalent impurity problems. This ensures each bath 
+  is properly initialized for subsequent diagonalization.
 
+\paragraph{\bf Diagonalization} The function {\tt ed\_solve} also accepts this 
+  rank-2 bath array and manages the diagonalization of each impurity 
+  problem. Parallel execution is controlled by the input flag 
+  {\tt mpi\_lanc=T/F}, which determines whether the Lanczos 
+  diagonalization is performed in parallel or sequentially across 
+  different impurities.
 
+\paragraph{\bf Finalization} Memory release is handled through the extended 
+{\tt ed\_finalize} function, which clears the memory pool for all 
+inequivalent impurity instances.
+
+  
 
 
 \subsubsection{Inequivalent Baths}\label{ssSecIneqBath}
-The inequivalent impurities extension is encoded in {\tt E2I\_BATH}
-which contains procedures to control the baths setup on the user side
-and the  implementation of conventional symmetry operations.
-In the {\tt E2I\_BATH\_REPLICA} module we extend all the functions
-which set the replica/general bath matrix basis 
-$\vec{\Gamma}$ and the corresponding initial variational parameters
-$\vec{\lambda}$. Although the variational parameters are generally
-different from site to site, in the current implementation the matrix
-basis is independent from the impurities number. This will possibly be
-relaxed in a future release. 
-Analogously, in the module {\tt E2I\_BATH\_FIT} we implement an extension of the generic
-function {\tt ed\_chi2\_fitgf} to perform multiple independent
-bath optimization for all inequivalent impurities in terms of an MPI iterative cycle. 
+The bath setup for multiple impurities is managed by the 
+{\tt E2I\_BATH} module, which provides functions for defining 
+site-specific bath matrices and their corresponding variational 
+parameters. This includes support for conventional symmetry operations 
+and the handling of replica bath structures. 
+
+In the module {\tt E2I\_BATH\_REPLICA}, we extend the 
+matrix basis definition for the variational parameters 
+$\vec{\lambda}$, allowing for flexible bath optimization across 
+multiple sites. Although the matrix basis is currently shared among 
+all impurities, future versions may allow for fully independent 
+bath parameterizations.
+
+Additionally, the {\tt E2I\_BATH\_FIT} module extends the generic 
+{\tt ed\_chi2\_fitgf} function to support simultaneous, independent 
+bath optimization for all impurities using MPI, thereby improving the 
+efficiency of large-scale calculations.
+
+
  
 \subsubsection{Input/Output}\label{ssSecIneqIO}
-A key part of the {\tt EDIpack2ineq} library is the extension for the
-input/output procedures to return observables or dynamical functions per inequivalent impurity.
-The module {\tt E2I\_IO} implements numerous functions which retrieve
-or evaluate on-the-fly any quantity accessible in \NAME for any given
-impurity (or all of them) using the same naming original convention
-defined in \NAME.       
+A key component of the {\tt EDIpack2ineq} extension is the 
+enhanced I/O capability for handling impurity-specific observables. 
+The {\tt E2I\_IO} module includes a variety of functions for 
+retrieving site-resolved quantities, such as local Green's functions, 
+self-energies, and density matrices. These functions use the same 
+naming conventions as the core \NAME library, ensuring a consistent 
+user experience across single and multi-impurity calculations.
 
 \end{document}
