@@ -266,8 +266,8 @@ In \NAME, three different symmetry configurations are available,
 controlled by the input variable {\tt ed\_mode} = {\bf normal}, 
 {\bf superc}, or {\bf nonsu2}:
 
-
- - The {\bf normal} case conserves both the total occupation $N$
+\begin{itemize}
+\item{} The {\bf normal} case conserves both the total occupation $N$
 and the total magnetization $S_z$, or equivalently, the total number
 of electrons with spin up $N_\up$ and down $N_\dw$.
 Optionally, the symmetry
@@ -278,17 +278,17 @@ Ref.~[\onlinecite{Amaricci2022}] and will not be further covered here.
 
 %
 
-- The {\bf superc} case maintains onlu the $S_z$ conservation,
+\item{} The {\bf superc} case maintains onlu the $S_z$ conservation,
 allowing the total charge to not be conserved. This setting captures
 system with $s$-wave superconductivity, including 
 intra- and inter-orbital pairing.
 
-- The {\bf nonsu2} case conserves the total
+\item{} The {\bf nonsu2} case conserves the total
 charge $N$ while allowing spin symmetry group to be not conserved.
 This scenario catpures effects such as local spin-orbit coupling
 $\vec{L}\cdot\vec{S}$~\cite{something}, in-plane spin ordering~\cite{BellomiaKMH} or
 in-plane spin-triplet exciton condensation~\cite{Amaricci2023_excitons,Blason}.  
-
+\end{itemize}
 
 From a computational perspective, constructing a symmetry
 sector amounts to defining a injective map
