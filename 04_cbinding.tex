@@ -351,11 +351,37 @@ pip install .
 
 
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
-\NAME is supported as alternative impurity solver by the w2dynamics DMFT package\cite{Wallerberger2019CPC}. The only prerequisite to use this option is the presence of a functioning EDIpy2 installation, which w2dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter. In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to {\tt   EDIPACK}. Configuration specific to the exact diagonalization solver can be performed through the parameters in section {\tt EDIPACK} of a w2dynamics parameter file. For most of the \NAME input variables, it provides a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set insofar as this is supported by the interface and not an option available through generic w2dynamics parameters. This thus includes some parameters that the user will ordinarily want to change from their defaults in a typical calculation such as the number of bath sites {\tt NBATH} and other parameters such as options for the bath fitting and diagonalization algorithms, but also specifically excludes other typically set input variables such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}. All of the these variables correspond or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}. Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by w2dynamics in mostly the same way as it would be for the CT-HYB solver. This e.g. means that results such as the Green's functions are stored into the w2dynamics HDF5 output file in the typical format, and that w2dynamics uses only its own code for e.g. calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence of this, some functionality that would require specific support from w2dynamics that is not available as of the time of publication can not be used through the interface, e.g. calculations with superconductivity or with phonons.
+\NAME is supported as alternative impurity solver by the w2dynamics DMFT package\cite{Wallerberger2019CPC}. The only prerequisite to use this option is the presence of a functioning EDIpy2 installation, which w2dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter.
+
+In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to {\tt   EDIPACK}. Configuration specific to the exact diagonalization solver can be performed through the parameters in section {\tt EDIPACK} of a w2dynamics parameter file. For most of the \NAME input variables, it provides a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set insofar as this is supported by the interface and not an option available through generic w2dynamics parameters. This thus includes some parameters that the user will ordinarily want to change from their defaults in a typical calculation such as the number of bath sites {\tt NBATH} and other parameters such as options for the bath fitting and diagonalization algorithms, but also specifically excludes other typically set input variables such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}. All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
+
+Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by w2dynamics in mostly the same way as it would be for the CT-HYB solver. This e.g. means that results such as the Green's functions are stored into the w2dynamics HDF5 output file in the typical format, and that w2dynamics uses only its own code for e.g. calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence of this, some functionality that would require specific support from w2dynamics that is not available as of the time of publication can not be used through the interface, e.g. calculations with superconductivity or with phonons.
 
 
 
 \subsection{EDIjl, the Julia API}\label{sSecInteropEDIjl}
-{\color{red} Lorenzo?}
+
+The c-bindings approach is extremely handy, in that is opens the way for interoperability 
+with a large number of languages and frameworks. As an example, an experimental Julia API 
+is provided in the EDIpack github repository. Rather than a fully functioning Julia package, 
+this is at present a proof of concept, capable of replicating the results of Fortran, C++ and
+python implementations for the Bethe lattice example driver.
+Its structure and operation mimicks that of the EDIpy layer, with minimal language-specific differences.
+
+The EDIpack Julia api consists of a module called {\tt EDIjl2}, which provides access to the global variables and functions contained in {\tt  libedipack2\_cbinding.so/.dylib}. This is searched upon loading the module, with the following loading hierarchy:
+
+\begin{itemize}
+\item {\tt EDIPACK\_PATH}: if this environment variable is set, {\tt EDIjl} will look there for the library first
+\item {\tt LD\_LIBRARY\_PATH}: for Linux systems
+\item {\tt DYLD\_LIBRARY\_PATH}: for Mac systems
+\end{itemize}
+
+in complete analogy to the Python API, the global variables and functions are contained in a  {\tt struct} called {\tt global\_env}, and can be called and assigned in the following way:
+
+\begin{itemize}
+\item A variable symbol is retrieved from the library through {\tt Libdl.dlsym} and then read via {\tt unsafe\_load}
+\item Similarly, variable assignment is achieved through {\tt Libdl.dlsym} and  {\tt unsafe\_store}
+\item Functions are called via {\tt Libdl.dlsym} and  {\tt ccall}
+\end{itemize}
 
 \end{document}
