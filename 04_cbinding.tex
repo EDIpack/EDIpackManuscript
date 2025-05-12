@@ -335,15 +335,19 @@ and {\tt get\_bath\_type} which similarly returns the value of {\tt bath\_type}.
 
 
 \subsection{TRIQS interface}\label{sSecInteropTRIQS}
-A thin compatibility layer between \NAME and the Toolbox for Research on 
-Interacting Quantum Systems (TRIQS)\cite{Parcollet2015CPC} called edipack2triqs 
-is available as a stand-alone project. It is a pure Python package that is 
-built upon \NAME's Python API  (Sec.~\ref{sSecInteropEDIpy}) and provides a 
-limited object-oriented interface to the most important features of \NAME. 
-edipack2triqs strives to offer seamless interoperability with other 
-tools based on TRIQS by adopting the data storage formats, conventions and 
-usage patterns common to other TRIQS-based impurity solvers, such as 
-TRIQS/CTHYB\cite{Seth2016CPC}.
+A thin compatibility layer between \NAME and the Toolbox for Research on
+Interacting Quantum Systems (TRIQS)\cite{Parcollet2015CPC} called edipack2triqs
+is available as a stand-alone project. It is a pure Python package
+built upon \NAME's Python API  (Sec.~\ref{sSecInteropEDIpy}) that provides a
+limited object-oriented interface to the most important features of \NAME.
+edipack2triqs strives to offer seamless interoperability with program tools
+based on TRIQS by adopting data types, conventions and usage patterns
+common to other TRIQS-based impurity solvers, such as
+TRIQS/CTHYB\cite{Seth2016CPC}. It also enables execution of \NAME calculations
+in the MPI parallel mode with no extra effort from the user.
+Detailed documentation of the package can be 
+found online at \href{https://krivenko.github.io/edipack2triqs/}
+{https://krivenko.github.io/edipack2triqs/}.
 
 \subsubsection{Installation}\label{sSecInteropTRIQSInstallation}
 The package depends on \NAME (which ultimately depends on SciFortran), EDIpy2
@@ -370,6 +374,109 @@ conda create -n edipack
 conda activate edipack
 conda install -c conda-forge -c edipack edipack2triqs
 \end{lstlisting}
+
+\subsubsection{Implementation}\label{sSecInteropTRIQSImplementation}
+The programming interface of edipack2triqs is built around the singleton 
+Python class {\tt EDIpackSolver} (defined in the module
+{\tt edipack2triqs.solver}), whose instance represents the internal state of 
+the \NAME library and exposes its functionality through a number of 
+attributes and methods.
+
+\paragraph{{\bf Constructor}}
+Constructor of {\tt EDIpackSolver} accepts the Hamiltonian to be diagonalized
+in the form of a second-quantized fermionic operator, the TRIQS {\tt Operator}
+object described in Sec.~8.7 of Ref.~\onlinecite{Parcollet2015CPC} (impurity 
+problems involving bosons are not supported in the current version). In 
+addition to the Hamiltonian, four {\it fundamental operator sets}
+{\tt fops\_imp\_up}, {\tt fops\_imp\_dn}, {\tt fops\_bath\_up} and
+{\tt fops\_bath\_dn} must be provided.
+Each of the sets contains pairs of labels {\tt (b,j)} carried
+by the operators $c^\dagger_{b,i} / c_{b,i}$ corresponding to either impurity
+or bath electronic degrees of freedom with a certain spin projection.
+Having these two crucial pieces of information, the constructor initializes
+the underlying Fortran library and automatically selects the appropriate
+{\tt ed\_mode=normal,superc,nonsu2} (Sec.~\ref{sSecQNs}) and
+{\tt bath\_type=normal,hybrid,general} (Sec.~\ref{sSecBath}). Besides, the
+constructor accepts a vast array of keyword arguments that allow for fine-tuning
+the diagonalization process. Among others, these include the ED algorithm
+selection, the quantum numbers to be used, parameters of the Krylov space,
+the spectrum cutoff and various tolerance levels.
+
+\paragraph{{\bf Method {\tt solve}}}
+The method {\tt solve()} of {\tt EDIpackSolver} calls
+{\tt edipy2.global\_env.solve()} and therefore performs the bulk of
+calculations. It accepts the inverse temperature $\beta$ required to calculate
+the expectation value of physical observables, and parameters of energy grids
+for Green's function calculations.
+
+\paragraph{{\bf Input parameters}}
+It is possible to read off and change parameters of the Hamiltonian between
+successive calls to {\tt solve()} via respective attributes of {\tt 
+EDIpackSolver}. Note, however, that the changes that would necessitate a change of {\tt ed\_mode} or {\tt bath\_type} are disallowed. The relevant attributes
+are the following.
+\begin{itemize}
+    \item {\tt nspin} --- the number of non-equivalent spin projections 
+          (read-only).
+    \item {\tt norb} -- the number of impurity orbitals (read-only).
+    \item {\tt hloc} --- matrix $h^0_{\alpha\beta\s\s'}$ of
+          the quadratic impurity Hamiltonian (\ref{Himp}).
+    \item {\tt Uloc}, {\tt Ust}, {\tt Jh}, {\tt Jx}, {\tt Jp} ---
+          parameters $U, U', J, J_X \text{ and } J_P$ of the impurity
+          interaction term $\hat{H}^\mathrm{int}_\mathrm{imp}$ (\ref{Hint}).
+    \item {\tt bath} --- an object representing the bath. Depending on the
+          bath type selected upon solver object construction, this object is an
+          instance of {\tt BathNormal}, {\tt BathHybrid} or {\tt BathGeneral}
+          (all three classes are members of the module
+          {\tt EDIpackSolver.bath}). The bath objects support basic arithmetic
+          operations so that a mixing scheme within a DMFT calculation can be
+          easily implemented. The way to access individual bath parameters is
+          specific to each of the three classes, and is described in detail in the       \href{https://krivenko.github.io/edipack2triqs/documentation.html\#module-edipack2triqs.bath}{online API reference}.
+\end{itemize}
+
+\paragraph{{\bf Calculation results}}
+After a successful invocation of {\tt solve()}, one can extract results of the 
+calculation from the following attributes.
+\begin{itemize}
+    \item {\tt e\_pot}, {\tt e\_kin} --- thermal average of the potential 
+          (interaction) and kinetic energy respectively.
+    \item {\tt densities}, {\tt double\_occ} --- lists of average densities and
+          double occupancies of impurity orbitals.
+    \item {\tt magnetization} --- Cartesian components of the average impurity  
+          magnetization vectors, one row per orbital.
+    \item {\tt superconductive\_phi} --- Matrix of impurity superconductive
+          order parameters
+          $\phi_{\alpha\beta} = \langle c_{\alpha\up} c_{\beta\down}\rangle$
+          in orbital space. {\color{red} Is it defined elsewhere in the text?}
+    \item {\tt g\_iw}, {\tt g\_an\_iw} --- Normal and anomalous components of
+          the Matsubara impurity Green's function.
+    \item {\tt Sigma\_iw}, {\tt Sigma\_an\_iw} --- Normal and anomalous
+          components of the Matsubara impurity self-energy.
+    \item {\tt g\_w}, {\tt g\_an\_w} --- Normal and anomalous components of
+          the real-frequency impurity Green's function.
+    \item {\tt Sigma\_w}, {\tt Sigma\_an\_w} --- Normal and anomalous
+          components of the real-frequency impurity self-energy.
+\end{itemize}
+
+The Green's functions are returned as TRIQS {\tt BlockGf} containers
+with names of the individual blocks determined from the block labels {\tt 'b'}
+found in {\tt fops\_imp\_up}, {\tt fops\_imp\_dn} and from solver's
+{\tt ed\_mode}. The Matsubara and real-frequency meshes of the TRIQS GF 
+containers (see Sec.~8.2 of Ref.~\onlinecite{Parcollet2015CPC}) are constructed
+according to the parameters passed to {\tt solve()}.
+The anomalous components of the Green's functions and self-energies are only 
+available when anomalous bath terms are present in the Hamiltonian.
+If this is not the case, an attempt to access these attributes results in a
+{\tt RuntimeError}.
+
+\paragraph{{\bf Bath parameter fitting}}
+The method {\tt EDIpackSolver.chi2\_fit\_bath()} is essentially a wrapper around
+{\tt edipy2.global\_env.chi2\_fitgf()}. It accepts the function to fit (either
+the hybridization function or the Weiss field) in the {\tt BlockGf} format,
+and returns the parameter fit result as a {\tt Bath*} object along with a
+{\tt BlockGf} representation of the fitted function. In the superconducting
+case ({\tt ed\_mode=superc}), this method accepts and returns pairs of
+the {\tt BlockGf} containers corresponding to the normal and anomalous 
+components of the quantities in question.
 
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
 \NAME is supported as alternative impurity solver by the w2dynamics DMFT package\cite{Wallerberger2019CPC}. The only prerequisite to use this option is the presence of a functioning EDIpy2 installation, which w2dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter.
