@@ -625,8 +625,72 @@ handling both ground state and finite temperature superconducting
 phases, capturing the complex physics of the BCS-BEC crossover with 
 high accuracy.
 
+\subsection{Multi-orbital impurity with Hubbard-Kanamori interaction (TRIQS)}
+\label{SecExamplesTRIQS}
 
-\subsection{Multi-orbital Hubbard (TRIQS)}
+The third example demonstrates how to use the edipack2triqs compatibility
+layer (Sec.~\ref{sSecInteropTRIQS}) to solve a quantum system comprised by a
+3-orbital correlated impurity coupled to a few non-interacting bath sites.
+The interaction term of the impurity Hamiltonian has the Hubbard-Kanamori
+form (\ref{Hint}).
+
+A Python script implementing a calculation that makes use of edipack2triqs
+generally begins with a few module imports.
+\lstinputlisting[style=mypython,
+                 numbers=none,
+                 basicstyle={\scriptsize\ttfamily},
+                 firstline=1, lastline=13]
+{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+
+One then proceeds to defining the system under consideration. In this case we
+consider an impurity atom with three correlated orbitals and two bath states
+per each impurity orbital. This information must be encoded in the fundamental
+set objects that are later used to construct the solver.
+\lstinputlisting[style=mypython,
+                 numbers=none,
+                 basicstyle={\scriptsize\ttfamily},
+                 firstline=15, lastline=26]
+{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+The next step is to define a TRIQS many-body operator expression that represents
+the Hamiltonian to be diagonalized.
+\lstinputlisting[style=mypython,
+                 numbers=none,
+                 basicstyle={\scriptsize\ttfamily},
+                 firstline=28, lastline=67]
+{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+Finally, one creates a solver object and performs the actual calculation by
+calling its method {\tt solve()}. This is normally the most time- and
+memory-consuming step.
+\lstinputlisting[style=mypython,
+                 numbers=none,
+                 basicstyle={\scriptsize\ttfamily},
+                 firstline=69, lastline=83]
+{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+The computation results are readily available as attributes of the solver
+object. The following code snippet shows how to access measured expectation
+values of the static observables, and how to employ the plotting framework of
+TRIQS to visualize the obtained Matsubara and real-frequency impurity Green's
+functions (Fig.~\ref{figEx3}).
+\lstinputlisting[style=mypython,
+                 mathescape=false,
+                 numbers=none,
+                 basicstyle={\scriptsize\ttfamily},
+                 firstline=85, lastline=112]
+{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+
+\begin{figure}[t!]
+    \includegraphics[width=0.5\linewidth]
+        {edipack2_examples/edipack2triqs/G_iw.pdf}
+    \includegraphics[width=0.5\linewidth]
+        {edipack2_examples/edipack2triqs/A_w.pdf}
+    \caption{\label{figEx3}%
+        Imaginary part of the Matsubara Green's function (left) and the
+        corresponding orbital-resolved spectral function (right) computed for a
+        three-orbital impurity model with an interaction of the Hubbard-Kanamori
+        type (\ref{Hint}). This illustration is produced by the edipack2triqs
+        example script presented in Sec.~\ref{SecExamplesTRIQS}.
+    }
+\end{figure}
 
 \subsection{Bethe lattice DMFT (w2dynamics)}\label{SecExamplesBetheDMFTw2d}
 Let us revisit the example of Sec.~\ref{SecExamplesBetheDMFT} to
