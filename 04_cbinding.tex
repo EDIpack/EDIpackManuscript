@@ -378,10 +378,40 @@ The library is searched upon loading the module, with the following order of pri
 \item {\tt DYLD\_LIBRARY\_PATH}: for Mac systems
 \end{itemize}
 
-in complete analogy to the Python API, the global variables and functions are contained in a  {\tt struct} called {\tt global\_env}.
+in partial analogy to the Python API, the global variable, but not the functions, are contained in a  {\tt struct} called {\tt global\_env}.
 
 Similarly to the C++ case, global variables are loaded as raw pointers. As a consequence, it is important that the dimensions of the array variables (such as {\tt ULOC}) and, in general, the size of the memory sector occupied by each variable are correcty accounted for. This is achieved within the Julia module by appropriately casting the variables to compatible types, such as {\tt  Cint, Cbool, Cdouble}.
-Functions are directly called from the library, making use of the {\tt  ccall} procedure. As previously stated, as a consequence of the C linking conventions multiple calls to {\tt  ccall} are necessary to account for the different input options of each interfaced Fortran procedure; the Julia wrapper functions take care of selecting the appropriate Fortran procedure depending on the set of input parameters provided by the user.
+Functions are directly called from the dynamic library, making use of the {\tt  ccall} procedure. As previously stated, as a consequence of the C linking conventions multiple calls to {\tt  ccall} are necessary to account for the different input options of each interfaced Fortran procedure; the Julia wrapper functions take care of selecting the appropriate Fortran procedure depending on the set of input parameters provided by the user.
+
+\subsubsection{Installation as usage}
+
+At present, the EDIpack Julia interface is not offered as a package. The git repository has to be cloned via
+
+\begin{lstlisting}[style=mybash]
+git clone https://github.com/EDIpack/EDIjl2.0.git
+\end{lstlisting}
+
+and the location of the source files needs to be included in the user program via
+
+\begin{lstlisting}
+push!(LOAD_PATH, joinpath(@__DIR__, "PATH_TO_REPO/EDIjl2/src"))
+\end{lstlisting}
+
+The EDIjl2 module can then be loaded via
+
+\begin{lstlisting}
+using EDIjl2
+\end{lstlisting}
+
+The correct way to access global variables and functions is then as in the following example:
+
+\begin{lstlisting}
+EDIjl2.read_input("inputED.conf")
+ed = EDIjl2.global_env
+println("Nspin = ", ed.Nspin)
+ed.Nspin = 2
+\end{lstlisting}
+
 The names and inputs of the Julia-wrapped functions are entirely analogous to those of the Python API.
 
 Particular care has to be taken with respect to parallelism: Julia offers an in-house platform for parallel computing with memory shearing through multi-threading. At present, there is no integration between this architecture and the MPI-based parallelism of \NAME{}, and their concurrent use in a single program is entirely untested and not encouraged. If the library is compiled with enabled parallelism, MPI support will need to be enabled in the user-created Julia program, by making use of modules such as {\tt  MPI.jl}. The {\tt MPI\_COMM\_WORLD} communicator will need to be correctly initialized by the user as well, and the program will need to be run with {\tt  mpiexec/mpirun}.
