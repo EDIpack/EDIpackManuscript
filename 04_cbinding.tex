@@ -393,19 +393,19 @@ git clone https://github.com/EDIpack/EDIjl2.0.git
 
 and the location of the source files needs to be included in the user program via
 
-\begin{lstlisting}
-push!(LOAD_PATH, joinpath(@__DIR__, "PATH_TO_REPO/EDIjl2/src"))
+\begin{lstlisting}[style=mybash]
+push!(LOAD_PATH, joinpath(@__DIR__, "PATH/TO/REPO/src"))
 \end{lstlisting}
 
 The EDIjl2 module can then be loaded via
 
-\begin{lstlisting}
+\begin{lstlisting}[style=mybash]
 using EDIjl2
 \end{lstlisting}
 
 The correct way to access global variables and functions is then as in the following example:
 
-\begin{lstlisting}
+\begin{lstlisting}[style=mybash]
 EDIjl2.read_input("inputED.conf")
 ed = EDIjl2.global_env
 println("Nspin = ", ed.Nspin)

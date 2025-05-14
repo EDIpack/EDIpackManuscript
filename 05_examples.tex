@@ -628,7 +628,78 @@ high accuracy.
 
 \subsection{Multi-orbital Hubbard (TRIQS)}
 
-\subsection{Some model (W2Dynamics)}
+\subsection{Bethe lattice DMFT (w2dynamics)}\label{SecExamplesBetheDMFTw2d}
+Let us revisit the example of Sec.~\ref{SecExamplesBetheDMFT} to
+demonstrate usage of the w2dynamics interface how to perform such a
+calculation instead. Unlike when the Fortran API is used, none of the
+five steps of the iterative algorithm listed there are left to the
+user to implement themselves. Instead, in addition to possibly
+non-default values for \NAME input variables, the model specification
+must also be added to a w2dynamics parameter file and depending on the
+model, further input files might need to be provided. Further
+differences are that initialization is performed in w2dynamics by
+starting from a self-energy of zero or reading a self-energy value
+from an old file, which results in the initial Weiss field that the
+initial bath parameters are fitted to, and that automatic convergence
+checking is not currently available. Finally, using the same settings
+as for the Fortran example we arrive at the w2dynamics parameter file
+shown in the following listing.
+
+\begin{lstlisting}[style=fstyle,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
+[General]
+DOS             = Bethe           # support for the Bethe lattice is built-in
+half-bandwidth  = 1               # list of half-bandwidths per orbital
+NAt             = 1               # number of impurities
+beta            = 1000            # inverse temperature, defines Matsubara grid spacing
+mu              = 1.0             # chemical potential set to achieve half-filling
+EPSN            = 0.0             # turns off filling-based chemical potential search
+DMFTsteps       = 100             # given no convergence checking, we might want fewer
+magnetism       = para            # symmetrize self-energies per spin
+FileNamePrefix  = bethe_dmft_U2   # prefix for the output file name
+fileold         = bethe_dmft*hdf5 # file to read an initial self-energy from
+readold         = 0               # iteration number to read initial self-energy from, 0 turns off
+mixing          = 0.5             # mixing, but mixes self-energies and not Weiss fields
+mixing_strategy = linear          # linear mixing as in the Fortran example
+solver          = EDIPACK         # use EDIpack2 as impurity solver, not default CTHYB
+
+[Atoms]
+[[1]]                             # one subsection per impurity
+Nd              = 1               # number of orbitals
+Hamiltonian     = Kanamori        # create a Hubbard-Kanamori interaction Hamiltonian
+Udd             = 2.0             # equivalent to ULOC
+Vdd             = 1.0             # equivalent to UST, meaningless for 1 orbital
+Jdd             = 0.5             # equivalent to JH, JX and JP, also meaningless here
+
+[QMC]                             # Parameters for some grid sizes are part of this section
+Ntau            = 1024            # imaginary time grid size
+Niw             = 4096            # number of positive Matsubara frequencies
+
+[EDIPACK]                         # further non-default parameters, also taken from Fortran example
+NBATH           = 7               # number of bath sites
+ED_TWIN         = True            # use twin symmetry
+LFIT            = 2048            # number of Matsubara frequencies used for the bath fit
+LANC_NGFITER    = 500             # number of Lanczos iterations for Green's function
+CG_FTOL         = 1e-10           # conjugate-gradient tolerance
+CG_NITER        = 2048            # maximum number of conjugate-gradient iterations
+\end{lstlisting}
+
+With this parameter file, we can use the {\tt DMFT.py} script of
+w2dynamics to perform the execution and find the results in form of
+both a typical w2dynamics HDF5 output file whose name starts with {\tt
+  bethe\textunderscore{}dmft\textunderscore{}U2} and a number of folders whose names start with the
+name of the HDF5 output file that contain unavoidable or explicitly
+requested \NAME input and output files for each individual DMFT
+iteration. We can extract results from the HDF5 output file e.g. using
+the {\tt hgrep} script of w2dynamics. The following listing shows how
+to perform a calculation with 10 parallel MPI processes and print the
+impurity self-energy result of the last DMFT iteration to the terminal
+assuming that the parameter file is {\tt bethe\textunderscore{}dmft.in} in the working
+directory and w2dynamics installed to {\tt /opt/w2dynamics}.
+
+\begin{lstlisting}[style=mybash]
+mpiexec -n 10 /opt/w2dynamics/DMFT.py bethe_dmft.in
+python /opt/w2dynamics/hgrep latest siw-full -1
+\end{lstlisting}
 
 \subsection{Interacting Bernevig-Hughes-Zhang (Fortran)}
 
