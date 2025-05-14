@@ -368,7 +368,9 @@ this is at present a proof of concept, capable of replicating the results of For
 python implementations for the Bethe lattice example driver.
 Its structure and operation mimicks that of the EDIpy layer, with minimal language-specific differences.
 
-The EDIpack Julia api consists of a module called {\tt EDIjl2}, which provides access to the global variables and functions contained in {\tt  libedipack2\_cbinding.so/.dylib}. This is searched upon loading the module, with the following loading hierarchy:
+The EDIpack Julia api consists of a module called {\tt EDIjl2}, which provides access to the global variables and functions contained in {\tt  libedipack2\_cbinding.so/.dylib}. 
+
+The library is searched upon loading the module, with the following order of priority:
 
 \begin{itemize}
 \item {\tt EDIPACK\_PATH}: if this environment variable is set, {\tt EDIjl} will look there for the library first
@@ -376,12 +378,13 @@ The EDIpack Julia api consists of a module called {\tt EDIjl2}, which provides a
 \item {\tt DYLD\_LIBRARY\_PATH}: for Mac systems
 \end{itemize}
 
-in complete analogy to the Python API, the global variables and functions are contained in a  {\tt struct} called {\tt global\_env}, and can be called and assigned in the following way:
+in complete analogy to the Python API, the global variables and functions are contained in a  {\tt struct} called {\tt global\_env}.
 
-\begin{itemize}
-\item A variable symbol is retrieved from the library through {\tt Libdl.dlsym} and then read via {\tt unsafe\_load}
-\item Similarly, variable assignment is achieved through {\tt Libdl.dlsym} and  {\tt unsafe\_store}
-\item Functions are called via {\tt Libdl.dlsym} and  {\tt ccall}
-\end{itemize}
+Similarly to the C++ case, global variables are loaded as raw pointers. As a consequence, it is important that the dimensions of the array variables (such as {\tt ULOC}) and, in general, the size of the memory sector occupied by each variable are correcty accounted for. This is achieved within the Julia module by appropriately casting the variables to compatible types, such as {\tt  Cint, Cbool, Cdouble}.
+Functions are directly called from the library, making use of the {\tt  ccall} procedure. As previously stated, as a consequence of the C linking conventions multiple calls to {\tt  ccall} are necessary to account for the different input options of each interfaced Fortran procedure; the Julia wrapper functions take care of selecting the appropriate Fortran procedure depending on the set of input parameters provided by the user.
+The names and inputs of the Julia-wrapped functions are entirely analogous to those of the Python API.
 
+Particular care has to be taken with respect to parallelism: Julia offers an in-house platform for parallel computing with memory shearing through multi-threading. At present, there is no integration between this architecture and the MPI-based parallelism of \NAME{}, and their concurrent use in a single program is entirely untested and not encouraged. If the library is compiled with enabled parallelism, MPI support will need to be enabled in the user-created Julia program, by making use of modules such as {\tt  MPI.jl}. The {\tt MPI\_COMM\_WORLD} communicator will need to be correctly initialized by the user as well, and the program will need to be run with {\tt  mpiexec/mpirun}.
+
+We provide an example script for the simple case of the Bethe lattice in the normal phase in the {\tt  examples} folder of the EDIjl2.0 repository. Documentation of the API and further examples are being developed.
 \end{document}
