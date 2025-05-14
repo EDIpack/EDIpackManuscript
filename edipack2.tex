@@ -67,6 +67,18 @@
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
+\lstdefinestyle{cstyle}{
+  frame=lines,
+  language=c,
+  basicstyle=\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
 
 % % MINTED:
 % % \usepackage[cache=true,cachedir=minted-cache]{minted}
@@ -225,14 +237,14 @@
 \author[d]{S.~Giuli}
 \author[d]{G.~Bellomia}
  \author[c]{A.~Kowalski}
-% \author[f]{A.~Scazzola}
-\author[g]{F.~Petocchi}
- \author[e]{M.~Wallerberger}
- \author[h]{G.~Mazza}
- \author[i]{L.~de Medici}
+\author[e]{F.~Petocchi}
+ \author[f]{M.~Wallerberger}
+ \author[g]{G.~Mazza}
+ \author[h]{L.~de Medici}
  \author[c,b]{G.~Sangiovanni}
- \author[d,j]{M.~Capone}
-\author[j]{A.~Amaricci}
+ \author[d,i]{M.~Capone}
+\author[i]{A.~Amaricci}
+% \author[]{A.~Scazzola}
 
 % \cortext[author] {Corresponding author.\\\textit{E-mail address:} amaricci@iom.cnr.it}
 \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
@@ -256,12 +268,12 @@
 \address[b]{\CTQMAT}
 \address[c]{\WZBURG}
 \address[d]{\SISSA}
-\address[e]{\TUW}
-\address[f]{Politecnico di Torino, Turin, Italy}
-\address[g]{\Geneve}
-\address[h]{\UPISA}
-\address[i]{\ESPCI}
-\address[j]{\CNRIOM}
+\address[e]{\Geneve}
+\address[f]{\TUW}
+\address[g]{\UPISA}
+\address[h]{\ESPCI}
+\address[i]{\CNRIOM}
+% \address[]{Politecnico di Torino, Turin, Italy}
 % \cortext[AA]{Corresponding author:lorenzo.crippa@uni-hamburg.de}
 % \cortext[BB] {Corresponding author:giuli@sissa.it}
 % \cortext[CC]{Corresponding author:bellomia@sissa.it}
@@ -339,6 +351,48 @@
 
 
 \section{Conclusions}
+{\color{red} Tentative conclusions}
+We have presented EDIpack2, a versatile, high-performance solver for
+generic quantum impurity problems. Leveraging on the massively
+parallel algorithms introduced with its predecessor, this version of
+the library features new capabilities and symmetries within a unified
+framework, providing reliable evaluations of the dynamical correlation
+functions on arbitrary complex argument.
+This makes it particularly well-suited for capturing the sharp
+low-energy excitations and complex spectral features of strongly
+correlated systems. We have shown that this new version enables the evaluation of impurity
+reduced density matrices directly from Fock space quantities and thus unlock 
+quantum information analyses of correlated systems.  
+
+A central feature of EDIpack2 is its strong focus on interoperability,
+achieved through modern Fortran constructs, C/C++-bindings, and
+comprehensive APIs for Python (EDIpy2). 
+These interfaces enable seamless integration with broader
+computational frameworks like TRIQS and W2Dynamics, expanding the
+functionality of these platforms and providing a robust foundation for
+reproducible research.
+
+We thoroughly discussed the implementation of the EDIpack2 library, the
+most important algorithms and classes. We presented in
+details the third-party interfaces which extend exact diagonalization
+capabilities beyond the realm of the library itself.   
+Finally, we showcased the use of the EDIpack2 software in different
+contexts via elaborated example which can serve as reference for the
+potential users. 
+
+The modular and extensible design of EDIpack2 provides a
+natural foundation for future extensions, for instance to cluster-DMFT where the
+impurity problem is generalized to include clusters of interacting
+sites. This approach would enable the treatment of spatial
+correlations beyond the single-site approximation, capturing effects
+such as d-wave pairing in high-temperature superconductors, charge
+order, and complex spin textures in strongly correlated systems.
+We anticipate that EDIpack2 will become a valuable tool for the
+computational condensed matter community, supporting a wide range of
+studies on strongly correlated materials and providing a reliable
+reference platform for quantum impurity solvers.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

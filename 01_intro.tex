@@ -2,21 +2,91 @@
 \begin{document}
 
 \section{Introduction and Motivation}\label{SecIntro}
-
-A few words about the motivations who led us to develop this
-software, possible applications and advantages:
+{\color{red} A tentative Introduction scheme}
 
 
-* flexibility: can address generic cases including multi-orbital,
-superconducting or spin-non-conserving regimes
+\paragraph{intro} Quantum impurity models play a central role in condensed matter
+physics, providing the theoretical foundation for understanding
+of strongly correlated electrons systems.
+These models describe a small
+number of interacting electronic degrees of freedom coupled to 
+a non-interacting bath.
+Notably, quantum impurity problems lie at the core of dynamical mean-field theory
+(DMFT). By  reducing the lattice many-body problem to a
+self-consistent quantum impurity problem,  retaining essential local
+correlations, the DMFT enabled a  successful effective description of the
+complex physics of correlated materials, including Mott insulators,
+heavy fermion compounds, and high-temperature superconductors.  
+However, solving the quantum impurity problems emerging in the DMFT context accurately and efficiently remains a
+critical challenge, particularly for multi-orbital systems, systems
+at low temperatures or endowed with lower symmetry. 
 
-* zero and low finite temperatures
 
-* direct access to (well approximated) analytic dynamical functions
+\paragraph{what is new, what is inside: modes, RDM, ineq}
+  In this work we introduced EDIpack2: a flexible, high-performance numerical library designed to
+address these challenges, providing an exact diagonalization solver
+for generic quantum impurity problems. 
+The library builds on the foundations of
+its predecessor featuring massively parallel Lanczos-based algorithms while including several significant
+improvements. EDIpack2 supports both zero and finite temperature
+calculations for different symmetries of the problem  
+within a unified framework, making it suitable for a wide
+range of physical phenomena, from spin-orbit coupling effect in
+quantum materials to multi-orbital superconductivity. It also provides direct
+access to well-approximated dynamical correlation functions across the
+entire complex plane, thus enabling calculations of spectral functions, local susceptibilities, and
+other response properties.
 
-* direct access to impurity Fock space quantities
 
-bla bla bla
+Additionally, EDIpack2 offers access to the Fock space of
+the impurity system and thus, for instance, the possibility to
+evaluate the impurity reduced density matrix
+(iRDM). This capability enables quantum information-inspired analyses,
+providing insights into the entanglement properties, subsystem purity,
+and quantum correlations of interacting electron systems. These
+features are increasingly recognized as essential for understanding
+the emergent behavior in correlated matter, including quantum
+criticality and superconductivity.
+
+This new version includes support for systems with inequivalent
+impurities, a critical feature for studying heterostructures,
+superlattices, and disordered systems, where the local environment
+varies significantly across different sites. This capability makes it
+possible to explore a wide range of inhomogeneous systems, including
+oxide interfaces or disordered systems, where
+translational symmetry is broken.
+
+
+\paragraph{Interoperability}
+Interoperability is a core design principle of this version of 
+EDIpack. The library is implemented using modern Fortran constructs, with comprehensive
+C-bindings that enable integration with other programming
+languages. In particular, EDIpack2 includes native  C and C++
+interface layer which enable development of third-party
+extensions. A significant contribution is realized via the Python API, EDIpy2, which provides a
+high-level interface for defining and solving impurity problems. The
+Python bindings also enable integration with established scientific
+libraries, such as NumPy and SciPy, facilitating data analysis and
+rapid prototyping.
+
+The development of such Python API unlocked construction of direct interfaces to the TRIQS
+(Toolbox for Research on Interacting Quantum Systems)  as
+well as to the W2Dynamics software.
+This integration provides EDIpack2 users with access to the
+extensive data handling and analysis tools in the TRIQS ecosystem,
+while also allowing TRIQS and W2Dynamics users to benefit from the
+flexibility and performance of EDIpack2. This dual functionality
+extends the capabilities of these platforms, supporting
+reproducibility and cross-validation of numerical results, and sets a
+new standard for interoperability in quantum impurity solvers.
+
+\paragraph{closure}
+In this paper, we present the mathematical framework, implementation
+details, and key features of EDIpack2, along with several illustrative
+applications. We aim to demonstrate how this flexible,
+high-performance solver can be used to tackle a wide range of
+challenging impurity problems. 
+
 
 
 

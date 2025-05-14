@@ -7,7 +7,7 @@ program ed_ahm_2d
   real(8),parameter                         :: D=1
   integer                                   :: iloop,i
   integer                                   :: Nb,Nso
-  logical                                   :: converged,get_sigma
+  logical                                   :: converged,get_sigma,get_dos
   !Bath:
   real(8),allocatable,dimension(:)          :: Bath,Bath_Prev
   !The local functions:
@@ -27,6 +27,7 @@ program ed_ahm_2d
   call parse_cmd_variable(finput,"FINPUT",default='inputAHM.conf')
   call parse_input_variable(wmixing,"wmixing",finput,default=0.5d0,comment="Mixing bath parameter")
   call parse_input_variable(get_sigma,"get_sigma",finput,default=.false.)
+  call parse_input_variable(get_dos,"get_dos",finput,default=.false.)
   !
   call ed_read_input(trim(finput))
 
@@ -82,10 +83,21 @@ program ed_ahm_2d
      stop
   end if
 
-  
+
+  if(get_dos)then
+     call ed_get_sigma(Sreal(1,:,:,:),axis='r',type='n')
+     call ed_get_sigma(Sreal(2,:,:,:),axis='r',type='a')
+     call get_gloc(Edos,Ddos,H0,Greal,Sreal,axis='r')
+     call write_gf(Greal(1,:,:,:),"Gloc",axis='real',iprint=1)
+     call write_gf(Greal(2,:,:,:),"Floc",axis='real',iprint=1)
+     stop 
+  endif
 
 
-  
+
+
+
+
   !> Get bath dimension and allocate user bath to this size
   Nb=ed_get_bath_dimension()
   allocate(Bath(Nb))

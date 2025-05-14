@@ -1,5 +1,5 @@
 HERE   = `pwd`
-EXE=ed_ahm_square
+EXE=ed_ahm_2d
 FC=mpif90
 PLAT=gnu
 DIREXE   = $(HERE)

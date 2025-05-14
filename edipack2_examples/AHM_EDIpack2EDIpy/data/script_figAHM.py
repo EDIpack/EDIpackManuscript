@@ -14,7 +14,7 @@ from scipy import optimize
 plt.rcParams["font.family"] = "Times"
 plt.rcParams['text.usetex'] = True
 plt.rc('text.latex', preamble=r'\usepackage{amsmath,xcolor,amssymb,latexsym}')
-plt.rcParams.update({'font.size': 24})
+plt.rcParams.update({'font.size': 30})
 plt.rcParams['figure.figsize'] = [35, 15]
 
 
@@ -119,7 +119,7 @@ x2=d2[:,0];y2=d2[:,1];y2=0.25+y2**2
 
 ax.set_xlim([0, 5])
 # ax.set_ylim([0, 0.5])
-ax.set_xlabel(r'$T$')
+ax.set_xlabel(r'$U$')
 ax.set_ylabel(r'$\langle n_\uparrow n_\downarrow \rangle$')
 ax.tick_params(length=6, width=2,direction='out')
 
