@@ -767,4 +767,30 @@ python /opt/w2dynamics/hgrep latest siw-full -1
 
 \subsection{Interacting Bernevig-Hughes-Zhang (Fortran)}
 
+\subsection{Holstein model on the Bethe lattice (Fortran)}
+
+One of the features introduced in \NAME is the possibility of treating local phonons in the superconductive case (i.e. \textbf{ed\_mode=superc} ). In this example we show how to get the normal and superconductive solutions of the Holstein model on the Bethe lattice within DMFT. The phononic and electron-phonon part of the Holstein hamiltonian at half-filling for particle-hole symmetric density of states like in the Bethe lattice reads:
+\begin{equation} \label{eqex:H_Holstein}
+    H_{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i + b_i)\sum_{\sigma}(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2})\Big]
+\end{equation}
+
+This interaction in two limits takes two simpler forms, for $\omega_0 \rightarrow \infty$ with $g^2/\omega_0=\lambda$ constant, also known as anti-adiabatic limit, the interaction becomes a Hubbard attraction:
+\begin{equation}
+    H_{int} \overset{ \omega_0 \rightarrow \infty}{ \longrightarrow } -\frac{\lambda}{2} \sum_i \Big[\sum_\sigma(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2}) \Big]^2
+\end{equation}
+
+Meanwhile in the opposite limit, $\omega_0 \rightarrow 0$ with $g^2/\omega_0=\lambda$ constant, also known as adiabatic limit, the phonons are condensed and the creation/annihilation operators can be considered as a scalar number to be determined self-consistently. In that case the interaction at equation \eqref{eqex:H_Holstein} for uniform solution vanishes and one recovers the non-interacting limit.
+
+THE FOLLOWING MAYBE IN THE E-PH SECTION
+
+The phonon's frequency is passed to the \NAME program via the variable W0\_PH to be read from the input file. The displacement field acting on the phonon is passed thorugh the variable A\_PH from the input file. The electron-phonon coupling matrix $g_{\alpha \beta}$ instead can be passed in two different ways. If the matrix is diagonal ($g_{\alpha \beta} = g_\alpha \delta_{\alpha \beta}$), from the input file one can simply write in order the values $g_\alpha$ in the variable G\_PH. For any general shape one can pass to the input file a GPHfile variable containing the name of the file storing the $g_{\alpha \beta}$ array in Fortran style.
+If GPHfile=NONE the matrix $g_{\alpha \beta}$ is read from the variable G\_PH, else it is read from the GPHfile.
+
+In the following we show for a fixed value of $\lambda=2$ the adiabatic to anti-adiabatic crossover for the uniform solution of the Holstein problem.
+
+PLOT docc vs W0, superc and normal
+PLT delta vs w0, superc
+
+
+
 \end{document}
