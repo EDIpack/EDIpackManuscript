@@ -4,7 +4,7 @@ program ed_bhz
   USE DMFT_TOOLS
   USE MPI
   implicit none
-  
+
   integer                                 :: iloop,Lk,Nso
   logical                                 :: converged
   !Bath:
@@ -56,7 +56,7 @@ program ed_bhz
   call add_ctrl_var(Norb,"norb")
   call add_ctrl_var(Nspin,"nspin")
   call add_ctrl_var(beta,"beta")
- call add_ctrl_var(xmu,"xmu")
+  call add_ctrl_var(xmu,"xmu")
   call add_ctrl_var(wini,'wini')
   call add_ctrl_var(wfin,'wfin')
   call add_ctrl_var(eps,"eps")
@@ -166,7 +166,7 @@ program ed_bhz
   call finalize_MPI()
 
 
-  
+
 
 contains
 
