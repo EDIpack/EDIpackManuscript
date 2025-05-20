@@ -701,6 +701,18 @@ phases, capturing the complex physics of the BCS-BEC crossover with
 high accuracy.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 \begin{figure}[t!]
     \includegraphics[width=0.5\linewidth]
         {edipack2_examples/edipack2triqs/G_iw.pdf}
@@ -781,6 +793,10 @@ functions (Fig.~\ref{figEx3}).
 
 
 
+
+
+
+
 \subsection{Interacting Bernevig-Hughes-Zhang model}
 In this section we focus on the DMFT solution of the interacting
 Bernevig-Hughes-Zhang (BHZ).
@@ -834,14 +850,15 @@ Dirac state with linear band crossing at $k=[0,0]$.
 The code implementation follows the same guidelines discusses above
 for the other examples. There are two specific modifications requied
 to the  user. The first is to generate the Hamiltonian $H(k)$ on a discretized Brillouin zone in
-order to obtain both the local non-intearcing Hamiltonian
-$H_{loc}=\tfrac{1}{N_k}\sum_k H(k)$ and get the local interacting
-Green's function
+order to obtain the local interacting Green's function, used in the
+implementation of the self-consistency conditions:
+$\GG^{-1}=G_{loc}^{-1}+\Sigma$, with: 
 $$
-G_{loc}(z) = \tfrac{1}{N_k}\sum_k \left[z+\mu-H(k)-\Sigma(z) \right]^{-1}
+G_{loc}(z) = \tfrac{1}{N_k}\sum_k \left[z+\mu-H(k)-\Sigma(z)
+\right]^{-1}, 
 $$
-where $\z\in\CCC$, $\Sigma(z)$ is the self-energy function obtained from the DMFT
-solution of the problem and $N_k$ is the number of $k$-points. 
+where $\z\in\CCC$  and $\Sigma(z)$ is the self-energy function obtained from the DMFT
+solution of the proble.  $N_k$ is the number of $k$-points. 
 The second is to  construct the ``renormalized'' topological
 Hamiltonian
 $$
@@ -853,9 +870,23 @@ topological characterization of the interacting system.
 
 
 
+\begin{figure}[t!]
+  \includegraphics[width=\linewidth]{figures/figBHZ.pdf}
+    \caption{\label{figEx4}%
+      \textbf{Topological and Exciton Transition.}
+      (A) Evolution of the spin-triplet,
+      in-plane excitonic order parameter $\langle E_x\rangle$ (black solid line) and
+      orbital polarization $\langle T_z\rangle$ (orange dashed line) as a function of the
+      interaction $U$.
+      (B-D) Spectral functions of the two orbital electrons for three
+      values of the interaction $U=2.00$ (red circle), $4.00$ (red
+      square) and $6.00$ (red diamond) capturing, respectively, the
+      QSHI (B), the Excitonic Insulator (C) and the Mott Insulator
+      (D). 
+    }
+\end{figure}
 
-
-\subsubsection{Results}
+\paragraph{Results}
 To capture the possible symmetry breaking in any excitonic channel
 driven by the local interaction, we consider the vector order
 parameter
@@ -876,12 +907,12 @@ illustrate the ability of \NAME to capture matter phases with broken
 spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
   bath\_type=replica}.
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
-   !> Set $H_{loc}$ in \NAME
+   !> Set $H_{loc}$
    allocate(Hloc(Nso,Nso))
    Hloc = sum(Hk,dim=3)/Lk
    where(abs(dreal(Hloc))<1d-6)Hloc=zero
    call ed_set_hloc(Hloc)
-   !> Setup the replica bath basis using  $M$, $E_0$, $E_z$ and $E_x$ as symmetries
+   !> Setup the replica bath basis:
    allocate(lambdasym_vector(Nbath,4))
    allocate(Hsym_basis(Nso,Nso,4))
    Hsym_basis(:,:,1)=Gamma03  ;lambdasym_vector(:,1)= Mh
@@ -897,6 +928,16 @@ spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
    !> Initialize the ED solver (bath is guessed or read from file) 
    call ed_init_solver(bath)
 \end{lstlisting}
+where we use the local non-interacting Hamiltonian 
+$H_{loc}=\tfrac{1}{N_k}\sum_k H(k)$ to set 
+$h^0_{\a\b\s\s'}$, i.e. the impurity Hamiltonian. To anticipate the
+possibility of forming an excitonic ordered phase, the replica bath
+is constructed out of matrix basis with 4 distinct elements
+$\Gamma_{03}$, $\Gamma_{01}$, $\Gamma_{31}$, $\Gamma_{11}$ which
+are proportional, respectively, to the mass term, the exciton singlet
+$E_0$, the exciton triplet along easy-axis $E_z$ and in-plane
+$E_x$ (we assume $E_y=0$ levaraging on residual $U(1)$ in-plane
+symmetry. 
 
 
 
@@ -914,23 +955,36 @@ interaction would be to reduce the (effective) mass term and thus
 reducing the topological band gap. In the strong-coupling limit the
 two orbitals get populated with one electron per site, reaching the
 conditions for the formation of a Mott insulating state.
-In between, at inter-mediate coupling, we observe the formation of a
-region of exciton condensation.
-In panel (A) of \figu{figEx4} we report the evolution of the order
-parameter 
+As reported in panel (A) of \figu{figEx4}, at intermediate coupling,
+the DMFT solutions features the formation of a
+region of exciton condensation with $\langle E_x\rangle>0$, $\langle
+E_0\rangle=\langle E_z\rangle=0$. 
+Unlike the static mean-field description~\cite{Blason2021}, the
+transition from the QSHI topological state to the Excitonic Insulator 
+(EI) becomes of first-order in presence of quantum fluctuations
+corrections~\cite{Continentino,Paoletti} contained in DMFT. On the
+other hand, the EI continuously evolves into a Mott Insulator (MI)
+for larger interaction (neglecting for simplicity any 
+anti-ferromagnetic ordering that would naturally occurr in this
+regime).
+In the same panel we report the evolution of 
+$\langle T_z\rangle$ to illustrate the progressive reduction of the
+orbital polarization and, thus, of the effective mass. 
 
 
-
-
-
-
-\begin{figure}[t!]
-  \includegraphics[width=\linewidth]{figures/figBHZ.pdf}
-    \caption{\label{figEx4}%
-      \textbf{Topological and Exciton Transition.}
-      (a)
-    }
-\end{figure}
+To further illustrate the nature of the three distinct phases of this
+system, we leverage on the direct access to real-axis spectral
+function provided by \NAME solver. In panels (B)-(D) of \figu{figEx4}
+we report the spectral functions $-\Im{G}_{a,loc}(\omega)/\pi$ for
+$a=1,2$, $\sigma=\up$ and three distinct values of the interaction
+$U$ placing the solution, respectively, in the QSHI, the EI and the MI.
+The correlated QSHI is characterized by the presence of an 
+inverted band gap featuring a substantial orbital spectral mixing. The
+EI spectrum is instead characterized by a narrow gap, related to the
+finite order parameter, flanked by two sharp resonances and featuring
+larger high-energy weight.
+Finally, in the MI the two orbital spectral function describes the two 
+characteristic Hubbard bands separated by a large Mott gap.  
 
 
 
