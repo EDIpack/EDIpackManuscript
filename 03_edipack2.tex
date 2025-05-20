@@ -98,7 +98,7 @@ Finally, the electron-phonon part of the quantum impurity problems is
 described by the Hamiltonian terms: 
 \begin{equation}\label{Hph}
   \begin{split}
-    \hat{H}_\mathrm{ph}&=\sum_q \omega_{0q} b_q^+b_q\\
+    \hat{H}_\mathrm{ph}&=\sum_q \omega_{0q} b_q^+b_q + \sum_q \sqrt{2}A_{q}(b^\dagger_q + b_q)  \\
     % 
     \hat{H}_\mathrm{e-ph} &= \sum_q\sum_{\a\b\sigma} g_{\a\b} d^+_{\a\sigma}d_{\b\sigma}(b_q+b_q^+)
 \end{split}
@@ -109,7 +109,9 @@ frequency $\omega_{0q}$.
 The matrix  $g_{\a\b}$ describe the electron-phonon coupling. 
 Although feasible, dealing with more than one phonon mode becomes
 quickly computationally very demanding, thus in the rest of the this
-work we shall consider $N_q=1$. 
+work we shall consider $N_q=1$.
+The phonon's frequency is passed to the \NAME program via the variable { \tt W0\_PH } to be read from the input file. The displacement field acting on the phonon is passed through the variable {\tt A\_PH} from the input file. The electron-phonon coupling matrix $g_{\alpha \beta}$ instead can be passed in two different ways. If the matrix is diagonal ($g_{\alpha \beta} = g_\alpha \delta_{\alpha \beta}$), from the input file one can simply write in order the values $g_\alpha$ in the variable {\tt G\_PH }. For any general shape one can pass to the input file a {\tt GPHfile } variable containing the name of the file storing the $g_{\alpha \beta}$ array in Fortran style.
+If {\tt GPHfile=NONE} the matrix $g_{\alpha \beta}$ is read from the variable {\tt G\_PH}, else it is read from the {\tt GPHfile}.
 
 \subsubsection{System setup}
 We consider a bath discretized into a  number
