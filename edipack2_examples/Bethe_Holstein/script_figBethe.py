@@ -33,11 +33,11 @@ axs = plt.figure(layout="constrained").subplot_mosaic(
 )
 
 
-axs["A"].text(0.94, 0.04, r"(A)",transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
-axs["B"].text(0.94, 0.04, r"(B)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
+axs["A"].text(0.96, 0.04, r"(A)",transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
+axs["B"].text(0.96, 0.04, r"(B)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
 
 
-
+ms=20
 
 
 ##################################################################
@@ -56,14 +56,14 @@ ax.set_xlabel(r'$\omega_0$/D')
 ax.set_ylabel(r'$ \langle n_\uparrow n_\downarrow \rangle$')
 ax.set_ylim(0.4,0.5)
 
-ax.plot(W0_plot,n_docc_list[:-1],label="ed_mode=normal",c="orange",marker="o",linewidth=3)
-ax.plot(W0_plot,s_docc_list[:-1],label="ed_mode=superc",c="red",marker="o",linewidth=3)
+ax.plot(W0_plot,n_docc_list[:-1],label="normal",c="orange",marker="o",lw=6,markersize=ms,zorder=1)
+ax.plot(W0_plot,s_docc_list[:-1],label="superc",c="red",marker="s",lw=6,markersize=ms,zorder=1)
 #AntiAdiabatic
-ax.axhline(n_docc_list[-1],linestyle="--",c="orange",linewidth=6,alpha=.5)
-ax.axhline(s_docc_list[-1],linestyle="--",c="red",linewidth=6,alpha=0.5)
+ax.axhline(n_docc_list[-1],linestyle="--",c="orange",linewidth=8,alpha=.5,zorder=2)
+ax.axhline(s_docc_list[-1],linestyle="--",c="red",linewidth=8,alpha=0.5,zorder=2)
 
 
-ax.legend(loc='upper center') #, fontsize = '22', handlelength=1.5, framealpha=1)
+ax.legend(loc='upper right') #, fontsize = '22', handlelength=1.5, framealpha=1)
 
 ##################################################################
 
@@ -81,9 +81,9 @@ ax.set_xlabel(r'$\omega_0 /D$')
 ax.set_ylabel(r'$ \phi $')
 
 
-ax.plot(W0_plot,s_phi_list[:-1],label="ed_mode=superc",c="red",marker="o",linewidth=3)
+ax.plot(W0_plot,s_phi_list[:-1],label="superc",c="red",marker="s",linewidth=6,markersize=ms)
 #AntiAdiabatic
-ax.axhline(s_phi_list[-1],linestyle="--",c="red",linewidth=6,alpha=0.5)
+ax.axhline(s_phi_list[-1],linestyle="--",c="red",linewidth=8,alpha=0.5)
 
 
 ax.legend(loc='lower center') #, fontsize = '22', handlelength=1.5, framealpha=1)

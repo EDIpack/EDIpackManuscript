@@ -7,7 +7,7 @@ library and their interfaces as solver for DMFT through specific examples, inclu
 discussion of relevant code snippets. 
 
 
-\subsection{Bethe lattice DMFT}\label{SecExamplesBetheDMFT}
+\subsection{Hubbard model on the Bethe lattice (Fortran API)}\label{SecExamplesBetheDMFT}
 The test bed for any DMFT application is conventionally considered 
 the description of the Mott or metal-to-insulator transition (MIT) 
 in a Bethe lattice, i.e., a Cayley tree with coordination number 
@@ -368,7 +368,7 @@ ${\rm Im}\Sigma(\omega) \rightarrow -\infty$.
 
 
 
-\subsubsection{W2Dynamics solution}\label{SecExamplesBetheDMFTw2d}
+\subsubsection{Finite temperature solution (W2Dynamics interface)}\label{SecExamplesBetheDMFTw2d}
 To demonstrate use of the w2dynamics interface, here we briefly
 discuss how to solve the DMFT problem for the Bethe lattice using
 W2Dynamics interface. \fixme{For definitiness we compare the finite low
@@ -462,7 +462,7 @@ python /opt/w2dynamics/hgrep latest siw-full -1
 
 
 
-\subsection{Attractive Hubbard model}\label{SecExamplesAHM}
+\subsection{Attractive Hubbard model (Python API, {\tt ed\_mode=superc})}\label{SecExamplesAHM}
 The second example we present concerns the DMFT description of the 
 attractive Hubbard model on a two-dimensional square lattice. This 
 example has a twofold aim: (i) to demonstrate the support of \NAME 
@@ -727,7 +727,8 @@ high accuracy.
     }
 \end{figure}
 
-\subsection{Multi-orbital impurity with Hubbard-Kanamori interaction}
+\subsection{Multi-orbital quantum impurity with Hubbard-Kanamori
+  interaction (TRIQS interface)}
 \label{SecExamplesTRIQS}
 
 The third example demonstrates how to use the edipack2triqs compatibility
@@ -797,7 +798,7 @@ functions (Fig.~\ref{figEx3}).
 
 
 
-\subsection{Interacting Bernevig-Hughes-Zhang model}
+\subsection{Interacting Bernevig-Hughes-Zhang model (Fortran API, {\tt ed\_mode=nonsu2})}
 In this section we focus on the DMFT solution of the interacting
 Bernevig-Hughes-Zhang (BHZ).
 As shown in Ref.~\onlinecite{AmaricciPRB2022}, at moderate
@@ -943,7 +944,28 @@ symmetry.
 
 
 In the following we consider the case of $M=1$ which corresponds to a
-QSHI in the non-interacting limit and $J/U=0.25$. 
+QSHI in the non-interacting limit and $J/U=0.25$.
+The implemention is nearly identical to the cases discussed above and
+we report it here for completeness:
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+   iloop=0;converged=.false.
+   do while(.not.converged.AND.iloop<nloop)
+     iloop=iloop+1
+     !> Solve the impurity problem, retrieve $\Sigma(i\omega)$
+     call ed_solve(bath)
+     call ed_get_sigma(Smats,axis='mats')
+     !> Get $G_{loc}$ (assume to have a function for this task)
+     call get_gloc(Hk,Gmats,Smats,axis='m')
+     !> Update the Weiss field $\GG^{-1}=G^{-1}_{loc}+\Sigma$ +  Linear mixing.
+     call dmft_self_consistency(Gmats,Smats,Weiss)
+     if(iloop>1)Weiss = wmixing*Weiss + (1.d0-wmixing)*Weiss_;Weiss_=Weiss
+     !> Fit to updated the bath
+     call ed_chi2_fitgf(Weiss,bath,ispin=1)
+     !Check convergence (using DMFT_TOOLS)
+     converged = check_convergence(Weiss(1,1,:),dmft_error,nsuccess,nloop)
+   enddo  
+\end{lstlisting}
+
 %
 The main effect of the interaction is enclosed in the renormalized
 mass term $M_{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
@@ -991,26 +1013,72 @@ characteristic Hubbard bands separated by a large Mott gap.
 
 
 
-\subsection{Holstein model on the Bethe lattice (Fortran)}
+\subsection{Holstein model on the Bethe lattice (Fortran API, {\tt electron-phonons})}
+One of the features introduced in \NAME is the possibility of treating
+local phonons in conjunction with the superconductive phase,
+i.e. \textbf{ed\_mode=superc}. 
+In this example discuss  the normal and
+superconductive solution of the pure Holstein model on the Bethe
+lattice within DMFT.
+We stress that, using Fortran API, the code
+implementation for this specific case is essentially identical to the listing reported in the sections
+\ref{SecExamplesBetheDMFT} ({\tt ed\_mode=normal}) and
+\ref{SecExamplesAHM} ({\tt ed\_mode=superc}). 
 
-One of the features introduced in \NAME is the possibility of treating local phonons in the superconductive case (i.e. \textbf{ed\_mode=superc} ). In this example we show how to get the normal and superconductive solutions of the Holstein model on the Bethe lattice within DMFT. The phononic and electron-phonon part of the Holstein Hamiltonian at half-filling for particle-hole symmetric density of states like in the Bethe lattice reads:
+So we consider the model introduced in \secu{SecExamplesBetheDMFT}
+with $U=0$ and the additional phononic and electron-phonon terms:
 \begin{equation} \label{eqex:H_Holstein}
-    H_{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i + b_i)\sum_{\sigma}(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2})\Big]
+    H_{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i +
+    b_i)\sum_{\sigma}(c^\dagger_{i\sigma}c_{i\sigma}
+    -\frac{1}{2})\Big]. 
 \end{equation}
+We consider the half-filling regime of the particle-hole symmetric
+Bethe lattice density of states. We set the half-bandwidth as our
+energy unit $D=1$ and introduced the electron-phonon coupling $\lambda
+= \tfrac{2g^2}{\omega_0D}$.  
+The iterative DMFT solution algorithm follows the same principles
+illustrated in the previous sections. 
 
-In the following we show for a fixed value of $\lambda/D=1.0$ the adiabatic to anti-adiabatic crossover for the uniform solution of the Holstein problem on the Bethe lattice.
+\paragraph{Results}
+In the following we discuss the adiabatic ($\omega_0\to0$) to
+anti-adiabatic ($\omega_0\to\infty$) crossover for
+the uniform solution of the Holstein model at constant coupling $\lambda=1.0$.
 
-The Holstein interaction takes a simpler form for $\omega_0 \rightarrow \infty$ with $g^2/\omega_0=\lambda/2$ constant, also known as anti-adiabatic limit, for which it becomes a Hubbard attraction:
-\begin{equation}
+In the anti-adiabatic limit, the Holstein interaction takes a
+particularly simple form:
+\begin{equation}\label{HlikeAttraction}
     H_{int} \overset{ \omega_0 \rightarrow \infty}{ \longrightarrow } -\frac{\lambda}{2} \sum_i \Big[\sum_\sigma(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2}) \Big]^2
 \end{equation}
+which describes a local Hubbard-like attraction among electrons
+(mediated by local phonons).
+In the opposite, adiabatic, limit, $\omega_0 \rightarrow 0$ the system
+enters in a Bipolaronic Insulating phase~\citep{Capone2006PRB} for our
+choice of the coupling. 
 
-Meanwhile, in the opposite limit, $\omega_0 \rightarrow 0$ with $g^2/\omega_0=\lambda/2$ constant, also known as adiabatic limit, the system is in a phase of Bipolaronic insulator~\citep{Capone2006PRB} for $\lambda=1$.
 
+We characterize the model solution by showin the evolution of the
+double occupation $\langle n_{\up}n_{\dw}\rangle$ as a function of the
+phonon frequency $\omega_0$, see panel (A). In this panel we compare
+the behavior for {\tt ed\_mode=normal} against the superconductive
+solution ({\tt ed\_mode=superc}). Our results capture the whole
+crossover from adiabatic to anti-adiabatic regime. In the former
+regime, the double occupation takes a similar value for the two
+phases. However, approaching the anti-adiabatic regime, the two
+solutions reach the limiting values corresponding to the residual
+attraction \equ{HlikeAttraction}.   
+To better characterize the nature of the superconducting
+phase in the Holstein model we report the evolution of the anomalous order
+parameter $\phi$ in the adiabatic to anti-adiabatc crossover.
+The DMFT results obtained with \NAME show the rapid increase of the
+superconducting order parameter as phonon frequency grows
+large. Finally, in the anti-adiabatic regime $\phi$ saturates to a
+finite value corresponding to the attractive Hubbard-like interaction
+of strenght $\lambda/2$. 
 
 \begin{figure}[ht!]
-    \includegraphics[width=\linewidth]{edipack2_examples/Bethe_Holstein/figBethe_Holstein.pdf}
-    \caption{\label{figEx5}Plots of the double occupancy (A) and the superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda/D=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken line are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
+    \includegraphics[width=\linewidth]{figures/figBethe_Holstein.pdf}
+    \caption{\label{figEx5}
+      Evolution of the  double occupation (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken line are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
 \end{figure}
 
 
