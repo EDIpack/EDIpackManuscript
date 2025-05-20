@@ -43,19 +43,17 @@ standardizazion and interoperability between solution software suites has
 become a critical necessity.
 \NAME has been expressly designed following this guiding principle. 
 While the library itself is implemented using modern Fortran constructs, it also provides an extensive set of C-bindings that enable integration with other programming languages,
-be they compiled (C, C++), JIT-compiled (Julia) or interpreted (python). 
-A significant contribution is realized via the Python API, EDIpy, which provides a high-level interface for defining and solving impurity problems. The
-Python bindings also enable integration with established scientific
-libraries, such as NumPy and SciPy, facilitating data analysis and
+be they compiled (C, C++), JIT-compiled (Julia) or interpreted (Python). 
+Especially notable in this sense is the Python API, EDIpy which, beyond providing a 
+high-level interface for defining and solving impurity problems, also allows integration with established scientific libraries, such as NumPy and SciPy, facilitating data analysis and
 rapid prototyping.
 
 A key development feature in \NAME, unlocked by the introduction of Python and C/C++ API, 
-is the direct  interfaces to the TRIQS (Toolbox for Research on Interacting Quantum Systems)  as
-well as to the W2Dynamics software, which are two of the most 
-important and used computational tools in the field. \NAME seamlessly slots in as an alternative
-solver to the native Quantum Monte Carlo implementations, greatly extending the parameter (and 
-especially temperature) range reachable by the simulation while minimizing code production from 
-the end user.
+is the direct  interfaces to the TRIQS (Toolbox for Research on Interacting Quantum Systems) and
+W2Dynamics software suites, which are two of the most important and used computational tools in
+the field. \NAME seamlessly slots in as an alternative solver to the native Quantum Monte Carlo 
+implementations, greatly extending the parameter (and especially temperature) range reachable by 
+the simulation while minimizing the cfor the end user.
 At the same time, this integration provides \NAME users with access to the
 extensive data handling and analysis tools in the TRIQS ecosystem. 
 Overall, interoperability extends the cumulative reach and trustworthiness of all these platforms,
