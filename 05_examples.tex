@@ -368,6 +368,81 @@ ${\rm Im}\Sigma(\omega) \rightarrow -\infty$.
 
 
 
+\subsubsection{W2Dynamics solution}\label{SecExamplesBetheDMFTw2d}
+To demonstrate use of the w2dynamics interface, here we briefly
+discuss how to solve the DMFT problem for the Bethe lattice using
+W2Dynamics interface. \fixme{For definitiness we compare the finite low
+temperature results obtained via the two solvers: ED and CTQMC.  }
+
+Unlike when the Fortran API is used, none of the
+five steps of the iterative algorithm listed there are left to the
+user to implement themselves. Instead, in addition to possibly
+non-default values for \NAME input variables, the model specification
+must also be added to a w2dynamics parameter file and depending on the
+model, further input files might need to be provided. Further
+differences are that initialization is performed in w2dynamics by
+starting from a self-energy of zero or reading a self-energy value
+from an old file, which results in the initial Weiss field that the
+initial bath parameters are fitted to, and that automatic convergence
+checking is not currently available. Finally, using the same settings
+as for the Fortran example we arrive at the w2dynamics parameter file
+shown in the following listing.
+
+\begin{lstlisting}[style=fstyle,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
+[General]
+DOS             = Bethe           # support for the Bethe lattice is built-in
+half-bandwidth  = 1               # list of half-bandwidths per orbital
+NAt             = 1               # number of impurities
+beta            = 1000            # inverse temperature, defines Matsubara grid spacing
+mu              = 1.0             # chemical potential set to achieve half-filling
+EPSN            = 0.0             # turns off filling-based chemical potential search
+DMFTsteps       = 100             # given no convergence checking, we might want fewer
+magnetism       = para            # symmetrize self-energies per spin
+FileNamePrefix  = bethe_dmft_U2   # prefix for the output file name
+fileold         = bethe_dmft*hdf5 # file to read an initial self-energy from
+readold         = 0               # iteration number to read initial self-energy from, 0 turns off
+mixing          = 0.5             # mixing, but mixes self-energies and not Weiss fields
+mixing_strategy = linear          # linear mixing as in the Fortran example
+solver          = EDIPACK         # use EDIpack2 as impurity solver, not default CTHYB
+
+[Atoms]
+[[1]]                             # one subsection per impurity
+Nd              = 1               # number of orbitals
+Hamiltonian     = Kanamori        # create a Hubbard-Kanamori interaction Hamiltonian
+Udd             = 2.0             # equivalent to ULOC
+Vdd             = 1.0             # equivalent to UST, meaningless for 1 orbital
+Jdd             = 0.5             # equivalent to JH, JX and JP, also meaningless here
+
+[QMC]                             # Parameters for some grid sizes are part of this section
+Ntau            = 1024            # imaginary time grid size
+Niw             = 4096            # number of positive Matsubara frequencies
+
+[EDIPACK]                         # further non-default parameters, also taken from Fortran example
+NBATH           = 7               # number of bath sites
+ED_TWIN         = True            # use twin symmetry
+LFIT            = 2048            # number of Matsubara frequencies used for the bath fit
+LANC_NGFITER    = 500             # number of Lanczos iterations for Green's function
+CG_FTOL         = 1e-10           # conjugate-gradient tolerance
+CG_NITER        = 2048            # maximum number of conjugate-gradient iterations
+\end{lstlisting}
+
+With this parameter file, we can use the {\tt DMFT.py} script of
+w2dynamics to perform the execution and find the results in form of
+both a typical w2dynamics HDF5 output file whose name starts with {\tt
+  bethe\textunderscore{}dmft\textunderscore{}U2} and a number of folders whose names start with the
+name of the HDF5 output file that contain unavoidable or explicitly
+requested \NAME input and output files for each individual DMFT
+iteration. We can extract results from the HDF5 output file e.g. using
+the {\tt hgrep} script of w2dynamics. The following listing shows how
+to perform a calculation with 10 parallel MPI processes and print the
+impurity self-energy result of the last DMFT iteration to the terminal
+assuming that the parameter file is {\tt bethe\textunderscore{}dmft.in} in the working
+directory and w2dynamics installed to {\tt /opt/w2dynamics}.
+
+\begin{lstlisting}[style=mybash]
+mpiexec -n 10 /opt/w2dynamics/DMFT.py bethe_dmft.in
+python /opt/w2dynamics/hgrep latest siw-full -1
+\end{lstlisting}
 
 
 
@@ -625,7 +700,22 @@ handling both ground state and finite temperature superconducting
 phases, capturing the complex physics of the BCS-BEC crossover with 
 high accuracy.
 
-\subsection{Multi-orbital impurity with Hubbard-Kanamori interaction (TRIQS)}
+
+\begin{figure}[t!]
+    \includegraphics[width=0.5\linewidth]
+        {edipack2_examples/edipack2triqs/G_iw.pdf}
+    \includegraphics[width=0.5\linewidth]
+        {edipack2_examples/edipack2triqs/A_w.pdf}
+    \caption{\label{figEx3}%
+        Imaginary part of the Matsubara Green's function (left) and the
+        corresponding orbital-resolved spectral function (right) computed for a
+        three-orbital impurity model with an interaction of the Hubbard-Kanamori
+        type (\ref{Hint}). This illustration is produced by the edipack2triqs
+        example script presented in Sec.~\ref{SecExamplesTRIQS}.
+    }
+\end{figure}
+
+\subsection{Multi-orbital impurity with Hubbard-Kanamori interaction}
 \label{SecExamplesTRIQS}
 
 The third example demonstrates how to use the edipack2triqs compatibility
@@ -633,6 +723,10 @@ layer (Sec.~\ref{sSecInteropTRIQS}) to solve a quantum system comprised by a
 3-orbital correlated impurity coupled to a few non-interacting bath sites.
 The interaction term of the impurity Hamiltonian has the Hubbard-Kanamori
 form (\ref{Hint}).
+
+\fixme{Add Hamiltonian?}
+\fixme{}
+
 
 A Python script implementing a calculation that makes use of edipack2triqs
 generally begins with a few module imports.
@@ -678,94 +772,170 @@ functions (Fig.~\ref{figEx3}).
                  firstline=85, lastline=112]
 {edipack2_examples/edipack2triqs/hubbard_kanamori.py}
 
+
+
+
+
+
+
+
+
+
+\subsection{Interacting Bernevig-Hughes-Zhang model}
+In this section we focus on the DMFT solution of the interacting
+Bernevig-Hughes-Zhang (BHZ).
+As shown in Ref.~\onlinecite{AmaricciPRB2022}, at moderate
+interactions this model admits an excitonic phase in which opposite
+orbitals electrons and holes across the band gap bound into a coherent phase.
+
+We consider a system of two-orbital electrons on a square
+lattice interacting through a Hubbard-Kanamori term and describing
+a quantum spin Hall insulator.
+We consider a suitable matrix basis in terms of the Dirac
+matrices $\Gamma_{a\a}=\sigma_a\otimes \tau_\a$, where $\sigma_a$ and
+$\tau_\a$ are Pauli matrices, respectively, in the spin and orbital
+pseudo-spin space. The  model Hamiltonian reads
+$$
+H = \sum_{k}\psi_{k}^\dagger H(k)\psi_{k} + H_{\rm int}
+$$
+where $\psi_{k}=[c_{1\uparrow k}, c_{2\uparrow k},
+c_{1\downarrow k}, c_{2\downarrow k} ]$ is the spinor collecting
+annihilation operator $c_{a\sigma k}$ destructing an electrons at
+orbital $a=1,2$ with spin  $\sigma=\up,\dw$ and lattice momentum
+$k$. The non-interacting part of the Hamiltonian is:
+$$
+H(k) = \left[M-2t(\cos{k_x}+\cos{k_y}) \right]\Gamma_{03} +
+   \lambda\sin{k_x}\Gamma_{31} -   \lambda\sin{k_y}\Gamma_{02}
+$$
+where $M$ is the mass term, which plays the role of a crystal
+field splitting among the orbitals. The presence of this term breaks
+the symmetry in the orbital pseudo-spin channel.
+The  interaction reads: 
+$$
+   H_{\rm int} = (U-J)\frac{\hat{N}(\hat{N}-1)}{2} - J\left( \frac{1}{4}\hat{N}^2 +
+   \hat{S_z}^2 - 2 \hat{T_z}^2\right)
+ $$
+ where $\hat{N}=\tfrac{1}{2}\psi_i^\dagger \Gamma_{00}\psi_i$ is the
+total density operator,
+$\hat{S_z}=\tfrac{1}{2}\psi_i^\dagger \Gamma_{30}\psi_i$ is the total
+spin polarization operator and $\hat{T_z}=\tfrac{1}{2}\psi_i^\dagger
+\Gamma_{03}\psi_i$ is the orbital pseudo-spin polarization operator.
+This form corresponds to the density-density part of the
+Kanamori interaction. We neglect the pair-hopping and spin-flip purely
+for numerical reasons. 
+
+In the non-interacting regime, i.e. $U=J=0$ this model describes a
+quantum spin Hall insulator (QSHI) for $M<4t$ and a trivial Band
+Insulator (BI) for $M>4t$.
+The transition point at $M=4t$ describes the formation of a gapless
+Dirac state with linear band crossing at $k=[0,0]$.  
+
+
+The code implementation follows the same guidelines discusses above
+for the other examples. There are two specific modifications requied
+to the  user. The first is to generate the Hamiltonian $H(k)$ on a discretized Brillouin zone in
+order to obtain both the local non-intearcing Hamiltonian
+$H_{loc}=\tfrac{1}{N_k}\sum_k H(k)$ and get the local interacting
+Green's function
+$$
+G_{loc}(z) = \tfrac{1}{N_k}\sum_k \left[z+\mu-H(k)-\Sigma(z) \right]^{-1}
+$$
+where $\z\in\CCC$, $\Sigma(z)$ is the self-energy function obtained from the DMFT
+solution of the problem and $N_k$ is the number of $k$-points. 
+The second is to  construct the ``renormalized'' topological
+Hamiltonian
+$$
+H_{top} = \sqrt{Z}[H(k) + \Re\Sigma(\omega\to0)]\sqrt{Z}, 
+$$
+where $Z$ is the renormalization constant. $H_{top}$ describes the
+low-energy properties of many-body problem and can be used to obtain a 
+topological characterization of the interacting system.  
+
+
+
+
+
+\subsubsection{Results}
+To capture the possible symmetry breaking in any excitonic channel
+driven by the local interaction, we consider the vector order
+parameter
+$\vec{E}=[E_0,E_x,E_y,E_z]$ where $E_a=\langle\psi^\dagger
+\Gamma_{a1}\psi \rangle$.
+The first component $E_0$ describes the singlet excitonic state,
+whereas the remaing ones correspond to the triplet states with
+different spin orientation.   
+The analysis of the strong-coupling regime as well as impurity
+excitonic susceptibility available in \NAME suggest the possible
+instability to an in-plane spin-triplet exciton phase, i.e. with $E_x$
+and/or $E_y$ different from zero.
+Interestingly, this state breakes several symmetries including
+time-reversal and spin SU(2) which protect the topological state.
+
+Thus, here we illustrate the DMFT solution of the excitonic phase as a way to
+illustrate the ability of \NAME to capture matter phases with broken
+spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
+  bath\_type=replica}.
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+   !> Set $H_{loc}$ in \NAME
+   allocate(Hloc(Nso,Nso))
+   Hloc = sum(Hk,dim=3)/Lk
+   where(abs(dreal(Hloc))<1d-6)Hloc=zero
+   call ed_set_hloc(Hloc)
+   !> Setup the replica bath basis using  $M$, $E_0$, $E_z$ and $E_x$ as symmetries
+   allocate(lambdasym_vector(Nbath,4))
+   allocate(Hsym_basis(Nso,Nso,4))
+   Hsym_basis(:,:,1)=Gamma03  ;lambdasym_vector(:,1)= Mh
+   Hsym_basis(:,:,2)=Gamma01 ;lambdasym_vector(:,2)= sb_field
+   Hsym_basis(:,:,3)=Gamma31 ;lambdasym_vector(:,3)= sb_field
+   Hsym_basis(:,:,4)=Gamma11 ;lambdasym_vector(:,4)=-sb_field
+   !> Set the replica bath
+   call ed_set_Hreplica(Hsym_basis,lambdasym_vector)
+   !> Get bath dimension and allocate user bath to this size
+   Nb=ed_get_bath_dimension(4)   !There are 4 symmetries
+   allocate(Bath(Nb))
+   !
+   !> Initialize the ED solver (bath is guessed or read from file) 
+   call ed_init_solver(bath)
+\end{lstlisting}
+
+
+
+
+In the following we consider the case of $M=1$ which corresponds to a
+QSHI in the non-interacting limit and $J/U=0.25$. 
+%
+The main effect of the interaction is enclosed in the renormalized
+mass term $M_{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
+real-part of the self-energy being proportional to $\Gamma_{03}$
+corrects the mass term with respect to its bare value. To leading
+order this correction is given proportional to $\tfrac{U-5J}{4}\langle
+\hat{T}_z\rangle$. So, for our choice of parameters, the effect of
+interaction would be to reduce the (effective) mass term and thus
+reducing the topological band gap. In the strong-coupling limit the
+two orbitals get populated with one electron per site, reaching the
+conditions for the formation of a Mott insulating state.
+In between, at inter-mediate coupling, we observe the formation of a
+region of exciton condensation.
+In panel (A) of \figu{figEx4} we report the evolution of the order
+parameter 
+
+
+
+
+
+
 \begin{figure}[t!]
-    \includegraphics[width=0.5\linewidth]
-        {edipack2_examples/edipack2triqs/G_iw.pdf}
-    \includegraphics[width=0.5\linewidth]
-        {edipack2_examples/edipack2triqs/A_w.pdf}
-    \caption{\label{figEx3}%
-        Imaginary part of the Matsubara Green's function (left) and the
-        corresponding orbital-resolved spectral function (right) computed for a
-        three-orbital impurity model with an interaction of the Hubbard-Kanamori
-        type (\ref{Hint}). This illustration is produced by the edipack2triqs
-        example script presented in Sec.~\ref{SecExamplesTRIQS}.
+  \includegraphics[width=\linewidth]{figures/figBHZ.pdf}
+    \caption{\label{figEx4}%
+      \textbf{Topological and Exciton Transition.}
+      (a)
     }
 \end{figure}
 
-\subsection{Bethe lattice DMFT (w2dynamics)}\label{SecExamplesBetheDMFTw2d}
-Let us revisit the example of Sec.~\ref{SecExamplesBetheDMFT} to
-demonstrate usage of the w2dynamics interface how to perform such a
-calculation instead. Unlike when the Fortran API is used, none of the
-five steps of the iterative algorithm listed there are left to the
-user to implement themselves. Instead, in addition to possibly
-non-default values for \NAME input variables, the model specification
-must also be added to a w2dynamics parameter file and depending on the
-model, further input files might need to be provided. Further
-differences are that initialization is performed in w2dynamics by
-starting from a self-energy of zero or reading a self-energy value
-from an old file, which results in the initial Weiss field that the
-initial bath parameters are fitted to, and that automatic convergence
-checking is not currently available. Finally, using the same settings
-as for the Fortran example we arrive at the w2dynamics parameter file
-shown in the following listing.
 
-\begin{lstlisting}[style=fstyle,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
-[General]
-DOS             = Bethe           # support for the Bethe lattice is built-in
-half-bandwidth  = 1               # list of half-bandwidths per orbital
-NAt             = 1               # number of impurities
-beta            = 1000            # inverse temperature, defines Matsubara grid spacing
-mu              = 1.0             # chemical potential set to achieve half-filling
-EPSN            = 0.0             # turns off filling-based chemical potential search
-DMFTsteps       = 100             # given no convergence checking, we might want fewer
-magnetism       = para            # symmetrize self-energies per spin
-FileNamePrefix  = bethe_dmft_U2   # prefix for the output file name
-fileold         = bethe_dmft*hdf5 # file to read an initial self-energy from
-readold         = 0               # iteration number to read initial self-energy from, 0 turns off
-mixing          = 0.5             # mixing, but mixes self-energies and not Weiss fields
-mixing_strategy = linear          # linear mixing as in the Fortran example
-solver          = EDIPACK         # use EDIpack2 as impurity solver, not default CTHYB
 
-[Atoms]
-[[1]]                             # one subsection per impurity
-Nd              = 1               # number of orbitals
-Hamiltonian     = Kanamori        # create a Hubbard-Kanamori interaction Hamiltonian
-Udd             = 2.0             # equivalent to ULOC
-Vdd             = 1.0             # equivalent to UST, meaningless for 1 orbital
-Jdd             = 0.5             # equivalent to JH, JX and JP, also meaningless here
 
-[QMC]                             # Parameters for some grid sizes are part of this section
-Ntau            = 1024            # imaginary time grid size
-Niw             = 4096            # number of positive Matsubara frequencies
 
-[EDIPACK]                         # further non-default parameters, also taken from Fortran example
-NBATH           = 7               # number of bath sites
-ED_TWIN         = True            # use twin symmetry
-LFIT            = 2048            # number of Matsubara frequencies used for the bath fit
-LANC_NGFITER    = 500             # number of Lanczos iterations for Green's function
-CG_FTOL         = 1e-10           # conjugate-gradient tolerance
-CG_NITER        = 2048            # maximum number of conjugate-gradient iterations
-\end{lstlisting}
-
-With this parameter file, we can use the {\tt DMFT.py} script of
-w2dynamics to perform the execution and find the results in form of
-both a typical w2dynamics HDF5 output file whose name starts with {\tt
-  bethe\textunderscore{}dmft\textunderscore{}U2} and a number of folders whose names start with the
-name of the HDF5 output file that contain unavoidable or explicitly
-requested \NAME input and output files for each individual DMFT
-iteration. We can extract results from the HDF5 output file e.g. using
-the {\tt hgrep} script of w2dynamics. The following listing shows how
-to perform a calculation with 10 parallel MPI processes and print the
-impurity self-energy result of the last DMFT iteration to the terminal
-assuming that the parameter file is {\tt bethe\textunderscore{}dmft.in} in the working
-directory and w2dynamics installed to {\tt /opt/w2dynamics}.
-
-\begin{lstlisting}[style=mybash]
-mpiexec -n 10 /opt/w2dynamics/DMFT.py bethe_dmft.in
-python /opt/w2dynamics/hgrep latest siw-full -1
-\end{lstlisting}
-
-\subsection{Interacting Bernevig-Hughes-Zhang (Fortran)}
 
 \subsection{Holstein model on the Bethe lattice (Fortran)}
 
