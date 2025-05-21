@@ -235,7 +235,7 @@
 
 \begin{frontmatter}
 
-\title{EDIpack 2.0: A generic and interoperable Lanczos-based solver for quantum impurity problems}
+\title{EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity problems}
 \author[a,b,c]{L.~Crippa*}
 \author[a]{I.~Krivenko*}
 \author[d]{S.~Giuli*}
@@ -356,7 +356,7 @@
 
 \section{Conclusions}
 {\color{red} Tentative conclusions}
-We have presented EDIpack2, a versatile, high-performance solver for
+We have presented \NAME{}, a versatile, high-performance solver for
 generic quantum impurity problems. Leveraging on the massively
 parallel algorithms introduced with its predecessor, this version of
 the library features new capabilities and symmetries within a unified
@@ -368,7 +368,7 @@ correlated systems. We have shown that this new version enables the evaluation o
 reduced density matrices directly from Fock space quantities and thus unlock 
 quantum information analyses of correlated systems.  
 
-A central feature of EDIpack2 is its strong focus on interoperability,
+A central feature of \NAME is its strong focus on interoperability,
 achieved through modern Fortran constructs, C/C++-bindings, and
 comprehensive APIs for Python (EDIpy2). 
 These interfaces enable seamless integration with broader
@@ -376,22 +376,22 @@ computational frameworks like TRIQS and W2Dynamics, expanding the
 functionality of these platforms and providing a robust foundation for
 reproducible research.
 
-We thoroughly discussed the implementation of the EDIpack2 library, the
+We thoroughly discussed the implementation of the \NAME library, the
 most important algorithms and classes. We presented in
 details the third-party interfaces which extend exact diagonalization
 capabilities beyond the realm of the library itself.   
-Finally, we showcased the use of the EDIpack2 software in different
+Finally, we showcased the use of the \NAME software in different
 contexts via elaborated example which can serve as reference for the
 potential users. 
 
-The modular and extensible design of EDIpack2 provides a
+The modular and extensible design of \NAME provides a
 natural foundation for future extensions, for instance to cluster-DMFT where the
 impurity problem is generalized to include clusters of interacting
 sites. This approach would enable the treatment of spatial
 correlations beyond the single-site approximation, capturing effects
 such as d-wave pairing in high-temperature superconductors, charge
 order, and complex spin textures in strongly correlated systems.
-We anticipate that EDIpack2 will become a valuable tool for the
+We anticipate that \NAME will become a valuable tool for the
 computational condensed matter community, supporting a wide range of
 studies on strongly correlated materials and providing a reliable
 reference platform for quantum impurity solvers.

@@ -7,8 +7,8 @@ multi-platforms compabitility and dependencies resolution.
 The software builds into two distinct libraries.
 The main one is a static Fortran library calledc{\tt  libedipack.a} which, alongside the compiled
 modules, wraps the \NAME software in both its single- and multi-impurity variants.
-A second dynamic library, {\tt libedipack\_cbinding.so}, together with the associated header
-file{\tt edipack2\_cbinding.h}, enables interoperability with other programming languages.  
+A second dynamic library, {\tt libedipack\_cbindings.so}, together with the associated header
+file{\tt edipack\_cbindings.h}, enables interoperability with other programming languages.  
 
 
 \subsection{Structure}\label{sSecInstallStructure}
@@ -23,14 +23,14 @@ additional APIs.
 
 
 \begin{itemize}
-\item{\bf EDIpack2.}
+\item{\bf EDIpack.}
   This module forms the foundation of the library, implementing the 
   Lanczos-based solver for general quantum impurity problems. It 
   supports systems with a wide range of symmetries, including quantum 
   number conservation, multi-orbital models, and even coupling to local 
   phonons. The \NAME solver is structured hierarchically and modularly, 
   with different sections of the library communicating through a shared 
-  memory layer. The top-level module, {\tt EDIPACK2}, provides access 
+  memory layer. The top-level module, {\tt EDIPACK}, provides access 
   to the core Fortran API, exposing key procedures for initialization, 
   execution, and finalization, while abstracting the underlying data 
   structures. A detailed overview of this part of the library is 
@@ -48,7 +48,7 @@ problems, as discussed in Sec.\ref{sSecIneq}.
 
 
 
-\item{\bf EDIpack2 C-bindings.}
+\item{\bf EDIpack C-bindings.}
   For enhanced interoperability, \NAME includes a dedicated module 
 implementing Fortran-C/C++ bindings for key library procedures. This 
 module relies on the {\tt ISO\_C\_BINDING} capabilities available in 
@@ -84,7 +84,7 @@ which speed up calculations for large dimensional systems.
 The software can be installed from source as follows. The source code can
 be retrieved directly from its GitHub repository, for instance using:
 \begin{lstlisting}[style=mybash]
-git clone https://github.com/edipack/EDIpack2.0 EDIpack2
+git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
 Then, assuming to be in the software directory, a conventional
 out-of-source building can be performed using two alternative compilation backends.
@@ -122,7 +122,7 @@ The CMake configuration can be further tuned using the following variables:
  \hline
   {\bf Option}               & {\bf Scope} & {\bf Value} \\
   \hline
-  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack2/TAG/PLAT/BRANCH\\
+  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack/TAG/PLAT/BRANCH\\
   -D{\bf USE\_MPI}       & MPI support  &  True/{\color{red}False}\\
   -D{\bf WITH\_INEQ}   & Inequivalent impurities support & {\color{red}True}/{False}\\
   -D{\bf VERBOSE}      & Verbose CMake output & {\color{red}True}/{False}\\ 
@@ -144,7 +144,7 @@ The Conda package installation procedure reads:
 \begin{lstlisting}[style=mybash]
 conda create -n edipack
 conda activate edipack
-conda install -c conda-forge -c edipack edipack2
+conda install -c conda-forge -c edipack edipack
 \end{lstlisting}
 \noindent
 which installs a bundle of SciFortran and \NAME libraries together with
