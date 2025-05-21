@@ -1971,14 +1971,18 @@ their specific needs.
 Notes on the norm function: a) the definition for conventional
 matrices, ;b) the definition for the replica/general case where you
 can choose between different norm defition.
-\fixme{There's no actual reason to not provide the ``elemental" norm for
-the normal and hybrid bath parametrizations, as it is relevant or not
-depending on the off-diagonal structure of $\Theta(z)$, which depends
-only on \texttt{ed\_mode}, not \texttt{bath\_type}. What do we do? I would
-vote for describing what the different norms do and vaguely mention that
-they do not work for all possible \texttt{bath\_type} values, without 
-entering any detail on the reason why. Or even not mention it, and slowly
-start to update the code to make it work with all possible combinations...}
+\fixme{After careful inspection, I (GB) realize that the elemental norm 
+was never really ported from CDFMT-ED to EDIpack (there's no different
+matrix weight than all ones, which is the standard chi2, of course). 
+Hence the \texttt{cg\_norm} options is really not doing anything significant,
+as with "elemental" it gives the usual $\chi^2$ (or $\chi^q$, if you change the
+\texttt{cg\_pow}...) and for "Frobenius" it gives again the usual $\chi^2$,
+unless you put $q\neq2$, which gives an ill-defined matrix norm...
+(it mixes an effective $q=2$ coming from the matrix multiplication with 
+$q\neq2$ when you do the explicit $q$-root). I think we
+should just get rid of \texttt{cg\_norm} and do the traditional $\chi^q$, as 
+indeed we are already doing by default. Implemented like this, it is just random
+no-consequence code.}
 %GBtodo placeholder
 
 
