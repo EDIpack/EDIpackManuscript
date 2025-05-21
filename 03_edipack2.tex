@@ -192,7 +192,7 @@ growth with the number of electronic levels.
 
 The quantum states in the space $\FF$ are naturally represented in
 the occupation number formalism of second quantization,
-i.e., the Fock basis.
+i.e.~the Fock basis.
 For a system of $N_\mathrm{s}$ electrons, each Fock state
 is given as $\ket{p}\ket{\vec{n}}$, with
 \begin{equation} \label{eq:FockState_|nupndw>}
@@ -274,7 +274,7 @@ and the total magnetization $S_z$, or equivalently, the total number
 of electrons with spin up $N_\up$ and down $N_\dw$.
 Optionally, the symmetry
 can be extended to act indipendently to each orbital and spin
-component, i.e., $\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This
+component, i.e.~$\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This
 specific case is discussed extensively
 Ref.~[\onlinecite{Amaricci2022}] and will not be further covered here.
 
@@ -565,7 +565,7 @@ processes, with rows dynamically assigned to each process.
 Matrix elements are inserted using the 
 {\tt sp\_insert\_element} procedure, which leverages the Fortran 
 intrinsic {\tt move\_alloc} for faster execution compared to 
-implicit reallocation, i.e., {\tt vec=[vec,new\_element]}. 
+implicit reallocation, i.e.~{\tt vec=[vec,new\_element]}. 
 
 This approach offers several key advantages, including efficient 
 memory management for matrices with unknown numbers of non-zero 
@@ -578,7 +578,6 @@ methods.
 %minipage of the listings)
 
 \subsubsection{Sparse map}\label{CodeSparseMap}
-\fixme{GB: I don't like the minipage of the listing below.}
 As discussed in \secu{sSecRDM}, the construction of a symmetry 
 sector often requires associating each sector state $\ket{i}$ with 
 disjoint information about the corresponding Fock state $\ket{I}$. 
@@ -624,8 +623,9 @@ $$
 J =I_\up +  B_\up2^{N_\mathrm{imp}} + (I_\dw +  B_\dw2^{N_\mathrm{imp}})2^{N_\mathrm{s}}
 $$
 where $N_\mathrm{imp}$ is the number of impurity bits and 
-$N_\mathrm{s}$ is the total number of spin components.
-To obtain a contiguous memory pattern we define the \emph{key} for the sparse
+$N_\mathrm{s}$ is the total number of spin orbitals.
+% To obtain a contiguous memory pattern %%> What? They are pointed lists...
+We define the \emph{key} for the sparse
 map as $I=I_\up + I_\dw2^{N_\mathrm{imp}}$ and the corresponding
 \emph{values} as the integers $B=B_\up + B_\dw2^{N_\mathrm{b}}$.
 Note that these relations can be easily inverted to obtain $I_{\sigma=\up,\dw}$ from
@@ -637,7 +637,7 @@ for the \textbf{nonsu2} case and
 $\mathtt{popcnt}(I_\up + B_\up2^{N_\mathrm{imp}}) - \mathtt{popcnt}(I_\dw + B_\dw2^{N_\mathrm{imp}}) = S_z$
 for the \textbf{superc} case.
 This structure ensures an efficient and compact representation 
-of the many-body Hilbert space, facilitating rapid state lookup 
+of the many-body Hilbert space, enabling a rapid state lookup 
 during the diagonalization process.
 
 An overview of the implementation is reported in the following listing:
@@ -809,13 +809,16 @@ $N_\mathrm{b}$ electronic levels assigned to the bath, is specified
 through the input variable {\tt bath\_type}. This variable can take
 one of four possible values: {\bf normal}, {\bf hybrid}, {\bf
   replica}, and {\bf general} (see Fig.~\ref{figBaths}).
+  \fixme{This figure looks quite annoying to generate, especially to cover
+  all possible \texttt{ed\_mode} values. I'd pass...}
 
 
 
 \paragraph{{\tt bath\_type}={\bf normal}} In this configuration, the
-bath consists  of $N_\mathrm{bath}$
-electronic levels coupled to each of the impurity orbital, resulting
-in a total  $N_\mathrm{b} = N_\a N_\mathrm{bath}$ of bath levels.
+bath consists of $N_\mathrm{bath}$
+electronic sites coupled to each of the impurity orbital, resulting
+in a total  $N_\mathrm{b} = N_\sigma N_\a N_\mathrm{bath}$ of bath levels.
+% Ocio!
 
 For {\tt ed\_mode}={\bf normal} the bath Hamiltonian is parametrized
 as diagonal matrices in both the orbital and spin spaces:
@@ -823,6 +826,7 @@ $$
 h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'} .
 $$
 where $\varepsilon_{\a\s}$ represents  the on-site energies for each orbital and spin.
+
 If {\tt ed\_mode}={\bf superc},  anomalous
 amplitudes connecting bath levels with opposite spins must also be
 considered. In this case, the bath Hamiltonian gains 
@@ -844,6 +848,7 @@ The hybridization amplitudes between the impurity and the bath levels
 are similarly structured. For all values of {\tt ed\_mode} these
 parameters are diagonal in both
 spin and orbital space: $V^p_{\a\b\s\s'}=V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
+
 If {\tt ed\_mode}={\bf nonsu2} the an additional set including terms
 describing spin-flip processes (as total magnetization is not
 conserved) should be included $V^p_{\a\b\s\s'} =
@@ -852,9 +857,9 @@ W^p_{\a}\delta_{\a\b}\delta_{\s \overline{\s}}$.
 
 
 \paragraph{{\tt bath\_type}={\bf hybrid}}
-The bath is formed by $N_\mathrm{bath}$ levels coupled to all the
-impurity orbitals, resulting in a total of 
-$N_\mathrm{b}\equiv N_\mathrm{bath}$ electronic bath levels. 
+The bath is formed by $N_\mathrm{bath}$ sites coupled to all the
+impurity orbitals, resulting in a total of % Ocio!
+$N_\mathrm{b}\equiv N_\sigma N_\alpha N_\mathrm{bath}$ electronic bath levels. 
 The parametrization of the bath Hamiltonian is 
 diagonal in both orbital and spin space, i.e.,
 $$
@@ -873,18 +878,19 @@ $$
 V^p_{\a\b\s\s'}=V^p_{\a\b\s}\delta_{\s\s'}.
 $$
 
-If spin group is not conserved, i.e., for {\tt ed\_mode}={\bf nonsu2}, an additional
+If full spin symmetry is not preserved, i.e.~for {\tt ed\_mode}={\bf nonsu2}, an additional
 set of parameters must be specified to account for spin-flip processes:
 $V^p_{\a\b\s\s'} = W^p_{\a\b}\delta_{\s \overline{\s}}$. 
 
 This hybrid topology of the bath captures the effects of locally
 hybridized impurity orbitals, but typically requires a more
-challenging optimization process, specially
+challenging optimization process, especially
 with few available bath levels (see \secu{sSecFit}). 
 
 \paragraph{{\tt bath\_type}={\bf replica}/{\bf general}}
 This configuration provides a more flexible parametrization of the 
-bath. The core idea is to assign each bath element a structure 
+bath. The original core idea \cite{Capone2004PRB,Civelli2006}
+is to assign each bath element a structure 
 that {\it replicates} the internal structure of the impurity, while 
 maintaining diagonal coupling between bath elements and the impurity. 
 This offloads the complexity of representing structured quantum 
@@ -892,25 +898,29 @@ impurities to the bath Hamiltonian rather than the hybridizations.
 
 From a broader perspective, this can be formalized by considering  
 a user-defined matrix basis
-$\vec{\Gamma}=\{ \Gamma^\nu_{\a\b\s\s'} \}_{\nu=1,\dots,N_{sym}}$ in the (Nambu-)spin-orbital
+$\vec{\Gamma}=\{ \Gamma^\nu_{\a\b\s\s'} \}_{\nu=1,\dots,N_\mathrm{sym}}$ in the (Nambu-)spin-orbital
 space, and expressing the bath Hamiltonian as
 $$
-h^p = \sum_{\nu=1}^{N_{sym}} \lambda^p_\nu
+h^p = \sum_{\nu=1}^{N_\mathrm{sym}} \lambda^p_\nu
 \Gamma^\nu\equiv \vec{\lambda}^p\cdot \vec{\Gamma}
 $$
-where $\vec{\lambda}^p\in\RRR^{N_{sym}}$ is a vector of variational parameters. 
+where $\vec{\lambda}^p\in\RRR^{N_\mathrm{sym}}$ is a vector of variational parameters. 
 The choice of the matrix basis can be inspired by the internal structure
 of the quantum impurity, i.e. $\hat{h}^0$, or determined
-case-by-case by based on the physical properties of the system.
-In this scheme, the total number of bath levels becomes: $N_\mathrm{b}
-= N_{sym} N_\mathrm{bath}$.
+case-by-case, depending on the desired properties of the solution.
+In this scheme, the total number of bath levels becomes $N_\mathrm{b}
+= N_\mathrm{imp} N_\mathrm{bath}$, while the number of independent bath
+parameters to optimize is (excluding the hybridization amplitudes)
+$N_\mathrm{params} = N_\mathrm{sym} N_\mathrm{bath}$.
+% Ocio!
 
 
 
 For the {\bf replica} topology, the coupling between the impurity 
-and each bath element remains diagonal in spin, orbital, and internal 
+and each bath element is independent on spin, orbital, and internal 
 bath structure: $V^p_{\a\b\s\s'} = V^p$.
 In the {\bf general} case, this is generalized to include explicit 
+diagonal
 dependence on the internal spin and orbital indices: $V^p_{\a\b\s\s'}
 = V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$. 
 
@@ -941,7 +951,7 @@ The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}
 for the {\bf replica} and {\bf general} bath parametrizations. In 
 addition to standard object construction, destruction, reading, and 
 saving, this module provides matrix basis setup 
-$\{ \Gamma^\nu \}_{\nu=1,\dots,N_{sym}}$ and variational parameter 
+$\{ \Gamma^\nu \}_{\nu=1,\dots,N_\mathrm{sym}}$ and variational parameter 
 initialization through {\tt set\_Hreplica} (or {\tt set\_Hgeneral}). 
 The actual bath Hamiltonian is constructed with the function 
 {\tt build\_Hreplica} (or {\tt build\_Hgeneral}) via the relation
@@ -988,9 +998,9 @@ representation and the user-defined bath arrays via
 %                     & $\vec{\e}[N_\mathrm{bath}], \vec{\Delta}[N_\mathrm{bath}],\vec{V}[N_\mathrm{b}]$
 %                                    &  $\vec{\e}[N_\mathrm{bath}], \vec{V}[N_\mathrm{b}],\vec{W}[N_\mathrm{b}]$ \\
 %   \hline
-%   {\bf replica} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_{sym}]$ & \multicolumn{3}{*{\hat{h} } \cr
+%   {\bf replica} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_\mathrm{sym}]$ & \multicolumn{3}{*{\hat{h} } \cr
 %   \hline
-%   {\bf general} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_{sym}]$ & \cline{2-4} & b&  c  \cr
+%   {\bf general} $[N_\mathrm{b}\!=\!N_\mathrm{bath}N_\mathrm{sym}]$ & \cline{2-4} & b&  c  \cr
 %   \hline
 % \end{tabularx}
 % \end{center}
@@ -1031,7 +1041,7 @@ though less efficient, parallel Lanczos algorithm using the input
 variable {\tt lanc\_method}.
 
 The core computational task in any Krylov-based diagonalization
-algorithm is the Matrix-Vector Product (MVP), i.e., the application
+algorithm is the Matrix-Vector Product (MVP), i.e.~the application
 of the Hamiltonian to a given input vector:
 \begin{equation}
 H_\SS \ket{v} \to \ket{w}\qquad \ket{v},\ket{w}\in \SS_{\vec{Q}}.
@@ -1401,14 +1411,15 @@ system stored in the {\tt state\_list}.
 The latest version of \NAME introduces the calculation of the 
 impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), 
 extending the algorithm initially proposed in 
-Ref.~\onlinecite{BellomiaPhD} to support the analysis of entanglement 
+Ref.~\onlinecite{BellomiaPhD}, to support the analysis of entanglement 
 properties of quantum impurities for any value of  {\tt ed\_mode}.
 
 For simplicity, this section focuses on the zero-temperature limit, 
 assuming a non-degenerate ground state $\ket{\psi}$ present in the 
 {\tt state\_list}. The generalization to the finite-temperature regime 
 or degenerate ground states is straightforward, requiring only the 
-replacement of the pure state average with the thermal or degenerate 
+% replacement of the pure state average %%> What is a pure state average?
+introduction of a thermal or degenerate 
 ensemble average $\ibra \rho^\mathrm{imp} \iket$, as defined in 
 \equ{eq:thermal_average}.
 
@@ -1418,7 +1429,7 @@ sector $\SS_{\vec{Q}}$ can be represented in the Fock basis as:
 $
 \ket{\psi} = \sum_I a_I \ket{I},
 $
-where the pure density matrix $\rho$ is then given by:
+where the corresponding pure density matrix $\rho$ is given by:
 \begin{equation}
 \rho = \ket{\psi}\bra{\psi} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
 a^*_J a_I \ket{I}\bra{J} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
@@ -1430,39 +1441,42 @@ The iRDM is obtained by tracing out the bath degrees of freedom:
 \begin{equation}
 \rho^\mathrm{imp} = \Tr_\mathrm{bath}(\rho).
 \end{equation}
-However, the summations involved in this trace quickly become 
-computationally prohibitive, as their range scales exponentially 
-with the system size, i.e., $4^{N_\mathrm{s}}$.
+However, the memory footprint of $\rho$, as well as the CPU footprint 
+of the summations involved in this trace scales exponentially 
+with the system size, i.e.~$4^{N_\mathrm{s}}$, quickly becoming prohibitive.
 
-To address this, we implemented a fast algorithm that exploits the 
+To overcome the issue, we implement a fast algorithm that exploits the 
 block structure of the Fock space defined by the symmetry sectors and
-the subsequent map sparsity. 
+the subsequent map sparsity, to perform the trace \emph{on-the-flight}. 
 This approach significantly reduces the computational cost by limiting 
 the summation to the sector size $D_\SS$ of the symmetry sector 
-$\SS$ to which the ground state (or any eigenstate) belongs.
+$\SS$ to which the ground state (or any eigenstate) belongs, and avoiding
+the storage of the large matrix associated with $\rho$.
 
-
-Next, we decompose the Fock basis into spin-dependent impurity and 
-bath parts. Any Fock state $\ket{I}$ can be split as:
-$
-\ket{I} = \ket{i_\uparrow \, b_\uparrow} \otimes 
-\ket{i_\downarrow \, b_\downarrow},
-$
-where the impurity $i_\sigma$ and bath $b_\sigma$ states span subspaces of dimension 
-$D^\s_\mathrm{imp}$ and $D^\s_\mathrm{bath}$, respectively, for each 
-spin $\s = \uparrow, \downarrow$.
-
-
+%%% ATTENZIONE: this is true only for the normal case!
+%
+%Next, we decompose the Fock basis into spin-dependent impurity and 
+%bath parts. Any Fock state $\ket{I}$ can be split as:
+%$
+%\ket{I} = \ket{i_\uparrow \, b_\uparrow} \otimes 
+%\ket{i_\downarrow \, b_\downarrow},
+%$
+%where the impurity $i_\sigma$ and bath $b_\sigma$ states span subspaces of dimension 
+%$D^\s_\mathrm{imp}$ and $D^\s_\mathrm{bath}$, respectively, for each 
+%spin $\s = \uparrow, \downarrow$.
+%
+%%% I WOULD SAY THAT WE DON'T NEED TO REPEAT OURSELVES< THE SECTOR
+%%% SECTION IS THERE FOR A REASON. I try to edit below:
 To efficiently manage this decomposition, we introduce a 
 {\tt sparse\_map} ${\cal P}$, as detailed in \secu{CodeSparseMap}. 
 This structure stores, for each impurity configuration 
-$i_\s = 1, \dots, D^\s_\mathrm{imp}$ (the \emph{key}), the 
+(the \emph{key}), the 
 corresponding bath configurations 
-$b_\s \in [1, \dots, D^\s_\mathrm{bath}]$ (the \emph{values}) that 
+(the \emph{values}) that 
 satisfy the symmetry constraints over the sector quantum numbers
 imposed by the {\tt ed\_mode} variable.
-We denote the number of keys as ${\cal D}_{i\s}$ and the 
-number of values as ${\cal D}_{b\s}$.
+We denote the number of (spin-dependent) keys and values respectively
+as ${\cal D}_{i\s}$ and ${\cal D}_{b\s}$.
 The fast summation algorithm for evaluating the iRDM differs 
 significantly between the {\bf normal} and {\bf superc/nonsu2} modes, 
 as outlined in the sections below.
@@ -1472,8 +1486,8 @@ as outlined in the sections below.
 
 
 \paragraph{{\bf normal}}
-In this case, we take advantage of the Fock space factorization and 
-sector spin-resolved decomposition, as discussed in detail in 
+In this case, we take advantage of spin-resolved sector decomposition, 
+as discussed in detail in 
 \secu{sSecQNs}. 
 The global bitset can be split into spin-resolved 
 impurity and bath components as:
@@ -1485,16 +1499,16 @@ impurity and bath components as:
 Here, creation (destruction) operators  $c^+_{p\sigma}$
 ($c^+_{p\sigma}$) at position $p$ and for a given spin $\sigma$
 act only on the corresponding 
-spin subspace, i.e., they commute with the opposite spin 
+spin subspace, i.e.~they commute with the opposite spin 
 subspace $\ket{\vec{n}_{\bar{\s}}}$ without introducing any 
 fermionic sign.
 
-In the {\bf normal} mode, the iRDM is restricted to 
+In the {normal} mode, the iRDM is restricted to 
 {spin-diagonal} blocks. This follows from the observation 
 that the conserved quantum numbers are 
-\emph{additive} quantities, given by:
-$N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$
-where the corresponding generator of the symmetry group factorizes as
+\emph{additive} quantities, given by
+$N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$,
+so that the corresponding generator of the symmetry group factorizes as
 $U_{N_\s} = U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}}$. 
 Since the iRDM acts only on the impurity Fock space, this implies:
 % $$
@@ -1507,14 +1521,12 @@ Since the iRDM acts only on the impurity Fock space, this implies:
 % $$
 \begin{equation}
 \begin{aligned}
-U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} &= 
+\rho^\mathrm{imp} &= U_{N_\s}^\dagger \rho^\mathrm{imp} U_{N_\s} = 
 U_{N_\s^\mathrm{bath}}^\dagger \otimes U_{N_\s^\mathrm{imp}}^\dagger 
 \rho^\mathrm{imp} 
 U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}} \\
 &= 
-U_{N_\s^\mathrm{imp}}^\dagger \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}}\\
-& = 
-\rho^\mathrm{imp},
+U_{N_\s^\mathrm{imp}}^\dagger \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}},
 \end{aligned}
 \end{equation}
 demonstrating that $U_{N_\s^\mathrm{imp}}$ defines a symmetry of 
@@ -1662,7 +1674,7 @@ To further simplify this expression, it is essential to eliminate the
 sums over the internal bath indices $p_\sigma$ and $q_\sigma$, ideally 
 contracting them with the outer bath indices $b_\sigma$. This requires 
 reorganizing the bit representation of the basis states to bring the 
-bath bitsets before the impurity states:
+bath bitsets before the impurity ones:
 $$
 \ket{i_\up\, p_\up\, i_\dw\, p_\dw} \rightarrow C_{p_\up,i_\dw} \ket{i_\up\, i_\dw \,p_\up\,p_\dw}
 $$
@@ -1671,7 +1683,7 @@ $C_{p_\up,i_\dw}  = (-1)^{\#\vec{n}_{p\up} \cdot
   \#\vec{n}_{i\dw}}$
 accounts for the exchange of the bath $\ket{p_\up}$  and impurity
 $\ket{i_\dw}$ bit configurations.
-Here, $\#\vec{n}_{\alpha\sigma}$ denotes the number of set bits in the 
+Here, $\#\vec{n}_{\alpha\sigma}$ denotes the number of ones in the 
 occupation vector $\vec{n}_{\alpha\sigma}$. 
 
 Substituting this relation back into the iRDM expression yields:
@@ -1691,7 +1703,7 @@ Substituting this relation back into the iRDM expression yields:
   \end{equation}
 where the term 
 $C_{b_\up,i_\dw}C_{b_\up,j_\dw}$ accounts for the fermionic 
-signs associated with the bath-impurity bitset exchange.
+sign associated with the bath-impurity bitset exchange.
 
   
 In numerical implementations, this approach introduces a few 
@@ -1814,7 +1826,8 @@ $\Delta_{\a\b\s\s'}$ are the corresponding functions for the quantum
 impurity model, as defined in \secu{sSecFunc}.
 
 While more sophisticated optimization methods have been developed for 
-truncated algorithms like sCI or DMRG, which handle systems with a 
+truncated algorithms like sCI\cite{Mejuto_Bath_ASCI-DMFT} or DMRG\cite{boh}, 
+which handle systems with a 
 larger number of bath levels, the CG minimization approach has proven 
 both efficient and flexible for the small to moderate bath sizes 
 typical in ED solvers. 
@@ -1958,7 +1971,14 @@ their specific needs.
 Notes on the norm function: a) the definition for conventional
 matrices, ;b) the definition for the replica/general case where you
 can choose between different norm defition.
-{\color{red} I (GB) can take care of this, as I introduced the ``elemental" norm in the code.}
+\fixme{There's no actual reason to not provide the ``elemental" norm for
+the normal and hybrid bath parametrizations, as it is relevant or not
+depending on the off-diagonal structure of $\Theta(z)$, which depends
+only on \texttt{ed\_mode}, not \texttt{bath\_type}. What do we do? I would
+vote for describing what the different norms do and vaguely mention that
+they do not work for all possible \texttt{bath\_type} values, without 
+entering any detail on the reason why. Or even not mention it, and slowly
+start to update the code to make it work with all possible combinations...}
 %GBtodo placeholder
 
 
