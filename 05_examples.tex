@@ -46,7 +46,7 @@ allocation, Bethe lattice creation, and solver initialization.
     \center{\bf Fortran}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program ed_hm_bethe
-   USE EDIPACK2
+   USE EDIPACK
    USE SCIFOR
    implicit none
    integer                :: Le=1000
@@ -81,7 +81,7 @@ program ed_hm_bethe
   \begin{minipage}{0.505\linewidth}
     \center{\bf C++}
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
-#include <edipack2_cbinding.h>
+#include <edipack_cbindings.h>
 using namespace std;
 ...
 //Main variables
@@ -370,38 +370,22 @@ ${\rm Im}\Sigma(\omega) \rightarrow -\infty$.
 
 
 
-\begin{figure}%[t!]
-  \includegraphics[width=\linewidth]{figures/figBetheW2D.pdf}
-    \caption{\label{figEx1W}%
-        }
-\end{figure}
 
-\subsubsection{Finite temperature solution (W2Dynamics interface)}\label{SecExamplesBetheDMFTw2d}
-To demonstrate use of the w2dynamics interface, here we briefly
-discuss how to solve the DMFT problem for the Bethe lattice using
-W2Dynamics interface. \fixme{For definitiness we compare the finite low
-temperature results obtained via the two solvers: ED and CTQMC.  }
+\subsubsection{Finite temperature solution (w2dynamics interface)}\label{SecExamplesBetheDMFTw2d}
+To demonstrate the usage of the w2dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using w2dynamics. 
+In order to showcase the capabilities of \NAME to address low-temperature problems we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in w2dynamics against the \NAME solver at finite temperature.  
 
-Unlike when the Fortran API is used, none of the
-five steps of the iterative algorithm listed there are left to the
-user to implement themselves. Instead, in addition to possibly
-non-default values for \NAME input variables, the model specification
-must also be added to a w2dynamics parameter file and depending on the
-model, further input files might need to be provided. Further
-differences are that initialization is performed in w2dynamics by
-starting from a self-energy of zero or reading a self-energy value
-from an old file, which results in the initial Weiss field that the
-initial bath parameters are fitted to, and that automatic convergence
-checking is not currently available. Finally, using the same settings
-as for the Fortran example we arrive at the w2dynamics parameter file
-shown in the following listing.
+In contrast to the \NAME API that only enables access to the impurity solver and bath optimization procedures, but requires the user to implement (using different methods) the DMFT algorithm themselves, the standard way to use w2dynamics is fundamentally different: a single Python script {\tt DMFT.py} is provided that takes care of the whole DMFT calculation via dedicated classes to implement generic self-consistency. The w2dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of w2dynamics can be found in Ref.~\onlinecite{Wallerberger2019CPC}           
 
-\begin{lstlisting}[style=fstyle,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
+Another important difference concerns the initial point of the iterative DMFT solution algorithm: while \NAME starts from a given discrete bath, w2dynamics is initialized with a zero self-energy function or alternatively reads this quantity from a converged solution file. When using the \NAME ED interface, the initial Weiss field is determined using self-consistency and finally an initial discrete bath is obtained through the \NAME bath optimization procedure. 
+
+The w2dynamics configuration file for the solution of the Bethe lattice problem at finite temperature reads: 
+\begin{lstlisting}[style=mybash,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
 [General]
 DOS             = Bethe           # support for the Bethe lattice is built-in
 half-bandwidth  = 1               # list of half-bandwidths per orbital
 NAt             = 1               # number of impurities
-beta            = 1000            # inverse temperature, defines Matsubara grid spacing
+beta            = 100             # inverse temperature
 mu              = 1.0             # chemical potential set to achieve half-filling
 EPSN            = 0.0             # turns off filling-based chemical potential search
 DMFTsteps       = 100             # given no convergence checking, we might want fewer
@@ -411,7 +395,8 @@ fileold         = bethe_dmft*hdf5 # file to read an initial self-energy from
 readold         = 0               # iteration number to read initial self-energy from, 0 turns off
 mixing          = 0.5             # mixing, but mixes self-energies and not Weiss fields
 mixing_strategy = linear          # linear mixing as in the Fortran example
-solver          = EDIPACK         # use EDIpack2 as impurity solver, not default CTHYB
+FTType          = none            # (for CT-HYB): use the NFFT-measured G
+solver          = EDIPACK         # use EDIpack as impurity solver, not default CTHYB
 
 [Atoms]
 [[1]]                             # one subsection per impurity
@@ -421,36 +406,45 @@ Udd             = 2.0             # equivalent to ULOC
 Vdd             = 1.0             # equivalent to UST, meaningless for 1 orbital
 Jdd             = 0.5             # equivalent to JH, JX and JP, also meaningless here
 
-[QMC]                             # Parameters for some grid sizes are part of this section
-Ntau            = 1024            # imaginary time grid size
-Niw             = 4096            # number of positive Matsubara frequencies
-
-[EDIPACK]                         # further non-default parameters, also taken from Fortran example
+[EDIPACK]                         # further ED parameters, as in the Fortran example
 NBATH           = 7               # number of bath sites
 ED_TWIN         = True            # use twin symmetry
 LFIT            = 2048            # number of Matsubara frequencies used for the bath fit
 LANC_NGFITER    = 500             # number of Lanczos iterations for Green's function
 CG_FTOL         = 1e-10           # conjugate-gradient tolerance
 CG_NITER        = 2048            # maximum number of conjugate-gradient iterations
+ED_FINITE_TEMP  = True            # at finite temperature T = 1/beta
+
+[QMC]                             # Parameters for some grid sizes and the CT-HYB calculation
+Ntau            = 1024            # imaginary time grid size
+Niw             = 4096            # number of positive Matsubara frequencies
+# parameters only relevant for CT-HYB follow
+MeasGiw         = 1               # enable NFFT measurement of G
+NCorr           = 175             # estimate of the autocorrelation length
+Nmeas           = 200000          # number of measurements / sample size
+Nwarmups        = 1000000         # number of initial warmup steps for Markov chain thermalization
 \end{lstlisting}
-
-With this parameter file, we can use the {\tt DMFT.py} script of
-w2dynamics to perform the execution and find the results in form of
-both a typical w2dynamics HDF5 output file whose name starts with {\tt
-  bethe\textunderscore{}dmft\textunderscore{}U2} and a number of folders whose names start with the
-name of the HDF5 output file that contain unavoidable or explicitly
-requested \NAME input and output files for each individual DMFT
-iteration. We can extract results from the HDF5 output file e.g. using
-the {\tt hgrep} script of w2dynamics. The following listing shows how
-to perform a calculation with 10 parallel MPI processes and print the
-impurity self-energy result of the last DMFT iteration to the terminal
-assuming that the parameter file is {\tt bethe\textunderscore{}dmft.in} in the working
-directory and w2dynamics installed to {\tt /opt/w2dynamics}.
-
-\begin{lstlisting}[style=mybash]
+Assuming that w2dynamics is installed to {\tt /opt/w2dynamics} and the preceding parameters file saved as {\tt bethe\textunderscore{}dmft.in}, we can start the calculation by running the {\tt DMFT.py} script:
+\begin{lstlisting}[style=mybash,numbers=none]
 mpiexec -n 10 /opt/w2dynamics/DMFT.py bethe_dmft.in
-python /opt/w2dynamics/hgrep latest siw-full -1
 \end{lstlisting}
+
+The results are collected into an HDF5 archive in the usual w2dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with w2dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
+\begin{lstlisting}[style=mybash,numbers=none]
+/opt/w2dynamics/hgrep latest siw-full -1
+\end{lstlisting}
+
+\begin{figure}%[t!]
+  \includegraphics[width=\linewidth]{figures/figBetheW2D.pdf}
+    \caption{\label{figEx1W}%
+    \textbf{Finite temperature DMFT solution.}
+    Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and Self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with w2dynamics are compared against \NAME ED results, used both through the w2dynamics interface and with a standalone Fortran program. 
+        }
+\end{figure}
+
+In \figu{figEx1W} we report a comparison of the results obtained using the hybridization expansion CTQMC solver in w2dynamics and using the \NAME ED method both as a solver in w2dynamics and with a program using the Fortran API directly as shown in the previous subsection. Using DMFT, we solve the Hubbard model on a Bethe lattice for $T/D=0.01$ and $U/D=2.00$, corresponding to a correlated metallic state. 
+In panel (A) we show the behavior of the imaginary part of the impurity Green's function $\Im{G}(i\omega_n)$ (note that w2dynamics does not directly have access to the real-axis Green's function when using the CTQMC solver). In panel (B) we show the same comparison for impurity self-energy $\Im{\Sigma}(i\omega_n)$. 
+The results obtained from the three calculations are in this case nearly identical already for a small number of bath levels ({\tt NBATH=7}) and relatively low QMC statistics.   
 
 
 
@@ -664,36 +658,38 @@ of weakly bound Cooper pairs. This regime is known to be
 computationally challenging. In the opposite, strong-coupling, limit 
 $\phi$ saturates at its theoretical maximum of $\phi \rightarrow 1/2$, 
 indicating tightly bound local pairs. Comparison with the mean-field result 
-(gray line) reveals the effect of local quantum fluctuations, which 
+(gray line) reveals the effect of local dynamical fluctuations, which 
 slightly suppress the order parameter, particularly in the intermediate 
 regime.
 
 
 
-To quantify these correlation effects, we plot in panel (C) the 
+To quantify these dynamical effects, we plot in panel (C) the 
 \emph{correlation strength}
 $\Theta=\frac{|S(i\omega\to 0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$
 where $S(i\omega)$ is the anomalous self-energy.
-This ratio statically captures 
-the maximum amplitude of its dynamical dependence by comparing the high-energy 
-mean-field-like limit with the low-energy behavior at the Fermi level. 
-Large values of $\Theta$ indicate a strongly correlated state with 
-significant dynamical effects, hence a more correlated state.
+This ratio encapsulates, in a single positive number, % sorry, but "statically captures" sounded quite mysterious to me (I guess it refers to having just a single number, but it requires hard mental processing, imho)
+the amplitude of the dynamical dependence of $S(i\omega)$ by comparing its 
+BCS-like limit at high energy with the low-energy behavior at the Fermi level. 
+Large values of $\Theta$ indicate an anomalous self-energy with 
+significant dynamical effects, hence a more correlated superconducting state.
 Our results show that both the weak 
-and strong coupling limits are relatively close to the mean-field 
-description, while the intermediate regime is marked by strong 
-correlations, significantly departing from the BCS picture.
+and strong coupling limits are relatively close to the BCS results, 
+while the intermediate regime is marked by strong 
+correlations, significantly departing from the mean-field picture.
 
-To further illustrate the impact of dynamical correlations, we 
+To further illustrate the impact of dynamical fluctuations, we 
 present in panel (D) the evolution of the double occupancy 
 $d = \langle n_\up n_\dw \rangle$ as a function of $U$. At half-filling, 
 the mean-field expression for this quantity is $d = 1/4 + \phi^2$, 
 reflecting the sole contribution of the order parameter. Our DMFT 
 results show a slight increase in $d$ over the mean-field prediction 
-in the weak coupling regime, indicating enhanced local correlations. 
-However, as $U$ increases, the double occupancy quickly drops below 
-the mean-field result, reflecting the onset of strong pairing and 
-pair localization in the BEC limit.
+in the weak coupling regime, corresponding to a steep growth of
+the correlation strength $\Theta$. 
+However, as $U$ increases, the double occupancy drops below 
+the BCS result, reflecting the onset of strong pairing and 
+pair localization in the BEC limit. Correspondingly, $\Theta$ 
+progressively decreases at large $U$ attraction strength.
 
 Finally, we demonstrate the ability of \NAME to capture finite 
 temperature effects. Panel (E) shows the temperature dependence of 
@@ -989,7 +985,7 @@ As reported in panel (A) of \figu{figEx4}, at intermediate coupling,
 the DMFT solutions features the formation of a
 region of exciton condensation with $\langle E_x\rangle>0$, $\langle
 E_0\rangle=\langle E_z\rangle=0$. 
-Unlike the static mean-field description~\cite{Blason2021}, the
+Unlike the static mean-field description~\cite{Blason}, the
 transition from the QSHI topological state to the Excitonic Insulator 
 (EI) becomes of first-order in presence of quantum fluctuations
 corrections~\cite{Continentino,Paoletti} contained in DMFT. On the

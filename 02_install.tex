@@ -2,35 +2,35 @@
 \begin{document}
 
 \section{Installation}\label{SecInstall}
-The installation of \NAME is available through CMake which ensures
+The configuration and installation of \NAME is handled by CMake, which ensures
 multi-platforms compabitility and dependencies resolution.  
 The software builds into two distinct libraries.
-The main one is {\tt  libedipack.a} which, alongside the generated Fortan
-modules, wraps the \NAME software possibly including support for  
-inequivalent impurities.
-A second dynamic library, {\tt libedipack\_cbinding.so}, enables interoperability through
-specific bindings to the C/C++ programming language.    
+The main one is a static Fortran library calledc{\tt  libedipack.a} which, alongside the compiled
+modules, wraps the \NAME software in both its single- and multi-impurity variants.
+A second dynamic library, {\tt libedipack\_cbindings.so}, together with the associated header
+file{\tt edipack\_cbindings.h}, enables interoperability with other programming languages.  
 
 
 \subsection{Structure}\label{sSecInstallStructure}
 \NAME is a modular library organized into three main components. At its 
-core is the exact diagonalization solver, which provides the primary 
-computational engine. Building on this, the library includes 
+core, constituting the primary computational engine, 
+is the exact diagonalization solver for the quantum single-impurity Hamiltonian.
+Building on this, the library includes 
 {\tt EDIpack2ineq}, an extension for handling multiple inequivalent 
-impurity problems. Finally, a Fortran-C/C++ interface is provided for 
+impurity problems. Finally, the Fortran-C/C++ interface is provided for 
 seamless integration with external software and the development of 
 additional APIs.
 
 
 \begin{itemize}
-\item{\bf EDIpack2.}
+\item{\bf EDIpack.}
   This module forms the foundation of the library, implementing the 
   Lanczos-based solver for general quantum impurity problems. It 
   supports systems with a wide range of symmetries, including quantum 
   number conservation, multi-orbital models, and even coupling to local 
   phonons. The \NAME solver is structured hierarchically and modularly, 
   with different sections of the library communicating through a shared 
-  memory layer. The top-level module, {\tt EDIPACK2}, provides access 
+  memory layer. The top-level module, {\tt EDIPACK}, provides access 
   to the core Fortran API, exposing key procedures for initialization, 
   execution, and finalization, while abstracting the underlying data 
   structures. A detailed overview of this part of the library is 
@@ -48,7 +48,7 @@ problems, as discussed in Sec.\ref{sSecIneq}.
 
 
 
-\item{\bf EDIpack2 C-bindings.}
+\item{\bf EDIpack C-bindings.}
   For enhanced interoperability, \NAME includes a dedicated module 
 implementing Fortran-C/C++ bindings for key library procedures. This 
 module relies on the {\tt ISO\_C\_BINDING} capabilities available in 
@@ -64,7 +64,7 @@ with third-party software and support the development of custom APIs.
 
 
 \subsection{Dependencies}\label{sSecInstallDependencies}
-\NAME essentially depends on two external libraries.
+\NAME directly depends on two external libraries.
 \begin{itemize}
 \item {\bf SciFortran}: an open-source Fortran library to support
   mathematical and scientific software development. 
@@ -80,15 +80,14 @@ is required to access scalable parallel diagonalization algorithms
 which speed up calculations for large dimensional systems. 
 
 \subsection{Build and Install}\label{sSecInstallBuildInstall}
-\subsubsection{Source}
-The software can be installed from source as follows. The source can
+\subsubsection{Compilation from source}
+The software can be installed from source as follows. The source code can
 be retrieved directly from its GitHub repository, for instance using:
 \begin{lstlisting}[style=mybash]
-git clone https://github.com/edipack/EDIpack2.0 EDIpack2
+git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
-Then, assuming to be in the software directoru, a conventional
-out-of-source building is performed using two different compilations
-backends.
+Then, assuming to be in the software directory, a conventional
+out-of-source building can be performed using two alternative compilation backends.
 
 \begin{itemize}
   \item {\bf GNU Make}\\
@@ -117,13 +116,13 @@ ninja install
 \end{itemize}
 
 \noindent
-The CMake configurations can be further tuned using the following variables:
+The CMake configuration can be further tuned using the following variables:
 \begin{center}
 \begin{tabular}{ l|l|l } 
  \hline
   {\bf Option}               & {\bf Scope} & {\bf Value} \\
   \hline
-  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack2/TAG/PLAT/BRANCH\\
+  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack/TAG/PLAT/BRANCH\\
   -D{\bf USE\_MPI}       & MPI support  &  True/{\color{red}False}\\
   -D{\bf WITH\_INEQ}   & Inequivalent impurities support & {\color{red}True}/{False}\\
   -D{\bf VERBOSE}      & Verbose CMake output & {\color{red}True}/{False}\\ 
@@ -132,13 +131,12 @@ The CMake configurations can be further tuned using the following variables:
 \end{tabular}
 \end{center}
 
-The default target builds and install either the main library and the C-binding.
-However, a specific building for each library is available specifying
-the required target. A recap message is printed at the end of the
+The default target builds and installs both the main library and the C-bindings.
+Separate build targets for either are available. A recap message is printed at the end of the
 CMake configuration step. 
 
 \subsubsection{Anaconda}
-As an alternative we provide for both Linux and OSx systems
+As an alternative, we provide for both Linux and macOS systems
 installation through Anaconda packages into a virtual
 environment containing Python ($>3.10$).
 
@@ -146,32 +144,31 @@ The Conda package installation procedure reads:
 \begin{lstlisting}[style=mybash]
 conda create -n edipack
 conda activate edipack
-conda install -c conda-forge -c edipack edipack2
+conda install -c conda-forge -c edipack edipack
 \end{lstlisting}
 \noindent
-which installs a bundle of Scifor and \NAME libraries together with
-specific {\tt pkg-config} configurations files which can be used to
+which installs a bundle of SciFortran and \NAME libraries together with
+specific {\tt pkg-config} configurations files, which can be used to
 retrieve compilation and linking flags. In order to compile Fortran/C++ 
 drivers, the {\tt compilers} conda package will need to be installed.
 
 
 \subsection{OS Loading}\label{sSecInstallOSloading}
-In oder to avoid possible conflicts or require administrative
-privileges, the building step results get installed by default in a user home
+In order to avoid possible conflicts or the requirement for administrative
+privileges, the building step results are installed by default in the user's {\tt HOME}
 directory, specified by the CMake variable {\tt PREFIX}.
-In doing so, however, one misses the chance of automatic loading into
-the operative system.
+As a consequence, the system library and include paths will need to be updated by the user.
 
-We offer different strategies to perform this action:
+We offer different ways to perform this action:
 \begin{enumerate}
-\item  A CMake generated configuration file for environment module
+\item  A CMake-generated configuration file for an environment module
   which allows to load and unload the library at any time. This is
   preferred solution for HPC systems. 
-\item A CMake generated bash script to be sourced (once or
+\item A CMake-generated bash script to be sourced (once or
   permanently) in any shell session to add \NAME library to the
   default environment.
-\item A CMake generated pkg-config configuration file to be added in
-  the pkg-config path itself.  
+\item A CMake generated {\tt pkg-config} file to be added in
+  the {\tt PKG\_CONFIG\_PATH} itself.  
 \end{enumerate}
 An automatically generated recap message with all instructions is
 generated at the end of the installation procedure. 
