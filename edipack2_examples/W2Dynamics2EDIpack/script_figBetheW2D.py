@@ -23,7 +23,7 @@ def zimS(x,z):
 plt.rcParams["font.family"] = "Times"
 plt.rcParams['text.usetex'] = True
 plt.rc('text.latex', preamble=r'\usepackage{amsmath,xcolor,amssymb,latexsym}')
-plt.rcParams.update({'font.size': 24})
+plt.rcParams.update({'font.size': 28})
 plt.rcParams['figure.figsize'] = [35, 10]
 
 
@@ -35,8 +35,8 @@ axs = plt.figure(layout="constrained").subplot_mosaic(
 )
 
 
-axs["A"].text(0.94, 0.04, r"(A)",transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
-axs["B"].text(0.94, 0.04, r"(B)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
+axs["A"].text(0.01, 0.98, r"(A)",transform=axs["A"].transAxes,fontsize=24, va='top', color='black')
+axs["B"].text(0.01, 0.98, r"(B)",transform=axs["B"].transAxes,fontsize=24, va='top', color='black')
 
 
 
@@ -54,8 +54,6 @@ ax.set_xlim([0, 2])
 ax.set_ylim([-2,0])
 ax.set_xlabel(r'$\omega_n$')
 ax.set_ylabel(r'${\rm Im}G(i\omega_n)$')
-# ax.yaxis.set_tick_params(labelleft=False)
-# ax.set_yticks([])
 
 ax.tick_params(length=6, width=2,direction='out')
 #ax.yaxis.grid(True, which='both', alpha=0.5)
@@ -63,10 +61,10 @@ ax.tick_params(length=6, width=2,direction='out')
 
 lw=5
 
-ax.plot(x3,  y3, lw=lw, ls='solid',  c='black', marker='s', markersize=25, label=r"EDIpack", alpha=0.75)
-ax.plot(x1,  y1, lw=lw, ls='',  c='red', marker='o', markersize=20, label=r"W2Dynamics CT-HYB", alpha=1.0, fillstyle='none', markeredgewidth=3)
-ax.plot(x2,  y2, lw=lw, ls='',  c='green'  , marker='x', markersize=20, label=r"W2Dynamics EDIpack", alpha=1.0, fillstyle='none', markeredgewidth=3)
 
+ax.plot(x1,  y1, lw=lw, ls='',  c='blue', marker="+", markersize=30, label=r"W2Dynamics CT-HYB",fillstyle='full', markeredgewidth=4)
+ax.plot(x2,  y2, lw=lw, ls='',  c='red'  , marker="x", markersize=30, label=r"W2Dynamics EDIpack",fillstyle='full', markeredgewidth=4)
+ax.plot(x3,  y3, lw=lw, ls='solid',  c='black', marker='o', markersize=15, label=r"EDIpack", alpha=0.75)
 
 ax.legend(loc='upper center', fontsize = '22', handlelength=1.5, framealpha=1,ncol=6);
 ##################################################################
@@ -95,9 +93,9 @@ ax.tick_params(length=6, width=2,direction='out')
 
 lw=5
 
-ax.plot(x3,  y3, lw=lw, ls='solid',  c='black', marker='s', markersize=25, label=r"EDIpack", alpha=0.75)
-ax.plot(x1,  y1, lw=lw, ls='',  c='red', marker='o', markersize=20, label=r"W2Dynamics CT-HYB", alpha=1.0, fillstyle='none', markeredgewidth=3)
-ax.plot(x2,  y2, lw=lw, ls='',  c='green'  , marker='x', markersize=20, label=r"W2Dynamics EDIpack", alpha=1.0, fillstyle='none', markeredgewidth=3)
+ax.plot(x1,  y1, lw=lw, ls='',  c='blue', marker="+", markersize=30, label=r"W2Dynamics CT-HYB",fillstyle='full', markeredgewidth=4)
+ax.plot(x2,  y2, lw=lw, ls='',  c='red'  , marker="x", markersize=30, label=r"W2Dynamics EDIpack",fillstyle='full', markeredgewidth=4)
+ax.plot(x3,  y3, lw=lw, ls='solid',  c='black', marker='o', markersize=15, label=r"EDIpack", alpha=0.75)
 
 ax.legend(loc='upper center', fontsize = '22', handlelength=1.5, framealpha=1,ncol=6);
 ##################################################################
