@@ -438,7 +438,8 @@ The results are collected into an HDF5 archive in the usual w2dynamics format, i
   \includegraphics[width=\linewidth]{figures/figBetheW2D.pdf}
     \caption{\label{figEx1W}%
     \textbf{Finite temperature DMFT solution.}
-    Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and Self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with w2dynamics are compared against \NAME ED results, used both through the w2dynamics interface and with a standalone Fortran program. 
+    Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and Self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with w2dynamics are compared against \NAME ED results, used both through the w2dynamics interface and with a standalone Fortran program. \fixme{Are we sure we want to use these
+    fancy markers? As I saw the earlier version, I know what they are doing and I understand that all data coincide perfectly and how this can make for a fancy plot. But I suspect that looking at it without any prior knowledge, at a glance, I would just desume that the w2d and edipack calculations are not matching. I would probably just go with the usual "x", "." and "+" markers, that all together make for a fancy multicolor "*". The dot in front of everything, with the most fluo color (e.g. bright green). The "x" and "+" in complementary colors, like blue and red, not in fluo version, so that they do not "hide" the dot. Something like that.}
         }
 \end{figure}
 
@@ -972,7 +973,7 @@ we report it here for completeness:
 
 %
 The main effect of the interaction is enclosed in the renormalized
-mass term $M_{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
+mass term $M_\mathrm{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
 real-part of the self-energy being proportional to $\Gamma_{03}$
 corrects the mass term with respect to its bare value. To leading
 order this correction is given proportional to $\tfrac{U-5J}{4}\langle
@@ -1032,7 +1033,7 @@ implementation for this specific case is essentially identical to the listing re
 So we consider the model introduced in \secu{SecExamplesBetheDMFT}
 with $U=0$ and the additional phononic and electron-phonon terms:
 \begin{equation} \label{eqex:H_Holstein}
-    H_{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i +
+    H_\mathrm{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i +
     b_i)\sum_{\sigma}(c^\dagger_{i\sigma}c_{i\sigma}
     -\frac{1}{2})\Big]. 
 \end{equation}
@@ -1051,7 +1052,7 @@ the uniform solution of the Holstein model at constant coupling $\lambda=1.0$.
 In the anti-adiabatic limit, the Holstein interaction takes a
 particularly simple form:
 \begin{equation}\label{HlikeAttraction}
-    H_{int} \overset{ \omega_0 \rightarrow \infty}{ \longrightarrow } -\frac{\lambda}{2} \sum_i \Big[\sum_\sigma(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2}) \Big]^2
+    H_\mathrm{int} \overset{ \omega_0 \rightarrow \infty}{ \longrightarrow } -\frac{\lambda}{2} \sum_i \Big[\sum_\sigma(c^\dagger_{i\sigma}c_{i\sigma} -\frac{1}{2}) \Big]^2
 \end{equation}
 which describes a local Hubbard-like attraction among electrons
 (mediated by local phonons).
