@@ -1174,6 +1174,14 @@ bath levels and $\lambda_{2,p} \equiv m_p$ allowing
 a magnetic split, respectively in the $S_z$ and $S_x$ spin bases.
 
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+program dmft_kane_mele_hubbard
+  !Load EDIpack library 
+  USE EDIpack
+  !Load the inequivalent impurities extension
+  USE EDIpack2ineq
+  .
+  .
+  .
   !Setup bath and solver for anisotropic AFM phases
   !> define the symmetry-basis:
   Nineq = 2
@@ -1259,7 +1267,7 @@ the appropriate Néel symmetry:
       !> Solve the two inequivalent impurity problems
       if(neelsym)then
         !> solve just one sublattice and get the other by Neel symmetry
-        call ed_solve(comm,Bath(1,:),Hloc(1,:,:,:,:))
+        call ed_solve(Bath(1,:))
         call ed_get_sigma_matsubara(Smats(1,:,:,:,:,:))
         select case(ansatz)
             case('off-plane')
@@ -1276,9 +1284,9 @@ the appropriate Néel symmetry:
       else
          !> solve both sublattices independently with the RDMFT wrapper:
          !  mpi_lanc=T => MPI lanczos, mpi_lanc=F => MPI for ineq sites
-         call ed_solve(Bath,Hloc,mpi_lanc=.true.)
+         call ed_solve(Bath,mpi_lanc=.true.)
          !> retrieve all self-energies:
-         call ed_get_sigma_matsubara(Smats,Nlat)
+         call ed_get_sigma_matsubara(Smats,Nineq)
          !
       endif
       !
@@ -1310,8 +1318,45 @@ the appropriate Néel symmetry:
       converged = check_convergence(Weiss(:,1,1,1,1,:),dmft_error,nsuccess,nloop)
       !
    enddo
+   !
+   !> Compute Kinetic Energy
+   call dmft_kinetic_energy(Hk,Smats)
 \end{lstlisting}
 
-After reaching convergence, we can 
+We observe that, after convergence is reached, we can perform some 
+post-processing to get quantities of interest, e.g. computing the 
+lattice kinetic energy (as implemented in the \texttt{dmft\_tools} 
+library). The potential energy, as well as the AFM order parameters
+and most impurity observables are automatically computed by \NAME, 
+and saved with an appropriate inequivalent-impurity filename suffix 
+by the EDIpack2ineq layer.
+
+Hence, we can readily evaluate the total energy of both the AFM$_\perp$
+and AFM$_\parallel$ calculations and compare them to establish which 
+is favored as the groundstate of the system. In \figu{fig:KMenergy}(a)
+we show results for the energy difference $E_\parallel-E_\perp$ across
+a wide range of $U/t$ and $\lambda_\mathrm{so}$ values. To assess the
+degree of accuracy of our total energy calculation, we benchmark against
+Hartree-Fock (simple static mean-field, but inherently variational), 
+DMFT with NRG solver and lattice AFQMC data, as taken from 
+Ref.\,\cite{Racz2020}. The total energy comparison is reported in 
+\figu{fig:KMenergy}(b), for $\lambda_\mathrm{so}=0$.
+
+\begin{figure}
+\hspace{1cm} (a) \hspace{7.25cm} (b)\\
+    \includegraphics[width=0.47\linewidth,trim={0 0 0 5mm},clip]{figures/KMH_energy.pdf}\hfill
+    \includegraphics[width=0.45\linewidth]{figures/benchEnergy_honey.pdf}\\
+    \caption{In panel (a) the total energy difference between the in-plane 
+    and off-plane AFM solutions found in DMFT-ED at $T=0$. Negative values
+    signal a groundstate with in-plane magnetization. The plateau at zero
+    energy difference marks the topological phase of the model (a 
+    paramagnetic quantum spin-Hall insulator), at all points except on the $\lambda_\mathrm{so}=0$ line, where the groundstate is an interacting
+    Dirac liquid, at weak coupling, or an isotropic antiferromagnet at strong coupling. In panel (b) we compare the total energies across the 
+    $\lambda_\mathrm{so}=0$ line to published data for Hartree-Fock,
+    DMFT-NRG and AFQMC solutions \cite{Racz2020}.}
+    \label{fig:KMenergy}
+\end{figure}
+
+
 
 \end{document}

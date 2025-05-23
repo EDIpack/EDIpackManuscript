@@ -125,10 +125,11 @@ user bath array.
 
 \subsection{EDIpack2py, the Python API}\label{sSecInteropEDIpy}
 As a first application of the \NAME C-bindings we implemented a
-complete Python interface, i.e. EDIpack2py. This is a Python module which
+complete Python interface called EDIpack2py. This is a Python module which
 enables access to all the library features and unlock implementation of
 further interfaces of \NAME as a plug-in solver for external Python
-based software.    
+based software. Detailed documentation can be found online at \href{https://edipack.github.io/EDIpack2py}
+{https://edipack.github.io/EDIpack2py}.
 
 
 \subsubsection{Installation}\label{sSecInteropEDIpyInstallation}
@@ -161,20 +162,20 @@ As for \NAME, the Python API in EDIpack2py is available as an
 Anaconda package for GNU/Linux and Mac Os systems. Packages are available for
 Python version $>3.10$. The \NAME package contains the {\tt
   EDIpack2py} Python module as well as \NAME and SciFortran
-libraries. In this case the resolution of the dependencies is
-taken care from Conda itself. 
-Using conda the installation reads:
+libraries. 
+%In this case the resolution of the dependencies is
+%taken care from Conda itself. 
+Using conda or mamba the installation proceeds as following:
 \begin{lstlisting}[style=mybash]
-conda create -n edipack
-conda activate edipack
-conda install -c conda-forge -c edipack edipack
+conda create -n edipack  #creation of a virtual environment (name can be changed)
+conda activate edipack   #activation of the virtual environment
+conda install -c conda-forge -c edipack edipack #installation from the edipack channel
 \end{lstlisting}
 
 
-Once installed, any loading of the {\tt EDIpack2py} module resolves in the
-attempt to load the dynamic library {\tt
+When the{\tt EDIpack2py} module is imported, it attempts to load the dynamic library {\tt
   libedipack\_cbindings.so/.dylib} containing the Fortran-C bindings
-for \NAME. By default the library is searched proceeds as follow: 
+for \NAME. By default the library search proceeds as follow: 
 \begin{enumerate}
 \item First the user can override the location of the library
   (determined during \NAME build configuration) by exporting an
@@ -193,14 +194,16 @@ If none of the previous attempts succeeds, the module will not not load correctl
 
 \subsubsection{Implementation}\label{sSecInteropEDIpyImplementation}
 The Python API provided in the EDIpack2py module consists essentially of a
-suitable class called for convenience {\tt global\_env}.
-The class incorporates all the global variables inherited from \NAME
-C-bindings library and implements a number of interface functions
+class called for convenience {\tt global\_env}.
+This class contains all the global variables inherited from the \NAME
+C-bindings library, and implements a number of interface functions
 leveraging the Python duck typing to \NAME.  
 The variables and the functions of \NAME are exposed to the user and
 are accessed as properties and
-methods of the {\tt global\_env} claass, which needs to be imported at the beginning
-of the python script, along with other useful modules. For instance Numpy is
+methods of the {\tt global\_env} class.
+
+The {\tt global\_env} class needs to be imported at the beginning
+of the python script, along with other useful modules. Numpy is
 necessary, while mpi4py is strongly recommended.
 
 \begin{lstlisting}[language=python,  frame=lines]
@@ -211,8 +214,8 @@ from edipack2py import global_env as ed
 import os,sys
 \end{lstlisting}
 
-The EDIpack2py supports the solution of problems with independent
-impurities, interfacing with the the EDIpack2ineq extension of the
+The EDIpack2py module supports the solution of problems with independent
+impurities, interfacing to the EDIpack2ineq extension of the
 library, if present. Should the inequivalent impurities package not be
 built, the Python module silently disable the support to it, so that
 invoking any related procedure  will result in a {\tt RuntimeError}.
@@ -228,7 +231,7 @@ This includes a subset of the input variables available in \NAME which
 are used to control the calculation.
 The variables are loaded globally in {\tt EDIpack2py} and can be accessed
 or set locally as properties of the class {\tt
-  global\_env}. Differently these are initialized, alongside the remaining
+  global\_env}. The global variables are initialized, alongside the remaining
 default input variables, through a call to procedure {\tt
   edipack2py.global\_env.read\_input} which interface the {\tt
   ed\_read\_input} function in \NAME. 
@@ -240,14 +243,13 @@ from edipack2py import global_env as ed
 ed.Nspin = 1            # set a global variable
 mylocalvar = ed.Nspin   # assign to a local variable
 print(ed.Nspin)         # all functions can have global variables as arguments
-np.arange(ed.Nspin)
+np.arange(ed.Nspin)     # array of integers from 0 to Nspin-1
 \end{lstlisting}
 
 
 \paragraph{{\bf Solver functions}}
 This group includes a number of functions enabling initialization,
-execution and finalization  functionalities for the diagonalization
-solver.
+execution and finalization  of the \NAME solver.
 \begin{itemize}
   \item {\tt init\_solver} and {\tt set\_Hloc}. The first 
     initializes the \NAME environment for the quantum impurity problem
@@ -261,7 +263,7 @@ solver.
 
   \item {\tt solve} This function solves the quantum impurity problem,
     calculates the observables and any dynamical correlation
-    function. All results remain stored in the memory and get accessed
+    function. All results remain stored in the memory and can be accessed
     through input/output functions.
 
   \item {\tt finalize\_solver} This function cleans up the \NAME
@@ -395,7 +397,7 @@ or bath electronic degrees of freedom with a certain spin projection.
 Having these two crucial pieces of information, the constructor initializes
 the underlying Fortran library and automatically selects the appropriate
 {\tt ed\_mode=normal,superc,nonsu2} (Sec.~\ref{sSecQNs}) and
-{\tt bath\_type=normal,hybrid,general} (Sec.~\ref{sSecBath}). Besides, the
+{\tt bath\_type=normal,hybrid,general} (Sec.~\ref{sSecBath}). In addition, the
 constructor accepts a vast array of keyword arguments that allow for fine-tuning
 the diagonalization process. Among others, these include the ED algorithm
 selection, the quantum numbers to be used, parameters of the Krylov space,
@@ -480,9 +482,19 @@ components of the quantities in question.
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
 \NAME is supported as alternative impurity solver by the w2dynamics DMFT package~\cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{GitHub}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation, which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter.
 
-In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to \NAME. Configuration specific to the exact diagonalization solver can be performed through the parameters in section \NAME of a w2dynamics parameter file. For most of the \NAME input variables, it provides a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set insofar as this is supported by the interface and not an option available through generic w2dynamics parameters. This thus includes some parameters that the user will ordinarily want to change from their defaults in a typical calculation such as the number of bath sites {\tt NBATH} and other parameters such as options for the bath fitting and diagonalization algorithms, but also specifically excludes other typically set input variables such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}. All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
+In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to \NAME. 
 
-Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by w2dynamics in mostly the same way as it would be for the CT-HYB solver. This e.g. means that results such as the Green's functions are stored into the w2dynamics HDF5 output file in the typical format, and that w2dynamics uses only its own code for e.g. calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence of this, some functionality that would require specific support from w2dynamics that is not available as of the time of publication can not be used through the interface, e.g. calculations with superconductivity or with phonons.
+The  behavior of the w2dynamics solver is controlled by means of an input file, by default called
+{\tt Parameters.in}. In order to configure the ED solver, the content of a specific section in the parameters file, called {\tt [EDIPACK]}, has to be modified.
+
+For most of the \NAME input variables, w2dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt EDIPACK} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath sites {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
+
+A second set of input variables, including phyisical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the w2dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in~\ref{SecExamples}. See~\cite{Wallerberger2019CPC}
+for further details.
+
+%All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
+
+Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by w2dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the w2dynamics HDF5 output file in the typical format, and that w2dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence of this, some functionality that would require specific support from w2dynamics that is not available as of the time of publication can not be used through the interface, for instance calculations with {\tt ED\_MODE=SUPERC} or with phonons.
 
 
 
