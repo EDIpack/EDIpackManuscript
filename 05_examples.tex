@@ -7,7 +7,7 @@ library and their interfaces as solver for DMFT through a variety of examples, i
 discussion of relevant code snippets. 
 
 
-\subsection{Hubbard model on the Bethe lattice (Fortran API)}\label{SecExamplesBetheDMFT}
+\subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
 The test bed for any DMFT application is conventionally considered 
 the description of the Mott or metal-to-insulator transition (MIT) 
 in a Bethe lattice, i.e., a Cayley tree with coordination number 
@@ -371,7 +371,7 @@ ${\rm Im}\Sigma(\omega) \rightarrow -\infty$.
 
 
 
-\subsubsection{Finite temperature solution (w2dynamics interface)}\label{SecExamplesBetheDMFTw2d}
+\subsubsection{Finite temperature solution (w2dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTw2d}
 To demonstrate the usage of the w2dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using w2dynamics. 
 In order to showcase the capabilities of \NAME to address low-temperature problems we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in w2dynamics against the \NAME solver at finite temperature.  
 
@@ -711,7 +711,7 @@ high accuracy.
 
 
 
-\subsection{Holstein model on the Bethe lattice (Fortran API, {\tt electron-phonons})}
+\subsection{Holstein model on the Bethe lattice (electron-phonon coupling)}
 One of the features introduced in \NAME is the possibility of treating
 local phonons in conjunction with the superconductive phase,
 i.e. \textbf{ed\_mode=superc}. 
@@ -766,17 +766,17 @@ solutions reach the limiting values corresponding to the residual
 attraction \equ{HlikeAttraction}.   
 To better characterize the nature of the superconducting
 phase in the Holstein model we report the evolution of the anomalous order
-parameter $\phi$ in the adiabatic to anti-adiabatc crossover.
-The DMFT results obtained with \NAME show the rapid increase of the
+parameter $\phi$ in the adiabatic to anti-adiabatic crossover.
+The DMFT results obtained with \NAME show a rapid increase in the
 superconducting order parameter as phonon frequency grows
-large. Finally, in the anti-adiabatic regime $\phi$ saturates to a
+large. Finally, in the anti-adiabatic regime, $\phi$ saturates to a
 finite value corresponding to the attractive Hubbard-like interaction
-of strenght $\lambda/2$. 
+of strength $\lambda/2$. 
 
 \begin{figure}[ht!]
     \includegraphics[width=\linewidth]{figures/figBethe_Holstein.pdf}
     \caption{\label{figEx5}
-      Evolution of the  double occupation (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken line are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
+      Evolution of the double occupancy (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken lines are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
 \end{figure}
 
 
@@ -978,7 +978,7 @@ Interestingly, this state breakes several symmetries including
 time-reversal and spin SU(2) which protect the topological state.
 
 Thus, here we illustrate the DMFT solution of the excitonic phase as a way to
-illustrate the ability of \NAME to capture matter phases with broken
+illustrate the ability of \NAME to capture matter phases with lowered
 spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
   bath\_type=replica}.
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
@@ -1057,13 +1057,12 @@ region of exciton condensation with $\langle E_x\rangle>0$, $\langle
 E_0\rangle=\langle E_z\rangle=0$. 
 Unlike the static mean-field description~\cite{Blason}, the
 transition from the QSHI topological state to the Excitonic Insulator 
-(EI) becomes of first-order in presence of quantum fluctuations
-corrections~\cite{Continentino,Paoletti} contained in DMFT. On the
+(EI) becomes of first-order in the presence of the dynamical fluctuations~\cite{Continentino,Paoletti,BellomiaKMH} contained in DMFT. On the
 other hand, the EI continuously evolves into a Mott Insulator (MI)
 for larger interaction (neglecting for simplicity any 
-anti-ferromagnetic ordering that would naturally occurr in this
+antiferromagnetic ordering that would naturally occur in this
 regime).
-In the same panel we report the evolution of 
+In the same panel, we report the evolution of 
 $\langle T_z\rangle$ to illustrate the progressive reduction of the
 orbital polarization and, thus, of the effective mass. 
 
@@ -1082,13 +1081,237 @@ larger high-energy weight.
 Finally, in the MI the two orbital spectral function describes the two 
 characteristic Hubbard bands separated by a large Mott gap.  
 
+\subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq layer)}
 
+To complete the overview of \NAME capabilities, we consider another
+model for interacting quantum spin-Hall insulators, defined on the honeycomb lattice, with two inequivalent sites in the unit-cell.
 
+Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit-cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
+\begin{align*}
+    \mathbf{H}_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} \mathbf{H}({k}) \psi_{{k}},
+\end{align*}
+with $\psi_{{k}} = [c_{{k},\mathrm{A},\up},\,c_{{k},\mathrm{B},\up},\,c_{{k},\mathrm{A},\dw},\,c_{{k},\mathrm{B},\dw}]$ and
+    \begin{align}
+    \mathbf{H}({k}) 
+    &= x_{{k}}\Gamma_{01} + y_{{k}}\Gamma_{02} + \delta_{{k}}\Gamma_{33}, \label{eq:Hk_kanemele}\\[1mm]
+   x_{{k}}&=t\bigl[\cos({k}\cdot{u})+\cos({k}\cdot{v})+1\bigr],\nonumber\\
+   y_{{k}}&=t\bigl[\sin({k}\cdot{u})+\sin({k}\cdot{v})\bigr],\nonumber \\
+   \delta_{{k}}&=2\lambda_\mathrm{so}\bigl[\sin({k}\cdot{u})-\sin({k}\cdot{v}) - \sin({k}\cdot{u} -{k}\cdot{v})\bigr], \nonumber
+\end{align}
+where ${u} = (3/2, \sqrt{3}/2)$, and ${v} = (3/2, -\sqrt{3}/2)$
+are suitable basis vectors for the honeycomb lattice, $t$ is the
+nearest-neighbor hopping amplitude and $\lambda_\mathrm{so}$ is 
+the amplitude of a complex next-nearest-neighbor hopping amplitude,
+with a spin-dependent $\pm\tfrac{\pi}{2}$ chiral phase arising from spin-orbit coupling and well-known to stabilize a topological gap at the Fermi level \cite{Kane2005PRLa,Kane2005PRL}.
+The spinorial $4\times4$ matrices $\Gamma_{a\ell} = \sigma_a\otimes\tau_\ell$, are 
+defined in terms of $\sigma_a$ and $\tau_\ell$ Pauli matrices, respectively 
+referred to spin and sublattice degrees of freedom, with the convention that 
+$\sigma_0$ and $\tau_0$ are $2\times2$ identity matrices.
 
+To investigate the effects of electron-electron repulsion on the
+Kane-Mele model we include a local interaction, 
+leading to the Kane-Mele-Hubbard Hamiltonian \cite{Hohenadler2013ROPIP,Rachel2018ROPIP}
+\begin{equation}
+    \mathbf{H}_\mathrm{KMH} = \mathbf{H}_\mathrm{KM} 
+    + U\sum_{i}\Biggl[
+                        \left(n_{i,\up} - \frac{1}{2}\right)
+                        \left(n_{i,\dw} - \frac{1}{2}\right)
+                      \Biggr],
+    \label{eq:KMHmodel}
+\end{equation}
+where $n_{i,\sigma}=c^\dagger_{i,\sigma}c_{i,\sigma}$ are the 
+local spin-density operators. The interaction is written in an explicitly 
+particle-hole symmetric form so that the model is at half-filling for zero
+chemical potential.
 
+The essential features of the groundstate phase diagram have been established by intensive multi-method analyses \cite{Rachel2018ROPIP}.
+For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relatively high Hubbard repulsion, and magnetizes to an isotropic Néel state above above a critical $U/t$ ratio
+\footnote{In contrast with the expectations for a generic half-filled bipartite lattice, for which the groundstate is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
+at the Fermi level renders ineffective the logarithmic instability, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
+With a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering 
+eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization.
+\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRBa,Rachel2010PRB} and
+later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
+simulations \cite{Hohenadler2013ROPIP}.
 
+To treat the in-plane Néel ordering with \NAME, we can once again
+exploit the \texttt{ed\_mode=nonsu2} option, allowing off-diagonal 
+spin amplitudes in all dynamical matrices and so eventually in the
+resulting impurity self-energy.
+Referring to the two inequivalent sublattices as
+A and B, whereas a standard off-plane ($S_z$)
+calculation would enforce Néel symmetry (AFM$_\perp$)  as
+$\Sigma^\mathrm{A}_{\up\up} = \Sigma^\mathrm{B}_{\dw\dw}$, 
+$\Sigma^\mathrm{A}_{\dw\dw} = \Sigma^\mathrm{B}_{\up\up}$,
+with
+$\Sigma^\mathrm{A}_{\up\dw} = \Sigma^\mathrm{A}_{\dw\up} = \Sigma^\mathrm{B}_{\up\dw} = \Sigma^\mathrm{B}_{\dw\up} = 0$,
+an in-plane magnetization (AFM$_\parallel$) corresponds to
+$\Sigma^\mathrm{A}_{\up\up} = \Sigma^\mathrm{B}_{\up\up}$, 
+$\Sigma^\mathrm{A}_{\dw\dw} = \Sigma^\mathrm{B}_{\dw\dw}$,
+$\Sigma^\mathrm{A}_{\up\dw} = -\Sigma^\mathrm{B}_{\dw\up}$, 
+$\Sigma^\mathrm{A}_{\dw\up} = -\Sigma^\mathrm{B}_{\up\dw}$.
 
+The same off-diagonal spin symmetry must be realized also in
+the bath Hamiltonian, which can be conveniently achieved with
+either the \texttt{replica} and \texttt{general} choices for 
+the \texttt{bath\_type} option. The most stable strategy to 
+verify that the groundstate of the model is magnetized in the
+plane also in DMFT is to allow either an $S_z$ or an $S_x$ (equivalently $S_y$) magnetization in the bath, and then 
+compare the energies of the respective solutions at $T=0$. 
+The corresponding Hamiltonian forms are:
+\begin{align}
+    \mathbf{H}^\mathrm{bath}_\perp &= 
+        \sum_{p=1}^{N_\mathrm{b}}(\epsilon_p \sigma_0 + m_p \sigma_z), 
+        \label{eq:afmz_dmft_ansatz} \\[1mm]
+    \mathbf{H}^\mathrm{bath}_\parallel &= 
+        \sum_{p=1}^{N_\mathrm{b}}(\epsilon_p \sigma_0 + m_p \sigma_x).
+        \label{eq:afmx_dmft_ansatz}
+\end{align}
+comparing with \ref{eq:replica_bath_sym}, it is clear 
+that this amount to having $N_\mathrm{sym}=2$, with
+$\lambda_{1,p} \equiv \epsilon_p$ describing average
+bath levels and $\lambda_{2,p} \equiv m_p$ allowing 
+a magnetic split, respectively in the $S_z$ and $S_x$ spin bases.
 
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+  !Setup bath and solver for anisotropic AFM phases
+  !> define the symmetry-basis:
+  Nineq = 2
+  Nsym = 2
+  allocate(Hsym_basis(Nspin*Norb,Nspin*Norb,Nsym))
+  Hsym_basis(:,:,1) = pauli_0
+  select case(ansatz)
+    case('off-plane')
+        Hsym_basis(:,:,2) = pauli_z
+    case('in-plane')
+        Hsym_basis(:,:,2) = pauli_x
+  end select
+  !> initialize the symmetry parameters
+  allocate(lambdasym_vectors(Nineq,Nbath,Nsym))
+  call build_replica_band(onsite_band,ed_hw_bath,Nbath)
+  lambdasym_vectors(:,:,1) = onsite_band
+  lambdasym_vectors(:,:,2) = 0d0 ! paramagnetic
+  !> define a symmetry-breaking AFM kick, to help numerics
+  if(afmkick)then
+     lambdasym_vectors(1,:,2) = +sb_field
+     lambdasym_vectors(2,:,2) = -sb_field
+  endif
+  !> setup H_bath inside the solver
+  select case(bath_type)
+    case('replica')
+        call ed_set_Hreplica(Hsym_basis,lambdasym_vectors)
+    case('general')
+        call ed_set_Hgeneral(Hsym_basis,lambdasym_vectors)
+  end select
+  !> finally initialize the two solver instances, one per sublattice
+  !  (the EDIpack2ineq layer automatically dispatches it for the two
+  !   impurity models, if we feed a Bath with the [Nineq,Nb] shape!)
+  Nb = ed_get_bath_dimension(Hsym_basis)
+  allocate(Bath(Nineq,Nb))
+  call ed_init_solver(Bath)
+  .
+  .
+  .
+  contains
+  .
+  .
+  .
+  subroutine build_replica_band(epsilons,bandwidth,Nreplica)
+  !> Initialization of the (average) bath levels, suitable to
+  !  describe a weakly interacting metal or a band insulator
+      real(8),allocatable,dimension(:,:),intent(out)   :: epsilons
+      real(8),intent(in)                               :: bandwidth
+      integer,intent(in)                               :: Nreplica
+      integer                                          :: ireplica
+      real(8),dimension(Nreplica)                      :: tempvec
+      real(8)                                          :: tempval
+      !
+      allocate(epsilons(Nineq,Nbath))
+      !
+      do ireplica=1,Nreplica
+         tempval = ireplica - 1 - (Nreplica-1)/2d0       ![-(N-1)/2 : (N-1)/2]
+         tempval = tempval * 2 * bandwidth/(Nreplica-1)  !-bandwidth:bandwidth
+         tempvec(ireplica) = tempval
+      enddo
+      !
+      if(mod(Nreplica,2)==0)then
+         tempvec(Nreplica/2) = -1d-1  !Much needed small energies around the
+         tempvec(Nreplica/2+1) = 1d-1 !Fermi level (if EF itself not present)
+      endif
+      !
+      do ilat=1,Nineq
+         epsilons(ilat,:) = tempvec
+      enddo
+      !
+   end subroutine build_replica_band
+\end{lstlisting}
 
+The DMFT loop can then be implemented, with the explicit solution of two
+independent impurity problems (prone to numerical noise) or by solving
+only one impurity problem and building the full solution by exploiting 
+the appropriate Néel symmetry:
+
+\begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
+   iloop=0;converged=.false.
+   do while(.not.converged.AND.iloop<nloop)
+      iloop=iloop+1
+      !
+      !> Solve the two inequivalent impurity problems
+      if(neelsym)then
+        !> solve just one sublattice and get the other by Neel symmetry
+        call ed_solve(comm,Bath(1,:),Hloc(1,:,:,:,:))
+        call ed_get_sigma_matsubara(Smats(1,:,:,:,:,:))
+        select case(ansatz)
+            case('off-plane')
+             Smats(2,2,2,:,:,:) = Smats(1,1,1,:,:,:) 
+             Smats(2,1,1,:,:,:) = Smats(1,2,2,:,:,:) 
+             if(master)write(*,*) ">>> Enforcing AFMz symmetry"
+            case('in-plane')
+             Smats(2,1,1,:,:,:) = Smats(1,1,1,:,:,:)   
+             Smats(2,2,2,:,:,:) = Smats(1,2,2,:,:,:)   
+             Smats(2,1,2,:,:,:) = -Smats(1,1,2,:,:,:)  
+             Smats(2,2,1,:,:,:) = -Smats(1,2,1,:,:,:) 
+             if(master)write(*,*) ">>> Enforcing AFMx symmetry"
+        end select
+      else
+         !> solve both sublattices independently with the RDMFT wrapper:
+         !  mpi_lanc=T => MPI lanczos, mpi_lanc=F => MPI for ineq sites
+         call ed_solve(Bath,Hloc,mpi_lanc=.true.)
+         !> retrieve all self-energies:
+         call ed_get_sigma_matsubara(Smats,Nlat)
+         !
+      endif
+      !
+      !> Compute the local Green's function
+      call dmft_gloc_matsubara(Hk,Gmats,Smats)
+      !
+      !> Compute the two inequivalent Weiss fields
+      call dmft_self_consistency(Gmats,Smats,Weiss)
+      !
+      !> Fit the new bath
+      !  this behaves differently depending on the ed_mode input:
+      !  - for the normal mode: normal/AFMz phase is solved, so we 
+      !    can fit spin1 and spin2 components independently
+      !  - for the nonsu2 mode: Sz-conservation can be broken, so a 
+      !    unique fit for both spin components is needed
+      select case(ed_mode)
+       case("normal")
+         call ed_chi2_fitgf(Bath,Weiss,ispin=1)
+         call ed_chi2_fitgf(Bath,Weiss,ispin=2)
+       case("nonsu2")
+         call ed_chi2_fitgf(Bath,Weiss,Hloc)
+      end select
+      !
+      !> linear mixing (aids convergence near transition points)
+      if(iloop>1) Bath = wmixing*Bath + (1.d0-wmixing)*Bath_prev
+      Bath_prev = Bath
+      !
+      !> check convergence
+      converged = check_convergence(Weiss(:,1,1,1,1,:),dmft_error,nsuccess,nloop)
+      !
+   enddo
+\end{lstlisting}
+
+After reaching convergence, we can 
 
 \end{document}
