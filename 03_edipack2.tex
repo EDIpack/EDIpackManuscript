@@ -903,6 +903,7 @@ space, and expressing the bath Hamiltonian as
 $$
 h^p = \sum_{\nu=1}^{N_\mathrm{sym}} \lambda^p_\nu
 \Gamma^\nu\equiv \vec{\lambda}^p\cdot \vec{\Gamma}
+\label{eq:replica_bath_sym}
 $$
 where $\vec{\lambda}^p\in\RRR^{N_\mathrm{sym}}$ is a vector of variational parameters. 
 The choice of the matrix basis can be inspired by the internal structure
@@ -1398,6 +1399,7 @@ where $E_n$ and $\ket{\psi_n}$ are the low-lying eigenstates
 of the system stored in the {\tt state\_list}. This approach 
 greatly reduces computational overhead by focusing on the 
 relevant, low-energy sector.
+\textcolor{red}{what's the difference with the one above}
 \begin{equation}
   \ibra \OO\iket  = \tfrac{1}{Z}\sum_n e^{-\beta  E_n}
   \bra{\psi_n}\OO\ket{\psi_n},

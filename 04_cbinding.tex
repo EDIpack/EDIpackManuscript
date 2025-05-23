@@ -56,7 +56,7 @@ As an example, the {\tt ed\_chi2\_fitgf} Fortran function, which handles the fit
     \item  {\tt chi2\_fitgf\_single\_superc\_n5}: for {\tt ED\_MODE=SUPERC}, single-site DMFT and rank-5 Weiss field/hybridization function arrays
 \end{itemize}
 and analogous functions for the real-space DMFT case. All functions are listed and documented in the online manual.
-When using \NAME functions in a C/C++ program, care must be taken in the way arrays are passed. Consistently with {\tt ISO\_C\_BINDING}, non-scalar parameters have to be passed as raw pointers. An array of integers containing the dimensions of the former need to be passed as well to allow for proper Fortran input parsing. A working C++ example is provided in the {\tt examples} folder of the \NAME repository.
+When using \NAME functions in a C/C++ program, care must be taken in the way arrays are passed. Consistently with {\tt ISO\_C\_BINDING}, non-scalar parameters have to be passed as raw pointers. An array of integers containing the dimensions of the former need to be passed as well to allow for proper Fortran input parsing. A working C++ example is provided in the {\tt examples} folder of the \NAME repository and discussed in Section \ref{SecExamples}.
 
 \subsubsection{Implementation}\label{sSecInteropCbindingsImplementation}
 The interface layer is contained in the Fortran module {\tt
@@ -132,7 +132,8 @@ based software.
 
 
 \subsubsection{Installation}\label{sSecInteropEDIpyInstallation}
-EDIpack2py is available as a stand-alone
+\paragraph{From source}
+EDIpack2py is available as a Python
 module which only depends on \NAME and SciFortran.
 The Python package can be obtained from the repository
 \href{https://github.com/EDIpack/EDIpack2py}{EDIpack2py}.
@@ -142,19 +143,19 @@ git clone https://github.com/edipack/EDIpack2py EDIpack2py
 cd EDIpack2py
 pip install . 
 \end{lstlisting}
-In some more recent Python distribution the flag {\tt
-  --break-system-packages} might be required to complete
-installation or a virtual environment should be used instead. 
-
 
 \paragraph{PyPi}
 The EDIpack2py package is also available in PyPi at
-\href{https://pypi.org/project/EDIpack2py/}{pypi.org/EDIpack2py}. As such
-EDipack2py can be conveniently installed in any system supporting {\tt pip} as:
+\href{https://pypi.org/project/EDIpack2py/}{pypi.org/EDIpack2py}. The package can be easily installed in any system supporting {\tt pip} as:
 
 \begin{lstlisting}[style=mybash]
 pip install edipack2py
 \end{lstlisting}
+
+%In some more recent GNU/Linux and Mac Os versions the flag {\tt
+%  --break-system-packages} might be required to complete
+%installation in system paths. Alternatively, and preferrably, 
+%a virtual Python environment can be used. 
 
 
 \paragraph{Anaconda}
