@@ -1787,13 +1787,13 @@ In the superconducting case, where {\tt ed\_mode}={\bf superc},
 special care is needed to properly handle the anomalous (off-diagonal) 
 components within the Nambu basis. In this case, the bath functions 
 must include both the normal and anomalous components, 
-which can significantly alter the form of the self-energy. 
+which can significantly alter the form of the self-energy. Similar issues arise in the {\bf nonsu2} case, where spin off-diagonal components usually drive the physics of the problem.
 
 
 
 
 \subsection{Bath Optimization}\label{sSecFit}
-In the DMFT framework, the bath parameters must be optimized to 
+In the DMFT-ED framework, the bath parameters must be optimized to 
 faithfully reproduce the Weiss field, 
 ${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or its corresponding hybridization 
 function 
@@ -1807,7 +1807,7 @@ discretization requires a careful fitting of this continuous function
 using a finite set of bath parameters (see \secu{sSecBath}).
 
 Several algorithms have been proposed for this optimization 
-step~\cite{Garcia2004PRL,Taranto2012PRB}, each with strengths suited 
+step~\cite{Garcia2004PRL,Taranto2012PRB,Mejuto_Bath_ASCI-DMFT}, each with strengths suited 
 to different physical contexts. To maintain flexibility in \NAME, 
 we provide a general optimization interface that is independent 
 from the core impurity solver. However, we also include a fully 
@@ -1817,12 +1817,13 @@ minimization of the cost function:
 \chi = \sum_{n=1}^{L_\mathrm{fit}} 
 \frac{1}{W_n} \left\|X(i\omega_n) - 
 X^\mathrm{QIM}(i\omega_n; \{V, h\}) \right\|_q,
+\label{eq:chiq}
 \end{equation}
 where the $q$-norm is a suitably chosen distance metric in the 
 matrix function space. Here, $X_{\a\b} = {\GG_{0}}_{\a\b\s\s'}$ or 
-$\Theta_{\a\b\s\s'}$ are the user-supplied local functions, while 
+$\Theta_{\a\b\s\s'}$ are the user-supplied functions of the bath parameters, while 
 $X_{\a\b}^\mathrm{QIM} = G^0_{\a\b\s\s'}$ or 
-$\Delta_{\a\b\s\s'}$ are the corresponding functions for the quantum 
+$\Delta_{\a\b\s\s'}$ are the corresponding quantities for the quantum 
 impurity model, as defined in \secu{sSecFunc}.
 
 While more sophisticated optimization methods have been developed for 
@@ -1845,7 +1846,7 @@ tunable parameters:
 \item \texttt{cg\_method=0,1} - Chooses the CG algorithm: 
 \texttt{0} for a Fletcher-Reeves-Polak-Ribiere variant adapted from 
 Numerical Recipes~\cite{NumRec77}, and \texttt{1} for the original 
-algorithm described in Ref.\onlinecite{Georges1996RMP}, commonly used 
+algorithm described in Ref. \cite{Georges1996RMP}, commonly used 
 in the DMFT community.
 \item \texttt{cg\_grad=0,1} - Sets the gradient calculation method: 
 \texttt{0} for analytical gradients (when available), \texttt{1} for 
@@ -1861,6 +1862,22 @@ can emphasize low-energy contributions.
 \item \texttt{cg\_pow} - Sets the power $q$ of the cost function, 
 allowing the user to fine-tune the sensitivity of the optimization 
 to outliers.
+\item \texttt{cg\_norm=elemental,frobenius} - Sets the matrix norm to be used to define the cost function in \equ{eq:chiq}. The default value (\texttt{elemental}) corresponds to a generic element-wise $\chi^q$ norm, defined as 
+\begin{equation*}
+    ||X-X^\mathrm{QIM}||_q \equiv {\sum_{ij} \left|X_{ij}-X^\mathrm{QIM}_{ij}\right|^q}.
+\end{equation*}
+The \texttt{frobenius} option implements instead the matrix distance induced by the Frobenius inner product as
+\begin{equation*}
+    ||X-X^\mathrm{QIM}||_q \equiv 
+    \sqrt[q]{\Tr\left[(X-X^\mathrm{QIM})^\dagger(X-X^\mathrm{QIM})\right]} =
+    \left(\sum_{ij} \left|X_{ij}-X^\mathrm{QIM}_{ij}\right|^2 \right)^{\!\!\!\frac{1}{q}}.
+\end{equation*}
+For $q=2$ (see \texttt{cg\_pow}) the Frobenius norm is equivalent
+to the Euclidean distance in matrix space. 
+%For $q\neq2$ we are implementing something that is not a matrix norm (better to not comment on it explicitly)
+We prospect to expand the choices for \texttt{cg\_norm} in future updates of \NAME, as the \textbf{nonsu2} and \textbf{superc}
+diagonalization modes entail nontrivial subtleties in optimizing 
+the off-diagonal components of $X$.
 \item \texttt{cg\_Ftol} - Controls the fit tolerance, setting the 
 convergence threshold for the CG minimization.
 \item \texttt{cg\_Niter} - Specifies the maximum number of allowed 
@@ -1881,109 +1898,6 @@ which condition to apply.
 Together, these parameters provide precise control over the fitting 
 process, allowing users to balance speed and accuracy according to 
 their specific needs.
-
-% In the DMFT context the bath needs to be optimized
-% against a given realization of the Weiss field
-% ${\GG^{-1}_{0}}_{\a\b\s\s'}(z)$, or the corresponding {\it hybridization} function
-% $\Theta = (z + \mu)\11 - H^{loc} -\GG_0^{-1}](z)$. While the Weiss
-% field is obtained from the DMFT self-consistency
-% equation~\cite{Georges1996RMP}, bath discretization impose to  find an optimal
-% description of the continuous Weiss field in terms of the finite
-% number of parameters of the bath (see \secu{sSecBath}.
-% Although different algorithms can be envisaged to perform this
-% step~\cite{Garcia2004PRL,Taranto2012PRB} which are perfectly valid in
-% some physical contexts.
-% In order to enable the users to use their preferred 
-% method in \NAME we keep the optimization implementation independent
-% from the rest of the code. Yet, we offer a fully fledged optimization
-% strategy based on the  conjugate gradient (CG) minimization of the cost function:
-% $$
-% \chi = \sum_{n=1}^{L_\mathrm{fit}}\frac{1}{W_n}||X(i\omega_n) - X^\mathrm{QIM}(i\omega_n;\{V,h\})||_q
-% $$
-% where the symbol $|| \cdot ||_q$ is a suitably defined $q$-norm in the
-% matrix function space, $X_{\a\b}={\GG_{0}}_{\a\b\s\s'},\,\Theta_{\a\b\s\s'}$ are the user
-% supplied local functions and
-% $X_{\a\b}^\mathrm{QIM}=G^0_{\a\b\s\s'},\,\Delta_{\a\b\s\s'}$ the
-% quantum impurity model functions, defined above.
-% Notably, more sophisticated optimization algorithms have been
-% recently implemented to better undertake the minimization of similar
-% cost functions. However, these developments are designed to work with truncated
-% algorithms, e.g. sCI or DMRG, describing systems with a larger number of
-% bath levels.   
-% In the ED context however, where the efficient and wise selection of
-% the relatively few bath levels becomes crucial, the CG minimization of
-% the local functions proved to be the most efficient and
-% flexible optimization scheme so far. 
-
-% The fit procedure is entirely wrapped by the single function {\tt
-%   ed\_chi2\_fitgf} contained in the module \texttt{ED\_BATH\_FIT}.   
-% In order to exploit regularity of the functions the fit is 
-% performed using imaginary Matsubara frequency. 
-% The actual form of $X_{\a\b\s\s'}$ is controlled by the input parameter
-% \texttt{cg\_Scheme=Weiss,Delta}. 
-
-% In order to fine tune the optimization step in \NAME\ we
-% introduced a number of control parameters. To start with, we include
-% two distinct CG algorithms in the library, controlled by the input variable
-% \texttt{cg\_method=0,1}. The value \texttt{0} corresponds to a
-% Fletcher-Reeves-Polak-Ribiere minimisation algorithm, adapted from
-% Numerical Recipes~\cite{NumRec77}. Yet, in order to guarantee
-% back-compatibility with respect to the past literature, we also provide the
-% possibility of using the minimization procedure published in
-% Ref.\onlinecite{Georges1996RMP} which has been largely used in the DMFT
-% community.
-
-% The gradient $\nabla\chi$ required by the CG algorithm can be
-% evaluated either analytically or numerically as
-% controlled by the value of the input parameter \texttt{cg\_grad=0,1}. For
-% \texttt{cg\_method=1} only numerical gradient can be used.
-% The number of Matsubara frequency $L_\mathrm{fit}$ used in the fit procedure
-% is controlled  by the input parameter \texttt{cg\_Lfit}.
-% This parameter can be used to restrict the fit to the low frequency
-% part as the large frequency tails of the local Matsubara functions
-% have universal behavior.
-% Similarly, the weight  $W_n=1,1/L_\mathrm{fit},1/\omega_n$ is used to
-% enhance the weight of low energy part with respect to the
-% intermediate-to-large energy one in the cost function.
-% This is controlled by the input parameter \texttt{cg\_Weight=0,1,2}.
-% Another  factor contributing to determine the behavior
-% of the fit is the power $q$ of the cost function $\chi$. By tuning
-% this parameter, controlled by input variable \texttt{cg\_pow}, it is
-% possible to enhance or suppress the differences in the $\chi$ in order
-% to improve (or simplify) the optimization procedure.  
-
-% Finally, we introduced few additional parameters which aim to
-% control the quality of the fit. The first is the fit tolerance,
-% controlled by the input parameter \texttt{cg\_Ftol}, which
-% determines the convergence threshold of the minimization procedure.
-% The second is the maximum number of iterations \texttt{cg\_Niter}
-% allowed for the CG algorithm to determine the minimum.
-% The last parameter \texttt{cg\_stop=0,1,2} selects the exit
-% condition of the minimization procedure. We envisaged  three
-% possible conditions: $C_1\cup C_2$, $C_1$, $C_2$ with 
-% $C_1=|\chi^{n-1} -\chi^n|<\mathtt{cg\_Ftol}(1+\chi^n)$ and
-% $C_2=||x_{n-1} -x_n||<\mathtt{cg\_Ftol}(1+||x_n||)$, where $\chi^n$
-% is the cost function evaluated at the $n^{\rm th}$-step and $x_n$
-% the corresponding argument. Increasing the value of the stop
-% parameter generally loosens up the exit conditions of the minimization.   
-
-{\bf REMARK TODO}
-Notes on the norm function: a) the definition for conventional
-matrices, ;b) the definition for the replica/general case where you
-can choose between different norm defition.
-\fixme{After careful inspection, I (GB) realize that the elemental norm 
-was never really ported from CDFMT-ED to EDIpack (there's no different
-matrix weight than all ones, which is the standard chi2, of course). 
-Hence the \texttt{cg\_norm} options is really not doing anything significant,
-as with "elemental" it gives the usual $\chi^2$ (or $\chi^q$, if you change the
-\texttt{cg\_pow}...) and for "Frobenius" it gives again the usual $\chi^2$,
-unless you put $q\neq2$, which gives an ill-defined matrix norm...
-(it mixes an effective $q=2$ coming from the matrix multiplication with 
-$q\neq2$ when you do the explicit $q$-root). I think we
-should just get rid of \texttt{cg\_norm} and do the traditional $\chi^q$, as 
-indeed we are already doing by default. Implemented like this, it is just random
-no-consequence code.}
-%GBtodo placeholder
 
 
 
