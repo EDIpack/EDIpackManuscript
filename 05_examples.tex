@@ -1,4 +1,4 @@
-\documentclass[edipack2.tex]{subfiles}
+\documentclass[edipack_sp.tex]{subfiles}
 \begin{document}
 
 \section{Examples}\label{SecExamples}
@@ -43,7 +43,6 @@ allocation, Bethe lattice creation, and solver initialization.
 
 \setbox0=\hbox{%
   \begin{minipage}{0.465\linewidth}
-    \center{\bf Fortran}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program ed_hm_bethe
    USE EDIPACK
@@ -58,14 +57,15 @@ program ed_hm_bethe
    real(8),allocatable    :: Ebands(:),Dbands(:)
    complex(8),allocatable :: Smats(:,:,:,:,:)
    complex(8),allocatable :: Delta(:,:,:,:,:)
-   ...  
+   !...  
    !Read variables
    call ed_read_input('inputED.conf')
    !Solver-specific arays
    allocate(Smats(Nspin,Nspin,Norb,Norb,Lmats))
    allocate(Delta(Nspin,Nspin,Norb,Norb,Lmats))
-   allocate(Hloc(Nspin,Nspin,Norb,Norb));Hloc=0d0
-   ...
+   allocate(Hloc(Nspin,Nspin,Norb,Norb))
+   Hloc=0d0
+   !...
    !Initialize Bethe arrays
    allocate(Ebands(Le),Dbands(Le))
    Ebands = linspace(-D,D,Le,mesh=de)
@@ -79,11 +79,10 @@ program ed_hm_bethe
 
 \setbox0=\hbox{%
   \begin{minipage}{0.505\linewidth}
-    \center{\bf C++}
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 #include <edipack_cbindings.h>
 using namespace std;
-...
+!...
 //Main variables
 int Le = 1000;
 int iloop = 0;
@@ -113,6 +112,7 @@ ed_set_Hloc_single_N4(Hloc.data(), d);
 \savestack{\listingB}{\box0}
 
 \begin{tabular}{c|c}\label{list2}
+{\bf Fortran} & {\bf C++}\\
   \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
 \end{tabular}
 
@@ -165,32 +165,30 @@ The iterative algorithm to solve the DMFT problem is based on
 a reverse communication strategy and proceeds as follows:
 \begin{itemize}
   
-\item[{\tiny $\blacksquare$}] Call the exact diagonalization {\bf impurity solver}
+\item[{\tiny {\bf EDIpack}}] Call the exact diagonalization {\bf impurity solver}
   whose only input is the set of parameters $\vec{x}$ contained in a
   rank-1 array. All  \NAME options are controlled through input file
   specifications.
   
-\item[{\tiny $\blacksquare$}] Retrieve the self-energy functions $\Sigma_{\a\b\s\s'}(i\omega)$ on the
+\item[{\tiny {\bf EDIpack}}] Retrieve the self-energy functions $\Sigma_{\a\b\s\s'}(i\omega)$ on the
   Matsubara axis using dedicated function provided by \NAME API.
   
-\item[{\tiny $\blacktriangleright$}] Evaluate the local interacting Green's function
+\item[{\tiny {\it User}}] Evaluate the local interacting Green's function
   $G_\mathrm{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e$ with
   $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$.
   
-\item[{\tiny $\blacktriangleright$}] Update the Weiss field via the {\bf self-consistency}
+\item[{\tiny {\it User}}] Update the Weiss field via the {\bf self-consistency}
   relation: $\GG^{-1}_0(i\omega) = G_\mathrm{loc}(i\omega) +
     \Sigma(i\omega)$. For the Bethe lattice, this simplifies to
     $\Delta = \tfrac{D}{4}G_\mathrm{loc}$.
     
-  \item[{\tiny $\blacktriangleright$}] Optimize the bath parameters $\vec{x}$ against the updated
+  \item[{\tiny ${\it User} $>$ {\bf EDIpack}}] Optimize the bath parameters $\vec{x}$ against the updated
     Weiss field,  potentially using the conjugate gradient procedures 
 supplied by \NAME. Then, restart at step 1.
 \end{itemize}
 
-The first two steps, marked by the ${\tiny \blacksquare}$ symbol, 
-are handled directly by \NAME routines. In the subsequent steps, 
-indicated by the ${\tiny \blacktriangleright}$ symbol, control returns 
-to the user, who must implement the algebraic updates required to 
+The first two steps are handled directly by \NAME routines, while during the subsequent steps the 
+ control returns to the user, who must implement the algebraic updates required to 
 close the self-consistency loop and optimize the bath.
 Given the 
 critical importance of this optimization, \NAME provides access to 
@@ -272,7 +270,7 @@ enddo
 
 
 
-\paragraph{Results}
+\paragraph{Results.}
 In the following, we present results for the interaction-driven Mott 
 transition in the Bethe lattice, which captures the gradual 
 transformation of a partially-filled metallic state into a correlated 
@@ -539,7 +537,8 @@ def generate_kgrid(Nk):
     gridout = np.stack([n1.ravel(), n2.ravel()], axis=-1)
     return np.dot(gridout,[b1,b2])
 def h_square2d(k,t):
-  return -2*t*(np.cos(k[...,0,np.newaxis,np.newaxis])+np.cos(k[...,1,np.newaxis,np.newaxis]))*np.eye(ed.Norb)
+  return -2*t*( np.cos(k[...,0,np.newaxis,np.newaxis])+
+                np.cos(k[...,1,np.newaxis,np.newaxis]))*np.eye(ed.Norb)
     
 #Read input
 ed.read_input("inputAHM.conf")
@@ -636,7 +635,7 @@ ed.finalize_solver()
         }
 \end{figure}
 
-\paragraph{Results}
+\paragraph{Results.}
 Here we showcase some results for the DMFT solution of the 
 attractive Hubbard model across the BCS to BEC crossover regime, 
 illustrating the capability of \NAME to handle $s$-wave 
@@ -1081,12 +1080,10 @@ larger high-energy weight.
 Finally, in the MI the two orbital spectral function describes the two 
 characteristic Hubbard bands separated by a large Mott gap.  
 
-\subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq layer)}
+\subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq layer, iRDM)}
 
 To complete the overview of \NAME capabilities, we consider another
-model for interacting quantum spin-Hall insulators, defined on the honeycomb lattice, with two inequivalent sites in the unit-cell.
-
-Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit-cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
+model for interacting quantum spin-Hall insulators, defined on the honeycomb lattice, with two inequivalent sites in the unit-cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit-cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
 \begin{align*}
     \mathbf{H}_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} \mathbf{H}({k}) \psi_{{k}},
 \end{align*}
@@ -1101,8 +1098,8 @@ with $\psi_{{k}} = [c_{{k},\mathrm{A},\up},\,c_{{k},\mathrm{B},\up},\,c_{{k},\ma
 where ${u} = (3/2, \sqrt{3}/2)$, and ${v} = (3/2, -\sqrt{3}/2)$
 are suitable basis vectors for the honeycomb lattice, $t$ is the
 nearest-neighbor hopping amplitude and $\lambda_\mathrm{so}$ is 
-the amplitude of a complex next-nearest-neighbor hopping amplitude,
-with a spin-dependent $\pm\tfrac{\pi}{2}$ chiral phase arising from spin-orbit coupling and well-known to stabilize a topological gap at the Fermi level \cite{Kane2005PRLa,Kane2005PRL}.
+the amplitude of a complex next-nearest-neighbor hopping,
+with a spin-dependent $\pm\tfrac{\pi}{2}$ chiral phase arising from spin-orbit coupling, which is well-known to open a topological gap at the Fermi level \cite{Kane2005PRLa,Kane2005PRL}.
 The spinorial $4\times4$ matrices $\Gamma_{a\ell} = \sigma_a\otimes\tau_\ell$, are 
 defined in terms of $\sigma_a$ and $\tau_\ell$ Pauli matrices, respectively 
 referred to spin and sublattice degrees of freedom, with the convention that 
@@ -1125,11 +1122,10 @@ particle-hole symmetric form so that the model is at half-filling for zero
 chemical potential.
 
 The essential features of the groundstate phase diagram have been established by intensive multi-method analyses \cite{Rachel2018ROPIP}.
-For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relatively high Hubbard repulsion, and magnetizes to an isotropic Néel state above above a critical $U/t$ ratio
-\footnote{In contrast with the expectations for a generic half-filled bipartite lattice, for which the groundstate is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
+For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relatively high Hubbard repulsion, and magnetizes to an isotropic Néel state above above a critical $U/t$ ratio\footnote{In contrast with the expectations for a generic half-filled bipartite lattice, for which the groundstate is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
 at the Fermi level renders ineffective the logarithmic instability, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
 With a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering 
-eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization.
+eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
 \cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRBa,Rachel2010PRB} and
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
 simulations \cite{Hohenadler2013ROPIP}.
@@ -1168,10 +1164,9 @@ The corresponding Hamiltonian forms are:
         \label{eq:afmx_dmft_ansatz}
 \end{align}
 comparing with \ref{eq:replica_bath_sym}, it is clear 
-that this amount to having $N_\mathrm{sym}=2$, with
-$\lambda_{1,p} \equiv \epsilon_p$ describing average
-bath levels and $\lambda_{2,p} \equiv m_p$ allowing 
-a magnetic split, respectively in the $S_z$ and $S_x$ spin bases.
+that this amounts to having $N_\mathrm{sym}=2$, with
+$\lambda_{1,p} \equiv \epsilon_p$ as the degenerate
+bath levels that are Zeeman split by $\lambda_{2,p} \equiv m_p$, respectively in the $S_z$ and $S_x$ bases.
 
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program dmft_kane_mele_hubbard
@@ -1336,27 +1331,140 @@ and AFM$_\parallel$ calculations and compare them to establish which
 is favored as the groundstate of the system. In \figu{fig:KMenergy}(a)
 we show results for the energy difference $E_\parallel-E_\perp$ across
 a wide range of $U/t$ and $\lambda_\mathrm{so}$ values. To assess the
-degree of accuracy of our total energy calculation, we benchmark against
+degree of accuracy of our total energy calculation, we report in
+\figu{fig:KMenergy}(b) a $\lambda_\mathrm{so}=0$ benchmark against
 Hartree-Fock (simple static mean-field, but inherently variational), 
 DMFT with NRG solver and lattice AFQMC data, as taken from 
-Ref.\,\cite{Racz2020}. The total energy comparison is reported in 
-\figu{fig:KMenergy}(b), for $\lambda_\mathrm{so}=0$.
+Ref.\,\cite{Racz2020}. 
 
 \begin{figure}
 \hspace{1cm} (a) \hspace{7.25cm} (b)\\
     \includegraphics[width=0.47\linewidth,trim={0 0 0 5mm},clip]{figures/KMH_energy.pdf}\hfill
     \includegraphics[width=0.45\linewidth]{figures/benchEnergy_honey.pdf}\\
-    \caption{In panel (a) the total energy difference between the in-plane 
-    and off-plane AFM solutions found in DMFT-ED at $T=0$. Negative values
+    \caption{In panel (a) we report the total energy difference between 
+    the in-plane and the
+    off-plane AFM solutions found with \NAME at $T=0$. Negative values
     signal a groundstate with in-plane magnetization. The plateau at zero
     energy difference marks the topological phase of the model (a 
     paramagnetic quantum spin-Hall insulator), at all points except on the $\lambda_\mathrm{so}=0$ line, where the groundstate is an interacting
-    Dirac liquid, at weak coupling, or an isotropic antiferromagnet at strong coupling. In panel (b) we compare the total energies across the 
-    $\lambda_\mathrm{so}=0$ line to published data for Hartree-Fock,
+    Dirac liquid, at weak coupling, or an isotropic antiferromagnet at strong coupling. In panel (b) we compare the total energies, across the 
+    $\lambda_\mathrm{so}=0$ line, to published data for Hartree-Fock,
     DMFT-NRG and AFQMC solutions \cite{Racz2020}.}
     \label{fig:KMenergy}
 \end{figure}
 
+\begin{figure}
+    \centering
+    (a) \hspace{12cm} (b) \\
+    \includegraphics[width=0.8\linewidth]{figures/flakes_edipack.pdf}\\[3mm]
+    (c) \hspace{12cm} (d) \\
+    \hspace{1.2cm}
+    \includegraphics[width=0.33\linewidth]{figures/3NflakeU4.5_x.pdf} \hspace{1.2cm}
+    \includegraphics[width=0.33\linewidth]{figures/3NflakeU6_x.pdf} \vspace{3mm}
+    \caption{Kane-Mele-Hubbard model at the nanoscale.
+    In (a) the local in-plane
+    magnetization $n_{i,\rightarrow}-n_{i,\leftarrow}$. In
+    (b) the local correlation as measured by the mutual 
+    information between local in-plane spin eigenstates
+    $I(\rightarrow:\leftarrow)$ \cite{BellomiaPhD}. Both the
+    (a)-(b) panels mark the edge and "bulk" sites in lighter 
+    and darker colors, respectively.
+    In (c) and (d) a visual representation of the given 
+    nano-system at different values of $U/t$, as marked 
+    respectively by the orange and red vertical lines 
+    in panels (a) and (b). The area of the 
+    circles is proportional to $I(\rightarrow:\leftarrow)$, 
+    the length of the arrows to the local magnetization.
+    All data are taken at $\lambda_\mathrm{so}=0.3t$ and $T=0$.}
+    \label{fig:KMflake}
+\end{figure}
+
+
+\subsubsection{Kane-Mele Nanoflakes}
+The capabilities of the EDIpack2ineq layer go well beyond the
+simple case of a two-site unit-cell. We can readily adapt the
+code to deal with nanoscopic systems such as hexagonal flakes
+\cite{Valli2016PRB,Valli2018NL}, by building a
+$N_\mathrm{ineq}\times N_\mathrm{ineq}$ local Hamiltonian 
+$H_\mathrm{loc}$ with open boundary conditions, and implementing
+the self-consistent equations with a trivial single momentum 
+$k=0$. With respect to the infinite lattice, it is expected that
+the system develops an inhomogeneous magnetization, so the number
+of impurity models to solve cannot be halved by imposing the usual
+Néel symmetry. Some lowered point symmetry can be found, but a 
+safer approach of solving all the $N_\mathrm{ineq}$ impurity models
+leads to good results, with fair control of spatial numerical noise.
+
+In \figu{fig:KMflake} we report results for a nanosystem of 
+$N_\mathrm{ineq}=54$ sites, solved with the bath parametrization 
+described in \equ{eq:afmx_dmft_ansatz}, for the in-plane 
+antiferromagnetic state.
+Panel (a) shows the interaction dependence of the local magnetization,
+computed from the impurity groundstate as  
+$ \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket$,
+so that we can define the $S_x$ spin-occupation numbers as
+\begin{equation*}
+    n_{i,\rightarrow} \equiv \frac{n_{i,\up} + n_{i,\dw} +
+    \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket}{2},
+    \qquad
+    n_{i,\leftarrow} \equiv \frac{n_{i,\up} + n_{i,\dw} -
+    \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket}{2},
+\end{equation*}
+which trivially satisfy the conservation of the local average charge $n_{i,\rightarrow} + n_{i,\leftarrow} = n_{i,\up} + n_{i,\dw}$.
+Having a direct expression for $n_{i,\rightarrow}$ and $n_{i,\leftarrow}$
+we can verify that the impurity reduced density matrix, computed by 
+tracing the bath states in the \texttt{ed\_mode=nonsu2} representation 
+(see \ref{sSecRDM}), once diagonalized, takes the familiar form
+\cite{XiDai2013,WalshLetter2019,BellomiaPhD,BellomiaKMH,Bellomia_intracorr} 
+\begin{equation}
+    \rho^\mathrm{imp} = 
+     \begin{pmatrix}
+            \left\ibra\left(1-n_{i,\rightarrow}\right)\left(1-n_{i,\leftarrow}\right)\right\iket   &    0          &       0       &   0 \\
+                    0       &    \left\ibra n_{i,\rightarrow}\left(1-n_{i,\leftarrow}\right)\right\iket  &       0       &   0 \\
+                   0       &       0   &    \left\ibra\left(1-n_{i,\rightarrow}\right)n_{i,\leftarrow}\right\iket      &   0 \\
+                    0       &       0   &       0          &    \left\ibra n_{i,\rightarrow} n_{i,\leftarrow}\right\iket
+        \end{pmatrix} 
+\end{equation}
+in the basis of the \emph{natural} spin-orbitals, whose occupation numbers
+are given by $n_{i,\rightarrow}$ and $n_{i,\leftarrow}$.
+
+As extensively discussed in \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr},
+by defining the spin traces of $\rho^\mathrm{imp}$, as
+\begin{equation}
+    \rho^\mathrm{imp}_\sigma = 
+    \Tr_{\bar{\sigma}} \left[\rho^\mathrm{imp}\right] =
+    \begin{pmatrix}
+        \ibra n_{i,\sigma} \iket & 0 \\
+        0 & \ibra n_{i,\bar{\sigma}} \iket
+    \end{pmatrix}
+\end{equation}
+we can directly measure local correlations by defining the mutual information
+between the impurity spin-orbitals
+$I(\rightarrow:\leftarrow) = 
+    S(\rho^\mathrm{imp}_{\rightarrow}) + 
+    S(\rho^\mathrm{imp}_{\leftarrow}) -
+    S(\rho^\mathrm{imp})$,
+where $S(\cdot)$ denotes the von Neumann entropy of its argument.
+
+In panel (b) of \figu{fig:KMflake} we report the spatially resolved
+interaction dependency of $I(\rightarrow:\leftarrow)$, as a direct 
+observation of the enhanced local correlations at the boundary of the
+finite system. While it is usually assumed that edge sites must be
+more correlated than internal ("bulk") sites, based on the reduced
+lattice coordination, the inter-spin mutual information beautifully
+highlights in a quantitative fashion the phenomenon: the edge correlations,
+marked in lighter green, are decidedly higher as long as the system 
+remains in a weakly magnetized regime. When the local magnetization
+exceeds half of its saturation value, all local correlations start to decrease,
+as spin fluctuations are damped by ordering. Significantly, the edge 
+correlations get lower than the bulk correlations as the maximum is 
+crossed, consistently with the observation that their magnetization
+is always higher and so their fluctuations are frozen faster.
+Finally, we observe that the nanosystem of \figu{fig:KMflake} has 
+finite local magnetization for arbitrary low interaction strengths,
+in striking contrast with the infinite lattice. This is a well-known
+effect of quantum confinement, as proposed in early works on graphene
+flakes \cite{Valli2016PRB,Valli2018NL}.
 
 
 \end{document}

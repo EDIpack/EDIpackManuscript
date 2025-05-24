@@ -33,7 +33,7 @@ additional APIs.
   to the core Fortran API, exposing key procedures for initialization, 
   execution, and finalization, while abstracting the underlying data 
   structures. A detailed overview of this part of the library is 
-  provided in Sec.\ref{SecEDIpack}.
+  provided in \secu{SecEDIpack}.
   
 \item{\bf EDIpack2ineq.}
   This extension, developed using modern Fortran constructs,
@@ -82,7 +82,7 @@ which speed up calculations for large dimensional systems.
 \subsubsection{Compilation from source}
 The software can be installed from source as follows. The source code can
 be retrieved directly from its GitHub repository, for instance using:
-\begin{lstlisting}[style=mybash]
+\begin{lstlisting}[style=mybash,numbers=none]
 git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
 Then, assuming to be in the software directory, a conventional
@@ -91,7 +91,7 @@ out-of-source building can be performed using two alternative compilation backen
 \begin{itemize}
   \item {\bf GNU Make}\\
 This is the default CMake workflow:
-\begin{lstlisting}[style=mybash]
+\begin{lstlisting}[style=mybash,numbers=none]
 mkdir build
 cd build
 cmake ..
@@ -105,7 +105,7 @@ make install
 An alternative workflow employs the Ninja building backend with
 Fortran support. Ninja is generally faster and automatically supports
 multi-threaded building:
-\begin{lstlisting}[style=mybash]
+\begin{lstlisting}[style=mybash,numbers=none]
 mkdir build
 cd build
 cmake -GNinja ..
@@ -140,7 +140,7 @@ installation through Anaconda packages into a virtual
 environment containing Python ($>3.10$).
 
 The Conda package installation procedure reads:
-\begin{lstlisting}[style=mybash]
+\begin{lstlisting}[style=mybash,numbers=none]
 conda create -n edipack
 conda activate edipack
 conda install -c conda-forge -c edipack edipack

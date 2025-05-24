@@ -74,11 +74,13 @@
   morecomment=[l]{!\ },% Otherwise it's a comment only with space after !
   fontadjust=true,
   mathescape,
-  % breakatwhitespace=false,
+  %breakatwhitespace=false,
   keepspaces=true,
   showstringspaces=false,
   columns=fullflexible,
   frame=single,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -102,9 +104,50 @@
   showstringspaces=false,
   columns=fullflexible,
   frame=single,
-  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
+
+%%
+%% Julia definition (c) 2014 Jubobs
+%%
+\lstdefinelanguage{Julia}%
+  {morekeywords={abstract,break,case,catch,const,continue,do,else,elseif,%
+      end,export,false,for,function,immutable,import,importall,if,in,%
+      macro,module,otherwise,quote,return,switch,true,try,type,typealias,%
+      using,while},%
+   sensitive=true,%
+   alsoother={$},%
+   morecomment=[l]\#,%
+   morecomment=[n]{\#=}{=\#},%
+   morestring=[s]{"}{"},%
+   morestring=[m]{'}{'},%
+}[keywords,comments,strings]%
+
+\lstdefinestyle{myjulia}{
+  frame=lines,
+  language=julia,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\footnotesize,
+  morecomment=[l]{\#\ },% Otherwise it's a comment only with space after #
+  mathescape,
+  fontadjust=true,
+  mathescape,
+  % breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  frame=single,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
 
 \lstdefinestyle{mybash}{
   frame=lines,
@@ -112,18 +155,16 @@
   % basicstyle=\footnotesize,
   basicstyle=\ttfamily,
   stringstyle=\color{mymauve},%\ttfamily,
-  % commentstyle=\itshape,
   commentstyle=\color{comment-color},
-  morecomment=[l]{\#\ }% Comment only with space after #
   % keywordstyle=\bfseries,
   keywordstyle=\color{keyword-color},
   % It would be nice to have 'conda' here,
   % but then 'conda-forge' gets highlighted too.
-  morekeywords={*,git,mkdir,cmake,make,pip},
+  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
   captionpos=b,
   mathescape,
   fontadjust=true,
-  % breakatwhitespace=false,
+  breakatwhitespace=false,
   keepspaces=true,
   showstringspaces=false,
   columns=flexible,
@@ -135,14 +176,25 @@
 
 \lstdefinestyle{cstyle}{
   frame=lines,
-  language=c,
-  basicstyle=\footnotesize,
-  stringstyle=\ttfamily,
-  commentstyle=\itshape,
-  fontadjust=true,
-  keywordstyle=\color{red},
-  % morekeywords={*,...},
+  language=C,
+  % basicstyle=\footnotesize,
+  basicstyle=\ttfamily,
+  stringstyle=\color{mymauve},%\ttfamily,
+  commentstyle=\color{comment-color},
+  % keywordstyle=\bfseries,
+  keywordstyle=\color{keyword-color},
+  % It would be nice to have 'conda' here,
+  % but then 'conda-forge' gets highlighted too.
+  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
+  captionpos=b,
   mathescape,
+  fontadjust=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=flexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -314,18 +366,18 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 % Separate subsequent authors by a comma, omit comma and use "and" for the last author.
 % Mark the corresponding author(s) with a superscript symbol in this order
 % \star, \dagger, \ddagger, \circ, \S, \P, \parallel, ...
-    Lorenzo Crippa\textsuperscript{1,2,3$\star$},
-    Igor Krivenko\textsuperscript{1$\star$},
-    Samuele Giuli\textsuperscript{4$\star$},
-    Gabriele Bellomia\textsuperscript{4$\star$},
+    Lorenzo Crippa\textsuperscript{1,2,3},
+    Igor Krivenko\textsuperscript{1},
+    Samuele Giuli\textsuperscript{4},
+    Gabriele Bellomia\textsuperscript{4},
     Alexander Kowalski\textsuperscript{3},
     Francesco Petocchi\textsuperscript{5},
     Markus Wallerberger\textsuperscript{6},
     Giacomo Mazza\textsuperscript{7},
     Luca de Medici\textsuperscript{8},
     Giorgio Sangiovanni\textsuperscript{2,3},
-    Massimo Capone\textsuperscript{4,9$\star$} and 
-    Adriano Amaricci\textsuperscript{9$\star$}    
+    Massimo Capone\textsuperscript{4,9} and 
+    Adriano Amaricci\textsuperscript{9}    
 %%%%%%%%%% END TODO: AUTHORS
 }\end{center}
 
@@ -363,7 +415,8 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 %%%%%%%%%% TODO: EMAIL
 % Provide email address of corresponding author(s)
 \vspace{\baselineskip}
-$\star$ \href{mailto:email1}{\small email1}\,,\quad
+% $\star$ \href{mailto:email1}{\small email1}\,,\quad
+\href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
 %%%%%%%%%% END TODO: EMAIL
 \end{center}
 
@@ -418,53 +471,49 @@ The abstract is in boldface, and should fit in 8 lines. It should be written in 
 
 
 
-% ##################################################################
-% ##################################################################
-% ##################################################################
+% ###################################################
+% ###################################################
+% ###################################################
 %
-%                              PAPER HERE BELOW
+%                 PAPER HERE BELOW
 %                              
-% ##################################################################
-% ##################################################################
-% ##################################################################
+% ###################################################
+% ###################################################
+% ###################################################
 
 
 
 \subfile{01_intro.tex}
 
-% ##################################################################
+% ###################################################
 
 
 \subfile{02_install.tex}
 
-% ##################################################################
+% ###################################################
 
 \subfile{03_edipack2.tex}
 
-% ##################################################################
+% ###################################################
 
 \subfile{04_cbinding.tex}
 
-% ##################################################################
+% ###################################################
 
 \subfile{05_examples.tex}
 
-% ##################################################################
+% ###################################################
 
 
 \subfile{06_conclusions_acknowledgement_appendix.tex}
 
-% ##################################################################
-% ##################################################################
-% ##################################################################
-
-
+% ###################################################
+% ###################################################
+% ###################################################
 
 
 %% References with bibTeX database:
 \bibliography{references}
-
-
 
 
 
