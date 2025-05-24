@@ -344,7 +344,7 @@ $\MM:\SS_{\vec{Q}}\rightarrow \FF$ which relates the states $\ket{i}$
 within a given symmetry sector $\SS_{\vec{Q}}$ to the states $\ket{I}$ in the
 full Fock space.
 This map is typically implemented as a rank-1
-integer array whose size corresponds to the dimension of the sector $D_{\SS_\vec{Q}}$$. 
+integer array whose size corresponds to the dimension of the sector $D_{SS_{\vec{Q}}}$. 
 
 
 The {\bf normal} case deserves a special note. Since $N_\up$ and
@@ -369,7 +369,7 @@ detailed discussion on the structure of the Fock basis in this case, see Ref.~\c
 
 The presence of a symmetry reduces the Hamiltonian matrix to
 a block diagonal form, where each block, labeled by $\vec{Q}$, has dimension
-$D_{\SS_\vec{Q}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
+$D_{\SS_{\vec{Q}}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix.
 In the {\bf normal} case this block structure is particularly
 symmetric due to the factorized nature of the sectors as discussed
@@ -555,7 +555,9 @@ where {\tt NORB} is the numer of orbitals $N_\a$ and each line
 defines a single two-body term of the form 
 $U_{ijkl}c^{\dagger}_{i}c^{\dagger}_{j}c_{l}c_{k}$. Note that the
 coefficient indices are swapped compared to the standard two-body
-operator formulation \cite{??}.  
+operator formulation $$
+\frac{1}{2}\sum_{i,j,k,l} c^{\dagger}_i c^{\dagger}_j U_{ijkl} c_l c_k
+$$ 
 Empty lines and lines starting with {\tt \#, \%, !} are ignored.
 
 While {\tt ED\_READ\_UMATRIX} and {\tt ED\_USE\_KANAMORI}
@@ -833,7 +835,7 @@ end type sparse_estate
 !Ordered  list storing the lower part of the Hamiltonian spectrum: 
 type sparse_espace
    integer                     :: size               !Current list
-   real(8)                     :: emax               !Max energy  fixed by ${\color{}e^{-\beta {\tt emax}}<{\tt cutoff}}$
+   real(8)                     :: emax               !Max energy  fixed by ${e^{-\beta {\tt emax}}<{\tt cutoff}}$
    real(8)                     :: emin               !Min energy:the groundstate energy
    logical                     :: status=.false.     !Allocation status
    type(sparse_estate),pointer :: root=>null()       !Root of the linked list
@@ -1424,7 +1426,7 @@ and $\Delta_\a = c_{\a\dw}c_{\a\up}$,
 where $\tau^{a=0,x,y,z}$ are the Pauli matrices.
 Off-diagonal terms are  evaluated using the operators
 $(S^z_\a + S^z_\b)$, $(N_\a + N_\b)$ or $(\Delta_\a + \Delta_\b)$. 
-The Excitonic susceptibilities, $\chi^\vec{T}_{\a\b}$, are defined with 
+The Excitonic susceptibilities, $\chi^{\vec{T}}_{\a\b}$, are defined with 
 respect to the vector operator: $T^i_{\a\b} = \sum_{\s\s'}
 c^+_{\a\s}\tau^i_{\s\s'}c_{\b\s'}$, where $i=0$ represents the
 spin-singlet exciton, and $i=x,y,z$  correspond to the spin-triplet exciton.
