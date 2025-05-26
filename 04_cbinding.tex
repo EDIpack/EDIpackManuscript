@@ -14,7 +14,7 @@ years supports the standardized generation of procedures and
 variables that are interoperable with C.
 
 
-\subsection{C-bindings}\label{sSecInteropCbindings}
+\subsection{C bindings}\label{sSecInteropCbindings}
 The interoperability with C language is provided by the
 {\tt ISO\_C\_BINDING} module, which is part of the Fortran
 standard since 2003. The module contains definitions of named
@@ -163,8 +163,8 @@ libraries.
 %taken care from Conda itself. 
 Using Conda or Mamba the installation proceeds as following:
 \begin{lstlisting}[style=mybash]
-conda create -n edipack  #create a virtual environment
-conda activate edipack   #activate it
+conda create -n myenv  #create a virtual environment called "myenv"
+conda activate myenv   #activate it
 conda install -c conda-forge -c edipack edipack #install edipack
 \end{lstlisting}
 
@@ -173,12 +173,12 @@ When the {\tt EDIpack2py}    module is imported, it attempts to load the dynamic
   libedipack\-\_cbindings.so (.dylib)} containing the Fortran-C bindings
 for \NAME. By default the library search proceeds as follow: 
 \begin{enumerate}
-\item First the user can override the location of the library
-  (determined during \NAME build configuration) by exporting an
+\item The user can override the location of the library
+  (determined during the \NAME build configuration) by exporting an
   environment variable called {\tt EDIPACK\_PATH} .
 \item By default, the Python module detects the position of the
-  Fortran libraries via {\tt pkg-config}. Any of the OS loading method
-  outlined in \secu{sSecInstallOSloading} automatically push the
+  Fortran libraries via {\tt pkg-config}. Any of the loading method
+  outlined in \secu{sSecInstallOSloading} automatically pushes the
   correct configuration to the {\tt PKG\_CONFIG\_PATH}. 
 \item As a last resort the environment variables {\tt
     LD\_LIBRARY\_PATH} and {\tt DYLD\_LIBRARY\_PATH} are analyzed to
@@ -202,7 +202,7 @@ The {\tt global\_env} class needs to be imported at the beginning
 of the python script, along with other useful modules. Numpy is
 necessary, while mpi4py is strongly recommended.
 
-\begin{lstlisting}[language=python,  frame=lines]
+\begin{lstlisting}[style=mypython]
 import numpy as np
 import mpi4py
 from mpi4py import MPI
@@ -233,7 +233,7 @@ default input variables, through a call to procedure {\tt
   ed\_read\_input} function in \NAME. 
 A given example is reported in the following code extract:
 
-\begin{lstlisting}[style=mypython,frame=lines]
+\begin{lstlisting}[style=mypython]
 import numpy as np
 from edipack2py import global_env as ed
 ed.Nspin = 1            # set a global variable
@@ -253,7 +253,7 @@ execution and finalization  of the \NAME solver.
     initializing it from flat band model. Once this function is
     called, it is not possible to allocate a second instance of the solver.
     {\tt set\_Hloc} sets the
-    non-interacting part of the impurity Hamiltonian $\h^0_{\a\b\s\s'}$. 
+    non-interacting part of the impurity Hamiltonian $h^0_{\a\b\s\s'}$. 
     Either function take different argument combinations there
     including support for inequivalent impurities.
 
@@ -317,9 +317,8 @@ normal or anomlous type and on a specific axis or frequency domain.
 \paragraph{{\bf Auxiliary functions}.}
 This group include some auxiliary functions, either interfacing \NAME
 procedures or defined locally in Python to provide specific new
-functionalities. Among the latter we include {\tt get\_ed\_mode} which
-return the value of the variable {\tt ed\_mode=normal,superc,nosu2}
-and {\tt get\_bath\_type} which similarly returns the value of {\tt bath\_type}.
+functionalities. Among the latter we include {\tt get\_ed\_mode} which return an integer index depending onthe value of the variable {\tt ed\_mode=normal,superc,nosu2}
+and {\tt get\_bath\_type} which works similarly for {\tt bath\_type}.
 
 
 
@@ -374,7 +373,7 @@ conda install -c conda-forge -c edipack edipack2triqs
 
 \subsubsection{Implementation}\label{sSecInteropTRIQSImplementation}
 The programming interface of EDIpack2triqs is built around the  
-Python class {\tt EDIpackSolver}, defined in the module
+singleton Python class {\tt EDIpackSolver}, defined in the module
 {\tt edipack2triqs.solver}, whose instance represents the internal state of 
 the \NAME library and exposes its functionality through a number of 
 attributes and methods.
@@ -481,21 +480,22 @@ components of the quantities in question.
 
 
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
-\NAME is supported as alternative impurity solver in the W2Dynamics DMFT package~\cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation, which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameter.
+\NAME is supported as alternative impurity solver in the W2Dynamics DMFT package~\cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation, which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameters.
 
-In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to {\tt EDIpack}. 
+The  behavior of W2Dynamics is controlled by means of an input file, by default called
+{\tt Parameters.in}.
+First, in order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to {\tt EDIpack}. 
 
-The  behavior of the W2Dynamics solver is controlled by means of an input file, by default called
-{\tt Parameters.in}. In order to configure the ED solver, the content of a specific section in the parameters file, called {\tt [EDIPACK]}, has to be modified.
+Then, in order to configure the ED solver, the content of a specific section in the parameters file, called {\tt [EDIPACK]}, has to be specified.
 
-For most of the \NAME input variables, W2Dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt EDIPACK} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath elements {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
+For most of the \NAME input variables, W2Dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt [EDIPACK]} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath elements {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
 
-A second set of input variables, including phyisical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. See~\cite{Wallerberger2019CPC}
+A second set of input variables, including phyisical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also~\cite{Wallerberger2019CPC}
 for further details.
 
 %All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
 
-Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format, and that W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and which are currently under development can not yet be used through the interface. For instance the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}, or in presence of local phonons will only be available in the next future through an updated of W2Dynamics package.
+Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and which are currently under development can not yet be used through the interface. For instance, the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}, or in presence of phonon modes will only be available in the near future through an update of the W2Dynamics package.
 
 
 
@@ -520,7 +520,7 @@ The library is searched upon loading the module, with the following order of pri
 
 In partial analogy to the Python API, the global variables, but not the functions, are contained in a  {\tt struct} called {\tt global\_env}.
 
-Similarly to the C++ case, global variables and functions are loaded as raw pointers. As a consequence, it is important that the dimensions of the array-like variables (such as {\tt ULOC}) and, in general, the amount of memory occupied by each variable are correcty accounted for. This is achieved within the Julia module by appropriately casting the variables to compatible types, such as {\tt  Cint, Cbool, Cdouble}.
+Similarly to the C++ case, global variables and functions are accessed as raw pointers. As a consequence, it is important that the dimensions of the array-like variables (such as {\tt ULOC}) and, in general, the amount of memory occupied by each variable are correctly accounted for. This is achieved within the Julia module by appropriately casting the variables to compatible types, such as {\tt  Cint, Cbool, Cdouble}.
 Functions are called from the dynamic library, making use of the {\tt  ccall} procedure. As previously stated, as a consequence of the C linking conventions multiple alternative version of the interfaced Fortran procedures are present, to account for the different input variable combinations; the EDIpack2jl wrapper functions take care of selecting the appropriate Fortran procedure depending on the set of input parameters provided by the user.
 
 \subsubsection{Installation and usage}
