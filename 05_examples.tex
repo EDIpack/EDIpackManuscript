@@ -8,7 +8,7 @@ discussion of relevant code snippets.
 
 
 \subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
-The test bed for any DMFT application is conventionally considered 
+The test bed for any DMFT implementation is conventionally considered 
 the description of the Mott or metal-to-insulator transition (MIT) 
 in a Bethe lattice, i.e., a Cayley tree with coordination number 
 $z\to\infty$~\cite{Georges1996}.
@@ -111,7 +111,7 @@ ed_set_Hloc_single_N4(Hloc.data(), d);
 }
 \savestack{\listingB}{\box0}
 
-\begin{tabular}{c|c}\label{list2}
+\begin{tabular}{c|c}\label{list3}
 {\bf Fortran} & {\bf C++}\\
   \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
 \end{tabular}
@@ -156,7 +156,7 @@ init_solver_site(Bath.data(), bath_dim);
 }
 \savestack{\listingB}{\box0}
 
-\begin{tabular}{c|c}\label{list2}
+\begin{tabular}{c|c}\label{list4}
   \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
 \end{tabular}
 
@@ -263,7 +263,7 @@ enddo
 }
 \savestack{\listingB}{\box0}
 
-\begin{tabular}{c|c}\label{list2}
+\begin{tabular}{c|c}\label{list5}
   \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
 \end{tabular}
 
@@ -1085,11 +1085,11 @@ characteristic Hubbard bands separated by a large Mott gap.
 To complete the overview of \NAME capabilities, we consider another
 model for interacting quantum spin-Hall insulators, defined on the honeycomb lattice, with two inequivalent sites in the unit-cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit-cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
 \begin{align*}
-    \mathbf{H}_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} \mathbf{H}({k}) \psi_{{k}},
+    H_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} H({k}) \psi_{{k}},
 \end{align*}
 with $\psi_{{k}} = [c_{{k},\mathrm{A},\up},\,c_{{k},\mathrm{B},\up},\,c_{{k},\mathrm{A},\dw},\,c_{{k},\mathrm{B},\dw}]$ and
     \begin{align}
-    \mathbf{H}({k}) 
+    H({k}) 
     &= x_{{k}}\Gamma_{01} + y_{{k}}\Gamma_{02} + \delta_{{k}}\Gamma_{33}, \label{eq:Hk_kanemele}\\[1mm]
    x_{{k}}&=t\bigl[\cos({k}\cdot{u})+\cos({k}\cdot{v})+1\bigr],\nonumber\\
    y_{{k}}&=t\bigl[\sin({k}\cdot{u})+\sin({k}\cdot{v})\bigr],\nonumber \\
@@ -1109,7 +1109,7 @@ To investigate the effects of electron-electron repulsion on the
 Kane-Mele model we include a local interaction, 
 leading to the Kane-Mele-Hubbard Hamiltonian \cite{Hohenadler2013ROPIP,Rachel2018ROPIP}
 \begin{equation}
-    \mathbf{H}_\mathrm{KMH} = \mathbf{H}_\mathrm{KM} 
+    H_\mathrm{KMH} = H_\mathrm{KM} 
     + U\sum_{i}\Biggl[
                         \left(n_{i,\up} - \frac{1}{2}\right)
                         \left(n_{i,\dw} - \frac{1}{2}\right)
@@ -1156,10 +1156,10 @@ plane also in DMFT is to allow either an $S_z$ or an $S_x$ (equivalently $S_y$) 
 compare the energies of the respective solutions at $T=0$. 
 The corresponding Hamiltonian forms are:
 \begin{align}
-    \mathbf{H}^\mathrm{bath}_\perp &= 
+    H^\mathrm{bath}_\perp &= 
         \sum_{p=1}^{N_\mathrm{b}}(\epsilon_p \sigma_0 + m_p \sigma_z), 
         \label{eq:afmz_dmft_ansatz} \\[1mm]
-    \mathbf{H}^\mathrm{bath}_\parallel &= 
+    H^\mathrm{bath}_\parallel &= 
         \sum_{p=1}^{N_\mathrm{b}}(\epsilon_p \sigma_0 + m_p \sigma_x).
         \label{eq:afmx_dmft_ansatz}
 \end{align}
@@ -1467,4 +1467,7 @@ effect of quantum confinement, as proposed in early works on graphene
 flakes \cite{Valli2016PRB,Valli2018NL}.
 
 
+
+%% References with bibTeX database:
+\bibliography{references}
 \end{document}

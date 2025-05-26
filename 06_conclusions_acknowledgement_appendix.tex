@@ -69,7 +69,8 @@ This is optional. If desired, contributions should be succinctly described in a 
 % TODO: include funding information
 \paragraph{Funding information}
 L.C. acknowledge support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994). Ratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
-I.K. acknowledge support from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Grant agreement No.~854843-FASTCORR).
+I.K. acknowledges support from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Grant agreement No.~854843-FASTCORR).
+G.S. and A.K. acknowledge financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) through FOR 5249 (project-id 449872909, Project P05), and the W\"urzburg-Dresden Cluster of Excellence on Complexity and Topology in Quantum Matter-ct.qmat (EXC 2147, project-id 390858490).
 %S.G.
 %G.B
 %A.K.
@@ -92,7 +93,7 @@ It is written in C++ and offers wrappers for the basic
 types and operations thereof. The syntax replicates a cultural italian
 phenomenon known as ``supercazzola", a rambling nonsensical discourse
 which gives the false impression of carrying an actual meaning,
-introduced in the trilogy movies ``Amici Miei'', directed by Mario
+introduced in the movies trilogy ``Amici Miei'', directed by Mario
 Monicelli (see
 \href{https://it.wikipedia.org/wiki/Amici_miei}{it.wikipedia.org/wiki/Amici\_miei}). 
 
@@ -102,7 +103,7 @@ and can be installed using CMake. The software depends on C++
 compiler with {\tt stdlib}, LLVM and in some cases {\tt libz} library. The installation gives access to the {\tt
   Monicelli} compiler {\tt mcc}, which statically links LLVM. 
 We believe the discourse flow of this language is best captured by 
-illustrating its features via a paraphrase of the original supercazzola, an epic dialogue between a traffic policeman (V), count Mascetti (M) and G. Perozzi (P) (see
+illustrating its features and \NAME interface via a paraphrase of the original supercazzola, an epic dialogue between a traffic policeman (V), count Mascetti (M) and G. Perozzi (P) (see
 \href{https://it.wikipedia.org/wiki/Supercazzola#Origine}{it.wikipedia.org/wiki/Supercazzola}
 and \href{https://www.youtube.com/watch?v=SF8YUFdP6eU}{Movie Scene}). 
 
@@ -123,7 +124,7 @@ funzioni? Lo vede che interfacciano gli array, non supportati da
 Monicelli, e prematurano anche! 
 Ora io le direi, anche con il rispetto per l'autorità, anche solo le
 due parole come install {\tt Monicelli} from
-\href{github.com/esseks/monicelli.git}{https://github.com/esseks/monicelli.git}
+\url{https://github.com/esseks/monicelli.git}
 e compila il file {\tt hm\_bethe.mc}, per esempio.}\\
 V: {\it Basta così! Mi seguano nel programma di test!}\\
 P: {\it No, no, no, attenzione! Il loop dmft completo \`e supportato
@@ -141,6 +142,7 @@ The first part of the DMFT code load all the required functions from
 {\tt bagaglio.cpp}, in particular it loads the interface to the \NAME
 solver functions {\tt ed\_init\_solver} and {\tt ed\_solve}:
 
+\lstset{breaklines=true, breakindent=1em}
 \begin{lstlisting}[style=cstyle]
 bituma le funzioni ausiliarie che vengono dal bagaglio
 ...
@@ -205,7 +207,7 @@ stuzzica
  e brematura anche, se la fine minore di 1
 \end{lstlisting}
 
-\paragraph{Usage}.
+\paragraph{Usage.}
 The source code can be retrieved from
 \href{https://github.com/lcrippa/prematurata_la_dmft}{github.com/lcrippa/prematurata\_la\_dmft}. 
 The {\tt src} directory contains several files, including the source
@@ -227,4 +229,7 @@ re-converge the solution within few loops.
 
 
 
+
+%% References with bibTeX database:
+\bibliography{references}
 \end{document}

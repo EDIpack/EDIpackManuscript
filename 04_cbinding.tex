@@ -373,7 +373,7 @@ conda install -c conda-forge -c edipack edipack2triqs
 \end{lstlisting}
 
 \subsubsection{Implementation}\label{sSecInteropTRIQSImplementation}
-The programming interface of EDIpack2triqs is built around the singleton 
+The programming interface of EDIpack2triqs is built around the  
 Python class {\tt EDIpackSolver}, defined in the module
 {\tt edipack2triqs.solver}, whose instance represents the internal state of 
 the \NAME library and exposes its functionality through a number of 
@@ -554,4 +554,10 @@ The names and inputs of the Julia-wrapped functions are entirely analogous to th
 Particular care has to be taken with respect to parallelism: Julia offers an in-house platform for parallel computing with memory sharing through multi-threading. At present, there is no integration between this architecture and the MPI-based parallelism of \NAME{}, and their concurrent use in a single program is entirely untested and not encouraged. If the \NAME{} library is compiled with enabled parallelism, MPI support will need to be enabled in the user-created Julia program, by making use of modules such as {\tt  MPI.jl}. The {\tt MPI\_COMM\_WORLD} communicator will need to be correctly initialized by the user as well, and the program will need to be run with {\tt  mpiexec/mpirun}.
 
 We provide an example script for the simple case of the Bethe lattice in the normal phase in the {\tt  examples} folder of the EDIpack2jl repository. This script is intended to be run serially. Documentation of the API and further examples are being developed.
+
+
+
+
+%% References with bibTeX database:
+\bibliography{references}
 \end{document}

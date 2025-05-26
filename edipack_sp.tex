@@ -1,12 +1,15 @@
 \documentclass[dvipsnames]{SciPost}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\usepackage[bitstream-charter]{mathdesign}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsmath,amssymb,amsfonts,amsthm}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+%\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{ragged2e}
 \usepackage{makecell}
 \usepackage{array}
 \usepackage{stackengine}
@@ -16,7 +19,6 @@
 \usepackage{makecell}
 \usepackage{subfiles}
 \usepackage{comment}
-
 \usepackage{xspace}
 
 % Prevent all line breaks in inline equations.
@@ -32,7 +34,6 @@
     urlcolor={blue!80!black}
   }
 
-\usepackage[bitstream-charter]{mathdesign}
 \urlstyle{same}
 
 % Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
@@ -223,7 +224,6 @@
 % {\nocite{#1}\!\!\!\citenum{#1}} This was for CPC
 \newcommand{\fixme}[1]{{\color{BrickRed} #1}}
 \newcommand {\note}[1]{{\color{blue} [{\bf NOTE}: \bf #1]}}
-\newcommand {\aac}[1]{{\color{red} [{\bf AA}: \bf #1]}}
 \newcommand {\new}[1]{{\color{blue}\it #1}}
 
 \usepackage[inline]{showlabels}
@@ -325,7 +325,7 @@
 \def\ia{{\bf i}}
 \def\ja{{\bf j}}
 
-\usepackage{bbold}
+%\usepackage{bbold}
 \def\11{\mathbb{1}}
 \def\00{\mathbf{0}}
 \def\NAME{{\rm EDIpack}\xspace}
@@ -348,7 +348,6 @@
 
 \begin{document}
 
-
 \pagestyle{SPstyle}
 
 %TITLE
@@ -359,13 +358,12 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 }}}\end{center}
 
 
-\begin{center}\textbf{
-%%%%%%%%%% TODO: AUTHORS
-% Write the author list here. 
-% Use (full) first name (+ middle name initials) + surname format.
-% Separate subsequent authors by a comma, omit comma and use "and" for the last author.
+
+
+%%%%%%%%%% AUTHORS
 % Mark the corresponding author(s) with a superscript symbol in this order
 % \star, \dagger, \ddagger, \circ, \S, \P, \parallel, ...
+\begin{center}\textbf{
     Lorenzo Crippa\textsuperscript{1,2,3},
     Igor Krivenko\textsuperscript{1},
     Samuele Giuli\textsuperscript{4},
@@ -378,13 +376,15 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
     Giorgio Sangiovanni\textsuperscript{2,3},
     Massimo Capone\textsuperscript{4,9} and 
     Adriano Amaricci\textsuperscript{9}    
-%%%%%%%%%% END TODO: AUTHORS
 }\end{center}
+%%%%%%%%%% END TODO: AUTHORS
 
-\begin{center}
+
+
 %%%%%%%%%% TODO: AFFILIATIONS
 % Write all affiliations here.
 % Format: institute, city, country
+\begin{center}
   \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
   Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
   Trieste, Italy}
@@ -401,7 +401,6 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
   Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
 \newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
 \newcommand{\TUW}{Institure of Solid State Physics, TU Wien, 1040 Vienna, Austria}
-
 {\bf 1} \ITPHamburg\\
 {\bf 2} \CTQMAT\\
 {\bf 3} \WZBURG\\
@@ -411,44 +410,51 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 {\bf 7} \UPISA\\
 {\bf 8} \ESPCI\\
 {\bf 9} \CNRIOM\\
+\end{center}
 %%%%%%%%%% END TODO: AFFILIATIONS
+
+
+
 %%%%%%%%%% TODO: EMAIL
 % Provide email address of corresponding author(s)
+\begin{center}
 \vspace{\baselineskip}
 % $\star$ \href{mailto:email1}{\small email1}\,,\quad
 \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
-%%%%%%%%%% END TODO: EMAIL
 \end{center}
+%%%%%%%%%% END TODO: EMAIL
 
-\section*{\color{scipostdeepblue}{Abstract}}
-\textbf{\boldmath{%
+
+
 %%%%%%%%%% TODO: ABSTRACT
 % Write your abstract here.
+\section*{\color{scipostdeepblue}{Abstract}}
+\textbf{\boldmath{%
 The abstract is in boldface, and should fit in 8 lines. It should be written in a clear and accessible style, emphasizing the context, the problem(s) studied, the methods used, the results obtained, the conclusions reached, and the outlook. You can add a table contents, recommended if your paper is more than 6 pages long.
-%%%%%%%%%% END TODO: ABSTRACT
 }}
+%%%%%%%%%% END TODO: ABSTRACT
 
 \vspace{\baselineskip}
 
 
-%%%%%%%%%% BLOCK: Copyright information
-% This block will be filled during the proof stage, and finilized just before publication.
-% It exists here only as a placeholder, and should not be modified by authors.
-\noindent\textcolor{white!90!black}{%
-\fbox{\parbox{0.975\linewidth}{%
-\textcolor{white!40!black}{\begin{tabular}{lr}%
-  \begin{minipage}{0.6\textwidth}%
-    {\small Copyright attribution to authors. \newline
-    This work is a submission to SciPost Physics Codebases. \newline
-    License information to appear upon publication. \newline
-    Publication information to appear upon publication.}
-  \end{minipage} & \begin{minipage}{0.4\textwidth}
-    {\small Received Date \newline Accepted Date \newline Published Date}%
-  \end{minipage}
-\end{tabular}}
-}}
-}
-%%%%%%%%%% BLOCK: Copyright information
+% %%%%%%%%%% BLOCK: Copyright information
+% % This block will be filled during the proof stage, and finilized just before publication.
+% % It exists here only as a placeholder, and should not be modified by authors.
+% \noindent\textcolor{white!90!black}{%
+% \fbox{\parbox{0.975\linewidth}{%
+% \textcolor{white!40!black}{\begin{tabular}{lr}%
+%   \begin{minipage}{0.6\textwidth}%
+%     {\small Copyright attribution to authors. \newline
+%     This work is a submission to SciPost Physics Codebases. \newline
+%     License information to appear upon publication. \newline
+%     Publication information to appear upon publication.}
+%   \end{minipage} & \begin{minipage}{0.4\textwidth}
+%     {\small Received Date \newline Accepted Date \newline Published Date}%
+%   \end{minipage}
+% \end{tabular}}
+% }}
+% }
+% %%%%%%%%%% BLOCK: Copyright information
 
 
 %%%%%%%%%% TODO: LINENO

@@ -24,8 +24,8 @@ $$
 \hat{H} = \hat{H}_\mathrm{imp} + \hat{H}_\mathrm{bath} + \hat{H}_\mathrm{hyb} + \hat{H}_\mathrm{ph} + \hat{H}_\mathrm{e-ph}
 $$
 which describes a multi-orbital quantum impurity
-coupled to an electronic bath and local phonons (e.g., Holstein
-modes). For now, we assume no specific symmetries.
+coupled to an electronic bath and local \fixme{phonons (e.g., Holstein
+modes)}. For now, we assume no specific symmetries.
 
 \subsubsection{Impurity Hamiltonian}
 The impurity Hamiltonian is split into a quadratic and an 
@@ -209,8 +209,9 @@ The electronic part of the Fock state $\ket{\vec{n}}$ is represented
 as a binary string of length $2N_\mathrm{s}$. Thus, any such state can be encoded
 in a computer using a sequence of $2N_\mathrm{s}$ bits, or equivalently, as an integer $I=0,\dots 2^{2N_\mathrm{s}}-1$ such that $\ket{\vec{n}}=\ket{I}$.  
 
-Destruction and creation operators, $c_{a\sigma}$ and $c^+_{a\sigma}$ 
-respectively, act on the Fock space as:
+
+\fixme{Destruction and creation operators, $c_{a\sigma}$ and $c^+_{a\sigma}$ 
+respectively, act on the Fock space as}:
 \begin{align*}
   c_{a\sigma}\ket{\vec{n}} &=
     \begin{cases}
@@ -297,7 +298,7 @@ state bit sequence from the integer representation.
 
 
 \subsection{Conserved quantum numbers}\label{sSecQNs}
-To mitigate the exponential scaling of the Fock space dimension, it 
+To mitigate the exponential scaling of the \fixme{Fock space dimension}, it 
 is essential to exploit suitable symmetries. Specifically, if the 
 Hamiltonian $H$ commutes with a set of operators ${\cal \vec{Q}}=[{\cal Q}_1,{\cal Q}_2,\dots,{\cal Q}_M]$ such that 
 $[H, {\cal Q}_i] = 0$, the Fock space can be decomposed into smaller, 
@@ -344,7 +345,7 @@ $\MM:\SS_{\vec{Q}}\rightarrow \FF$ which relates the states $\ket{i}$
 within a given symmetry sector $\SS_{\vec{Q}}$ to the states $\ket{I}$ in the
 full Fock space.
 This map is typically implemented as a rank-1
-integer array whose size corresponds to the dimension of the sector $D_{SS_{\vec{Q}}}$. 
+integer array whose size corresponds to the dimension of the sector $D_{\SS_{\vec{Q}}}$. 
 
 
 The {\bf normal} case deserves a special note. Since $N_\up$ and
@@ -402,8 +403,8 @@ Table~(\ref{TabSector}).
 A table summarizing the possible values of the input variable {\tt
   ed\_mode} selecting the symmetries of the problem. To each value
 (first column) correspond different quantum numbers (second column).
-The third column report the dimension of the symmetry sector for a
-given realization of the quantum numbers.}
+The third column report the dimension of the electronic symmetry sector $\SS_{\vec{Q}}$ for a
+given value of the quantum numbers $\vec{Q}$.}
 \end{table}
 
 % Although the sectors have dimensions much smaller than the full Fock
@@ -865,10 +866,10 @@ to monitor this distribution.
 
 \subsubsection{GFmatrix}
 One of the main goal of the \NAME is to evaluate dynamical correlations
-functions (DCF), e.g. $D(t) = \ibra \TT[ A(t) A^+ ]\iket$. Using Krylov methods,
-these DCFs can be expressed as truncated Kallen-Lehmann spectral sums of the form
+functions (DCF), e.g. $C(t) = \ibra \TT[ A(t) A^+ ]\iket$. Using Krylov methods,  
+these DCFs can be expressed as truncated K\"all\'en-Lehmann spectral sums of the form
 $$
-D(z) = \tfrac{1}{Z}\sum_n e^{-\beta E_n} \sum_{m=1}^{N} \tfrac{|w_{mn}|^2}{ z
+C(z) = \tfrac{1}{Z}\sum_n e^{-\beta E_n} \sum_{m=1}^{N} \tfrac{|w_{mn}|^2}{ z
   - dE_{mn}}
 $$
 where $w_{mn}$ is the weight determined by the projection of the
@@ -888,7 +889,7 @@ avoiding repeated diagonalizations, making it a critical component
 for the high-performance execution of \NAME.
 
 \begin{lstlisting}[style=fstyle,numbers=none]   
-!The contributions to the GF Kallen-Lehmann sum are stored as
+!The contributions to the GF K\"all\'en-Lehmann sum are stored as
 !GF_{ab,sr}%state%channel%{w,e}.
 !A couple of weight,poles {w,e} is stored: 
 !for each *channel, i.e. !applied operator, for any starting state ${\color{comment-color}\ket{n}}$.
@@ -902,7 +903,7 @@ end type GFspectrum
 !N_channel = ${\color{comment-color} C,\, C^\dagger,\, C \pm C^\dagger,\, C \pm iC^\dagger}$, etc.
 !Sub-class: contains a given set of weights and poles.
 !Each instance of this sub-class correponds to a given input state 
-!and a given operator in the Kallen-Lehman representation.  
+!and a given operator in the K\"all\'en-Lehmann representation.  
 type GFchannel
    type(GFspectrum),dimension(:),allocatable :: channel 
 end type GFchannel
@@ -1157,6 +1158,7 @@ representation and the user-defined bath arrays via
 
 
 \subsection{Lanczos based Diagonalization}\label{sSecHam}
+
 In presence of symmetries (see \secu{sSecQNs}) the matrix representing
 the Hamiltonian operator $\hat{H}$ can be reduced to a block-diagonal form. Each block corresponds to a symmetry sector
 with a fixed set of quantum numbers $\vec{Q}$ and is represented by
@@ -1196,12 +1198,14 @@ to optimize this step. Here, we provide
 a brief outline of the main ideas for the purely electronic case (i.e. neglecting electron-phonon part), following the notation introduced
 in \onlinecite{Amaricci2022}, and focusing on the impact of the choice of {\tt ed\_mode}.
 
-\paragraph{\bf normal}.
-In this case, the tensor structure of the Fock space and the sector
+\fixme{Again: this discussion is only for the electronic part. We need to state we focus on that here and discuss the modifications requied to deal with phonons at the end of this section}
+
+
+In the {\bf normal} case, the tensor structure of the Fock space and the sector
 symmetries are fully leveraged. Within a given sector, the electronic
 part of the Hamiltonian can be expressed as:
 \begin{equation}
-H_\SS = H_\mathrm{d} + H_\up\otimes \11_\dw + \11_\up\otimes
+H^e_{\SS} = H_\mathrm{d} + H_\up\otimes \11_\dw + \11_\up\otimes
 H_\dw + H_\mathrm{nd},
 \label{HssNormal}
 \end{equation}
@@ -1211,7 +1215,7 @@ $H_\sigma$ captures hopping processes for electrons with spin
 $\sigma=\up,\dw$. The term $H_\mathrm{nd}$ encompasses all remaining
 non-diagonal contributions, such as spin-exchange and pair-hopping
 terms.
-
+%
 In this formulation, a sector state $\ket{v}$ can be
 represented in a matrix basis $\hat{v}$ with rows (columns)
 corresponding to $\up$ ($\dw$) configurations. This structure allows
@@ -1224,13 +1228,13 @@ slight communication overhead which partially reduces the parallel efficiency.
 
 
 
-\paragraph{\bf superc/nonsu2.}
-For these modes, symmetries enforce specific constraints between
+
+For the {\bf superc/nonsu2} modes, symmetries enforce specific constraints between
 $\up$ and $\dw$ configurations, preventing the direct use of the
 factorized Fock space representation. The electronic
 part of the Hamiltonian is typically structured as:
 \begin{equation}
-H_\SS = H_\mathrm{imp} + H_\mathrm{int} + H_\mathrm{bath} + H_\mathrm{imp-bath},
+H^e_\SS = H_\mathrm{imp} + H_\mathrm{int} + H_\mathrm{bath} + H_\mathrm{imp-bath},
 \end{equation}
 where $H_\mathrm{imp}$ encodes the local impurity Hamiltonian
 determined by $h^0_{\a\b\s\s'}$,
@@ -1367,7 +1371,9 @@ relies on a much smaller set of basis states.
 However, this method is typically limited to diagonal DCF like
 \equ{eqGaa}. In practice, many applications requires also to build off-diagonal
 functions of the form:
-$C_{\AA\BB}(z) = \ibra T_{\pm}[\AA(t) \BB^+]\iket$.
+$$
+C_{\AA\BB}(z) = \ibra T_{\pm}[\AA(t) \BB^+]\iket\, .
+$$
 This can be addressed by introducing auxiliary operators, e.g.  $\OO=\AA +\BB$ and
 $\PP=\AA-i\BB$, enabling the extraction of the desired function via
 simple algebraic combinations:
@@ -1519,7 +1525,7 @@ files {\tt ED\_OBSERVABLES\_?}.
 Local observables and correlations are generally defined 
 through the thermal average 
 $\ibra \OO\iket = \tfrac{1}{Z}\Tr\left[e^{-\beta H}\OO\right]$, 
-where $Z = \sum_n e^{-\beta E_n}$ is the partition function. 
+where $\OO$ can be any local operator and  $Z = \sum_n e^{-\beta E_n}$ is the partition function. 
 At zero or low temperatures, this can be efficiently 
 evaluated using the stored low-energy part of the spectrum, 
 taking advantage of the exponential suppression provided by 
@@ -1530,7 +1536,7 @@ the Boltzmann factor:
 \bra{\psi_n} \OO \ket{\psi_n},
 \label{eq:thermal_average}
 \end{equation}
-where $E_n$ and $\ket{\psi_n}$ are the low-lying eigenstates 
+where $E_n$ and $\ket{\psi_n}$ are the $N_{\tt state\_list}$ low-lying eigenstates 
 of the system stored in the {\tt state\_list}. This approach 
 greatly reduces computational overhead by focusing on the 
 relevant, low-energy sector.
@@ -2138,4 +2144,7 @@ self-energies, and density matrices. These functions use the same
 naming conventions as the core \NAME library, ensuring a consistent 
 user experience across single and multi-impurity calculations.
 
+
+%% References with bibTeX database:
+\bibliography{references}
 \end{document}
