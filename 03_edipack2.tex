@@ -19,30 +19,29 @@ present a detailed overview of the \NAME library implementation.
 
 
 \subsection{The quantum impurity problem}\label{sSecQIM}
-We consider a general quantum impurity problem described by the Hamiltonian:
+We consider a quantum impurity problem described by the Hamiltonian:
 $$
 \hat{H} = \hat{H}_\mathrm{imp} + \hat{H}_\mathrm{bath} + \hat{H}_\mathrm{hyb} + \hat{H}_\mathrm{ph} + \hat{H}_\mathrm{e-ph}
 $$
-which describes a multi-orbital quantum impurity
-coupled to an electronic bath and local \fixme{phonons (e.g., Holstein
-modes)}. For now, we assume no specific symmetries.
+which characterizes a multi-orbital quantum impurity
+coupled to an electronic bath and local phonons (e.g., Holstein
+modes). For now, we assume no specific symmetries.
 
 \subsubsection{Impurity Hamiltonian}
 The impurity Hamiltonian is split into a quadratic and an 
 interacting part:
 \begin{equation}\label{Himp}
-  \hat{H}_\mathrm{imp}  = \hat{H}^0_\mathrm{imp} + \hat{H}^\mathrm{int}_\mathrm{imp}
+  \hat{H}_\mathrm{imp}  = \hat{H}^0_\mathrm{imp} + \hat{H}^\mathrm{int}_\mathrm{imp}.
 \end{equation}
-where
+The first term has the form: 
 \begin{equation}\label{H0imp}
   \hat{H}^0_\mathrm{imp}  =
   \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^{+}_{\a\sigma}d_{\b\sigma'}
 \end{equation}
-represents the quadratic part, with $d_{\a\sigma}$ ($d^+_{\a\sigma}$) are the annihilation (creation)
+and represents the quadratic part, with $d_{\a\sigma}$ ($d^+_{\a\sigma}$) are the annihilation (creation)
 operators for impurity electrons in 
 orbital $\alpha=1,\dots,N_\a$, with $N_\a$ the number of orbitals,
-and spin $\sigma=\up,\dw$.  The occupation number operator is defined
-as  $n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$.
+and spin $\sigma=\up,\dw$. 
 The internal structure of the non-interacting part is captured by the 
 matrix $h^{0}_{\a\b\sigma\sigma'}$, which can include 
 orbital-dependent on-site energies or amplitudes, spin-orbit coupling or other single-particle terms.
@@ -65,10 +64,11 @@ adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interact
       \b}d^{+}_{\a\uparrow}d^{+}_{\a\downarrow}d_{\b\downarrow}d_{\b\uparrow}\\
 \end{split}
 \end{equation}
+where we introduced the occupation number operator   $n_{\alpha\sigma}=d^{+}_{\alpha\sigma}d_{\alpha\sigma}$.
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
 $U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Georges2013ACMP}.  
-The final two terms are, respectively, the spin-exchange ($J_X$) and
+The last two terms are, respectively, the spin-exchange ($J_X$) and
 the pair-hopping ($J_P$).
 In the three-orbital case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
 U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
@@ -90,9 +90,9 @@ bath elements. The operators $a_{p\alpha\sigma}$
 ($a^+_{p\alpha\sigma}$) correspond to the destruction (creation) of
 bath electrons with index $p$, orbital $\alpha$ and spin $\sigma$.
 Any bath element can be composed of several electronic levels
-according the chosen bath topology. The  properties of each bath level are described by the
-matrix $h^p_{\a\b\sigma\sigma'}$ and couples to the impurity through an amplitude
-$V^p_{\a\b\s\sigma'}$.   
+according to the chosen bath topology (see \secu{sSecBath}). The  properties of each bath element are described by the
+matrix $h^p_{\a\b\sigma\sigma'}$ while the amplitude
+$V^p_{\a\b\s\sigma'}$ desribes the coupling with the impurity.   
 
 
 \subsubsection{Electron-Phonon coupling}
@@ -381,7 +381,6 @@ additional constraints are present.
 A summary of the sector properties is provided in
 Table~(\ref{TabSector}). 
 \begin{table}%[ht]
-  \label{TabSector}
 \begin{center}
 \begin{tabularx}{\linewidth}{ |X|X|X| } 
  \hline
@@ -396,6 +395,7 @@ Table~(\ref{TabSector}).
   \hline
   {\bf nonsu2} & $N \equiv N_\up+N_\dw$ & $\binom{2N_\mathrm{s}}{N}$ \\ 
  \hline
+  \label{TabSector}
 \end{tabularx}
 \end{center}
 \caption{
@@ -2146,5 +2146,7 @@ user experience across single and multi-impurity calculations.
 
 
 %% References with bibTeX database:
-\bibliography{references}
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
 \end{document}

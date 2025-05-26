@@ -231,5 +231,7 @@ re-converge the solution within few loops.
 
 
 %% References with bibTeX database:
-\bibliography{references}
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
 \end{document}

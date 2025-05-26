@@ -77,7 +77,9 @@ Finally, in \secu{SecExamples} we discuss the functionalities and the capabiliti
 all the discussed extensions with a series of illustrative examples. 
 
 %% References with bibTeX database:
-\bibliography{references}
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
 \end{document}
 
 

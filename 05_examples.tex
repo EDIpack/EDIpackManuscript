@@ -1469,5 +1469,7 @@ flakes \cite{Valli2016PRB,Valli2018NL}.
 
 
 %% References with bibTeX database:
-\bibliography{references}
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
 \end{document}

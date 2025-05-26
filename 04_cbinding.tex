@@ -559,5 +559,7 @@ We provide an example script for the simple case of the Bethe lattice in the nor
 
 
 %% References with bibTeX database:
-\bibliography{references}
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
 \end{document}
