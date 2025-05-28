@@ -1,5 +1,4 @@
 \documentclass[dvipsnames]{SciPost}
-
 \usepackage[bitstream-charter]{mathdesign}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -15,11 +14,14 @@
 \usepackage{stackengine}
 \newlength\llength
 \llength=1.38ex\relax
-% \usepackage[dvipsnames]{xcolor}
 \usepackage{makecell}
 \usepackage{subfiles}
 \usepackage{comment}
 \usepackage{xspace}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage[final]{showlabels} %inline: draft//final
 
 % Prevent all line breaks in inline equations.
 \binoppenalty=10000
@@ -62,9 +64,16 @@
 \definecolor{comment-color}{rgb}{0.8,0.1,0.1}
 \definecolor{keyword-color}{rgb}{0.3,0.3,1}
 
+
+
+
+
+%LISTING PACKAGE AND CONFIG:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings}
 
-
+% FORTRAN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{fstyle}{
   frame=lines,
   language={[03]Fortran},
@@ -72,7 +81,7 @@
   stringstyle=\ttfamily,
   keywordstyle=\color{keyword-color},
   commentstyle=\color{comment-color}\footnotesize,
-  morecomment=[l]{!\ },% Otherwise it's a comment only with space after !
+  morecomment=[l]{!\ },
   fontadjust=true,
   mathescape,
   %breakatwhitespace=false,
@@ -87,6 +96,8 @@
 
 
 
+% PYTHON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{mypython}{
   frame=lines,
   language=python,
@@ -96,7 +107,7 @@
   fontadjust=true,
   keywordstyle=\color{keyword-color},
   commentstyle=\color{comment-color}\footnotesize,
-  morecomment=[l]{\#\ },% Otherwise it's a comment only with space after #
+  morecomment=[l]{\#\ },
   mathescape,
   fontadjust=true,
   mathescape,
@@ -120,7 +131,7 @@
       macro,module,otherwise,quote,return,switch,true,try,type,typealias,%
       using,while},%
    sensitive=true,%
-   alsoother={$},%
+   alsoother={\$},%
    morecomment=[l]\#,%
    morecomment=[n]{\#=}{=\#},%
    morestring=[s]{"}{"},%
@@ -150,6 +161,13 @@
   numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
+
+
+
+
+
+% BASH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{mybash}{
   frame=lines,
   language=bash,
@@ -175,6 +193,10 @@
 }
 
 
+
+
+% C/C++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{cstyle}{
   frame=lines,
   language=C,
@@ -199,18 +221,11 @@
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
-% % MINTED:
-% % \usepackage[cache=true,cachedir=minted-cache]{minted}
-% % \usepackage[finalizecache=true,cachedir=minted-cache]{minted}
-% \usepackage[frozencache=true,cachedir=minted-cache]{minted}
-% \setminted[fortran]{linenos,mathescape,frame=lines,style=bw,framesep=1mm,
-%   baselinestretch=1,fontsize=\footnotesize}
 
 
 
-\usepackage{array}
-\usepackage{tabularx}
-\usepackage{ltablex}
+
+
 
 
 
@@ -226,7 +241,7 @@
 \newcommand {\note}[1]{{\color{blue} [{\bf NOTE}: \bf #1]}}
 \newcommand {\new}[1]{{\color{blue}\it #1}}
 
-\usepackage[inline]{showlabels}
+
 
 
 %Reference to a given labelled equation
@@ -351,12 +366,16 @@
 \pagestyle{SPstyle}
 
 %TITLE
-\begin{center}{\Large \textbf{\color{scipostdeepblue}{
 %%%%%%%%%% TODO: Write your article's title here
-EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity problems\\
+\begin{center}{
+\Large \textbf{
+\color{scipostdeepblue}{
+EDIpack 2.0: A High-Performance, Interoperable Lanczos-based Solver for generic Quantum Impurity Models\\
+}
+}
+}
+\end{center}
 %%%%%%%%%% END TODO: TITLE
-}}}\end{center}
-
 
 
 
@@ -375,7 +394,7 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
     Luca de Medici\textsuperscript{8},
     Giorgio Sangiovanni\textsuperscript{2,3},
     Massimo Capone\textsuperscript{4,9} and 
-    Adriano Amaricci\textsuperscript{9}    
+    Adriano Amaricci\textsuperscript{9$\star$}    
 }\end{center}
 %%%%%%%%%% END TODO: AUTHORS
 
@@ -420,7 +439,7 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 \begin{center}
 \vspace{\baselineskip}
 % $\star$ \href{mailto:email1}{\small email1}\,,\quad
-\href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
+$\star$ \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
 \end{center}
 %%%%%%%%%% END TODO: EMAIL
 
@@ -429,8 +448,11 @@ EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity p
 %%%%%%%%%% TODO: ABSTRACT
 % Write your abstract here.
 \section*{\color{scipostdeepblue}{Abstract}}
+\fixme{Probably I can do a better or more evocative job here}
 \textbf{\boldmath{%
-The abstract is in boldface, and should fit in 8 lines. It should be written in a clear and accessible style, emphasizing the context, the problem(s) studied, the methods used, the results obtained, the conclusions reached, and the outlook. You can add a table contents, recommended if your paper is more than 6 pages long.
+EDIpack is a flexible, high-performance numerical library to solve generic quantum impurity problems using Lanczos-based exact diagonalization, as emerging from dynamical mean-field theory (DMFT) description of strongly correlated materials.
+Its modular architecture provides Fortran APIs and bindings for C, interfaces with Python or Julia as well as with  TRIQS and W2Dynamics research platform. We discuss mathematical framework alongside implementation details and showcases illustrative applications.
+The outlook includes further extensions for quantum materials, condensed matter physics, and quantum information applications.
 }}
 %%%%%%%%%% END TODO: ABSTRACT
 

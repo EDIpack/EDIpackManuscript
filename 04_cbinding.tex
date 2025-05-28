@@ -93,9 +93,9 @@ dimension of the bath array on the user side {\tt
 $\vec{\Gamma}$ for the replica (general) bath via different instances of
 {\tt set\_Hreplica(general)\_\-\{site,lattice\}\_d\{3,5\}}. 
 A crucial part of the DMFT self-consistency loop is the optimization of the bath through CG algorithm (see \secu{sSecFit}). To this end we interfaced a
-number of functions {\tt
-  chi2\_fitgf\_\{single,lattice\}\_\{normal,superc\}\_n\{3,4,5,6\}} which
-cover all the cases supported in \NAME. Note that, because the actual
+number of functions which
+cover all the cases supported in \NAME, conveniently called {\tt
+  chi2\_fitgf\_\{single,lattice\}\_\{normal,superc\}\_n\{3,4,5,6\}} . Note that, because the actual
 optimization is still performed through the Fortran code, no changes
 apply to the outcome of this step.    
 
@@ -398,8 +398,8 @@ the diagonalization process. Among others, these include the ED algorithm
 selection, the quantum numbers to be used, parameters of the Krylov space,
 the spectrum cutoff and various tolerance levels.
 
-\paragraph{{\bf Method {\tt solve}}.}
-The method {\tt solve()} of {\tt EDIpackSolver} calls
+\paragraph{{\bf Method {\tt solve()}}.}
+The method {\tt solve()} calls
 {\tt edipack2py.global\_env.solve()} and therefore performs the bulk of
 calculations. It accepts the inverse temperature $\beta$ required to calculate
 the expectation value of physical observables, and parameters of energy grids
@@ -413,12 +413,11 @@ are the following.
 \begin{itemize}
     \item {\tt nspin} --- the number of non-equivalent spin projections 
           (read-only).
-    \item {\tt norb} -- the number of impurity orbitals (read-only).
+    \item {\tt norb} --- the number of impurity orbitals (read-only).
     \item {\tt hloc} --- matrix $h^0_{\alpha\beta\s\s'}$ of
           the quadratic impurity Hamiltonian \equ{Himp}.
-    \item {\tt Uloc}, {\tt Ust}, {\tt Jh}, {\tt Jx}, {\tt Jp} ---
-          parameters $U, U', J, J_X \text{ and } J_P$ of the impurity
-          interaction term $\hat{H}^\mathrm{int}_\mathrm{imp}$ \equ{Hint}.
+    \item {\tt U} --- 8-dimensional array $U_{\alpha\sigma_1,\beta\sigma_2,\gamma\sigma_3,\delta\sigma_4}$
+          of two-particle interactions as defined in Eq.~(\ref{HintUmat}).
     \item {\tt bath} --- an object representing the bath. Depending on the
           bath type selected upon solver object construction, this object is an
           instance of {\tt BathNormal}, {\tt BathHybrid} or {\tt BathGeneral}
@@ -495,7 +494,7 @@ for further details.
 
 %All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
 
-Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and which are currently under development can not yet be used through the interface. For instance, the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}, or in presence of phonon modes will only be available in the near future through an update of the W2Dynamics package.
+Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and are currently not available can not be used through the interface, including e.g.\ the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}.
 
 
 

@@ -20,7 +20,7 @@ quantum information analyses of correlated systems.
 
 A central feature of \NAME is its strong focus on interoperability,
 achieved through modern Fortran constructs, C/C++-bindings, and
-comprehensive APIs for Python (EDIpy2). 
+comprehensive APIs for Python (EDIpack2py). 
 These interfaces enable seamless integration with broader
 computational frameworks like TRIQS and W2Dynamics, expanding the
 functionality of these platforms and providing a robust foundation for
@@ -51,36 +51,31 @@ reference platform for quantum impurity solvers.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TODO: include author contributions
-\paragraph{Author contributions}
-This is optional. If desired, contributions should be succinctly described in a single short paragraph, using author initials.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section*{Acknowledgements}
-We acknowledge helpful discussions, occurring at diverse stages of development of \NAME, with: Carlos Mejuto Zaera, Pablo Villar Arribi, Maria Chatzieleftheriou, Marcello Dalmonte, Mario Collura, Cedric Weber, Alberto Camjayi, Marcelo Rozenberg, ...   
+We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto~Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou, A.~Scazzola, M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, A.~Camjayi, M.~Rozenberg.    
 
-% TODO: include author contributions
-% This will be used to better attribute supervision of each part of the code, e.g. LC for part of the code, C-binding, Py, Julia, Monicelli, etc, IK for EDIpack2Triqs, AK+MW+GS for W2Dyn support, etc. 
-\paragraph{Author contributions}
-This is optional. If desired, contributions should be succinctly described in a single short paragraph, using author initials.
+% % TODO: include author contributions
+% % This will be used to better attribute supervision of each part of the code, e.g. LC for part of the code, C-binding, Py, Julia, Monicelli, etc, IK for EDIpack2Triqs, AK+MW+GS for W2Dyn support, etc. 
+% \paragraph{Author contributions}
+% This is optional. If desired, contributions should be succinctly described in a single short paragraph, using author initials.
 
 % TODO: include funding information
 \paragraph{Funding information}
-L.C. acknowledge support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994). Ratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
+L.C. acknowledge support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994) and gratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
 I.K. acknowledges support from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Grant agreement No.~854843-FASTCORR).
 G.S. and A.K. acknowledge financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) through FOR 5249 (project-id 449872909, Project P05), and the W\"urzburg-Dresden Cluster of Excellence on Complexity and Topology in Quantum Matter-ct.qmat (EXC 2147, project-id 390858490).
-%S.G.
-%G.B
-%A.K.
-%F.P
+%F.P.
 %M.W.
 %G.M.
-%L.dM.
-%G.S.
-%M.C.
-%A.A.
+G.M. acknowledges support from the MUR - Italian Ministry of University and Research - through the Rita-Levi Montalcini program.
+L.dM. acknowledges support by the European Commission through the ERC-CoG2016, StrongCoPhy4Energy, GA No. 724177.
+M.C., S.G. and G.B. acknowledge financial support from the National Recovery and Resilience Plan PNRR
+MUR Project No.~CN00000013-ICSC and by MUR via PRIN 2020 (Prot.~2020JLZ52N-002) and PRIN 2022 (Prot.~20228YCYY7) programmes.
+A.A. and M.C. acknowledge financial support from the National Recovery and Resilience Plan PNRR MUR Project No.~PE0000023-NQSTI. 
+
+
+
 
 \section{Appendix A: Monicelli interface}\label{appendixA}
 In order to further showcase the interoperability capabilities of
@@ -118,7 +113,7 @@ Unix soltanto in due, oppure in quattro anche scribai con il file
 sorgente {\tt hm\_bethe.mc}? \\ Come {\tt
   github.com/lcrippa/prematurata\_la\_dmft}, per esempio?}\\
 V: {\it Ma che DMFT, mi faccia il piacere! Questi signori stavano
-programmano loro, non si intrometta!}\\
+programmando loro, non si intrometta!}\\
 M: {\it Ma no, dico, mi porga il file {\tt bagaglio.cpp}. Le vede le
 funzioni? Lo vede che interfacciano gli array, non supportati da
 Monicelli, e prematurano anche! 
@@ -143,7 +138,7 @@ The first part of the DMFT code load all the required functions from
 solver functions {\tt ed\_init\_solver} and {\tt ed\_solve}:
 
 \lstset{breaklines=true, breakindent=1em}
-\begin{lstlisting}[style=cstyle]
+\begin{lstlisting}[style=cstyle,numbers=none]
 bituma le funzioni ausiliarie che vengono dal bagaglio
 ...
 blinda la supercazzola leggi o scherziamo?
@@ -170,7 +165,7 @@ and if error condition is met the loop exit.
 The main step of the implementation reads: 
 
 
-\begin{lstlisting}[style=cstyle]
+\begin{lstlisting}[style=cstyle,numbers=none]
 Lei ha clacsonato
 #Read the input file
     prematurata la supercazzola dimmilfile o scherziamo?
@@ -219,7 +214,7 @@ for the Bethe lattice solution at $U=2$.
 
 The code is compiled using standard Make invocation in the source
 directory:
-\begin{lstlisting}[style=mybash]
+\begin{lstlisting}[style=mybash,numbers=none]
 git clone https://github.com/lcrippa/prematurata_la_dmft
 cd prematurata_la_dmft/src
 make

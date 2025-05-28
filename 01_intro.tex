@@ -6,31 +6,32 @@
 
 
 Quantum impurity models play a central role in the study of strongly correlated electron systems, capturing the coupling of a small number of localized degrees of freedom with extended non-interacting environment.   
-Originally introduced to describe magnetic impurities in metallic hosts and leading to the solution of the Kondo problem, these systems progressively became powerful tools for exploring a wide range of quantum many-body phenomena. More recently, their importance has extended beyond the realm of condensed matter, influencing understanding of other areas such as quantum information or ultra-cold atomic systems. 
+Originally introduced to describe diluted magnetic impurities in metallic hosts, single-impurity models have led to the full understanding of the Kondo problem, thereby progressively becoming powerful tools for exploring a wide range of quantum many-body phenomena. More recently, their importance has extended beyond the realm of condensed matter, influencing understanding of other areas such as quantum information or ultra-cold atomic systems.
+%Asymptotic freedom 
 
-At the heart of quantum impurity models is the interaction between a localized ``impurity"  and a surrounding bath of itinerant particles, usually represented as a conduction band of electrons. The definition of the impurity is rather generic, and it can contain lattice (i.e. inequivalent sites), orbital and spin local degrees of freedom.
+At the heart of quantum impurity models is the interaction between a localized ``impurity"  and a surrounding bath of itinerant particles, usually represented as a conduction band of electrons. In this context, the definition of the impurity can taken as rather general, in order to contain lorbital and spin local degrees of freedom as well as a finite number of lattice sites. %MC eliminated inequivalent to avoid confusion with the last point
 This setup captures many essential aspects of strong correlation including screening, decoherence and entanglement in a computationally tractable way. 
 Most notably, quantum impurity problems lie at the core of dynamical mean-field theory (DMFT) where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem.  
-By accounting for local quantum fluctuations, DMFT can successfully describe of the most important physical features of correlated materials, including Mott insulators, heavy fermion compounds, and high-temperature superconductors.  
+By accounting for local quantum fluctuations, DMFT can successfully describe the most important physical features of correlated materials, including Mott insulators, heavy fermion compounds, and high-temperature superconductors.  
 
-Accurately and efficiently solving the DMFT quantum impurity problem remains a
+Accurately and efficiently solving a quantum impurity problem and computing the Green's functions which are central in the DMFT framework, remains a
 critical challenge, particularly for multi-orbital systems, systems
 at low temperatures or endowed with lower symmetry. During many years of development, different advanced numerical techniques have been developed together with cutting edge approaches aimed to reduce computational load.  
 
 %EDIPACK
 In this work we introduce  \NAME{}: a flexible, high-performance numerical library designed to address these challenges, providing an exact diagonalization (ED) solver for generic Quantum Impurity Problems. 
 The library builds on the foundations of
-its predecessor, featuring massively parallel Lanczos-based algorithms while including several significant extensions and 
-improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effect in quantum materials to multi-orbital superconductivity. It also provides direct
-access to well-approximated dynamical correlation functions across the
+its predecessor, featuring massively parallel Lanczos-based algorithms while including several significant extensions and  improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effect in quantum materials to multi-orbital superconductivity. It also provides direct
+access to well-approximated %MC why? I would say numerically exact 
+dynamical correlation functions across the
 entire complex plane, thus enabling calculations of spectral functions, local susceptibilities, and other response properties.
 
 Additionally, \NAME offers access to the Fock space of
-the impurity system and thus, for instance, the possibility to
-evaluate the impurity reduced density matrix
+the impurity system and thus, for instance, the possibility to evaluate the impurity reduced density matrix
 (iRDM). This capability enables quantum information-inspired analyses, providing insights into the entanglement properties, subsystem purity, and quantum correlations of interacting electron systems. These
 features are increasingly recognized as essential for understanding the emergent behavior in correlated matter, including quantum criticality and superconductivity.
 
+%MC this last point is intrinsically DMFT (or embedding) and it has no connection with impurity physics
 This new version also includes support for systems with non-equivalent impurities , a critical feature to study hetero-structures, super-lattices, and disordered systems, where the local environment varies significantly across different sites. This capability makes it 
 possible to explore a wide range of inhomogeneous systems, including
 oxide interfaces or disordered systems, where
@@ -51,7 +52,8 @@ rapid prototyping.
 A key development feature in \NAME, unlocked by the introduction of Python and C/C++ API, 
 is the direct interfaces to the TRIQS (Toolbox for Research on Interacting Quantum Systems) and
 W2Dynamics software suites, which are two of the most important and used computational tools in
-the field. \NAME seamlessly slots in as an alternative solver to the native Quantum Monte Carlo 
+the field. \NAME seamlessly %MC ?
+slots in as an alternative solver to the native Quantum Monte Carlo 
 implementations, greatly extending the parameter (and especially temperature) range reachable by 
 the simulation while minimizing the coding requirements for the end user.
 At the same time, this integration provides \NAME users with access to the

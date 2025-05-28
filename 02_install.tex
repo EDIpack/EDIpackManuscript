@@ -139,10 +139,10 @@ As an alternative, we provide for both Linux and macOS systems
 installation through Anaconda packages into a virtual
 environment containing Python ($>3.10$).
 
-The Conda package installation procedure reads:
+The Conda package installation procedure for a virtual environment called {\tt myenv} reads:
 \begin{lstlisting}[style=mybash,numbers=none]
-conda create -n edipack
-conda activate edipack
+conda create -n myenv
+conda activate myenv
 conda install -c conda-forge -c edipack edipack
 \end{lstlisting}
 \noindent
@@ -176,6 +176,7 @@ generated at the end of the installation procedure.
 \ifSubfilesClassLoaded{
   \bibliography{references}
 }{}
+
 \end{document}
 
 

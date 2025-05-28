@@ -4,7 +4,14 @@
 \section{Examples}\label{SecExamples}
 In this section we illustrate the functioning of the \NAME
 library and their interfaces as solver for DMFT through a variety of examples, including
-discussion of relevant code snippets. 
+discussion of relevant code snippets. As some tasks are inherently agnostic on the impurity
+solver (and the impurity solver is agnostic about them), the user is expected to implement
+them, or interface to existing utilities. For instance, all the Fortran subroutines with 
+naming convention \texttt{dmft\_do\_something()} refer to implementations that can be found
+in the {DMFTtools} package\footnote{\url{https://github.com/aamaricci/DMFTtools}},
+the example based on w2dynamics relies on the internal facilities provided by the \texttt{DMFT.py} script \cite{Wallerberger2019CPC} and the TRIQS library provides an 
+extensive toolbox for the manipulation of Green's functions and related quantities
+\cite{Parcollet2015CPC}.
 
 
 \subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
@@ -148,7 +155,7 @@ this is accomplished using the function {\tt
 // Initialize solver
 int Nb;
 vector<double> Bath(Nb);
-Nb = get_bath_dimension();
+Nb = get_bath_dimension_direct();
 int64_t bath_dim[1] = {Nb};
 init_solver_site(Bath.data(), bath_dim);
 \end{lstlisting}
@@ -422,14 +429,15 @@ NCorr           = 175             # estimate of the autocorrelation length
 Nmeas           = 200000          # number of measurements / sample size
 Nwarmups        = 1000000         # number of initial warmup steps for Markov chain thermalization
 \end{lstlisting}
-Assuming that w2dynamics is installed to {\tt /opt/w2dynamics} and the preceding parameters file saved as {\tt bethe\textunderscore{}dmft.in}, we can start the calculation by running the {\tt DMFT.py} script:
+Assuming the parameters are listed in a plain text file called 
+{\tt bethe\_dmft.in}, the DMFT simulation can then by run on {\tt NC} cores via:
 \begin{lstlisting}[style=mybash,numbers=none]
-mpiexec -n 10 /opt/w2dynamics/DMFT.py bethe_dmft.in
+mpiexec -n NC /path/to/w2dynamics/DMFT.py bethe_dmft.in
 \end{lstlisting}
 
 The results are collected into an HDF5 archive in the usual w2dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with w2dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
 \begin{lstlisting}[style=mybash,numbers=none]
-/opt/w2dynamics/hgrep latest siw-full -1
+/path/to/w2dynamics/hgrep latest siw-full -1
 \end{lstlisting}
 
 \begin{figure}%[t!]
@@ -710,6 +718,12 @@ high accuracy.
 
 
 
+\begin{figure}[ht!]
+    \includegraphics[width=\linewidth]{figures/figBethe_Holstein.pdf}
+    \caption{\label{figEx5}
+      Evolution of the double occupancy (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken lines are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
+\end{figure}
+
 \subsection{Holstein model on the Bethe lattice (electron-phonon coupling)}
 One of the features introduced in \NAME is the possibility of treating
 local phonons in conjunction with the superconductive phase,
@@ -772,12 +786,6 @@ large. Finally, in the anti-adiabatic regime, $\phi$ saturates to a
 finite value corresponding to the attractive Hubbard-like interaction
 of strength $\lambda/2$. 
 
-\begin{figure}[ht!]
-    \includegraphics[width=\linewidth]{figures/figBethe_Holstein.pdf}
-    \caption{\label{figEx5}
-      Evolution of the double occupancy (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken lines are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
-\end{figure}
-
 
 
 
@@ -809,9 +817,6 @@ layer (Sec.~\ref{sSecInteropTRIQS}) to solve a quantum system comprised by a
 3-orbital correlated impurity coupled to a few non-interacting bath sites.
 The interaction term of the impurity Hamiltonian is in the Hubbard-Kanamori
 form (\ref{Hint}).
-
-\fixme{Add Hamiltonian?}
-\fixme{}
 
 
 A Python script implementing a calculation that makes use of edipack2triqs
@@ -1040,8 +1045,7 @@ we report it here for completeness:
 \end{lstlisting}
 
 %
-The main effect of the interaction is enclosed in the renormalized
-mass term $M_\mathrm{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
+The main effect of the interaction to the topological properties can be captured by the renormalized mass term $M_\mathrm{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
 real-part of the self-energy being proportional to $\Gamma_{03}$
 corrects the mass term with respect to its bare value. To leading
 order this correction is given proportional to $\tfrac{U-5J}{4}\langle
@@ -1080,7 +1084,7 @@ larger high-energy weight.
 Finally, in the MI the two orbital spectral function describes the two 
 characteristic Hubbard bands separated by a large Mott gap.  
 
-\subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq layer, iRDM)}
+\subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq, iRDM)}
 
 To complete the overview of \NAME capabilities, we consider another
 model for interacting quantum spin-Hall insulators, defined on the honeycomb lattice, with two inequivalent sites in the unit-cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit-cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
@@ -1163,20 +1167,17 @@ The corresponding Hamiltonian forms are:
         \sum_{p=1}^{N_\mathrm{b}}(\epsilon_p \sigma_0 + m_p \sigma_x).
         \label{eq:afmx_dmft_ansatz}
 \end{align}
-comparing with \ref{eq:replica_bath_sym}, it is clear 
-that this amounts to having $N_\mathrm{sym}=2$, with
+which corresponds to $N_\mathrm{sym}=2$, with
 $\lambda_{1,p} \equiv \epsilon_p$ as the degenerate
 bath levels that are Zeeman split by $\lambda_{2,p} \equiv m_p$, respectively in the $S_z$ and $S_x$ bases.
 
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program dmft_kane_mele_hubbard
   !Load EDIpack library 
-  USE EDIpack
+  USE EDIPACK
   !Load the inequivalent impurities extension
-  USE EDIpack2ineq
-  .
-  .
-  .
+  USE EDIPACK2INEQ
+  ...
   !Setup bath and solver for anisotropic AFM phases
   !> define the symmetry-basis:
   Nineq = 2
@@ -1184,15 +1185,14 @@ program dmft_kane_mele_hubbard
   allocate(Hsym_basis(Nspin*Norb,Nspin*Norb,Nsym))
   Hsym_basis(:,:,1) = pauli_0
   select case(ansatz)
-    case('off-plane')
-        Hsym_basis(:,:,2) = pauli_z
-    case('in-plane')
-        Hsym_basis(:,:,2) = pauli_x
+    case('off-plane');Hsym_basis(:,:,2) = pauli_z
+    case('in-plane') ;Hsym_basis(:,:,2) = pauli_x
   end select
   !> initialize the symmetry parameters
   allocate(lambdasym_vectors(Nineq,Nbath,Nsym))
   call build_replica_band(onsite_band,ed_hw_bath,Nbath)
-  lambdasym_vectors(:,:,1) = onsite_band
+  ! (user-built guess of the starting bath levels)
+  lambdasym_vectors(:,:,1) = onsite_band 
   lambdasym_vectors(:,:,2) = 0d0 ! paramagnetic
   !> define a symmetry-breaking AFM kick, to help numerics
   if(afmkick)then
@@ -1212,41 +1212,7 @@ program dmft_kane_mele_hubbard
   Nb = ed_get_bath_dimension(Hsym_basis)
   allocate(Bath(Nineq,Nb))
   call ed_init_solver(Bath)
-  .
-  .
-  .
-  contains
-  .
-  .
-  .
-  subroutine build_replica_band(epsilons,bandwidth,Nreplica)
-  !> Initialization of the (average) bath levels, suitable to
-  !  describe a weakly interacting metal or a band insulator
-      real(8),allocatable,dimension(:,:),intent(out)   :: epsilons
-      real(8),intent(in)                               :: bandwidth
-      integer,intent(in)                               :: Nreplica
-      integer                                          :: ireplica
-      real(8),dimension(Nreplica)                      :: tempvec
-      real(8)                                          :: tempval
-      !
-      allocate(epsilons(Nineq,Nbath))
-      !
-      do ireplica=1,Nreplica
-         tempval = ireplica - 1 - (Nreplica-1)/2d0       ![-(N-1)/2 : (N-1)/2]
-         tempval = tempval * 2 * bandwidth/(Nreplica-1)  !-bandwidth:bandwidth
-         tempvec(ireplica) = tempval
-      enddo
-      !
-      if(mod(Nreplica,2)==0)then
-         tempvec(Nreplica/2) = -1d-1  !Much needed small energies around the
-         tempvec(Nreplica/2+1) = 1d-1 !Fermi level (if EF itself not present)
-      endif
-      !
-      do ilat=1,Nineq
-         epsilons(ilat,:) = tempvec
-      enddo
-      !
-   end subroutine build_replica_band
+  ... 
 \end{lstlisting}
 
 The DMFT loop can then be implemented, with the explicit solution of two
@@ -1355,9 +1321,8 @@ Ref.\,\cite{Racz2020}.
 
 \begin{figure}
     \centering
-    (a) \hspace{12cm} (b) \\
-    \includegraphics[width=0.8\linewidth]{figures/flakes_edipack.pdf}\\[3mm]
-    (c) \hspace{12cm} (d) \\
+    \includegraphics[width=0.8\linewidth]{figures/flakes_edipack.pdf}\\[1mm]
+    (c) \hspace{10cm} (d) \\
     \hspace{1.2cm}
     \includegraphics[width=0.33\linewidth]{figures/3NflakeU4.5_x.pdf} \hspace{1.2cm}
     \includegraphics[width=0.33\linewidth]{figures/3NflakeU6_x.pdf} \vspace{3mm}
@@ -1401,17 +1366,17 @@ described in \equ{eq:afmx_dmft_ansatz}, for the in-plane
 antiferromagnetic state.
 Panel (a) shows the interaction dependence of the local magnetization,
 computed from the impurity groundstate as  
-$ \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket$,
+$ \ibra S_x \iket = \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket$,
 so that we can define the $S_x$ spin-occupation numbers as
 \begin{equation*}
-    n_{i,\rightarrow} \equiv \frac{n_{i,\up} + n_{i,\dw} +
+    \ibra n_{i,\rightarrow} \iket \equiv \frac{\ibra n_{i,\up} + n_{i,\dw} \iket +
     \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket}{2},
     \qquad
-    n_{i,\leftarrow} \equiv \frac{n_{i,\up} + n_{i,\dw} -
+    \ibra n_{i,\leftarrow} \iket \equiv \frac{\ibra n_{i,\up} + n_{i,\dw} \iket -
     \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket}{2},
 \end{equation*}
-which trivially satisfy the conservation of the local average charge $n_{i,\rightarrow} + n_{i,\leftarrow} = n_{i,\up} + n_{i,\dw}$.
-Having a direct expression for $n_{i,\rightarrow}$ and $n_{i,\leftarrow}$
+which trivially satisfy the conservation of the local average charge $\ibra n_{i,\rightarrow} + n_{i,\leftarrow} \iket = \ibra n_{i,\up} + n_{i,\dw} \iket$.
+Having a direct expression for $\ibra n_{i,\rightarrow} \iket$ and $\ibra n_{i,\leftarrow} \iket$
 we can verify that the impurity reduced density matrix, computed by 
 tracing the bath states in the \texttt{ed\_mode=nonsu2} representation 
 (see \ref{sSecRDM}), once diagonalized, takes the familiar form
