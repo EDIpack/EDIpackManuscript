@@ -3,9 +3,9 @@
 
 \section{Installation}\label{SecInstall}
 The configuration and installation of \NAME is handled by CMake, which ensures
-multi-platforms compabitility and dependencies resolution.  
+multi-platform compatibility and dependencies resolution.  
 The software builds into two distinct libraries.
-The main one is a static Fortran library called {\tt  libedipack.a} which, alongside the compiled
+The main one is a static Fortran library called {\tt libedipack.a} which, alongside the compiled
 modules, wraps the \NAME software in both its single- and multi-impurity variants.
 A second dynamic library, {\tt libedipack\_cbindings.so}, together with the associated header
 file {\tt edipack\_cbindings.h}, enables interoperability with other programming languages.  
@@ -36,14 +36,14 @@ additional APIs.
   provided in \secu{SecEDIpack}.
   
 \item{\bf EDIpack2ineq.}
-  This extension, developed using modern Fortran constructs,
+  This extension, developed using suitable Fortran interfaces,
   enables the treatment of multiple, independent quantum 
 impurities. It is particularly useful in DMFT applications involving 
 unit cells with inequivalent atomic sites or systems with broken 
 translational symmetry, such as heterostructures, large supercells, 
 or disordered materials. This module provides flexible memory 
 management and supports the simultaneous solution of multiple impurity 
-problems, as discussed in Sec.\ref{sSecIneq}.
+problems, as discussed in \secu{sSecIneq}.
 
 
 
@@ -65,27 +65,27 @@ with third-party software and support the development of custom APIs.
 \subsection{Dependencies}\label{sSecInstallDependencies}
 \NAME directly depends on two external libraries.
 \begin{itemize}
-\item {\bf SciFortran}: an open-source Fortran library to support
-  mathematical and scientific software development. 
-\item {\bf MPI} (optional): a distributed memory parallel communication layer with support to modern Fortran compiler.
+\item {\bf SciFortran}: an open-source Fortran library that provides support
+for mathematical and scientific software development.
+\item {\bf MPI} (optional): a distributed memory parallel communication layer with support for modern Fortran compiler.
 \end{itemize}
  
 SciFortran provides a solid development platform enabling access to
 many algorithms and functions, including standard linear algebra
-operations and high-performance Lanczos based algorithms. This
+operations and high-performance Lanczos-based algorithms. This
 greatly reduces code clutter and development time.
 The use of distributed memory parallel environment, although optional,
-is required to access scalable parallel diagonalization algorithms
-which speed up calculations for large dimensional systems. 
+is required to access scalable parallel diagonalization algorithms,
+which speed up calculations for large systems. 
 
 \subsection{Build and Install}\label{sSecInstallBuildInstall}
 \subsubsection{Compilation from source}
 The software can be installed from source as follows. The source code can
-be retrieved directly from its GitHub repository, for instance using:
+be retrieved directly from its GitHub repository, for instance using
 \begin{lstlisting}[style=mybash,numbers=none]
 git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
-Then, assuming to be in the software directory, a conventional
+Then, assuming being in the software source directory, a conventional
 out-of-source building can be performed using two alternative compilation backends.
 
 \begin{itemize}
@@ -104,7 +104,7 @@ make install
 
 An alternative workflow employs the Ninja building backend with
 Fortran support. Ninja is generally faster and automatically supports
-multi-threaded building:
+parallel compilation:
 \begin{lstlisting}[style=mybash,numbers=none]
 mkdir build
 cd build
@@ -121,11 +121,11 @@ The CMake configuration can be further tuned using the following variables:
  \hline
   {\bf Option}               & {\bf Scope} & {\bf Value} \\
   \hline
-  -D{\bf PREFIX}          & Install directory  & $\sim$/opt/EDIpack/TAG/PLAT/BRANCH\\
+  -D{\bf PREFIX}          & Install directory  & {\color{red} $\sim$/opt/EDIpack/TAG/PLAT/BRANCH} \\
   -D{\bf USE\_MPI}       & MPI support  &  True/{\color{red}False}\\
-  -D{\bf WITH\_INEQ}   & Inequivalent impurities support & {\color{red}True}/{False}\\
+  -D{\bf WITH\_INEQ}   & multi-impurities support & {\color{red}True}/{False}\\
   -D{\bf VERBOSE}      & Verbose CMake output & {\color{red}True}/{False}\\ 
-  -D{\bf BUILD\_TYPE} & Compilation flags & {\color{red}RELEASE}/TESTING/DEBUG/AGGRESSIVE \\
+  -D{\bf BUILD\_TYPE} & Compilation flags & {\color{red}RELEASE}/TESTING/DEBUG \\
  \hline
 \end{tabular}
 \end{center}
@@ -137,9 +137,9 @@ CMake configuration step.
 \subsubsection{Anaconda}
 As an alternative, we provide for both Linux and macOS systems
 installation through Anaconda packages into a virtual
-environment containing Python ($>3.10$).
+environment containing Python ($\geq3.10$).
 
-The Conda package installation procedure for a virtual environment called {\tt myenv} reads:
+The Conda package installation procedure for a virtual environment called {\tt myenv} reads
 \begin{lstlisting}[style=mybash,numbers=none]
 conda create -n myenv
 conda activate myenv
@@ -147,17 +147,16 @@ conda install -c conda-forge -c edipack edipack
 \end{lstlisting}
 \noindent
 which installs a bundle of SciFortran and \NAME libraries together with
-specific {\tt pkg-config} configurations files, which can be used to
+specific {\tt pkg-config} configuration files, which can be used to
 retrieve compilation and linking flags. In order to compile Fortran/C++ 
 drivers, the {\tt compilers} conda package will need to be installed.
 
 
-\subsection{OS Loading}\label{sSecInstallOSloading}
+\subsection{Environment Variables}\label{sSecInstallOSloading}
 In order to avoid possible conflicts or the requirement for administrative
-privileges, the building step results are installed by default in the user's {\tt HOME}
+privileges, the results of the building step are installed by default in user's {\tt HOME}
 directory, specified by the CMake variable {\tt PREFIX}.
-As a consequence, the system library and include paths will need to be updated by the user.
-
+As a consequence, the environment variables holding the library and include paths will need to be updated by the user.
 We offer different ways to perform this action:
 \begin{enumerate}
 \item  A CMake-generated configuration file for an environment module

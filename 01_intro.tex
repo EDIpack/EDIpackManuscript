@@ -2,29 +2,26 @@
 \begin{document}
 
 \section{Introduction and Motivation}\label{SecIntro}
-\fixme{A tentative Introduction scheme}
-
-
-Quantum impurity models play a central role in the study of strongly correlated electron systems, capturing the coupling of a small number of localized degrees of freedom with extended non-interacting environment.   
-Originally introduced to describe diluted magnetic impurities in metallic hosts, single-impurity models have led to the full understanding of the Kondo problem, thereby progressively becoming powerful tools for exploring a wide range of quantum many-body phenomena. More recently, their importance has extended beyond the realm of condensed matter, influencing understanding of other areas such as quantum information or ultra-cold atomic systems.
+Quantum impurity models play a central role in the study of strongly correlated electron systems, capturing the coupling of a small number of localized degrees of freedom with an extended non-interacting environment.   
+Originally introduced to describe diluted magnetic impurities in metallic hosts, single-impurity models have led to the full understanding of the Kondo problem, and beyond that they have progressively become powerful tools for exploring a wide range of quantum many-body phenomena. More recently, their importance has extended beyond the realm of condensed matter, influencing understanding of other areas such as quantum information or ultra-cold atomic systems.
 %Asymptotic freedom 
 
-At the heart of quantum impurity models is the interaction between a localized ``impurity"  and a surrounding bath of itinerant particles, usually represented as a conduction band of electrons. In this context, the definition of the impurity can taken as rather general, in order to contain lorbital and spin local degrees of freedom as well as a finite number of lattice sites. %MC eliminated inequivalent to avoid confusion with the last point
+At the heart of quantum impurity models is the interaction between a localized ``impurity''  and a surrounding bath of itinerant particles, usually represented as a conduction band of electrons. In this context, the definition of the impurity can be taken as rather general, in order to contain orbital and spin local degrees of freedom as well as a finite number of lattice sites. %MC eliminated inequivalent to avoid confusion with the last point
 This setup captures many essential aspects of strong correlation including screening, decoherence and entanglement in a computationally tractable way. 
-Most notably, quantum impurity problems lie at the core of dynamical mean-field theory (DMFT) where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem.  
+Most notably, quantum impurity problems lie at the core of dynamical mean-field theory (DMFT) where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem \cite{Georges1996RMP}.  
 By accounting for local quantum fluctuations, DMFT can successfully describe the most important physical features of correlated materials, including Mott insulators, heavy fermion compounds, and high-temperature superconductors.  
 
-Accurately and efficiently solving a quantum impurity problem and computing the Green's functions which are central in the DMFT framework, remains a
+Accurately and efficiently solving a quantum impurity problem and computing the Green's functions, which are central in the DMFT framework, remains a
 critical challenge, particularly for multi-orbital systems, systems
 at low temperatures or endowed with lower symmetry. During many years of development, different advanced numerical techniques have been developed together with cutting edge approaches aimed to reduce computational load.  
 
 %EDIPACK
-In this work we introduce  \NAME{}: a flexible, high-performance numerical library designed to address these challenges, providing an exact diagonalization (ED) solver for generic Quantum Impurity Problems. 
+In this work we present the renewed and improved \NAME{}, version number \textcolor{red}{5.0}: a flexible, high-performance numerical library designed to address these challenges, providing an exact diagonalization (ED) solver for generic Quantum Impurity Problems. 
 The library builds on the foundations of
-its predecessor, featuring massively parallel Lanczos-based algorithms while including several significant extensions and  improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effect in quantum materials to multi-orbital superconductivity. It also provides direct
-access to well-approximated %MC why? I would say numerically exact 
+its predecessor~\cite{Amaricci2022}, featuring massively parallel Lanczos-based algorithms while including several significant extensions and improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effects in quantum materials to multi-orbital superconductivity. It also provides direct
+access to numerically exact
 dynamical correlation functions across the
-entire complex plane, thus enabling calculations of spectral functions, local susceptibilities, and other response properties.
+entire frequency complex plane, thus enabling calculations of spectral functions, local susceptibilities, and other response properties.
 
 Additionally, \NAME offers access to the Fock space of
 the impurity system and thus, for instance, the possibility to evaluate the impurity reduced density matrix
@@ -32,7 +29,7 @@ the impurity system and thus, for instance, the possibility to evaluate the impu
 features are increasingly recognized as essential for understanding the emergent behavior in correlated matter, including quantum criticality and superconductivity.
 
 %MC this last point is intrinsically DMFT (or embedding) and it has no connection with impurity physics
-This new version also includes support for systems with non-equivalent impurities , a critical feature to study hetero-structures, super-lattices, and disordered systems, where the local environment varies significantly across different sites. This capability makes it 
+This new version also includes support for systems with non-equivalent impurities. This is a critical feature in DMFT or, more generally, in quantum embedding methods, to study hetero-structures, super-lattices, and disordered systems, where the local environment varies significantly across different sites. This capability makes it 
 possible to explore a wide range of inhomogeneous systems, including
 oxide interfaces or disordered systems, where
 translational symmetry is broken.
@@ -40,39 +37,36 @@ translational symmetry is broken.
 
 %\paragraph{Interoperability}\\
 With the growing importance of  quantum impurity models in the study of correlated materials,
-standardizazion and interoperability between solution software suites has
+standardization and interoperability between solution software suites has
 become a critical necessity.
 \NAME has been expressly designed following this guiding principle. 
 While the library itself is implemented using modern Fortran constructs, it also provides an extensive set of C-bindings that enable integration with other programming languages,
 be they compiled (C, C++), JIT-compiled (Julia) or interpreted (Python). 
-Especially notable in this sense is the Python API, EDIpy which, beyond providing a 
+Especially notable in this sense is the Python API, EDIpack2py, which beyond providing a 
 high-level interface for defining and solving impurity problems, also allows integration with established scientific libraries, such as NumPy and SciPy, facilitating data analysis and
 rapid prototyping.
 
-A key development feature in \NAME, unlocked by the introduction of Python and C/C++ API, 
-is the direct interfaces to the TRIQS (Toolbox for Research on Interacting Quantum Systems) and
-W2Dynamics software suites, which are two of the most important and used computational tools in
-the field. \NAME seamlessly %MC ?
-slots in as an alternative solver to the native Quantum Monte Carlo 
-implementations, greatly extending the parameter (and especially temperature) range reachable by 
+A key development feature in \NAME, unlocked by the introduction of the Python API, 
+is the possibility to directly interface to the TRIQS (Toolbox for Research on Interacting Quantum Systems) and
+W2Dynamics software suites, which are two of the most important and widely used computational tools in
+the field. \NAME slots in as an alternative solver to the native Quantum Monte Carlo 
+implementations, extending the parameter (and especially temperature) range reachable by 
 the simulation while minimizing the coding requirements for the end user.
 At the same time, this integration provides \NAME users with access to the
 extensive data handling and analysis tools in the TRIQS ecosystem. 
 Overall, interoperability extends the cumulative reach and trustworthiness of all these platforms,
-enhancing reproducibility and cross-validation of numerical results, with the ultimate aim of a
-chieving standardization for quantum impurity solvers along the guiding principles of initiatives such as FAIRmat.
+enhancing reproducibility and cross-validation of numerical results, with the ultimate goal of achieving standardization for quantum impurity solvers along the guiding principles of initiatives such as FAIRmat, see \href{https://www.fairmat-nfdi.eu/fairmat/}{fairmat-nfdi.eu/fairmat}. 
 
 %\paragraph{closure}
 In this paper, we present the mathematical framework, implementation
-details, and key features of \NAME, along with several illustrative
+details, and key features of \NAME \textcolor{red}{5.0}, along with several illustrative
 applications. We aim to demonstrate how this flexible,
 high-performance solver can be used to tackle a wide range of
 challenging impurity problems. 
 The rest of this work has the following structure. In \secu{SecInstall} we 
 briefly illustrate the overall structure of \NAME together with its dependencies, configuration
 and installation procedures. In the following  \secu{SecEDIpack} we present the quantum impurity
-problem and review the software implementation in full details. In the following 
-\secu{SecInterop} we thoroughly discuss the C-binding interface which is at the heart of the 
+problem and review the software implementation in full detail. In \secu{SecInterop} we thoroughly discuss the C-binding interface which is at the heart of the 
 interoperability capabilities of \NAME. In this section we also discuss 4 interface layers: i) 
 the Python API, ii) the TRIQS interface, iii) the W2Dynamics interface and iv) a basic Julia API.
 Finally, in \secu{SecExamples} we discuss the functionalities and the capabilities of \NAME and 

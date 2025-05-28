@@ -53,19 +53,26 @@ reference platform for quantum impurity solvers.
 
 
 \section*{Acknowledgements}
-We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto~Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou, A.~Scazzola, M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, A.~Camjayi, M.~Rozenberg.    
+We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto~Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou,  M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, A.~Camjayi, M.~Rozenberg.    
 
-% % TODO: include author contributions
-% % This will be used to better attribute supervision of each part of the code, e.g. LC for part of the code, C-binding, Py, Julia, Monicelli, etc, IK for EDIpack2Triqs, AK+MW+GS for W2Dyn support, etc. 
-% \paragraph{Author contributions}
-% This is optional. If desired, contributions should be succinctly described in a single short paragraph, using author initials.
+\paragraph{Author contributions}
+A.A. designed the project, developed the main structure of the software and conceived the computational algorithms in the core library. 
+L.C., G.M., F.P. A.S., S.G. and G.B.  equally contributed to the development and implementation of many different aspects of the  software, including code writing, configuration, installation, testing and continuous integration procedures. 
+L.C. devised and developed the C-binding layer, the Python, Julia and Monicelli interface together with Python specific deployment and installation tools. 
+I.K. developed the Triqs interface and contributed to the testing part. 
+A.K., M.W. and G.S. developed the integration with W2Dynamics.  
+A.A. and M.C. conceived the diagonalization, correlation function  calculation and bath optimization strategies implemented in the library. M.C. devised the inclusion of the electron-phonon coupling. 
+A.A., M.C., L.d.M. and G.S designed additional algorithms extending functionalities of the core software.   
+A.A., L.C., I.K., A.K., S.G. and G.B. performed the calculations, analyzed the results and prepared the data presentation in the examples.
+A.A. and L.C. wrote the backbone of the manuscript.
+All authors participated in the writing and revision process. 
 
 % TODO: include funding information
 \paragraph{Funding information}
-L.C. acknowledge support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994) and gratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
+L.C. acknowledges support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994) and gratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
 I.K. acknowledges support from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Grant agreement No.~854843-FASTCORR).
 G.S. and A.K. acknowledge financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) through FOR 5249 (project-id 449872909, Project P05), and the W\"urzburg-Dresden Cluster of Excellence on Complexity and Topology in Quantum Matter-ct.qmat (EXC 2147, project-id 390858490).
-%F.P.
+F.P. acknowledges support from the Swiss National Science Foundation via NCCR Marvel and SNSF Grant No. 200021-196966.
 %M.W.
 %G.M.
 G.M. acknowledges support from the MUR - Italian Ministry of University and Research - through the Rita-Levi Montalcini program.
@@ -89,8 +96,7 @@ types and operations thereof. The syntax replicates a cultural italian
 phenomenon known as ``supercazzola", a rambling nonsensical discourse
 which gives the false impression of carrying an actual meaning,
 introduced in the movies trilogy ``Amici Miei'', directed by Mario
-Monicelli (see
-\url{https://it.wikipedia.org/wiki/Amici_miei}). 
+Monicelli (see \href{https://it.wikipedia.org/wiki/Amici_miei}{it.wikipedia.org/wiki/Amici\-\_\-miei}). 
 
 The {\tt Monicelli} language can be found at
 \href{https://github.com/esseks/monicelli.git}{github.com/esseks/monicelli.git}
@@ -119,7 +125,8 @@ funzioni? Lo vede che interfacciano gli array, non supportati da
 Monicelli, e prematurano anche! 
 Ora io le direi, anche con il rispetto per l'autorità, anche solo le
 due parole come install {\tt Monicelli} from
-\url{https://github.com/esseks/monicelli.git}
+\href{https://github.com/esseks/monicelli.git}{github.com/esseks/monicelli.git}
+%\url{https://github.com/esseks/monicelli.git}
 e compila il file {\tt hm\_bethe.mc}, per esempio.}\\
 V: {\it Basta così! Mi seguano nel programma di test!}\\
 P: {\it No, no, no, attenzione! Il loop dmft completo \`e supportato
@@ -138,7 +145,7 @@ The first part of the DMFT code load all the required functions from
 solver functions {\tt ed\_init\_solver} and {\tt ed\_solve}:
 
 \lstset{breaklines=true, breakindent=1em}
-\begin{lstlisting}[style=cstyle,numbers=none]
+\begin{lstlisting}[style=MonicelliStyle,numbers=none]
 bituma le funzioni ausiliarie che vengono dal bagaglio
 ...
 blinda la supercazzola leggi o scherziamo?
@@ -165,7 +172,7 @@ and if error condition is met the loop exit.
 The main step of the implementation reads: 
 
 
-\begin{lstlisting}[style=cstyle,numbers=none]
+\begin{lstlisting}[style=MonicelliStyle,numbers=none]
 Lei ha clacsonato
 #Read the input file
     prematurata la supercazzola dimmilfile o scherziamo?

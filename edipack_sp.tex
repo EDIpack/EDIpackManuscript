@@ -22,6 +22,7 @@
 \usepackage{tabularx}
 \usepackage{ltablex}
 \usepackage[final]{showlabels} %inline: draft//final
+\usepackage{ulem} % \uline,  \uwave, \sout...
 
 % Prevent all line breaks in inline equations.
 \binoppenalty=10000
@@ -163,7 +164,41 @@
 
 
 
+%%
+%% Monicelli definition (c) 2025 Amaricci
+%%
+\lstdefinelanguage{Monicelli}%
+  {morekeywords={vaffanzum,ha clacsonato,più,meno,per,diviso,maggiore,minore,scappellamento,come fosse,Necchi,Mascetti,Perozzi,Melandri,Sassaroli,voglio,posterdati,mi porga,stuzzica,"brematura anche",che cos'è, o magari, o tarapia, il genio,"blinda la supercazzola",brematurata la supercazzola, avvertite},%
+   sensitive=true,%
+   alsoother={\$},%
+   morecomment=[l]\#,%
+   morecomment=[n]{\#=}{=\#},%
+   morestring=[s]{"}{"},%
+   morestring=[m]{'}{'},%
+}[keywords,comments,strings]%
 
+\lstdefinestyle{MonicelliStyle}{
+  frame=lines,
+  language=Monicelli,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\footnotesize,
+  morecomment=[l]{\#\ },
+  mathescape,
+  fontadjust=true,
+  mathescape,
+  % breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  frame=single,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
 
 
 % BASH
@@ -383,18 +418,19 @@ EDIpack 2.0: A High-Performance, Interoperable Lanczos-based Solver for generic 
 % Mark the corresponding author(s) with a superscript symbol in this order
 % \star, \dagger, \ddagger, \circ, \S, \P, \parallel, ...
 \begin{center}\textbf{
-    Lorenzo Crippa\textsuperscript{1,2,3},
+    Lorenzo Crippa\textsuperscript{1,2,3}
     Igor Krivenko\textsuperscript{1},
     Samuele Giuli\textsuperscript{4},
     Gabriele Bellomia\textsuperscript{4},
-    Alexander Kowalski\textsuperscript{3},
+    Alexander Kowalski\textsuperscript{3},    
     Francesco Petocchi\textsuperscript{5},
-    Markus Wallerberger\textsuperscript{6},
-    Giacomo Mazza\textsuperscript{7},
-    Luca de Medici\textsuperscript{8},
+    Alberto Scazzola\textsuperscript{6},
+    Markus Wallerberger\textsuperscript{7},
+    Giacomo Mazza\textsuperscript{8},
+    Luca de Medici\textsuperscript{9},
     Giorgio Sangiovanni\textsuperscript{2,3},
-    Massimo Capone\textsuperscript{4,9} and 
-    Adriano Amaricci\textsuperscript{9$\star$}    
+    Massimo Capone\textsuperscript{4,10} and 
+    Adriano Amaricci\textsuperscript{10}    
 }\end{center}
 %%%%%%%%%% END TODO: AUTHORS
 
@@ -419,16 +455,18 @@ EDIpack 2.0: A High-Performance, Interoperable Lanczos-based Solver for generic 
 \newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
   Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
 \newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
-\newcommand{\TUW}{Institure of Solid State Physics, TU Wien, 1040 Vienna, Austria}
+\newcommand{\TUW}{Institute of Solid State Physics, TU Wien, 1040 Vienna, Austria}
+\newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, I\-10129 Torino, Italy}
 {\bf 1} \ITPHamburg\\
 {\bf 2} \CTQMAT\\
 {\bf 3} \WZBURG\\
 {\bf 4} \SISSA\\
 {\bf 5} \Geneve\\
-{\bf 6} \TUW\\   
-{\bf 7} \UPISA\\
-{\bf 8} \ESPCI\\
-{\bf 9} \CNRIOM\\
+{\bf 6} \ToPoli\\
+{\bf 7} \TUW\\   
+{\bf 8} \UPISA\\
+{\bf 9} \ESPCI\\
+{\bf 10} \CNRIOM\\
 \end{center}
 %%%%%%%%%% END TODO: AFFILIATIONS
 
@@ -439,7 +477,7 @@ EDIpack 2.0: A High-Performance, Interoperable Lanczos-based Solver for generic 
 \begin{center}
 \vspace{\baselineskip}
 % $\star$ \href{mailto:email1}{\small email1}\,,\quad
-$\star$ \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
+EDIpack group: \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
 \end{center}
 %%%%%%%%%% END TODO: EMAIL
 
@@ -448,10 +486,11 @@ $\star$ \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
 %%%%%%%%%% TODO: ABSTRACT
 % Write your abstract here.
 \section*{\color{scipostdeepblue}{Abstract}}
-\fixme{Probably I can do a better or more evocative job here}
 \textbf{\boldmath{%
-EDIpack is a flexible, high-performance numerical library to solve generic quantum impurity problems using Lanczos-based exact diagonalization, as emerging from dynamical mean-field theory (DMFT) description of strongly correlated materials.
-Its modular architecture provides Fortran APIs and bindings for C, interfaces with Python or Julia as well as with  TRIQS and W2Dynamics research platform. We discuss mathematical framework alongside implementation details and showcases illustrative applications.
+EDIpack is a flexible, high-performance numerical library to solve generic quantum impurity problems using Lanczos-based exact diagonalization, as emerging from Dynamical Mean-Field Theory description of strongly correlated materials. 
+The library efficiently solve impurity problems with different symmetry properties, including superconductivity, spin-orbit terms or electron-phonon coupling. It provides access to dynamical correlation function on the entire complex frequency plane at zero and low-temperatures.    
+% We discuss the mathematical framework alongside implementation details of the software. Moreover we showcase illustrative applications.
+The modular architecture of the software not only provides Fortran APIs but also includes bindings to C/C++, interfaces with Python and Julia or with TRIQS and W2Dynamics research platforms, thus ensuring unprecedented level of inter-operability.   
 The outlook includes further extensions for quantum materials, condensed matter physics, and quantum information applications.
 }}
 %%%%%%%%%% END TODO: ABSTRACT

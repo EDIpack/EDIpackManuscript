@@ -391,8 +391,8 @@ by the operators $c^\dagger_{b,i} / c_{b,i}$ corresponding to either impurity
 or bath electronic degrees of freedom with a certain spin projection.
 Having these two crucial pieces of information, the constructor initializes
 the underlying Fortran library and automatically selects the appropriate
-{\tt ed\_mode} (see Sec.~\ref{sSecQNs}) and
-{\tt bath\_type} (see Sec.~\ref{sSecBath}). In addition, the
+{\tt ed\_mode} (see \secu{sSecQNs}) and
+{\tt bath\_type} (see \secu{sSecBath}). In addition, the
 constructor accepts a vast array of keyword arguments that allow for fine-tuning
 the diagonalization process. Among others, these include the ED algorithm
 selection, the quantum numbers to be used, parameters of the Krylov space,
@@ -416,8 +416,8 @@ are the following.
     \item {\tt norb} --- the number of impurity orbitals (read-only).
     \item {\tt hloc} --- matrix $h^0_{\alpha\beta\s\s'}$ of
           the quadratic impurity Hamiltonian \equ{Himp}.
-    \item {\tt U} --- 8-dimensional array $U_{\alpha\sigma_1,\beta\sigma_2,\gamma\sigma_3,\delta\sigma_4}$
-          of two-particle interactions as defined in Eq.~(\ref{HintUmat}).
+    \item {\tt U} --- 8-dimensional array $U_{\alpha\s_1,\beta\s_2,\gamma\s_3,\delta\s_4}$
+          of two-particle interactions as defined in \equ{HintUmat}.
     \item {\tt bath} --- an object representing the bath. Depending on the
           bath type selected upon solver object construction, this object is an
           instance of {\tt BathNormal}, {\tt BathHybrid} or {\tt BathGeneral}

@@ -725,16 +725,16 @@ high accuracy.
 \end{figure}
 
 \subsection{Holstein model on the Bethe lattice (electron-phonon coupling)}
-One of the features introduced in \NAME is the possibility of treating
-local phonons in conjunction with the superconductive phase,
+
+One of the features introduced in \NAME is the possibility of treating local phonons in conjunction with the superconductive phase,
 i.e. \textbf{ed\_mode=superc}. 
-In this example discuss  the normal and
+In this example, we discuss  the normal and
 superconductive solution of the pure Holstein model on the Bethe
 lattice within DMFT.
 We stress that, using Fortran API, the code
 implementation for this specific case is essentially identical to the listing reported in the sections
 \ref{SecExamplesBetheDMFT} ({\tt ed\_mode=normal}) and
-\ref{SecExamplesAHM} ({\tt ed\_mode=superc}). 
+\ref{SecExamplesAHM} ({\tt ed\_mode=superc}).
 
 So we consider the model introduced in \secu{SecExamplesBetheDMFT}
 with $U=0$ and the additional phononic and electron-phonon terms:
@@ -743,10 +743,7 @@ with $U=0$ and the additional phononic and electron-phonon terms:
     b_i)\sum_{\sigma}(c^\dagger_{i\sigma}c_{i\sigma}
     -\frac{1}{2})\Big]. 
 \end{equation}
-We consider the half-filling regime of the particle-hole symmetric
-Bethe lattice density of states. We set the half-bandwidth as our
-energy unit $D=1$ and introduced the electron-phonon coupling $\lambda
-= \tfrac{2g^2}{\omega_0D}$.  
+We consider the half-filling regime of the particle-hole symmetric Bethe lattice density of states. We set the half-bandwidth as our energy unit $D=1$ and introduced the electron-phonon coupling $\lambda = \tfrac{2g^2}{\omega_0D}$.  
 The iterative DMFT solution algorithm follows the same principles
 illustrated in the previous sections. 
 
@@ -770,7 +767,7 @@ choice of the coupling.
 We characterize the model solution by showin the evolution of the
 double occupation $\langle n_{\up}n_{\dw}\rangle$ as a function of the
 phonon frequency $\omega_0$, see panel (A). In this panel we compare
-the behavior for {\tt ed\_mode=normal} against the superconductive
+the behavior for the normal solution ({\tt ed\_mode=normal}) against the superconductive
 solution ({\tt ed\_mode=superc}). Our results capture the whole
 crossover from adiabatic to anti-adiabatic regime. In the former
 regime, the double occupation takes a similar value for the two
@@ -804,7 +801,7 @@ of strength $\lambda/2$.
         corresponding orbital-resolved spectral function (right) computed for a
         three-orbital impurity model with an interaction of the Hubbard-Kanamori
         type (\ref{Hint}). This illustration is produced by the edipack2triqs
-        example script presented in Sec.~\ref{SecExamplesTRIQS}.
+        example script presented in \secu{SecExamplesTRIQS}.
     }
 \end{figure}
 
@@ -813,10 +810,10 @@ of strength $\lambda/2$.
 \label{SecExamplesTRIQS}
 
 We proceed to demonstrate how to use the edipack2triqs compatibility
-layer (Sec.~\ref{sSecInteropTRIQS}) to solve a quantum system comprised by a
+layer (\secu{sSecInteropTRIQS}) to solve a quantum system comprised by a
 3-orbital correlated impurity coupled to a few non-interacting bath sites.
 The interaction term of the impurity Hamiltonian is in the Hubbard-Kanamori
-form (\ref{Hint}).
+form (\equ{Hint}).
 
 
 A Python script implementing a calculation that makes use of edipack2triqs
@@ -855,7 +852,7 @@ The computation results are readily available as attributes of the solver
 object. The following code snippet shows how to access measured expectation
 values of the static observables, and how to employ the plotting framework of
 TRIQS to visualize the obtained Matsubara and real-frequency impurity Green's
-functions (Fig.~\ref{figEx3}).
+functions (\figu{figEx3}).
 \lstinputlisting[style=mypython,
                  mathescape=false,
                  numbers=none,
