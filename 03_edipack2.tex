@@ -113,7 +113,7 @@ For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_d = g_1 \
 Choosing properly the shift $A_m$, one can reduce the number of excited phonons in the ground state and consequently the required cutoff. 
 Although feasible, dealing with more than one phonon mode quickly becomes computationally very demanding, thus we will consider only one mode and we drop the $m$ index in the rest of this work.
 
-The phonon frequency is passed to the \NAME program via the variable { \tt W0\_PH } to be read from the input file. The displacement field acting on the phonon is passed through the variable {\tt A\_PH} from the input file. For every phonon mode, the $g$ coupling can be written as a matrix $g_{\alpha \beta}$ which can be passed in two different ways. If the matrix is diagonal ($g_{\alpha \beta} = g_\alpha \delta_{\alpha \beta}$), from the input file one can simply write in order the values $g_\alpha$ in the variable {\tt G\_PH}. For any general shape one can pass to the input file a {\tt GPHfile } variable containing the name of the file storing the $g_{\alpha \beta}$ array in Fortran style.\fixme{I don't seem to understand the last two sentences at all\ldots}
+The phonon frequency is passed to the \NAME program via the variable { \tt W0\_PH } to be read from the input file. The displacement field acting on the phonon is passed through the variable {\tt A\_PH} from the input file. For every phonon mode, the $g$ coupling can be written as a matrix $g_{\alpha \beta}$ which can be passed in two different ways. If the matrix is diagonal ($g_{\alpha \beta} = g_\alpha \delta_{\alpha \beta}$), from the input file one can simply write in order the values $g_\alpha$ in the variable {\tt G\_PH}. For any general shape one can pass to the input file a {\tt GPHfile } variable containing the name of the file storing the $g_{\alpha \beta}$ array.
 If {\tt GPHfile=NONE}, the matrix $g_{\alpha\beta}$ is read from the variable {\tt G\_PH}, otherwise it is read from the {\tt GPHfile}.
 
 \subsubsection{System setup}
@@ -956,10 +956,14 @@ an additional set of parameters $\Delta^p_{\a}\delta_{\a\b}\delta_{\s \bar{\s}}$
 off-diagonal in the spin, where $\Delta^p_\a$ represents the pairing amplitudes. 
 This choice corresponds to a Nambu representation for each orbital component,
 with the Hamiltonian matrices taking the form:
+
 $$
 \hat{h}^p_{\a\b} = \e_{\a}\delta_{\a\b}\tau_0 +
 \Delta_{\a}\delta_{\a\b}\tau_x .
 $$
+
+\fixme{ (Samuele) Here and before h with or without hat? I would say without since it is how we wrote it in 3.1.1}
+\fixme{The superc h should have tau\_z instead of tau\_0 in nambu repr}
 where $\tau_{i=0,x,y,z}$ are Pauli matrices.
 %
 The hybridization amplitudes between the impurity and the bath levels
