@@ -96,9 +96,9 @@ if MPI.COMM_WORLD.Get_rank() == 0:
     # Plot the Matsubara Green's functions (imaginary part)
     plt.figure(figsize=(4, 4))
     for orb in orbs:
-        oplot(solver.g_iw['up'][orb, orb], mode='I', label=f"$\\Im G_%i(i\\omega_n)$" % orb)
+        oplot(solver.g_iw['up'][orb, orb], mode='I', label=f"${\\rm Im} G_%i(i\\omega_n)$" % orb)
     plt.xlim((-3, 3))
-    plt.ylabel(r"$\Im G(i\omega_n)$")
+    plt.ylabel(r"${\rm Im} G(i\omega_n)$")
     plt.legend()
     plt.savefig("G_iw.pdf")
 
