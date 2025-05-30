@@ -3,12 +3,10 @@
 
 \section{Interoperability}\label{SecInterop}
 The recent growing availability of state-of-the-art software dedicated
-to the solution of quantum impurity problems using different methods \cite{Bulla2008RMP,Parcollet2015CPC,Seth2016CPC,Bauernfeind2017PRX,Ganahl2015PRB,Mejuto_Bath_ASCI-DMFT,...}
+to the solution of quantum impurity problems using different methods \cite{Bulla2008RMP,Parcollet2015CPC,Seth2016CPC,Bauernfeind2017PRX,Ganahl2015PRB,Mejuto_Bath_ASCI-DMFT,...}Unfinished list of references
 poses a serious challenge to test accuracy and reliability of the
 results.
-As such, complex softwares are requested to develop a higher level of
-interoperability, i.e. the possibility to operate with other software
-possibly using different programming language.
+As such, complex software packages are expected to develop a higher level of interoperability, i.e. the capability to operate with other software, possibly written in different programming languages.
 Modern Fortran, which is the language of choice for \NAME, since many
 years supports the standardized generation of procedures and
 variables that are interoperable with C.
@@ -19,33 +17,31 @@ The interoperability with C language is provided by the
 {\tt ISO\_C\_BINDING} module, which is part of the Fortran
 standard since 2003. The module contains definitions of named
 constants, types and procedures for C interoperability.
-Alongside, a second key feature essential to expose to C any Fortran
-entity is the {\tt BIND(C)} intrinsic function.
+Alongside, a second key feature essential to expose any Fortran entity to C is the {\tt BIND(C)} intrinsic function.
 In \NAME we exploit these features of the language to provide a
-complete interface from the Fortran code to C/C++, i.e. {\tt
+complete interface from the Fortran code to C/C++ named {\tt
   EDIPACK\_C}. 
 
 
 \subsubsection{Installation and inclusion}\label{sSecInteropCbindingsInstallation}
-The C-binding module in included in the build process of \NAME and
+The C-binding module is included in the build process of \NAME and
 compiled into a dynamical library {\tt
   libedipack\_cbindings.so (.dylib)}. As discussed in the
-\secu{sSecInstallBuildInstall}, the support for inequivalent
+\secu{sSecInstallBuildInstall}, support for inequivalent
 impurities is configured at the build level and propagates to the
 C-bindings library as well. An exported variable {\tt has\_ineq} is
-defined and export to C/C++ as a way to query the presence of
-inequivalent impurities support. 
+defined and exported to C/C++ as a way to query the presence of support for the inequivalent impurities. 
 The generated library and header files get installed in the include
 directory at the prefix location, specified during configuration
 step. The corresponding path is added to the environment variable {\tt
   LD\_LIBRARY\_PATH}, valid of any Unix/Linux system, via any of the
-loading methods outlines in \secu{sSecInstallOSloading}. 
+loading methods outlined in \secu{sSecInstallOSloading}. 
 
 The C/C++ compatible functions and variables 
 are declared in the header file {\tt e\-di\-pack\_c\-bin\-din\-gs.h}.
 Since {\tt ISO\_C\_BINDING} only provides, to date, C compatibility, the 
 functions and variables are declared with C linkage, which prevents name mangling.
-Function overloading is also not supported, hence all interfaced Fortran functions, for example supporting multiple input variables combinations with different types and ranks, are here represented by multiple alternative functions.
+Function overloading is also not supported, hence all interfaced Fortran functions, for example supporting multiple input variable combinations with different types and ranks, are here represented by multiple alternative functions.
 As an example, the {\tt ed\_chi2\_fitgf} Fortran function, which handles the fitting of bath parameters, is callable in C++ in the following variants:
 \begin{itemize}
     \item  {\tt chi2\_fitgf\_single\_normal\_n3}: for {\tt ed\_mode=normal/nonsu2}, single-site DMFT and rank-3 Weiss field/hybridization function arrays
@@ -53,12 +49,12 @@ As an example, the {\tt ed\_chi2\_fitgf} Fortran function, which handles the fit
     \item  {\tt chi2\_fitgf\_single\_superc\_n3}: for {\tt ed\_mode=superc}, single-site DMFT and rank-3 Weiss field/hybridization function arrays
     \item  {\tt chi2\_fitgf\_single\_superc\_n5}: for {\tt ed\_mode=superc}, single-site DMFT and rank-5 Weiss field/hybridization function arrays
 \end{itemize}
-and analogous functions for the inequivalent impurities case, i.e. EDIpack2Ineq. All functions are thorougly listed and documented in the online manual.
-When using \NAME functions in a C/C++ program, care must be taken in the way arrays are passed. Consistently with {\tt ISO\_C\_BINDING}, non-scalar parameters have to be passed as raw pointers. An array of integers containing the dimensions of the former need to be passed as well to allow for proper Fortran input parsing. A working C++ example is provided in the {\tt examples} folder of the \NAME repository and discussed in Section \ref{SecExamples}.
+and analogous functions for the inequivalent impurities case, i.e. EDIpack2Ineq. All functions are listed and thorougly documented in the online manual.
+When using \NAME functions in a C/C++ program, care must be taken in the way arrays are passed. Consistently with {\tt ISO\_C\_BINDING}, non-scalar parameters have to be passed as raw pointers. An array of integers containing the dimensions of the former need to be passed as well to allow for proper Fortran input parsing. A working C++ example is provided in the {\tt examples} directory of the \NAME repository and is discussed in Section \ref{SecExamples}.
 
 \subsubsection{Implementation}\label{sSecInteropCbindingsImplementation}
 The interface layer is contained in the Fortran module {\tt
-  EDIPACK\_C}. This contains a common part and two set of functions,
+  EDIPACK\_C}. It contains a common part and two set of functions,
 one to interface the procedures from \NAME and a second
 one to extend the interface to the inequivalent impurities case.
 Specifically, the implemented interface functions expose to C through
@@ -67,9 +63,9 @@ procedures composing the Fortran API of \NAME, i.e. contained in {\tt
   ED\_MAIN}. The procedures and shared variables can be divided in four main groups (note that contrary to the Fortran API the functions here lose the prefix {\tt ed\_}):
 
 \paragraph{{\bf Variables}.}
-A number of relevant input and shared variables which are normally
-required to setup or to control the calculation are interfaced to C
-directly in the \NAME modules {\tt ED\_INPUT\_VARIABLES} using {\tt
+A number of relevant input and shared variables, which are normally
+required to setup or to control the calculation, are interfaced to C
+directly in the \NAME modules {\tt ED\_INPUT\_VARIABLES} using the {\tt
   bind(C)} constructs. These are implicitly loaded into the C-binding module {\tt
   EDIPACK\_C} through the Fortran {\tt USE EDIPACK} statement and
 then further interfaced in the C++ header file. 
@@ -87,22 +83,22 @@ interaction Hamiltonian through {\tt add\_twobody\_operator}.
 
 \paragraph{{\bf Bath}.} In this group we implement a number of
 procedures dealing with bath initialization, symmetry operations and
-optimization. In particular it contains the function returning the
-dimension of the bath array on the user side {\tt
-  get\_bath\_dimension} as well as the setup of the matrix basis
+optimization. In particular it contains the function {\tt
+  get\_bath\_dimension} returning the
+dimension of the bath array on the user side as well as the setup of the matrix basis
 $\vec{\Gamma}$ for the replica (general) bath via different instances of
 {\tt set\_Hreplica(general)\_\-\{site,lattice\}\_d\{3,5\}}. 
 A crucial part of the DMFT self-consistency loop is the optimization of the bath through CG algorithm (see \secu{sSecFit}). To this end we interfaced a
 number of functions which
 cover all the cases supported in \NAME, conveniently called {\tt
-  chi2\_fitgf\_\{single,lattice\}\_\{normal,superc\}\_n\{3,4,5,6\}} . Note that, because the actual
+  chi2\_fitgf\_\{single,lattice\}\_\{normal,superc\}\_n\{3,4,5,6\}}. Note that, because the actual
 optimization is still performed through the Fortran code, no changes
 apply to the outcome of this step.    
 
 \paragraph{{\bf Input/Output}.}
-The input and output part of the software is interfaced in this group
+The input and output parts of the software are interfaced in this group
 of functions. In particular, {\tt read\_input} exposes to C the input
-reading procedure of \NAME which set all the internal
+reading procedure of \NAME, which sets all the internal
 variables of \NAME.
 Next, in {\tt edipack\{2ineq\}\_c\_binding\_io} we interface all the
 functions implementing the communication from the \NAME instance to
@@ -122,9 +118,8 @@ as the non-interacting Green's and hybridization functions starting from the use
 \subsection{EDIpack2py, the Python API}\label{sSecInteropEDIpy}
 As a first application of the \NAME C-bindings we implemented a
 complete Python interface called EDIpack2py. This is a Python module which
-enables access to all the library features and unlock implementation of
-further interfaces of \NAME as a plug-in solver for external Python
-based software. Detailed documentation can be found online at \href{https://edipack.github.io/EDIpack2py}
+enables access to all the library features and unlocks implementation of
+further interfaces of \NAME as a plug-in solver for external Python-based software. Detailed documentation can be found online at \href{https://edipack.github.io/EDIpack2py}
 {edipack.github.io/EDIpack2py}.
 
 
@@ -154,9 +149,9 @@ pip install edipack2py
 
 
 \paragraph{Anaconda.}
-As for \NAME, the Python API in EDIpack2py is available as an
-Anaconda package for GNU/Linux and Mac Os systems. Packages are available for
-Python version $>3.10$. The \NAME package contains the {\tt
+Similarly to \NAME, the Python API in EDIpack2py is available as an
+Anaconda package for GNU/Linux and macOS systems. Packages are available for
+Python version 3.10 and newer. The \NAME package contains the {\tt
   EDIpack2py} Python module as well as \NAME and SciFortran
 libraries. 
 %In this case the resolution of the dependencies is
@@ -175,16 +170,16 @@ for \NAME. By default the library search proceeds as follow:
 \begin{enumerate}
 \item The user can override the location of the library
   (determined during the \NAME build configuration) by exporting an
-  environment variable called {\tt EDIPACK\_PATH} .
-\item By default, the Python module detects the position of the
-  Fortran libraries via {\tt pkg-config}. Any of the loading method
+  environment variable called {\tt EDIPACK\_PATH}.
+\item By default, the Python module detects the location of the
+  Fortran libraries via {\tt pkg-config}. Any of the loading methods
   outlined in \secu{sSecInstallOSloading} automatically pushes the
-  correct configuration to the {\tt PKG\_CONFIG\_PATH}. 
-\item As a last resort the environment variables {\tt
+  correct configuration to {\tt PKG\_CONFIG\_PATH}. 
+\item As a last resort, the environment variables {\tt
     LD\_LIBRARY\_PATH} and {\tt DYLD\_LIBRARY\_PATH} are analyzed to
-  retrieve the correct position. 
+  retrieve the correct location. 
 \end{enumerate}
-If none of the previous attempts succeeds, the module will not not load correctly and an error message will be printed. 
+If none of the previous attempts succeeds, the module will not load correctly and an error message will be printed. 
 
 
 
@@ -199,7 +194,7 @@ are accessed as properties and
 methods of the {\tt global\_env} class.
 
 The {\tt global\_env} class needs to be imported at the beginning
-of the python script, along with other useful modules. Numpy is
+of the Python script, along with other useful modules. Numpy is
 necessary, while mpi4py is strongly recommended.
 
 \begin{lstlisting}[style=mypython]
@@ -213,12 +208,12 @@ import os,sys
 The EDIpack2py module supports the solution of problems with independent
 impurities, interfacing to the EDIpack2ineq extension of the
 library, if present. Should the inequivalent impurities package not be
-built, the Python module silently disable the support to it, so that
+built, the Python module silently disables the support to it, so that
 invoking any related procedure  will result in a {\tt RuntimeError}.
 The user can check the availability of the inequivalent impurities
 interface by querying the value of  {\tt edipack2py.global\_env.has\_ineq}.
 
-The implementation of the Python API is divided in two main parts. The
+The implementation of the Python API is divided into two main parts. The
 first is a set of global variables, the second includes 4 groups of
 functions: solver, bath, input/output, auxiliary. 
 
@@ -250,11 +245,11 @@ execution and finalization  of the \NAME solver.
   \item {\tt init\_solver} and {\tt set\_Hloc}. The first 
     initializes the \NAME environment for the quantum impurity problem
     solution, sets the effective bath either reading it from a file or
-    initializing it from flat band model. Once this function is
+    initializing it from a flat band model. Once this function is
     called, it is not possible to allocate a second instance of the solver.
     {\tt set\_Hloc} sets the
     non-interacting part of the impurity Hamiltonian $h^0_{\a\b\s\s'}$. 
-    Either function take different argument combinations there
+    Either function takes different argument combinations there
     including support for inequivalent impurities.
 
   \item {\tt solve} This function solves the quantum impurity problem,
@@ -263,8 +258,8 @@ execution and finalization  of the \NAME solver.
     through input/output functions.
 
   \item {\tt finalize\_solver} This function cleans up the \NAME
-    environment, free the memory deallocating all relevant arrays or
-    data structure. A call to this functions enables a new
+    environment, frees the memory deallocating all relevant arrays and
+    data structures. A call to this functions enables a new
     initialization of the solver, i.e. a new call to {\tt
       init\_solver}.  
   \end{itemize}
@@ -277,26 +272,26 @@ effective bath on the user side as well as interfaces to specific
 conventional symmetry transformation. Here we discuss 
 a pair of crucial functions in this group.
 \begin{itemize}
-\item {\tt bath\_inspect}This function translates between the
+\item {\tt bath\_inspect} This function translates between the
   user-accessible continuous bath array and the bath components
-  (energy level, hybridization and so on). It functions in both ways,
+  (energy levels, hybridization and so on). It functions in both ways,
   given the array returns the components and vice-versa. It
   autonomously determines the type of bath and ED mode.
 
 \item {\tt chi2\_fitgf}
-  This function fits the Weiss field or Hybridization function (delta)
-  with a discrete set of level. The fit parameters are the bath
+  This function fits the Weiss field or hybridization function ($\Delta$)
+  with a discrete set of levels. The fit parameters are the bath
   parameters contained in the user-accessible array. Depending on the
   type of system we are considering (normal, superconductive,
-  non-SU(2)) a different set of inputs has to be passed. The specifics
+  non-SU(2) symmteric) a different set of inputs has to be passed. The specifics
   of the numerical fitting routines are controlled in the input file.
   \end{itemize}
 
 Additionally, the group includes the function {\tt
   get\_bath\_dimension}, returning the correct
 dimension for the user bath array to be allocated and {\tt
-  set\_H{replica/general}} which set the matrix basis
-$\vec{\Gamma}$ and init the bath variational parameters
+  set\_H{replica/general}}, which sets the matrix basis
+$\vec{\Gamma}$ and initializes the bath variational parameters
 $\vec{\lambda}$ for {\tt bath\_type=replica,general}. 
 
 
@@ -304,21 +299,21 @@ $\vec{\lambda}$ for {\tt bath\_type=replica,general}.
 
   
 \paragraph{{\bf Input/Output functions}.}
-This group includes functions which return to the userspace
+This group includes functions that return to the userspace
 observables or dynamical correlation functions evaluated in \NAME and
-conserved in the corresponding memory instance. Each function
-provides a general interface which encompass all dimension of the
-input array there including inequivalent impurities support.
-For instance, the function {\tt get\_sigma} returns the self-energy
+stored in the corresponding memory instance. Each function
+provides a general interface, which encompasses all dimension of the
+input array there including inequivalent impurities support. Not sure what is meant here
+For example, the function {\tt get\_sigma} returns the self-energy
 function array (evaluated on-the-fly) for a specified supported shape,
 normal or anomlous type and on a specific axis or frequency domain. 
     
 
 \paragraph{{\bf Auxiliary functions}.}
-This group include some auxiliary functions, either interfacing \NAME
+This group includes some auxiliary functions, either interfacing \NAME
 procedures or defined locally in Python to provide specific new
-functionalities. Among the latter we include {\tt get\_ed\_mode} which return an integer index depending onthe value of the variable {\tt ed\_mode=normal,superc,nosu2}
-and {\tt get\_bath\_type} which works similarly for {\tt bath\_type}.
+functionalities. Among the latter we include {\tt get\_ed\_mode}, which returns an integer index depending on the value of the variable {\tt ed\_mode=normal,superc,nosu2},
+and {\tt get\_bath\_type}, which works similarly for {\tt bath\_type}.
 
 
 
@@ -330,13 +325,13 @@ and {\tt get\_bath\_type} which works similarly for {\tt bath\_type}.
 
 
 
-\subsection{EDIpack2Triqs: the TRIQS interface}\label{sSecInteropTRIQS}
+\subsection{EDIpack2TRIQS: the TRIQS interface}\label{sSecInteropTRIQS}
 A thin compatibility layer between \NAME and the Toolbox for Research on
-Interacting Quantum Systems (TRIQS)\cite{Parcollet2015CPC} called EDIpack2Triqs
+Interacting Quantum Systems (TRIQS)\cite{Parcollet2015CPC} called EDIpack2TRIQS
 is available as a stand-alone project. This is a pure Python package
 built upon \NAME's Python API EDIpack2py (see \secu{sSecInteropEDIpy}) that provides a
 limited object-oriented interface to the most important features of \NAME.
-EDIpack2Triqs strives to offer seamless interoperability with program tools
+EDIpack2TRIQS strives to offer seamless interoperability with program tools
 based on TRIQS by adopting data types, conventions and usage patterns
 common to other TRIQS-based impurity solvers, such as
 TRIQS/CTHYB\cite{Seth2016CPC}. It also enables execution of \NAME calculations
@@ -348,7 +343,7 @@ found online at \href{https://krivenko.github.io/edipack2triqs/}
 \subsubsection{Installation}\label{sSecInteropTRIQSInstallation}
 The package depends on \NAME (which ultimately depends on SciFortran), EDIpack2py
 and TRIQS version 3.1 or newer. Assuming the three prerequisites are correctly 
-installed in the OS, the current development version of EDIpack2triqs can be 
+installed in the OS, the current development version of EDIpack2TRIQS can be 
 installed with {\tt pip} from its 
 \href{https://github.com/krivenko/edipack2triqs}{GitHub repository} as follows:
 
@@ -362,7 +357,7 @@ pip install .
 Another option for installing the package is by using the Anaconda package 
 manager on Unix/Linux systems.
 The following commands will create a new {\tt conda} environment named 
-`edipack' and install the most recently released version of EDIpack2triqs along 
+`edipack' and install the most recently released version of EDIpack2TRIQS along 
 with its dependencies (\NAME, EDIpack2py and the TRIQS libraries).
 
 \begin{lstlisting}[style=mybash]
@@ -372,7 +367,7 @@ conda install -c conda-forge -c edipack edipack2triqs
 \end{lstlisting}
 
 \subsubsection{Implementation}\label{sSecInteropTRIQSImplementation}
-The programming interface of EDIpack2triqs is built around the  
+The programming interface of EDIpack2TRIQS is built around the  
 singleton Python class {\tt EDIpackSolver}, defined in the module
 {\tt edipack2triqs.solver}, whose instance represents the internal state of 
 the \NAME library and exposes its functionality through a number of 
@@ -387,13 +382,13 @@ addition to the Hamiltonian, four {\it fundamental operator sets}
 {\tt fops\_imp\_up}, {\tt fops\_imp\_dn}, {\tt fops\_bath\_up} and
 {\tt fops\_bath\_dn} must be provided.
 Each of the sets contains pairs of labels {\tt (b,j)} carried
-by the operators $c^\dagger_{b,i} / c_{b,i}$ corresponding to either impurity
+by the operators $c^\dagger_{b,j} / c_{b,j}$ corresponding to either impurity
 or bath electronic degrees of freedom with a certain spin projection.
 Having these two crucial pieces of information, the constructor initializes
 the underlying Fortran library and automatically selects the appropriate
 {\tt ed\_mode} (see \secu{sSecQNs}) and
 {\tt bath\_type} (see \secu{sSecBath}). In addition, the
-constructor accepts a vast array of keyword arguments that allow for fine-tuning
+constructor accepts a vast array of keyword arguments that allow for fine-tuning of
 the diagonalization process. Among others, these include the ED algorithm
 selection, the quantum numbers to be used, parameters of the Krylov space,
 the spectrum cutoff and various tolerance levels.
@@ -489,12 +484,12 @@ Then, in order to configure the ED solver, the content of a specific section in 
 
 For most of the \NAME input variables, W2Dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt [EDIPACK]} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath elements {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
 
-A second set of input variables, including phyisical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also~\cite{Wallerberger2019CPC}
+A second set of input variables, including physical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also~\cite{Wallerberger2019CPC}
 for further details.
 
 %All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
 
-Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard the CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and are currently not available can not be used through the interface, including e.g.\ the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}.
+Solver specificities are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard CT-HYB code. For example, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{}. As a consequence, functionalities that would require specific support from W2Dynamics and are currently not available can not be used through the interface, including e.g.\ the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}.
 
 
 
@@ -503,7 +498,7 @@ The C-binding approach is extremely handy, in that it opens the way for interope
 As a further significant example, an experimental Julia API 
 is provided for \NAME. Although this is at the present a proof of concept, it is capable of replicating the results of Fortran, C++ and
 Python implementations for the Bethe lattice example driver.
-Its structure and operation mimicks that of the EDIpack2py layer, with minimal language-specific differences.
+Its structure and operation mimic that of the EDIpack2py layer, with minimal language-specific differences.
 
 The \NAME{} Julia API consists of a module called {\tt EDIpack2jl}, which provides access to the global variables and functions contained in {\tt  libedipack\_cbindings.so (.dylib)}. 
 
@@ -512,7 +507,7 @@ The library is searched upon loading the module, with the following order of pri
 \begin{itemize}
 \item {\tt EDIPACK\_PATH}: if this environment variable is set, {\tt EDIpack2jl} will look there for the library first
 \item {\tt LD\_LIBRARY\_PATH}: for Linux systems
-\item {\tt DYLD\_LIBRARY\_PATH}: for Mac systems
+\item {\tt DYLD\_LIBRARY\_PATH}: for macOS systems
 \end{itemize}
 
 \subsubsection{Structure}
@@ -550,7 +545,7 @@ ed.Nspin = 2
 
 The names and inputs of the Julia-wrapped functions are entirely analogous to those of the Python API.
 
-Particular care has to be taken with respect to parallelism: Julia offers an in-house platform for parallel computing with memory sharing through multi-threading. At present, there is no integration between this architecture and the MPI-based parallelism of \NAME{}, and their concurrent use in a single program is entirely untested and not encouraged. If the \NAME{} library is compiled with enabled parallelism, MPI support will need to be enabled in the user-created Julia program, by making use of modules such as {\tt  MPI.jl}. The {\tt MPI\_COMM\_WORLD} communicator will need to be correctly initialized by the user as well, and the program will need to be run with {\tt  mpiexec/mpirun}.
+Particular care has to be taken with respect to parallelism: Julia offers an in-house platform for parallel computing with memory sharing through multithreading. At present, there is no integration between this architecture and the MPI-based parallelism of \NAME{}, and their concurrent use in a single program is entirely untested and not encouraged. If the \NAME{} library is compiled with enabled parallelism, MPI support will need to be enabled in the user-created Julia program, by making use of modules such as {\tt  MPI.jl}. The {\tt MPI\_COMM\_WORLD} communicator will need to be correctly initialized by the user as well, and the program will need to be run with {\tt  mpiexec/mpirun}.
 
 We provide an example script for the simple case of the Bethe lattice in the normal phase in the {\tt  examples} folder of the EDIpack2jl repository. This script is intended to be run serially. Documentation of the API and further examples are being developed.
 

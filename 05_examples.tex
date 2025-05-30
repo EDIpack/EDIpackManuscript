@@ -2,16 +2,14 @@
 \begin{document}
 
 \section{Examples}\label{SecExamples}
-In this section we illustrate the functioning of the \NAME
-library and their interfaces as solver for DMFT through a variety of examples, including
-discussion of relevant code snippets. As some tasks are inherently agnostic on the impurity
-solver (and the impurity solver is agnostic about them), the user is expected to implement
-them, or interface to existing utilities. For instance, all the Fortran subroutines with 
-naming convention \texttt{dmft\_do\_something()} refer to implementations that can be found
-in the {DMFTtools} package\footnote{\url{https://github.com/aamaricci/DMFTtools}},
-the example based on w2dynamics relies on the internal facilities provided by the \texttt{DMFT.py} script \cite{Wallerberger2019CPC} and the TRIQS library provides an 
-extensive toolbox for the manipulation of Green's functions and related quantities
-\cite{Parcollet2015CPC}.
+In this section we illustrate and benchmark the functionalities and of the \NAME
+library and its interfaces as solver for DMFT through a variety of examples. We also discuss in detailed the relevant code snippets from different programming languages. 
+Some tasks --particularly those associated to the implementation of the DMFT self-consistency--  are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
+In the implementation using Fortran, Python or other \NAME API we adopt a reverse communication strategy, which requires the user to independently implement these parts or, equivalently, to exploit existing utilities. 
+In our examples based on the Fortran APIs  we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors) to perform specific tasks, including the evaluation of the local Green's function, the implementation of the self-consistency, the construction of the tight-binding model or the calculation of the kinetic energy. 
+Where appropriate, we include comments that reference these external procedures.
+On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself—see the \texttt{DMFT.py} script~\cite{Wallerberger2019CPC}—which handles all these tasks seamlessly.
+Similarly, the TRIQS library offers an extensive toolbox for the manipulation of Green’s functions and related quantities~\cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
 \subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
@@ -75,6 +73,7 @@ program ed_hm_bethe
    !...
    !Initialize Bethe arrays
    allocate(Ebands(Le),Dbands(Le))
+   !From SciFortran:
    Ebands = linspace(-D,D,Le,mesh=de)
    Dbands = dens_bethe(Ebands,Wband)*de
    !Set local H
@@ -109,6 +108,7 @@ vector<complex<double>> Delta(total_size_n5);
 ...
 // Initialize Bethe arrays
 vector<double> Ebands, Dbands;
+//Locally defined functions:
 Ebands = linspace(-D,D,Le);
 Dbands = dens_bethe(Ebands,Wband,de);
 //set local H
@@ -181,8 +181,10 @@ a reverse communication strategy and proceeds as follows:
   Matsubara axis using dedicated function provided by \NAME API.
   
 \item[{\tiny {\it User}}] Evaluate the local interacting Green's function
-  $G_\mathrm{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e$ with
-  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$.
+$$
+G_\mathrm{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e
+$$ 
+with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$.
   
 \item[{\tiny {\it User}}] Update the Weiss field via the {\bf self-consistency}
   relation: $\GG^{-1}_0(i\omega) = G_\mathrm{loc}(i\omega) +
@@ -206,27 +208,27 @@ An example of implementation is provided in the following listings.
 
 
 \setbox0=\hbox{%
-  \begin{minipage}{0.45\linewidth}
+  \begin{minipage}{0.46\linewidth}
     \center
     \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
-!DMFT loop
+    !DMFT loop
 do while(.not.converged.AND.iloop<nloop)
     iloop=iloop+1     
-    ! Call ED Solver
+    !Call ED Solver
     call ed_solve(bath)     
-    ! Retrieve Self-energy on Matsubara axis
+    !Retrieve $\Sigma(i\omega_n)$
     call ed_get_sigma(Smats,'m')
-    ! Build local Green's function
+    !Build local Green's function
     wfreq = pi/beta*(2*arange(1,Lmats)-1)
     do i=1,Lmats
        zeta= xi*wfreq(i)+xmu - Smats(1,1,1,1,i)
        Gmats(1,1,1,1,i)=sum(DOS/(zeta-Ene))*de  
     enddo
-    ! Self-consistency
+    !Self-consistency
     Delta = D/4d0*Gmats
-    ! Fitting -> new bath
+    !Fitting -> new bath
     call ed_chi2_fitgf(Weiss,bath,ispin=1)     
-    ! Check convergence
+    !Check convergence: from $\mathrm{DMFTtools}$
     converged=check_convergence(Delta,&
           dmft_error,Nsuccess,Nloop)
 enddo
@@ -236,35 +238,35 @@ enddo
 \savestack{\listingA}{\box0}
 
 \setbox0=\hbox{%
-  \begin{minipage}{0.52\linewidth}
+  \begin{minipage}{0.51\linewidth}
     \center
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
-  // DMFT loop
-  while (iloop < Nloop && !converged) {
-    //  Call ED Solver
-    solve_site(Bath.data(),bath_dim,1,1);      
-    // Retrieve  Self-energy on Matsubara axis
-    get_sigma_site_n5(Smats.data(),//
-        0,0,wm.data(),Lmats,0);
-    //  Build a local Green's function:
-    for (int i=0;i<Lmats;++i) {
-      zeta= wm[i] + xmu - Smats[i];
-      Gmats[i] = complex<double>(0.0,0.0);
-      for (int j=0; j< Le; j++) {
-        Gmats[i]+=Dbands[j]/(zeta-Ebands[j]);
-      }
+//DMFT loop
+while (iloop < Nloop && !converged) {
+  //Call ED Solver
+  solve_site(Bath.data(),bath_dim,1,1);      
+  //Retrieve $\Sigma(i\omega_n)$
+  get_sigma_site_n5(Smats.data(),//
+      0,0,wm.data(),Lmats,0);
+  //Build a local Green's function:
+  for (int i=0;i<Lmats;++i) {
+    zeta= wm[i] + xmu - Smats[i];
+    Gmats[i] = complex<double>(0.0,0.0);
+    for (int j=0; j< Le; j++) {
+      Gmats[i]+=Dbands[j]/(zeta-Ebands[j]);
     }
-    // Self-consistency
-    for (int i = 0; i < Lmats; ++i) {
-      Delta[i] = 0.25 * D * Gmats[i];
-    }
-    // Fit -> new bath
-    chi2_fitgf_single_normal_n5(Delta.data(),//
-        delta_dim,Bath.data(),bath_dim,1,0,1);
-    // Check convergence
-    converged = check_convergence(Delta,//
-        dmft_error, Nsuccess, Nloop, comm);  
   }
+  //Self-consistency
+  for (int i = 0; i < Lmats; ++i) {
+    Delta[i] = 0.25 * D * Gmats[i];
+  }
+  //Fit -> new bath
+  chi2_fitgf_single_normal_n5(Delta.data(),//
+      delta_dim,Bath.data(),bath_dim,1,0,1);
+  //Check convergence: local functions
+  converged = check_convergence(Delta,//
+      dmft_error, Nsuccess, Nloop, comm);  
+}
 \end{lstlisting}
 \end{minipage}
 }
@@ -1014,10 +1016,7 @@ are proportional, respectively, to the mass term, the exciton singlet
 $E_0$, the exciton triplet along easy-axis $E_z$ and in-plane
 $E_x$ (we assume $E_y=0$ levaraging on residual $U(1)$ in-plane
 symmetry. 
-
-
-
-
+%
 In the following we consider the case of $M=1$ which corresponds to a
 QSHI in the non-interacting limit and $J/U=0.25$.
 The implemention is nearly identical to the cases discussed above and
@@ -1029,14 +1028,14 @@ we report it here for completeness:
      !> Solve the impurity problem, retrieve $\Sigma(i\omega)$
      call ed_solve(bath)
      call ed_get_sigma(Smats,axis='mats')
-     !> Get $G_\mathrm{loc}$ (assume to have a function for this task)
+     !> Get $G_\mathrm{loc}$ using $\color{comment-color}\mathrm{DMFTtools}$
      call get_gloc(Hk,Gmats,Smats,axis='m')
-     !> Update the Weiss field $\GG^{-1}=G^{-1}_\mathrm{loc}+\Sigma$ +  Linear mixing.
+     !> Update the Weiss field ${\color{comment-color}\GG^{-1}=G^{-1}_\mathrm{loc}+\Sigma}$ +  Linear mixing: using $\color{comment-color}\mathrm{DMFTtools}$
      call dmft_self_consistency(Gmats,Smats,Weiss)
      if(iloop>1)Weiss = wmixing*Weiss + (1.d0-wmixing)*Weiss_;Weiss_=Weiss
      !> Fit to updated the bath
      call ed_chi2_fitgf(Weiss,bath,ispin=1)
-     !Check convergence (using DMFT_TOOLS)
+     !Check convergence: using $\color{comment-color}\mathrm{DMFTtools}$
      converged = check_convergence(Weiss(1,1,:),dmft_error,nsuccess,nloop)
    enddo  
 \end{lstlisting}
@@ -1127,7 +1126,7 @@ For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relativ
 at the Fermi level renders ineffective the logarithmic instability, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
 With a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering 
 eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
-\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRBa,Rachel2010PRB} and
+\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and there were two references to the same paper
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
 simulations \cite{Hohenadler2013ROPIP}.
 
@@ -1226,7 +1225,7 @@ the appropriate Néel symmetry:
       if(neelsym)then
         !> solve just one sublattice and get the other by Neel symmetry
         call ed_solve(Bath(1,:))
-        call ed_get_sigma_matsubara(Smats(1,:,:,:,:,:))
+        call ed_get_sigma(Smats(1,:,:,:,:,:),axis='m')
         select case(ansatz)
             case('off-plane')
              Smats(2,2,2,:,:,:) = Smats(1,1,1,:,:,:) 
@@ -1240,26 +1239,23 @@ the appropriate Néel symmetry:
              if(master)write(*,*) ">>> Enforcing AFMx symmetry"
         end select
       else
-         !> solve both sublattices independently with the RDMFT wrapper:
+         !> solve both sublattices independently using EDIpack2ineq:
          !  mpi_lanc=T => MPI lanczos, mpi_lanc=F => MPI for ineq sites
          call ed_solve(Bath,mpi_lanc=.true.)
          !> retrieve all self-energies:
-         call ed_get_sigma_matsubara(Smats,Nineq)
+         call ed_get_sigma(Smats,Nineq,axis='m')
          !
       endif
       !
-      !> Compute the local Green's function
+      !> Get ${\color{comment-color}G_{loc}(i\omega_n) }$ : using ${\color{comment-color}\mathrm{DMFTtools}}$
       call dmft_gloc_matsubara(Hk,Gmats,Smats)
       !
-      !> Compute the two inequivalent Weiss fields
+      !> Update local Weiss fields ${\color{comment-color}\GG^{-1}_0 = G_{loc} + \Sigma}$ :using ${\color{comment-color}\mathrm{DMFTtools}}$
       call dmft_self_consistency(Gmats,Smats,Weiss)
       !
-      !> Fit the new bath
-      !  this behaves differently depending on the ed_mode input:
-      !  - for the normal mode: normal/AFMz phase is solved, so we 
-      !    can fit spin1 and spin2 components independently
-      !  - for the nonsu2 mode: Sz-conservation can be broken, so a 
-      !    unique fit for both spin components is needed
+      !> Fit the new bath:
+      !  - normal mode: normal/AFMz and we fit spin-components independently
+      !  - nonsu2 mode: broken Sz-conservation and we fit both spin components altogether
       select case(ed_mode)
        case("normal")
          call ed_chi2_fitgf(Bath,Weiss,ispin=1)
@@ -1268,16 +1264,14 @@ the appropriate Néel symmetry:
          call ed_chi2_fitgf(Bath,Weiss,Hloc)
       end select
       !
-      !> linear mixing (aids convergence near transition points)
+      !> linear mixing and check convergence: using ${\color{comment-color}\mathrm{DMFTtools}}$
       if(iloop>1) Bath = wmixing*Bath + (1.d0-wmixing)*Bath_prev
       Bath_prev = Bath
-      !
-      !> check convergence
       converged = check_convergence(Weiss(:,1,1,1,1,:),dmft_error,nsuccess,nloop)
       !
    enddo
    !
-   !> Compute Kinetic Energy
+   !> Compute Kinetic Energy: using ${\color{comment-color}\mathrm{DMFTtools}}$
    call dmft_kinetic_energy(Hk,Smats)
 \end{lstlisting}
 
