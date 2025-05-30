@@ -28,7 +28,7 @@ fops_bath_dn = [('B_dn', i) for i in range(3 * 2)]
 # Non-interacting part of the impurity Hamiltonian
 h_loc = np.diag([-0.7, -0.5, -0.7])
 H = sum(h_loc[o1, o2] * c_dag(spin, o1) * c(spin, o2)
-for spin, o1, o2 in product(spins, orbs, orbs))
+        for spin, o1, o2 in product(spins, orbs, orbs))
 
 # Interaction part
 U = 3.0     # Local intra-orbital interactions U
@@ -85,8 +85,8 @@ solver.solve(beta=beta,
 # On master MPI node, output some calculation results
 if MPI.COMM_WORLD.Get_rank() == 0:
     # Print values of the static observables
-    print("Potential energy", solver.e_pot)
-    print("Kinetic energy", solver.e_kin)
+    print("Potential energy:", solver.e_pot)
+    print("Kinetic energy:", solver.e_kin)
     print("Densities (per orbital):", solver.densities)
     print("Double occupancy (per orbital):", solver.double_occ)
 
@@ -96,7 +96,8 @@ if MPI.COMM_WORLD.Get_rank() == 0:
     # Plot the Matsubara Green's functions (imaginary part)
     plt.figure(figsize=(4, 4))
     for orb in orbs:
-        oplot(solver.g_iw['up'][orb, orb], mode='I', label=f"${\\rm Im} G_%i(i\\omega_n)$" % orb)
+        oplot(solver.g_iw['up'][orb, orb], mode='I',
+              label=r"${\rm Im} G_" + str(orb) + r"(i\omega_n)$")
     plt.xlim((-3, 3))
     plt.ylabel(r"${\rm Im} G(i\omega_n)$")
     plt.legend()
