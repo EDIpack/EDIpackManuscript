@@ -3,12 +3,12 @@
 
 \section{Examples}\label{SecExamples}
 In this section we illustrate and benchmark the functionalities and of the \NAME
-library and its interfaces as solver for DMFT through a variety of examples. We also discuss in detailed the relevant code snippets from different programming languages. 
-Some tasks --particularly those associated to the implementation of the DMFT self-consistency--  are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
+library and its interfaces as a solver for DMFT through a variety of examples. We also discuss in detail the relevant code snippets from different programming languages. 
+Some tasks -- particularly those associated with the implementation of the DMFT self-consistency -- are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
 In the implementation using Fortran, Python or other \NAME API we adopt a reverse communication strategy, which requires the user to independently implement these parts or, equivalently, to exploit existing utilities. 
 In our examples based on the Fortran APIs  we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors) to perform specific tasks, including the evaluation of the local Green's function, the implementation of the self-consistency, the construction of the tight-binding model or the calculation of the kinetic energy. 
 Where appropriate, we include comments that reference these external procedures.
-On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself—see the \texttt{DMFT.py} script~\cite{Wallerberger2019CPC}—which handles all these tasks seamlessly.
+On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which handles all these tasks seamlessly.
 Similarly, the TRIQS library offers an extensive toolbox for the manipulation of Green’s functions and related quantities~\cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
@@ -23,19 +23,18 @@ solver.
 The model under consideration is the Fermi-Hubbard Hamiltonian:
 $$
 H = -t \sum_{\langle ij\rangle,\s} c^\dagger_{i\s} c_{j\s} + 
-    U \sum_i n_{i\up}n_{i\dw}
-    $$
-    
+    U \sum_i n_{i\up}n_{i\dw},
+$$
 where $c^\dagger_{i\s}$ ($c_{i\s}$) are the creation (annihilation) 
 operators for an electron at site $i$ with spin $\s$, and 
 $n_{i\s} = c^\dagger_{i\s} c_{i\s}$ is the corresponding occupation 
-operator. The first sum runs over nearest-neighbor pairs 
+operator. The first sum runs over nearest-neighbor pairs
 $\langle ij \rangle$.
 
 The system is defined on a Bethe lattice with density of states
-$\rho(\e)=\frac{1}{2D}\sqrt{D^2-\e^2}$,
+$\rho(\e)=\frac{1}{2D}\sqrt{D^2-\e^2}$ This density of states does not normalize to 1,
 where $D=2t$ is the half-bandwidth.
-In DMFT this lattice model is mapped onto a quantum impurity problem with 
+In DMFT, this lattice model is mapped onto a quantum impurity problem with
 an effective electronic bath that must be determined
 self-consistently.
 
@@ -44,7 +43,7 @@ using \NAME for the Bethe lattice, employing either the Fortran or
 C++ APIs. Fully operational versions of the two codes can be found 
 in the {\tt examples} directory of the \NAME source code. Both 
 samples share a similar initial structure, including memory 
-allocation, Bethe lattice creation, and solver initialization.
+allocation, Bethe lattice creation, and solver initialization. 'Bethe lattice creation' sounds a bit weird here. DMFT does not directly work with a lattice as a collection of sites, it only deals with the spectral functions.
 
 \setbox0=\hbox{%
   \begin{minipage}{0.465\linewidth}
@@ -88,7 +87,7 @@ program ed_hm_bethe
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 #include <edipack_cbindings.h>
 using namespace std;
-!...
+//...
 //Main variables
 int Le = 1000;
 int iloop = 0;
@@ -101,12 +100,12 @@ read_input(input);
 int64_t d[4] = {Nspin,Nspin,Norb,Norb};
 int total_size = d[0] * d[1] * d[2] * d[3];
 int total_size_n5 = total_size * Lmats;    
-// Solver-specific arrays
+//Solver-specific arrays
 vector<complex<double>> Hloc(total_size);
 vector<complex<double>> Smats(total_size_n5);
 vector<complex<double>> Delta(total_size_n5);
-...
-// Initialize Bethe arrays
+//...
+//Initialize Bethe arrays
 vector<double> Ebands, Dbands;
 //Locally defined functions:
 Ebands = linspace(-D,D,Le);
@@ -123,7 +122,7 @@ ed_set_Hloc_single_N4(Hloc.data(), d);
   \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
 \end{tabular}
 
-The bath is described by the (unknown) function $\GG^{-1}_0$, known as 
+The bath is described by the (unknown) function $\GG^{-1}_0$, called
 the Weiss field ({\tt Weiss}). In the ED approach implemented in \NAME, 
 the bath is approximated using a finite number of discrete energy levels. 
 The function $\GG^{-1}_0$ is then used to determine the bath parameters 
@@ -188,8 +187,8 @@ with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$.
   
 \item[{\tiny {\it User}}] Update the Weiss field via the {\bf self-consistency}
   relation: $\GG^{-1}_0(i\omega) = G_\mathrm{loc}(i\omega) +
-    \Sigma(i\omega)$. For the Bethe lattice, this simplifies to
-    $\Delta = \tfrac{D}{4}G_\mathrm{loc}$.
+    \Sigma(i\omega)$ $G_\mathrm{loc}$ inverted?. For the Bethe lattice, this simplifies to
+    $\Delta = \tfrac{D}{4}G_\mathrm{loc}$ Missing square in the coefficient?.
     
   \item[{\tiny {\it User} \textgreater\ {\bf EDIpack}}] Optimize the bath parameters $\vec{x}$ against the updated
     Weiss field,  potentially using the conjugate gradient procedures 
@@ -248,7 +247,7 @@ while (iloop < Nloop && !converged) {
   //Retrieve $\Sigma(i\omega_n)$
   get_sigma_site_n5(Smats.data(),//
       0,0,wm.data(),Lmats,0);
-  //Build a local Green's function:
+  //Build a local Green's function
   for (int i=0;i<Lmats;++i) {
     zeta= wm[i] + xmu - Smats[i];
     Gmats[i] = complex<double>(0.0,0.0);
@@ -299,7 +298,7 @@ with $U_\mathrm{c} \simeq 2.8D$.
 \begin{figure}[t!]
   \includegraphics[width=\linewidth]{figures/figBethe.pdf}
     \caption{\label{figEx1}%
-      \textbf{The Metal-Insulator Mott transition.}
+      \textbf{The Metal-insulator Mott transition.}
       (a) Evolution of the spectral function $-\Im{G}(\omega)/\pi$ as
       a function of increasing interaction $U$. The critical
       interaction $U_\mathrm{c}\simeq 2.8D$ separates the correlated metal $U<U_\mathrm{c}$ from
@@ -307,13 +306,13 @@ with $U_\mathrm{c} \simeq 2.8D$.
       (b)-(c) The corresponding evolution of the Matsubara self-energy
       $\Im\Sigma(i\omega)$ (b) and
       real-axis one $\Re\Sigma(\omega)$ across the Mott
-      transition. For a particle-hole symmetric case both allow to
+      transition. For a particle-hole symmetric case, both allow to
       estimate the renormalization constant $Z$ (see main text), using
       linear order expansion in frequency (blue solid lines). The
       values of $Z$ are reported in the legend.
-      The Mott insulating solution is associated to a singularity at
-      $\omega=0$ of $\Im\Sigma$. 
-        }
+      The Mott insulating solution is associated with a singularity at
+      $\omega=0$ of $\Im\Sigma$.
+    }
 \end{figure}
 
 The formation of a spectral gap separating the Hubbard bands in the 
@@ -355,7 +354,7 @@ non-interacting metal to 0 for a fully localized Mott insulator. It is
 defined through the low-energy expansion of the self-energy as
 $$
 Z=\left(1-\frac{\partial\Re\Sigma}{\partial\omega}\Biggr|_{\omega\rightarrow
-    0}\right)^{-1}.
+    0}\right)^{-1},
 $$
 which can also be estimated from the linear behavior of ${\rm Im}\Sigma(i\omega)$ for 
 $\omega\to0$ in the metallic regime using the relation:
@@ -379,8 +378,9 @@ ${\rm Im}\Sigma(\omega) \rightarrow -\infty$.
 
 
 \subsubsection{Finite temperature solution (w2dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTw2d}
+Capitalization in 'w2dynamics' is different compared to Sec. 4.
 To demonstrate the usage of the w2dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using w2dynamics. 
-In order to showcase the capabilities of \NAME to address low-temperature problems we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in w2dynamics against the \NAME solver at finite temperature.  
+In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in w2dynamics against the \NAME solver at finite temperature.  
 
 In contrast to the \NAME API that only enables access to the impurity solver and bath optimization procedures, but requires the user to implement (using different methods) the DMFT algorithm themselves, the standard way to use w2dynamics is fundamentally different: a single Python script {\tt DMFT.py} is provided that takes care of the whole DMFT calculation via dedicated classes to implement generic self-consistency. The w2dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of w2dynamics can be found in Ref.~\onlinecite{Wallerberger2019CPC}           
 
@@ -447,9 +447,6 @@ The results are collected into an HDF5 archive in the usual w2dynamics format, i
     \caption{\label{figEx1W}%
     \textbf{Finite temperature DMFT solution.}
     Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and Self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with w2dynamics are compared against \NAME ED results, used both through the w2dynamics interface and with a standalone Fortran program. 
-    % \fixme{Are we sure we want to use these
-    % fancy markers? As I saw the earlier version, I know what they are doing and I understand that all data coincide perfectly and how this can make for a fancy plot. But I suspect that looking at it without any prior knowledge, at a glance, I would just desume that the w2d and edipack calculations are not matching. I would probably just go with the usual "x", "." and "+" markers, that all together make for a fancy multicolor "*". The dot in front of everything, with the most fluo color (e.g. bright green). The "x" and "+" in complementary colors, like blue and red, not in fluo version, so that they do not "hide" the dot. Something like that.}
-    % NOW I LOVE IT :)
         }
 \end{figure}
 
@@ -1126,7 +1123,7 @@ For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relativ
 at the Fermi level renders ineffective the logarithmic instability, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
 With a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering 
 eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
-\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and there were two references to the same paper
+\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and 
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
 simulations \cite{Hohenadler2013ROPIP}.
 
