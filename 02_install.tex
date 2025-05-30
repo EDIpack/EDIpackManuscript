@@ -1,25 +1,24 @@
 \documentclass[edipack_sp.tex]{subfiles}
 \begin{document}
+\fixme{AA: reviewed. Misses possible References}
 
 \section{Installation}\label{SecInstall}
 The configuration and installation of \NAME is handled by CMake, which ensures
 multi-platform compatibility and dependencies resolution.  
 The software builds into two distinct libraries.
-The main one is a static Fortran library called {\tt libedipack.a} which, alongside the compiled
-modules, wraps the \NAME software in both its single- and multi-impurity variants.
+The main one is a static Fortran library named {\tt libedipack.a} which, alongside the compiled
+modules, wraps the \NAME software.
 A second dynamic library, {\tt libedipack\_cbindings.so}, together with the associated header
 file {\tt edipack\_cbindings.h}, enables interoperability with other programming languages.  
 
 
 \subsection{Structure}\label{sSecInstallStructure}
-\NAME is a modular library organized into three main components. At its 
+\NAME is a modular library organized into two main components. At its 
 core, constituting the primary computational engine, 
-is the exact diagonalization solver for the quantum single-impurity Hamiltonian.
+is the  Exact Diagonalization solver for the quantum single-impurity Hamiltonian.
 Building on this, the library includes 
-{\tt EDIpack2ineq}, an extension for handling multiple inequivalent 
-impurity problems. Finally, the Fortran-C/C++ interface is provided for 
-seamless integration with external software and the development of 
-additional APIs.
+\NAME{2ineq}, an extension for handling multiple inequivalent impurity problems at once. Finally, a Fortran-C/C++ interface is provided for 
+seamless integration with external software and the development of additional APIs.
 
 
 \begin{itemize}
@@ -34,8 +33,9 @@ additional APIs.
   execution, and finalization, while abstracting the underlying data 
   structures. A detailed overview of this part of the library is 
   provided in \secu{SecEDIpack}.
-  
-\item{\bf EDIpack2ineq.}
+  \begin{itemize}
+    \item[$\hookrightarrow$]
+    {\it EDIpack2ineq.}
   This extension, developed using suitable Fortran interfaces,
   enables the treatment of multiple, independent quantum 
 impurities. It is particularly useful in DMFT applications involving 
@@ -44,7 +44,7 @@ translational symmetry, such as heterostructures, large supercells,
 or disordered materials. This module provides flexible memory 
 management and supports the simultaneous solution of multiple impurity 
 problems, as discussed in \secu{sSecIneq}.
-
+\end{itemize}
 
 
 \item{\bf EDIpack C-bindings.}
@@ -64,29 +64,28 @@ with third-party software and support the development of custom APIs.
 
 \subsection{Dependencies}\label{sSecInstallDependencies}
 \NAME directly depends on two external libraries.
-\begin{itemize}
+\begin{enumerate}
 \item {\bf SciFortran}: an open-source Fortran library that provides support
-for mathematical and scientific software development.
-\item {\bf MPI} (optional): a distributed memory parallel communication layer with support for modern Fortran compiler.
-\end{itemize}
+for mathematical and scientific software development, available at \href{https://github.com/SciFortran/SciFortran}{github.com/SciFortran}.
+\item {\bf MPI}: a distributed memory parallel communication layer with support for modern Fortran compiler.
+\end{enumerate}
  
-SciFortran provides a solid development platform enabling access to
+{\bf SciFortran} provides a solid development platform enabling access to
 many algorithms and functions, including standard linear algebra
 operations and high-performance Lanczos-based algorithms. This
 greatly reduces code clutter and development time.
-The use of distributed memory parallel environment, although optional,
+The use of distributed memory parallel environment 
 is required to access scalable parallel diagonalization algorithms,
-which speed up calculations for large systems. 
+which speed up calculations for large systems. Nonetheless, through careful design \NAME operates serially even without initialization of the MPI framework. 
 
 \subsection{Build and Install}\label{sSecInstallBuildInstall}
 \subsubsection{Compilation from source}
-The software can be installed from source as follows. The source code can
+The software can be installed from source as follows. The code package can
 be retrieved directly from its GitHub repository, for instance using
 \begin{lstlisting}[style=mybash,numbers=none]
 git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
-Then, assuming being in the software source directory, a conventional
-out-of-source building can be performed using two alternative compilation backends.
+Then, assuming being in the software root directory ({\tt \$cd EDIpack}), a conventional out-of-source building can be performed using two alternative compilation backends.
 
 \begin{itemize}
   \item {\bf GNU Make}\\
@@ -129,24 +128,22 @@ The CMake configuration can be further tuned using the following variables:
  \hline
 \end{tabular}
 \end{center}
-
+%
 The default target builds and installs both the main library and the C-bindings.
-Separate build targets for either are available. A recap message is printed at the end of the
-CMake configuration step. 
+Separate build targets for either components are available. A recap message is printed at the end of the CMake configuration step to guide the user through the compilation, installation and OS loading process. 
 
 \subsubsection{Anaconda}
 As an alternative, we provide for both Linux and macOS systems
 installation through Anaconda packages into a virtual
 environment containing Python ($\geq3.10$).
-
+%
 The Conda package installation procedure for a virtual environment called {\tt myenv} reads
 \begin{lstlisting}[style=mybash,numbers=none]
 conda create -n myenv
 conda activate myenv
 conda install -c conda-forge -c edipack edipack
 \end{lstlisting}
-\noindent
-which installs a bundle of SciFortran and \NAME libraries together with
+and installs a bundle of SciFortran and \NAME libraries together with
 specific {\tt pkg-config} configuration files, which can be used to
 retrieve compilation and linking flags. In order to compile Fortran/C++ 
 drivers, the {\tt compilers} conda package will need to be installed.

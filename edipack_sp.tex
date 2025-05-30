@@ -64,8 +64,7 @@
 %From ALF source:
 \definecolor{comment-color}{rgb}{0.8,0.1,0.1}
 \definecolor{keyword-color}{rgb}{0.3,0.3,1}
-
-
+\definecolor{background-color}{rgb}{0.1,0.1,0.1}
 
 
 
@@ -73,10 +72,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings}
 
+% backgroundcolor - colour for the background. External color or xcolor package needed.
+% commentstyle - style of comments in source language.
+% basicstyle - font size/family/etc. for source (e.g. basicstyle=\ttfamily\small)
+% keywordstyle - style of keywords in source language (e.g. keywordstyle=\color{red})
+% numberstyle - style used for line-numbers
+% numbersep - distance of line-numbers from the code
+% stringstyle - style of strings in source language
+% showspaces - emphasize spaces in code (true/false)
+% showstringspaces - emphasize spaces in strings (true/false)
+% showtabs - emphasize tabulators in code (true/false)
+% numbers - position of line numbers (left/right/none, i.e. no line numbers)
+% prebreak - displaying mark on the end of breaking line (e.g. prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}})
+% captionpos - position of caption (t/b)
+% frame - showing frame outside code (none/leftline/topline/bottomline/lines/single/shadowbox)
+% breakatwhitespace - sets if automatic breaks should only happen at whitespaces
+% breaklines - automatic line-breaking
+% keepspaces - keep spaces in the code, useful for indetation
+% tabsize - default tabsize
+% escapeinside - specify characters to escape from source code to LATEX (e.g. escapeinside={\%*}{*)})
+% rulecolor - Specify the colour of the frame-box
+
 % FORTRAN
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%see fonts here: https://latexref.xyz/Low_002dlevel-font-commands.html
+%set with  basicstyle={\usefont{OT1}{lmr}{ec}{n}\scriptsize},  
 \lstdefinestyle{fstyle}{
-  frame=lines,
   language={[03]Fortran},
   basicstyle={\ttfamily\footnotesize},
   stringstyle=\ttfamily,
@@ -89,9 +110,10 @@
   keepspaces=true,
   showstringspaces=false,
   columns=fullflexible,
-  frame=single,
+  frame=none,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
+  backgroundcolor=\color{gray!10},
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -100,7 +122,6 @@
 % PYTHON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{mypython}{
-  frame=lines,
   language=python,
   basicstyle=\ttfamily\footnotesize,
   stringstyle=\ttfamily,
@@ -110,15 +131,15 @@
   commentstyle=\color{comment-color}\footnotesize,
   morecomment=[l]{\#\ },
   mathescape,
-  fontadjust=true,
-  mathescape,
+  % fontadjust=true,
+  % mathescape,
   % breakatwhitespace=false,
-  keepspaces=true,
+  % keepspaces=true,
   showstringspaces=false,
-  columns=fullflexible,
+  % columns=fullflexible,
   frame=single,
-  xleftmargin=3.4pt,
-  xrightmargin=3.4pt,
+  % xleftmargin=3.4pt,
+  % xrightmargin=3.4pt,
   numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -212,19 +233,20 @@
   commentstyle=\color{comment-color},
   % keywordstyle=\bfseries,
   keywordstyle=\color{keyword-color},
-  % It would be nice to have 'conda' here,
-  % but then 'conda-forge' gets highlighted too.
   morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
+  deletekeywords={"conda-forge"},
   captionpos=b,
   mathescape,
   fontadjust=true,
-  breakatwhitespace=false,
-  keepspaces=true,
+  %breakatwhitespace=false,
+  % keepspaces=true,
   showstringspaces=false,
-  columns=flexible,
+  columns=fullflexible,%flexible
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+  backgroundcolor=\color{gray!10},
+  frame=none,
+  %numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
 

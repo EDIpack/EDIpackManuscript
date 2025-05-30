@@ -1,6 +1,8 @@
 \documentclass[edipack_sp.tex]{subfiles}
 \begin{document}
 
+\fixme{AA: this needs a further edit + all bibliography. I also need to add a paragraph to comments relation with other ED codes and cite them all.}
+
 \section{Introduction and Motivation}\label{SecIntro}
 Quantum impurity models play a central role in the study of strongly correlated electron systems, capturing the coupling of a small number of localized degrees of freedom with an extended non-interacting environment.   
 Originally introduced to describe diluted magnetic impurities in metallic hosts, single-impurity models have led to the full understanding of the Kondo problem, and beyond that they have progressively become powerful tools for exploring a wide range of quantum many-body phenomena. More recently, their importance has extended beyond the realm of condensed matter, influencing understanding of other areas such as quantum information or ultra-cold atomic systems.
@@ -18,7 +20,7 @@ at low temperatures or endowed with lower symmetry. During many years of develop
 %EDIPACK
 In this work we present the renewed and improved \NAME{}: a flexible, high-performance numerical library designed to address these challenges, providing an exact diagonalization (ED) solver for generic Quantum Impurity Problems. 
 The library builds on the foundations of
-its predecessor~\cite{Amaricci2022}, featuring massively parallel Lanczos-based algorithms while including several significant extensions and improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effects in quantum materials to multi-orbital superconductivity. It also provides direct
+its predecessor~\cite{amaricci2022CPC}, featuring massively parallel Lanczos-based algorithms while including several significant extensions and improvements. The library now supports, within a unified framework, both zero and finite temperature calculations for a wide set of impurity models, making it capable of addressing a large set of problems, from spin-orbit coupling effects in quantum materials to multi-orbital superconductivity. It also provides direct
 access to numerically exact
 dynamical correlation functions across the
 entire frequency complex plane, thus enabling calculations of spectral functions, local susceptibilities, and other response properties.
@@ -59,7 +61,7 @@ enhancing reproducibility and cross-validation of numerical results, with the ul
 
 %\paragraph{closure}
 In this paper, we present the mathematical framework, implementation
-details, and key features of \NAME \textcolor{red}{2.0 i get that we want to say this is the updated edipack, but now it is version 5.0.5... i believe this could create confusion}, along with several illustrative
+details, and key features of \NAME, along with several illustrative
 applications. We aim to demonstrate how this flexible,
 high-performance solver can be used to tackle a wide range of
 challenging impurity problems. 

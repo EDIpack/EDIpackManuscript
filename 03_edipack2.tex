@@ -9,15 +9,6 @@ present a detailed overview of the \NAME library implementation.
 
 
 
-
-
-
-
-
-
-
-
-
 \subsection{The quantum impurity problem}\label{sSecQIM}
 We consider a quantum impurity problem described by the Hamiltonian:
 $$
@@ -38,13 +29,14 @@ The first term has the form
   \hat{H}^0_\mathrm{imp}  =
   \sum_{\a\b\sigma\sigma'}h^{0}_{\a\b\sigma\sigma'}d^\dagger_{\a\sigma}d_{\b\sigma'}
 \end{equation}
-and represents the quadratic part, with $d_{\a\sigma}$ ($d^\dagger_{\a\sigma}$) being the annihilation (creation)
+and represents the non-interacting part, with $d_{\a\sigma}$ ($d^\dagger_{\a\sigma}$) being the annihilation (creation)
 operators for impurity electrons in 
-orbital $\alpha=1,\dots,N_\a$, with the number of orbitals $N_\a$,
+orbital $\alpha=1,\dots,N_\a$, where $N_\a$ is the number of orbitals,
 and spin $\sigma=\up,\dw$.
-The internal structure of the non-interacting part is captured by the 
+The internal structure of this quadratic part is captured by the 
 matrix $h^{0}_{\a\b\sigma\sigma'}$, which can include 
 orbital-dependent on-site energies or amplitudes, spin-orbit coupling or other single-particle terms.
+In \NAME the matrix $\hat{h}_0$ is set by the user passing an complex array through the function {\tt ed\_set\_Hloc}. 
 
 
 The interaction part of the impurity Hamiltonian, 
@@ -54,7 +46,7 @@ set of two-body operators:
 \hat{H}^\mathrm{int}_\mathrm{imp} = \frac{1}{2} \sum_{ijkl} d^{\dagger}_{i}d^{\dagger}_{j}U_{ijkl}d_{l}d_{k}.\label{HintUmat}
 \end{equation}
 However, we typically 
-adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interaction~\cite{Georges2013AROCMP}:
+adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interaction~\cite{Georges2013ARCMP}:
 \begin{equation}
   \begin{split}
     \hat{H}^\mathrm{int}_\mathrm{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
@@ -68,13 +60,20 @@ adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interact
 where we introduced the occupation number operator $n_{\alpha\sigma}=d^\dagger_{\alpha\sigma}d_{\alpha\sigma}$.
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
-$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Georges2013AROCMP}.  
+$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Werner2008PRL,Werner2009PR,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
 The last two terms are, respectively, the spin-exchange ($J_X$) and
 the pair-hopping ($J_P$).
 In the three-orbital case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
 U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
-$J_X=J_P=J$~\cite{Georges2013AROCMP}. Different choices, preserving part
-of the combined symmetry group, can be made for other numbers of orbitals~\cite{Georges2013AROCMP}.
+$J_X=J_P=J$~\cite{Georges2013ARCMP}. Different choices, preserving part
+of the combined symmetry group, can be made for other numbers of orbitals~\cite{Georges2013ARCMP}.
+
+
+
+
+
+
+
 
 \subsubsection{Bath and Hybrization}
 The coupling between the impurity and the bath is described by
@@ -94,7 +93,7 @@ Any bath element can be composed of several electronic levels
 according to the chosen bath topology (see \secu{sSecBath}). The  properties of each bath element are described by the
 matrix $h^p_{\a\b\sigma\sigma'}$ while the amplitude
 $V^p_{\a\b\s\sigma'}$ describes the coupling with the impurity.   
-
+The bath parametrization is handled in \NAME using reverse communication strategy as will be discussed later in \secu{sSecBath}.  
 
 \subsubsection{Electron-Phonon coupling}
 Finally, we include a local electron-phonon coupling on the impurity site
@@ -109,7 +108,10 @@ described by the Hamiltonian terms:
 where $m=1,\dots,M$ indexes the number of local phonon modes, and $b_m$
 ($b_m^\dagger$) are the destruction (creation) operators for a phonon with
 frequency $\omega_{0m}$. Each phonon mode is coupled to a bilinear fermionic operator $\hat{O}_m= \sum_{\alpha \beta, \sigma }g^{m}_{\alpha \beta} d^\dagger_{\alpha, \sigma} d_{\beta, \sigma}$ on the impurity, while $A_m$ is a constant acting as a displacement field.  %Indeed, if the expectation value of the bosonic displacement operator $\langle b_q^\dagger + b_q\rangle$ is non-zero, a change of variables from the bosons $b^{(\dagger)}_q$ leads to new effective bosons $\tilde{b}^{(\dagger)}_q = b^{(\dagger)}_q- A_q$ for which the displacement operator has a smaller expectation value (ideally zero if we can impose $A_m = \langle \hat{O}_m\rangle$). 
-For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_d = g_1 \sum_{\sigma} d^{\dagger}_{\sigma}d_{\sigma}$, which defines the Holstein model\cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes\cite{Capone2010ACMP}, for which $\hat{O}_2 = g_2(n_1 - n_2)$\cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ h.c.)$. For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling\cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction\cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRB,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRB_ph,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime\cite{Capone2003PRL}.
+%
+For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_{1d} = g_1 \sum_{\sigma} d^{\dagger}_{1\sigma}d_{1\sigma}$, which defines the Holstein model\cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes\cite{Capone2010ACMP}, for which $\hat{O}_2 = g_2(n_{1d} - n_{2d})$\cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ H.c.)$. 
+
+For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling\cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction\cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRB,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRB_ph,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime\cite{Capone2003PRL}.
 Choosing properly the shift $A_m$, one can reduce the number of excited phonons in the ground state and consequently the required cutoff. 
 Although feasible, dealing with more than one phonon mode quickly becomes computationally very demanding, thus we will consider only one mode and we drop the $m$ index in the rest of this work.
 
@@ -210,65 +212,66 @@ respectively, act on the Fock space as:
       0 & \text{otherwise}
     \end{cases}    
 \end{align*}
-where $\#_{a\sigma}=\sum_{b\sigma'<a\sigma} n_{b\sigma'}$ accounts for the fermionic sign imposed by the Pauli principle.
+where $\#_{a\sigma}=\sum_{i\sigma'<a\sigma} n_{i\sigma'}$ accounts for the fermionic sign imposed by the Pauli principle.
 The bosonic operators $b$ and $b^\dagger$ act on the phonon part $\ket{p}$ of the Fock state as
 \begin{align*}
   b\ket{p} &= \sqrt{p-1}\ket{p}, \\
-  b^\dagger\ket{p} &= \sqrt{p}\ket{p}. \\
+  b^\dagger\ket{p} &= \sqrt{p}\ket{p}.
 \end{align*}
 The implementation of Fock states and operators can be found in 
 {\tt ED\_AUX\_FUNX}. In particular, in that module we define the bitwise action 
 of the fermionic creation and annihilation operators as functions 
-{\tt CDG} and {\tt C}, used throughout the code. Additionally, 
+{\tt CDG} and {\tt C}, used throughout the code. 
+Additionally, 
 we provide the function {\tt bdecomp} for reconstructing the Fock  state bit sequence from the integer representation. 
 
 
-\begin{lstlisting}[style=fstyle,numbers=none]
-  subroutine C(pos,in,out,fsgn) !$c_\mathrm{pos}|\mathrm{in}\rangle=|\mathrm{out}\rangle$
-    integer,intent(in)    :: pos  !Position to be set to 1
-    integer,intent(in)    :: in   !Input index
-    integer,intent(inout) :: out  !Output index
-    real(8),intent(inout) :: fsgn !Fermionic sign   
-    integer               :: l
-    if(.not.btest(in,pos-1))stop "C error: C_i|...0_i...>"
-    fsgn=1d0
-    do l=1,pos-1
-       if(btest(in,l-1))fsgn=-fsgn
-    enddo
-    out = ibclr(in,pos-1)         !Set bit at pos to 0
-  end subroutine C
-\end{lstlisting}
+% \begin{lstlisting}[style=fstyle,numbers=none]
+%   subroutine C(pos,in,out,fsgn)   !${\color{comment-color}c_\mathrm{pos}|\mathrm{in}\rangle=|\mathrm{out}\rangle}$
+%     integer,intent(in)    :: pos  !Position to be set to 1
+%     integer,intent(in)    :: in   !Input index
+%     integer,intent(inout) :: out  !Output index
+%     real(8),intent(inout) :: fsgn !Fermionic sign   
+%     integer               :: l
+%     if(.not.btest(in,pos-1))stop "C error: C_i|...0_i...>"
+%     fsgn=1d0
+%     do l=1,pos-1
+%        if(btest(in,l-1))fsgn=-fsgn
+%     enddo
+%     out = ibclr(in,pos-1)         !Set bit at pos to 0
+%   end subroutine C
+% \end{lstlisting}
 
 
-\begin{lstlisting}[style=fstyle,numbers=none]
-  subroutine CDG(pos,in,out,fsgn) !$c^\dagger_\mathrm{pos}|\mathrm{in}\rangle=|\mathrm{out}\rangle$
-    integer,intent(in)    :: pos  !Position to be set to 1
-    integer,intent(in)    :: in   !Input index
-    integer,intent(inout) :: out  !Output index
-    real(8),intent(inout) :: fsgn !Fermionic sign   
-    integer               :: l
-    if(btest(in,pos-1))stop "C^+ error: C^+_i|...1_i...>"
-    fsgn=1d0
-    do l=1,pos-1
-       if(btest(in,l-1))fsgn=-fsgn
-    enddo
-    out = ibset(in,pos-1)         !Set bit at pos to 1
-  end subroutine CDG
-\end{lstlisting}
+% \begin{lstlisting}[style=fstyle,numbers=none]
+%   subroutine CDG(pos,in,out,fsgn) !${\color{comment-color}c^\dagger_\mathrm{pos}|\mathrm{in}\rangle=|\mathrm{out}\rangle}$
+%     integer,intent(in)    :: pos  !Position to be set to 1
+%     integer,intent(in)    :: in   !Input index
+%     integer,intent(inout) :: out  !Output index
+%     real(8),intent(inout) :: fsgn !Fermionic sign   
+%     integer               :: l
+%     if(btest(in,pos-1))stop "C^+ error: C^+_i|...1_i...>"
+%     fsgn=1d0
+%     do l=1,pos-1
+%        if(btest(in,l-1))fsgn=-fsgn
+%     enddo
+%     out = ibset(in,pos-1)         !Set bit at pos to 1
+%   end subroutine CDG
+% \end{lstlisting}
+% %
 
-
-\begin{lstlisting}[style=fstyle,numbers=none]
- !Binary decomposition of the ${\color{comment-color} i\in\NNN}$ with Ntot bits
- function Bdecomp(i,Ntot) result(ivec)
-    integer :: Ntot,ivec(Ntot),l,i
-    logical :: busy
-    do l=0,Ntot-1
-       busy=btest(i,l)
-       ivec(l+1)=0
-       if(busy)ivec(l+1)=1
-    enddo
-  end function Bdecomp
-\end{lstlisting}
+% \begin{lstlisting}[style=fstyle,numbers=none]
+%  !Binary decomposition of the ${\color{comment-color} i\in\NNN}$ with Ntot bits
+%  function Bdecomp(i,Ntot) result(ivec)
+%     integer :: Ntot,ivec(Ntot),l,i
+%     logical :: busy
+%     do l=0,Ntot-1
+%        busy=btest(i,l)
+%        ivec(l+1)=0
+%        if(busy)ivec(l+1)=1
+%     enddo
+%   end function Bdecomp
+% \end{lstlisting}
 
 
 
@@ -312,7 +315,7 @@ Optionally, the symmetry
 can be extended to act independently on each orbital and spin
 component, i.e.~$\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This
 specific case is discussed extensively
-Ref.~\cite{Amaricci2022}, so we will cover it no further here recalling that any consideration concerning the {\tt normal} case extends directly to this case as well.
+Ref.~\cite{Amaricci2022CPC}, so we will cover it no further here recalling that any consideration concerning the {\tt normal} case extends directly to this case as well.
 
 %
 
@@ -359,10 +362,10 @@ given value of the quantum numbers $\vec{Q}$.}
 From a computational perspective, constructing a symmetry
 sector amounts to defining an injective map
 $\MM:\SS_{\vec{Q}}\rightarrow \FF_e$ that relates the electronic states $\ket{i}$
-within a given symmetry sector $\SS_{\vec{Q}}$ to the states $\ket{I_e}$ in the Fock space.
+within a given symmetry sector $\SS_{\vec{Q}}$ to the states $\ket{I_e}$ in the electronic Fock space. 
 This map is typically implemented as a rank-1
 integer array, whose size corresponds to the dimension of the sector $D_{\SS_{\vec{Q}}}$. 
-The global Fock state $\ket{I}=\ket{I_e}\ket{p}$, including the phonon part, is univocally determined by the relation: $I\to I_e + p 2^{2 N_s}$.
+The global Fock state $\ket{I}=\ket{I_e}\ket{p}$, including the phonon part, is univocally determined by the relation: $I\to I_e + p\,2^{2 N_s}$.
 
 
 The {\bf normal} case deserves a special note. Since $N_\up$ and
@@ -381,7 +384,7 @@ D_{\SS_\dw}$.
 The maps $\MM_\sigma$ then connect these basis states to Fock states
 $\ket{I_e}=\ket{I_\up}\ket{I_\dw}$, labeled by two integers
 $[I_\up,I_\dw]$ as $I_e=I_\up +   I_\dw 2^{N_\mathrm{s}}$.
-For a more detailed discussion on the structure of the Fock basis in this case, see Ref.~\cite{Amaricci2022}. 
+For a more detailed discussion on the structure of the Fock basis in this case, see Ref.~\cite{Amaricci2022CPC}. 
 
 The presence of a symmetry reduces the electronic Hamiltonian matrix to
 a block-diagonal form, where each block labeled by $\vec{Q}$ has dimension
@@ -389,21 +392,14 @@ $D_{\SS_{\vec{Q}}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix.
 In the {\bf normal} case this block structure is particularly
 symmetric due to the factorized nature of the sectors as discussed
-above, see also Ref.~\cite{Amaricci2022}.
+above, see also Ref.~\cite{Amaricci2022CPC}.
 The analysis of the spectrum is then reduced to inspecting the
 Hamiltonian within each symmetry sector, or to a subset thereof if
 additional constraints are present.
 
 
-% Although the sectors have dimensions much smaller than the full Fock
-% space, for large systems storing the Hamiltonian matrix in the memory
-% can still be highly inefficient. In such cases, any Krylov  subspace  
+
 % method~\cite{Lanczos1950JRNBSB,Lin1993CIP,Lehoucq1998,Maschhoff1996}
-% can be implemented using a storage-free algorithm, performing the
-% necessary linear operations on-the-fly.
-% This solution has generally a negative impact on the execution
-% time, however this can be well compensated by scaling in a distributed 
-% parallel framework.
 
 In \NAME, the implementation of symmetry sectors is managed through the
 {\tt sector} object, which is defined in {\tt
@@ -414,11 +410,11 @@ dimensions, quantum numbers and the map $\MM$. The constructor
   ED\_SECTORS} module via the function {\tt build\_sector} ({\tt
   delete\_sector}).
 These functions use different algorithms depending on the nature 
-of the quantum numbers $\vec{Q}$, i.e. the value of {\tt ed\_mode}. The following code snippets summarize the various available implementations. The core idea is to loop over the necessary Fock states through the integers $I_\sigma=1,\dots,2^{N_s}$ and to enforce the quantum number constraint:
-    
-\setbox0=\hbox{%
-  \begin{minipage}{0.27\linewidth}
-\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+of the quantum numbers $\vec{Q}$, i.e. the value of {\tt ed\_mode}. The following code snippets summarize the various available implementations. The core idea is to loop over the Fock states and  enforce the quantum number constraint:
+\begin{center}
+\begin{minipage}[t]{0.32\linewidth}
+\textbf{Normal}
+\begin{lstlisting}[style=fstyle,frame=leftline,numbers=none,basicstyle={\ttfamily\scriptsize}]
 i=0
 do Iup=0,2**Nbit-1     
   nup_ = popcnt(Iup) 
@@ -431,36 +427,34 @@ do Idw=0,2**Nbit-1
   ndw_= popcnt(Idw)
   if(ndw_ /= Ndws(1))cycle
   i = i+1
-  H(iud+Ns)%map(i) = Idw
+  H(iud+Ns)%map(i)=Idw
 enddo
 \end{lstlisting}
 \end{minipage}
-}
-\savestack{\listingA}{\box0}
-
-\setbox0=\hbox{%
-  \begin{minipage}{0.27\linewidth}
-\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+%
+\begin{minipage}[t]{0.32\linewidth}
+\textbf{Superc}
+\begin{lstlisting}[style=fstyle,frame=leftline,numbers=none,basicstyle={\ttfamily\scriptsize}]
 i=0
 do Idw=0,2**Ns-1
   ndw_= popcnt(idw)
   do Iup=0,2**Ns-1
     nup_ = popcnt(iup)
     sz_  = nup_ - ndw_
-    if(sz_ /= self%Sz)cycle
+    if(sz_ /=self%Sz)cycle
     i=i+1
-    self%H(1)%map(i) = &
+    self%H(1)%map(i)= &
         Iup+Idw*2**N
   enddo
 enddo
+$\phantom{.}$
+$\phantom{.}$
 \end{lstlisting}
 \end{minipage}
-}
-\savestack{\listingB}{\box0}
-
-\setbox0=\hbox{%
-  \begin{minipage}{0.3\linewidth}
-\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+%
+\begin{minipage}[t]{0.32\linewidth}
+\textbf{Nonsu2}
+\begin{lstlisting}[style=fstyle,frame=leftline,numbers=none,basicstyle={\ttfamily\scriptsize}]
 i=0
 do Idw=0,2**Ns-1
   ndw_= popcnt(Idw)
@@ -469,24 +463,19 @@ do Idw=0,2**Ns-1
     nt_  = nup_ + ndw_
     if(nt_/=self%Ntot)cycle
     i=i+1
-    self%H(1)%map(i) = &
+    self%H(1)%map(i)= &
         Iup+Idw*2**Ns
   enddo
 enddo
+$\phantom{.}$
+$\phantom{.}$
 \end{lstlisting}
 \end{minipage}
-}
-\savestack{\listingC}{\box0}
+\end{center}
 
-\vspace{2mm}
-\begin{tabular}{c|c|c}\label{list1}
-    {\bf normal} & {\bf superc} & {\bf nonsu2}\\
-    \hline
-\stackinset{l}{}{t}{}{}{\listingA} &
-\stackinset{l}{}{t}{}{}{\listingB} &
-\stackinset{l}{}{t}{}{}{\listingC} \\
-\end{tabular}
-\vspace{2mm}
+   
+
+
 
 In addition to the basic construction and destruction routines, the
 {\tt ED\_SECTORS} module also includes functions to
@@ -539,7 +528,7 @@ i1 j1 k1 l1 U_i1j1k1l1
 i2 j2 k2 l2 U_i2j2k2l2
 ...
 \end{lstlisting}
-where {\tt NORB} is the number of orbitals $N_\a$.\\
+where {\tt NORB} is the number of orbitals $N_\a$.
 Each line defines a two-body second-quantized operator of the form 
 $$
 \hat{H}^{\mathrm{int}}=\frac{1}{2}d^{\dagger}_{i}d^{\dagger}_{j}U_{ijkl}d_{l}d_{k}.
@@ -549,7 +538,9 @@ Empty lines and lines starting with {\tt \#, \%, !} are ignored.
 
 While {\tt ED\_READ\_UMATRIX} and {\tt ED\_USE\_KANAMORI}
 are mutually exclusive, it is allowed to set both to {\tt F}. 
-In any case, the user can specify additional interaction terms in the calling program or script by means of the procedure {\tt add\_twobody\_operator}, before the impurity problem is solved. The input of this function has the same form of each line of the {\tt UMATRIX} file. The list of user-provided interaction terms will be added to those read from file or from the Hubbard-Kanamori coefficients in case the relative flags are {\tt T}. To clear the list, the procedure {\tt reset\_umatrix} has to be called.\\
+In this case, the user can specify additional interaction terms in the calling program or script by means of the procedure {\tt add\_twobody\_operator}, before the impurity problem is solved. The input of this function has the same form of each line of the {\tt UMATRIX} file. 
+A list of user-provided interaction terms will be added to those read from file or from the Hubbard-Kanamori coefficients in case the relative flags are {\tt T}. To clear the list, the procedure {\tt reset\_umatrix} has to be called.
+
 For reference and future use, when the impurity problem is solved, a list of the interaction operators used in each call to the solver is saved in the output file 
 {\tt <UMATRIX\_FILE>.used}.
 The reading, writing, parsing and initialization of the two-body interaction terms are implemented in the module {\tt ED\_PARSE\_UMATRIX}.
@@ -580,42 +571,41 @@ Sparse matrix storage is handled through a dedicated class in the
 {\tt SPARSE\_MATRIX} module. This module defines the 
 {\tt sparse\_matrix\_csr} object, which stores sparse matrices as 
 hash tables. Each key corresponds to a row index, while the associated 
-value contains a pair of dynamic arrays: one for the non-zero (NNZ) matrix 
-elements and one for their respective column indices.
+value contains a pair of dynamic arrays: one for the non-zero matrix 
+elements and one for their respective column indices. 
+In an MPI framework, elements local in the memory are store in a separate set of row, i.e. {\tt loc} while keeping track of the indices of the global share, {\tt istart, ishift, iend}. 
+Each instance of {\tt sparse\_matrix\_csr} can be stored serially (one copy per process) or distributed across multiple 
+processes with rows dynamically assigned to each process. 
 
-\begin{lstlisting}[style=fstyle,numbers=none]
-! sparse row: contains the NNZ elements on any row of the sparse matrix.
-type sparse_row_csr
-   integer                                   :: size  !size of the row = NNZ
-   real(8),dimension(:),allocatable          :: dvals !rank-1 array for double precision
-   complex(8),dimension(:),allocatable       :: cvals !rank-1 array for double complex
-   integer,dimension(:),allocatable          :: cols  !rank-1 array for column indices
-end type sparse_row_csr
-! Sparse Matrix: allocatable array of sparse rows
-type sparse_matrix_csr
-   type(sparse_row_csr),dimension(:),pointer :: row  !array of {\tt sparse\_row\_csr} 
-   integer                                   :: Nrow !total number of rows
-   integer                                   :: Ncol !total number of columns
-   logical                                   :: status=.false. !Allocation status
-#ifdef _MPI
-   type(sparse_row_csr),dimension(:),pointer :: loc      !array for the diagonal blocks
-   integer                                   :: istart=0 !start index MPI range
-   integer                                   :: iend=0   !end index MPI range
-   integer                                   :: ishift=0 !shift index MPI range
-   logical                                   :: mpi=.false.
-#endif
-end type sparse_matrix_csr
-\end{lstlisting}
+% \begin{lstlisting}[style=fstyle,numbers=none]
+% ! sparse row: contains the NNZ elements on any row of the sparse matrix.
+% type sparse_row_csr
+%    integer                                   :: size  !size of the row = NNZ
+%    real(8),dimension(:),allocatable          :: dvals !rank-1 array for double precision
+%    complex(8),dimension(:),allocatable       :: cvals !rank-1 array for double complex
+%    integer,dimension(:),allocatable          :: cols  !rank-1 array for column indices
+% end type sparse_row_csr
+% ! Sparse Matrix: allocatable array of sparse rows
+% type sparse_matrix_csr
+%    type(sparse_row_csr),dimension(:),pointer :: row  !array of {\tt sparse\_row\_csr} 
+%    integer                                   :: Nrow !total number of rows
+%    integer                                   :: Ncol !total number of columns
+%    logical                                   :: status=.false. !Allocation status
+% #ifdef _MPI
+%    type(sparse_row_csr),dimension(:),pointer :: loc      !array for the diagonal blocks
+%    integer                                   :: istart=0 !start index MPI range
+%    integer                                   :: iend=0   !end index MPI range
+%    integer                                   :: ishift=0 !shift index MPI range
+%    logical                                   :: mpi=.false.
+% #endif
+% end type sparse_matrix_csr
+% \end{lstlisting}
 
-
-Each instance of {\tt sparse\_matrix\_csr} can be stored in either 
-a serial manner (one copy per process) or distributed across multiple 
-processes, with rows dynamically assigned to each process. 
 Matrix elements are inserted using the 
 {\tt sp\_insert\_element} procedure, which leverages the Fortran 
 intrinsic {\tt move\_alloc} for faster execution compared to 
 implicit reallocation, i.e.~{\tt vec=[vec,new\_element]}. 
-
+%
 This approach offers several key advantages, including efficient 
 memory management for matrices with unknown numbers of non-zero 
 elements per row, and $O(1)$ element access time, both of which 
@@ -625,7 +615,6 @@ methods.
 
 
 \subsubsection{Sparse map}\label{CodeSparseMap}
-% \fixme{General question: Could it be more instructive to use the left bit shift notation in some expression, e.g. $A \ll N$ instead of $A \cdot 2^N$?}
 As discussed in \secu{sSecRDM}, the construction of a symmetry 
 sector often requires associating each sector state $\ket{i}$ with 
 information about the corresponding electronic Fock state $\ket{I_e}$. 
@@ -633,17 +622,17 @@ In this context, the electronic Fock state can be decomposed into bit chunks,
 e.g. $\ket{\vec{n}} = \ket{\vec{i}_\up\,\vec{b}_\up\,
 \vec{i}_\dw\,\vec{b}_\dw}$, reflecting a natural grouping into impurity 
 and bath components and where we highlight the overall ordering in
-spin-up and spin-down parts (see \equ{eq:FockState_|nupndw>}).
+spin-$\up$ and spin-$\dw$ parts (see \equ{eq:FockState_|nupndw>}).
 
 The module {\tt ED\_SPARSE\_MAP} provides an efficient hash table 
 implementation, {\tt sparse\_map} which is part of the {\tt
   sector} object and stores the relation between these bit chunks. 
 Specifically, for each impurity configuration 
-$\vec{i}_\s$ (key), it maintains a list of compatible bath 
-configurations $\vec{b}_\s$ (values) consistent with the conserved 
+$\vec{i}_\s$ ({\it key}), it maintains a list of compatible bath 
+configurations $\vec{b}_\s$ ({\it values}) consistent with the conserved 
 quantum numbers of the given sector (see \secu{sSecQNs}).
 The {\tt sparse\_map} objects ${\cal P}$ are constructed upon call of the {\tt
-  build\_sector} ({\tt sector} constructor) using different algorithms 
+  build\_sector} (i.e. the {\tt sector} constructor) using different algorithms 
 for each value of {\tt ed\_mode}.
 
 
@@ -653,7 +642,7 @@ type sparse_row
    integer                               :: size          !current size
    integer                               :: bath_state_min!smallest bath state
    integer                               :: bath_state_max!largest bath state
-   integer,dimension(:),allocatable      :: bath_state    !rank-1 bath states
+   integer,dimension(:),allocatable      :: bath_state    !Values:rank-1 bath states
    integer,dimension(:),allocatable      :: sector_indx   !bath state sector indices
 end type sparse_row
 !Sparse Map: array of sparse rows 
@@ -665,18 +654,18 @@ end type sparse_map
 \end{lstlisting}
 
 
-In the {\bf normal} mode, the sector object contains two separate {\tt
+In the {\bf normal} mode, the {\tt sector} object contains two separate {\tt
   sparse\_maps} objects ${\cal P}_{\s=\up,\dw}$, reflecting the
 factorization of the Fock and sector states into independent spin components: 
 $\ket{J_e}=\ket{J_\up}\otimes\ket{J_\dw} \xleftarrow{\MM}
 \ket{j_\up}\otimes\ket{j_\dw}=\ket{j}$.
 The sparse maps are built as follows. 
-For any spin Fock state appearing in the sector $\ket{J_\s}=\ket{{\vec{I}_{\s}\vec{B}_{\s}}}$,
-the \emph{key} is determined by the integer $I_\s$ corresponding to the
-impurity bitset $\vec{I}_\s$. The \emph{values} are given by any
-integer $B_\s$ corresponding to any bath bitset
+For any spin Fock state appearing in the sector $\ket{j}\xrightarrow{\MM}\ket{J_\s}=\ket{{\vec{I}_{\s}\vec{B}_{\s}}}$,
+the {\it key} is determined by the integer $I_\s$ corresponding to the
+impurity bitset $\vec{I}_\s$. The {\it values} are given by all 
+integers $B_\s$ corresponding to any bath bit set
 $\vec{B_\s}$ associated with $\vec{I}_\s$ by the sector symmetry constraint: $\#\vec{I}_\s + \#\vec{B}_\s = \mathtt{popcnt}(I_\s) + \mathtt{popcnt}(B_\s)= N_\s$.
-Thus, any given \emph{key-value} combination 
+Thus, any given {\it key-value} combination 
 reconstructs an integer $J_\s$ representing a Fock state in the
 given spin sector according to the rule $J_s = I_\s +
 2^{N_\mathrm{imp}}B_\s$, where $N_\mathrm{imp}$ is the number of impurity bits. 
@@ -708,10 +697,11 @@ This structure ensures an efficient and compact representation
 of the many-body Hilbert space, enabling a rapid state lookup 
 during the diagonalization process.
 
-An overview of the implementation, complementing the symmetry sector construction, is reported in the following listing:
-\setbox0=\hbox{%
-  \begin{minipage}{0.42\linewidth}
-\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+An overview of the implementation leveraging the Fortran intrinsic {\tt ibits(I,pos,len)} is reported in the following listing:
+\begin{center}
+\begin{minipage}[t]{0.49\linewidth}
+\textbf{Normal}
+\begin{lstlisting}[style=fstyle,frame=leftline,numbers=none,basicstyle={\ttfamily\scriptsize}]
 i=0
 do Iup=0,2**Nbit-1     
   nup_ = popcnt(Iup) 
@@ -725,6 +715,7 @@ do Iup=0,2**Nbit-1
                        iBath,&
                        i)
 enddo
+!
 i=0
 do Idw=0,2**Nbit-1
   ndw_= popcnt(Idw)
@@ -740,12 +731,10 @@ do Idw=0,2**Nbit-1
 enddo
 \end{lstlisting}
 \end{minipage}
-}
-\savestack{\listingA}{\box0}
-
-\setbox0=\hbox{%
-  \begin{minipage}{0.45\linewidth}
-\begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
+%
+\begin{minipage}[t]{0.49\linewidth}
+\textbf{Superc/Nonsu2}
+\begin{lstlisting}[style=fstyle,frame=leftline,numbers=none,basicstyle={\ttfamily\scriptsize}]
 i=0
 do Idw=0,2**Ns-1
   ndw_= popcnt(idw)
@@ -766,7 +755,7 @@ do Idw=0,2**Ns-1
     iBathUp= ibits(iup,Norb,Norb*Nbath)
     iBathDw= ibits(idw,Norb,Norb*Nbath)
     iImp   = iImpUp  + iImpDw*(2**Norb)
-    iBath  = iBathUp + iBathDw*(2**(Norb*Nbath))
+    iBath  = iBathUp + iBathDw*(2**Ns)
     call sp_insert_state(self%H(1)%sp,&
                          iImp,&
                          iBath,&
@@ -775,19 +764,7 @@ do Idw=0,2**Ns-1
 enddo
 \end{lstlisting}
 \end{minipage}
-}
-\savestack{\listingB}{\box0}
-
-\begin{tabular}{c|c}\label{list2}
-{\bf normal} & {\bf superc/nonsu2}\\
-\hline
-  \stackinset{l}{}{t}{}{}{\listingA} & \stackinset{l}{}{t}{}{}{\listingB} 
-\end{tabular}
-\vspace{1mm}
-
-
-It leverages the Fortran intrinsic function {\tt ibits(I,pos,len)} which returns the integer representation of the bit subset of length {\tt len} starting from {\tt pos} of the  integer {\tt I}.     
-
+\end{center}
 
 
   
@@ -800,34 +777,32 @@ of selected eigenvalues, eigenvectors, and quantum numbers for the
 low-lying spectrum of the quantum impurity Hamiltonian. 
 In MPI mode, the memory footprint of each eigenvector 
 is minimized by automatically distributing it among all processors in suitable shares
-according to the nature of the quantum numbers $\vec{Q}$.
+according to the value of {\tt ed\_mode}. 
 While for zero-temperature calculations only the ground state (with its
-degeneracy) is stored, for finite temperatures the list also includes all the necessary excited states.
-
-
-\begin{lstlisting}[style=fstyle,numbers=none]    
-!Single element of the list: contains a single eigenpair.
-!Twin states are just pointers, no memory.
-!double or cmplx vectors are automatically MPI distributed.
-type sparse_estate
-   integer                             :: sector        !Symmetry sector index
-   real(8)                             :: e             !eigenvalue: ordering key
-   real(8),dimension(:),allocatable    :: dvec          !double  eigenvector
-   complex(8),dimension(:),allocatable :: cvec          !complex eigenvector
-   logical                             :: itwin=.false. !twin sector logical label
-   type(sparse_estate),pointer         :: twin=>null()  !link to twin state in the list
-   type(sparse_estate),pointer         :: next=>null()  !List next pointer
-end type sparse_estate
-!Ordered list storing the lower part of the Hamiltonian spectrum: 
-type sparse_espace
-   integer                     :: size               !Current list
-   real(8)                     :: emax               !Max energy fixed by ${\color{comment-color}e^{-\beta {\tt emax}}\!<\!{\tt cutoff}}$
-   real(8)                     :: emin               !Min energy: the ground state energy
-   logical                     :: status=.false.     !Allocation status
-   type(sparse_estate),pointer :: root=>null()       !Root of the linked list
-end type sparse_espace
-
-\end{lstlisting}
+degeneracy) is stored, for finite temperature the list includes all the necessary excited states.
+If the input variable {\tt ED\_TWIN=T}, the {\it twin sectors}, i.e. sectors with symmetric values of the quantum numbers ($S_z\to -S_z$ and $N\to N_s-N$), are excluded from the list and their contribution is reconstructed by symmetry where needed. 
+% \begin{lstlisting}[style=fstyle,numbers=none]    
+% !Single element of the list: contains a single eigenpair.
+% !Twin states are just pointers, no memory.
+% !double or cmplx vectors are automatically MPI distributed.
+% type sparse_estate
+%    integer                             :: sector        !Symmetry sector index
+%    real(8)                             :: e             !eigenvalue: ordering key
+%    real(8),dimension(:),allocatable    :: dvec          !double  eigenvector
+%    complex(8),dimension(:),allocatable :: cvec          !complex eigenvector
+%    logical                             :: itwin=.false. !twin sector logical label
+%    type(sparse_estate),pointer         :: twin=>null()  !link to twin state in the list
+%    type(sparse_estate),pointer         :: next=>null()  !List next pointer
+% end type sparse_estate
+% !Ordered list storing the lower part of the Hamiltonian spectrum: 
+% type sparse_espace
+%    integer                     :: size               !Current list
+%    real(8)                     :: emax               !Max energy fixed by ${\color{comment-color}e^{-\beta {\tt emax}}\!<\!{\tt cutoff}}$
+%    real(8)                     :: emin               !Min energy: the ground state energy
+%    logical                     :: status=.false.     !Allocation status
+%    type(sparse_estate),pointer :: root=>null()       !Root of the linked list
+% end type sparse_espace
+% \end{lstlisting}
 A truncation mechanism is put in place to avoid the unbounded growth of this list. On the first call, a fixed number of
 states per sector  
 \texttt{lanc\_nstates\_sector} is collected, up to a
@@ -840,7 +815,7 @@ where
 $E_i$ is the energy of the $i^{\rm th}$ state in the list, $E_0$ is the
 ground state energy, $\beta=1/T$ is the inverse temperature ($k_B=1$) and \texttt{cutoff} is an input parameter fixing an {\it a priori} energy threshold.
 
-The list dynamically adjusts to optimize the distribution of states 
+By successive call to the \NAME solver, the list dynamically adjusts to optimize the distribution of states 
 across sectors, balancing memory use and computation time. The
 variable \texttt{lanc\_nstates\_step} controls the increase or
 decrease in the number of states per sector. 
@@ -862,45 +837,44 @@ $dE_{mn}=E_m-E_n$ is the corresponding excitation energy.
 % \fixme{How does the operator $A$ enter this expression?}
 
 The module {\tt ED\_GFMATRIX} implements the class {\tt gfmatrix}, 
-which provides an efficient, multi-layer data structure for storing 
+which provides an efficient, multi-layer, data structure for storing 
 all weights and poles required for the evaluation of DCFs. This 
 class is designed to handle multiple operators and sectors, allowing 
-for rapid, on-the-fly evaluation of the DCF for any complex frequency 
+on-the-fly evaluation of the DCF for any complex frequency 
 $z\in\CCC$.
 
 The use of this data structure significantly reduces the computational 
-cost of evaluating DCFs by minimizing redundant calculations and 
-avoiding repeated diagonalizations, making it a critical component 
+cost of evaluating DCFs making it a critical component 
 for the high-performance execution of \NAME.
 
-\begin{lstlisting}[style=fstyle,numbers=none]   
-!The contributions to the GF Kallen-Lehmann sum are stored as
-!GF_{ab,sr}%state%channel%{w,e}.
-!A couple of weight,poles {w,e} is stored: 
-!for each *channel, i.e. !applied operator, for any starting state ${\color{comment-color}\ket{n}}$.
-!
-!Sub-class: contains the actual weight and poles:
-type GFspectrum
-   complex(8),dimension(:),allocatable       :: weight
-   real(8),dimension(:),allocatable          :: poles
-end type GFspectrum
-!
-!N_channel = ${\color{comment-color} C,\, C^\dagger,\, C \pm C^\dagger,\, C \pm iC^\dagger}$, etc.
-!Subclass: contains a given set of weights and poles.
-!Each instance of this subclass corresponds to a given input state 
-!and a given operator in the Kallen-Lehmann representation.  
-type GFchannel
-   type(GFspectrum),dimension(:),allocatable :: channel 
-end type GFchannel
-!
-!Main class: stores  weights and poles of a given DCF 
-!obtained through the dynamical Lanczos algorithm.
-!state_list%size = Number of states in the spectrum 
-type GFmatrix
-   type(GFchannel),dimension(:),allocatable  :: state
-   logical                                   :: status=.false. !Allocation status
-end type GFmatrix
-\end{lstlisting}
+% \begin{lstlisting}[style=fstyle,numbers=none]   
+% !The contributions to the GF Kallen-Lehmann sum are stored as
+% !GF_{ab,sr}%state%channel%{w,e}.
+% !A couple of weight,poles {w,e} is stored: 
+% !for each *channel, i.e. !applied operator, for any starting state ${\color{comment-color}\ket{n}}$.
+% !
+% !Sub-class: contains the actual weight and poles:
+% type GFspectrum
+%    complex(8),dimension(:),allocatable       :: weight
+%    real(8),dimension(:),allocatable          :: poles
+% end type GFspectrum
+% !
+% !N_channel = ${\color{comment-color} C,\, C^\dagger,\, C \pm C^\dagger,\, C \pm iC^\dagger}$, etc.
+% !Subclass: contains a given set of weights and poles.
+% !Each instance of this subclass corresponds to a given input state 
+% !and a given operator in the Kallen-Lehmann representation.  
+% type GFchannel
+%    type(GFspectrum),dimension(:),allocatable :: channel 
+% end type GFchannel
+% !
+% !Main class: stores  weights and poles of a given DCF 
+% !obtained through the dynamical Lanczos algorithm.
+% !state_list%size = Number of states in the spectrum 
+% type GFmatrix
+%    type(GFchannel),dimension(:),allocatable  :: state
+%    logical                                   :: status=.false. !Allocation status
+% end type GFmatrix
+% \end{lstlisting}
 
 
 
@@ -925,20 +899,24 @@ end type GFmatrix
 The quantum impurity problem is characterized by the coupling between
 a local impurity and a surrounding bath. Following the structure of
 \equ{Hbath}, the bath is parametrized by two components: the
-Hamiltonian matrices, $h^p$, and the hybridization amplitudes,
-$V^p$, for $p = 1, \dots, N_\mathrm{bath}$.
+Hamiltonian matrices, $h_{\a\b\s\s'}^p$, and the hybridization amplitudes,
+$V_{\a\b\s\s'}^p$, for $p = 1, \dots, N_\mathrm{bath}$.
 Internally, the bath is represented by a dedicated object, {\tt
   effective\_bath}, defined in the {\tt ED\_VARS\_GLOBAL} module. From
 the user's perspective, all parameters are consolidated into a rank-1
-array of doubles, managed using a reverse communication strategy. This
-approach ensures that a local array remains accessible to the
-user while preventing direct access to the internal copy, thereby
-preserving data integrity and reducing memory overhead.
+array of doubles, managed using a reverse communication strategy. 
+% to ensure 
+% that a local array remains accessible to the
+% user while preventing direct access to the internal copy, thereby
+% preserving data integrity and reducing memory overhead.
 
 
 The bath topology, which defines the connectivity between the
 electronic levels assigned to the bath, is specified
-through the input variable {\tt bath\_type}. In \NAME this variable can take one of four possible values: {\bf normal}, {\bf hybrid}, {\bf replica}, and {\bf general}.
+through the input variable {\tt bath\_type}. 
+In \NAME this variable can take one of four possible values: 
+{\bf normal}, {\bf hybrid}, {\bf replica}, and {\bf general}.
+
 
 \paragraph{{\tt bath\_type}={\bf normal}.} In this configuration, the
 bath consists of $N_\mathrm{bath}$
@@ -953,17 +931,14 @@ where $\varepsilon_{\a\s}$ represents  the on-site energies for each orbital and
 If {\tt ed\_mode}={\bf superc},  anomalous
 amplitudes connecting bath levels with opposite spins must also be
 considered. In this case, the bath Hamiltonian gains 
-an additional set of parameters $\Delta^p_{\a}\delta_{\a\b}\delta_{\s \bar{\s}}$, diagonal in orbital space but
-off-diagonal in the spin, where $\Delta^p_\a$ represents the pairing amplitudes. 
-This choice corresponds to a Nambu representation for each  component, with the Hamiltonian matrices taking the Nambu form:
+an additional set of parameters $\Delta^p_{\a}\delta_{\a\b}\delta_{\s \bar{\s}}$, where $\Delta^p_\a$ represents the orbital diagonal pairing amplitudes. 
+This choice corresponds to a Nambu representation for each component, with the Hamiltonian matrices taking the form:
 
 $$
-\hat{h}^p = \e^p\tau_z + \Delta^p\tau_x .
+h_{\a\b\s\s'}^p = \e_\a^p\delta_{\a\b}\tau^z_{\s\s'} + \Delta^p_\a\delta_{\a\b}\tau^x_{\s\s'} .
 $$
 
-% \fixme{ (Samuele) Here and before h with or without hat? I would say without since it is how we wrote it in 3.1.1}
-% \fixme{The superc h should have tau\_z instead of tau\_0 in nambu repr}
-where $\tau_{i=0,x,y,z}$ are Pauli matrices.
+where $\tau^{i=0,x,y,z}$ are Pauli matrices.
 %
 The hybridization amplitudes between the impurity and the bath levels
 are similarly structured. For all values of {\tt ed\_mode} these
@@ -973,11 +948,12 @@ spin and orbital space: $V^p_{\a\b\s\s'}=V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$.
 If {\tt ed\_mode}={\bf nonsu2}  an additional set including terms describing spin-flip processes (as total magnetization is not conserved) should be included, $V^p_{\a\b\s\s'} =
 W^p_{\a}\delta_{\a\b}\delta_{\s \bar{\s}}$. 
 %
-Thus, the total number of parameters used to determine the bath is $N_\mathrm{param}=2N_\a N_\mathrm{bath}$ for {\tt ed\_mode}={\bf normal} or $N_\mathrm{param}=3N_\a N_\mathrm{bath}$ for the other two values of {\tt ed\_mode}.
+
+The resulting total number of parameters used to determine the bath is $N_\mathrm{param}=2N_\a N_\mathrm{bath}$ for {\tt ed\_mode}={\bf normal} or $N_\mathrm{param}=3N_\a N_\mathrm{bath}$ for the other two values of {\tt ed\_mode}.
 
 
 \paragraph{{\tt bath\_type}={\bf hybrid}.}
-This hybrid topology is the simplest generalization of the bath pa\-ra\-me\-tri\-za\-tion which captures the effects of locally
+The hybrid topology is the simplest generalization of the bath pa\-ra\-me\-tri\-za\-tion which captures the effects of locally
 coupled impurity orbitals. However, this setup typically requires a more challenging optimization process, especially
 with few available bath levels (see \secu{sSecFit}). 
 The bath is formed by $N_\mathrm{bath}$ sites coupled to all the
@@ -987,18 +963,20 @@ diagonal in both orbital and spin space, i.e.
 $$
 h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}.
 $$
+For {\tt ed\_mode}={\bf superc} additional anomalous components 
+$\Delta_\a^p\delta_{\a\b}\delta_{\s\bar{\s}}$ diagonal in the orbital basis are included.
 %
+
 The key difference compared to the previous case is that the hybridization matrix elements are generally off-diagonal in the orbital indices:
 $$
 V^p_{\a\b\s\s'}=V^p_{\a\b\s}\delta_{\s\s'}.
 $$
-Moreover, the {\tt ed\_mode}={\bf superc} introduces additional anomalous components 
-$\Delta^p\delta_{\a\b}\delta_{\s\bar{\s}}$ diagonal in the orbital basis.
 %
 If full spin symmetry is not preserved, i.e. for {\tt ed\_mode} = {\bf nonsu2}, a further 
 set of parameters must be specified to account for spin-flip processes:
 $V^p_{\a\b\s\s'} = W^p_{\a\b}\delta_{\s \bar{\s}}$. 
 %
+
 The resulting total numbers of available bath parameters are 
  $N_\mathrm{param}=N_\mathrm{bath}+ N_\a N_\mathrm{bath}$ for {\tt ed\_mode}={\bf normal},  
  $N_\mathrm{param}=2N_\mathrm{bath}+ N_\a N_\mathrm{bath}$ if  {\tt ed\_mode}={\bf superc} or 
@@ -1026,8 +1004,8 @@ h^p = \sum_{\nu=1}^{N_\mathrm{sym}} \lambda^p_\nu
 $$
 where $\vec{\lambda}^p\in\RRR^{N_\mathrm{sym}}$ is a vector of variational parameters. 
 The choice of the matrix basis can be inspired by symmetry group considerations \cite{Koch2008PRB,Senechal2010PRB}, by the internal structure
-of the quantum impurity, i.e. $\hat{h}^0$, or determined
-case-by-case, depending on the desired properties of the solution.
+of the quantum impurity or determined
+case-by-case depending on the desired properties of the solution.
 In this scheme, the total number of bath levels is  $N_\mathrm{b}
 = N_\a N_\mathrm{bath}$. 
 
@@ -1061,23 +1039,29 @@ We summarize the total number $N_s$ of electronic levels of the quantum impurity
 \end{center}
 
 \vspace{2mm}
-All the procedures concerning the bath, either on the user side or concerning the internal {\tt effective\_bath}, are grouped into a set of modules wrapped by {\tt ED\_BATH}. We divided the set of modules into three categories, according to their scope.
+All the procedures concerning the bath
+% , either on the user side or concerning the internal {\tt effective\_bath}, 
+are grouped into a set of modules wrapped by {\tt ED\_BATH}. 
+We divided the set of modules into three categories, according to their scope.
 
 
 
 \paragraph{Bath Auxiliary Tools.}
 This group of modules provides user-oriented utilities, including 
-standard symmetry operations on the bath array, such as orbital 
+standard symmetry operations on the bath array, e.g. orbital 
 symmetry and particle-hole symmetry, available in 
-{\tt ED\_BATH\_USER}. The critical functionality here is the 
+{\tt ED\_BATH\_USER}. 
+
+The critical functionality here is the 
 determination of the total bath array dimension, implemented in 
 {\tt ED\_BATH\_DIM}. The function {\tt ed\_get\_bath\_dimension} 
 calculates the required dimension $N_\mathrm{params}$ for user-allocated bath 
 arrays, ensuring they contain exactly the necessary number of 
-parameters. Any following call
-to functions hosting the bath as an input verify the array's 
-dimensionality using {\tt check\_bath\_dimension} to prevent 
-allocation errors.
+parameters. 
+% Any following call
+% to functions hosting the bath as an input verify the array's 
+% dimensionality using {\tt check\_bath\_dimension} to prevent 
+% allocation errors.
 
 The following table summarizes the total number of parameters $N_\mathrm{params}$, as returned by the function {\tt ed\_get\_bath\_dimension} and required to describe the bath according to the values of {\tt ed\_mode} and {\tt bath\_type}:
 
@@ -1107,14 +1091,14 @@ The following table summarizes the total number of parameters $N_\mathrm{params}
 \end{center}
 
 \paragraph{Bath replica/general.}
-The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}/{\tt Hge\-ne\-ral} for the {\bf replica}/{\bf general} bath parametrizations. In  addition to standard object construction, destruction, reading, and saving, this module provides matrix basis  
-$\{ \Gamma^\nu \}_{\nu=1,\dots,N_\mathrm{sym}}$ setup as well as  the variational parameters $\vec{\lambda}$ initialization through {\tt set\_Hreplica}/{\tt set\_Hge\-ne\-ral}. 
+The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}/{\tt Hge\-ne\-ral} for the {\bf replica}/{\bf general} bath parametrizations. In  addition to standard object construction, destruction, reading and saving, this module provides the setup for either the matrix basis  
+$\{ \Gamma^\nu \}_{\nu=1,\dots,N_\mathrm{sym}}$ and the initial variational parameters $\vec{\lambda}$ through the function  {\tt set\_Hreplica}/{\tt set\_Hge\-ne\-ral}. 
 %
 The bath Hamiltonian is constructed with the function 
 {\tt build\_Hreplica}/{\tt build\_Hge\-ne\-ral} via the relation
-$$
-h^p = \vec{\lambda}^p \cdot \vec{\Gamma}.
-$$
+$
+h^p = \vec{\lambda}^p \cdot \vec{\Gamma}
+$.
 
 
 
@@ -1167,8 +1151,8 @@ $H_\SS$ have been developed, including Krylov subspace methods and related appro
 
 In \NAME, the preferred algorithm is P-ARPACK, a state of the art
 Lanczos-based eigensolver with distributed memory support
-\cite{Lehoucq1998}. This method incorporates re-orthogonalization within
-a block-Lanczos routine, ensuring the accurate convergence of the desired eigenpairs. However, it is also possible to select a simpler,
+\cite{Lehoucq1998} ensuring the accurate convergence of the desired eigenpairs. 
+However, it is also possible to select a simpler,
 though less efficient, parallel Lanczos algorithm using the input variable {\tt lanc\_method}.
 
 The core computational task in any Krylov-based diagonalization
@@ -1179,9 +1163,10 @@ H_\SS \ket{v} \to \ket{w}\qquad \ket{v},\ket{w}\in \SS_{\vec{Q}}.
 \end{equation}
 This operation amounts to more than 80\% of the overall
 computational effort, making its optimization a critical aspect of
-high-performance diagonalization algorithms. In \onlinecite{Amaricci2022} we discussed in greater details the distributed-memory massively parallel strategies currently employed in \NAME to optimize this step and presented various benchmarks of the parallel scaling. 
+high-performance diagonalization algorithms. In Ref.~\onlinecite{Amaricci2022CPC} we discussed in greater details the massively parallel strategies  employed in \NAME to optimize the MVP operations and presented various benchmarks of the parallel scaling. 
 Here, we provide a brief outline of the main ideas following the notation introduced
-in \onlinecite{Amaricci2022}, and focusing on the impact of the choice of {\tt ed\_mode}. For sake of clarity, here we focus on the purely electronic case, i.e. neglecting the electron-phonon part. The product structure of the electron and phonon Fock spaces ensure that the following approach applies with few algorithmic modifications in presence of electron-phonon coupling.  
+in Ref.~\onlinecite{Amaricci2022CPC}, and focusing on the impact of the choice of {\tt ed\_mode}. 
+For sake of clarity, here we focus on the purely electronic case, i.e. neglecting the electron-phonon part. The product structure of the electron and phonon Fock spaces ensure that the following approach applies with few algorithmic modifications in presence of electron-phonon coupling.  
 
 
 
@@ -1229,7 +1214,7 @@ impurity-bath couplings $V^p_{\a\b\s\s'}$.
 In an MPI setup, the first three terms contains also elements local to each node and
 stored separately within each {\tt sparse\_matrix} instance representing $H_\SS$ (see \secu{CodeSparseMatrix}).
 The MVP is carried out using the {\tt MPI\_AllGatherV} algorithm which, as noted  
-\onlinecite{Amaricci2022}, requires reconstruction of distributed
+Ref.~\onlinecite{Amaricci2022CPC}, requires reconstruction of distributed
 arrays and incurs significant communication overhead.
 \vspace{2mm}
 
@@ -1238,7 +1223,7 @@ arrays and incurs significant communication overhead.
 The diagonalization process itself is divided into two primary phases:
 \paragraph{\bf Global Setup.} This phase allocates the required memory, initializes
 the MPI environment, and configures the appropriate MVP procedure
-based on the symmetries of the problem. This logic is implemented in
+based on the symmetries of the problem. This is implemented in
 a set of independent modules, {\tt ED\_HAMILTONIAN\_<ed\_mode>}. Any module includes two functions: {\tt build\_Hv\_sector\_<ed\_mode>} and  {\tt vecDim\-\_\-Hv\-\_\-sector\-\_\-<ed\_mode>}.
 
 The {\tt build\_Hv\_sector\_<ed\_mode>} function builds the symmetry sector and
@@ -1337,25 +1322,25 @@ we can approximate the expression \equ{KLgf} as:
       z - (E_m-E_n)} \mp \frac{\bra{\psi_n}\AA^\dagger \AA\ket{\psi_n}
       |a^n_m|^2}{ z + (E_m-E_n)}\cr
     %
-    &= \frac{1}{Z}\sum_n\sum_{m=1}^{N} \sum_{\nu=\pm}\frac{w^{\nu}_{mn}[\AA]}{z - dE^\nu_{mn}[\AA]} 
-    = \frac{1}{Z}\sum_n
-    \sum_{m=1}^{N} \sum_{\nu=\pm} g_\AA(\nu, w^{\nu}_{mn},  dE^\nu_{mn}), \cr
+    &= \frac{1}{Z}\sum_n\sum_{m=1}^{N} \sum_{\nu=\pm}\frac{w^{\nu}_{mn}(\AA)}{z - dE^\nu_{mn}(\AA)} 
+    \equiv \frac{1}{Z}\sum_n
+    \sum_{m=1}^{N} \sum_{\nu=\pm} g_\AA(z;\nu, w^{\nu}_{mn},  dE^\nu_{mn}), \cr
   \end{split}
 \end{equation}
 where the terms are grouped as a sum over spectral weights and
-poles. We introduced the notation $g(\nu, w(\AA)^{\nu}_{mn},  dE(\AA)^\nu_{mn})$ does $g$ also depend on $z$?
+poles. We introduced the notation $g(z;\nu, w^{\nu}_{mn},  dE^\nu_{mn})$
 for the {\tt gfmatrix} object containing the weights $w(\AA)^{\nu}_{mn}$ and
 poles $dE(\AA)^{\nu}_{mn}$ for the operator $\AA$, for every initial state $\ket{\psi_n}$
 contributing to the low energy spectrum, for every order $m$ of the
 Krylov subspace algorithm and for channel $\nu$.
-This approach significantly reduces the computational burden, as it
-requires a much smaller set of basis states.
+% This approach significantly reduces the computational burden, as it
+% requires a much smaller set of basis states.
 
-However, this method is typically limited to diagonal DCF like
+This method is  limited to diagonal DCF like
 \equ{eqGaa}. In practice, many applications also require building off-diagonal
 functions of the form
 $$
-C_{\AA\BB}(z) = \ibra T_{\pm}[\AA(t) \BB^\dagger]\iket\, .
+C_{\AA\BB}(t) = \ibra T_{\pm}[\AA(t) \BB^\dagger]\iket\, .
 $$
 This can be addressed by introducing auxiliary operators, e.g.  $\OO=\AA +\BB$ and
 $\PP=\AA-i\BB$, enabling extraction of the desired function via
@@ -1367,7 +1352,7 @@ $$
 
 In \NAME, the computation of the impurity Green's functions 
 $$
-G_{\a\b\s\s'}=\ibra \TT_\pm[ c_{\a\s}(t) c_{\b\s'}^\dagger ]\iket
+G_{\a\b\s\s'}(t)=\ibra \TT_\pm[ c_{\a\s}(t) c_{\b\s'}^\dagger ]\iket
 $$
 is handled by the module \texttt{ED\_GREENS\_FUNCTIONS}.
 It integrates more specialized methods based on the symmetry
@@ -1420,7 +1405,7 @@ $(S^z_\a + S^z_\b)$, $(N_\a + N_\b)$ or $(\Delta_\a + \Delta_\b)$.
 The excitonic susceptibilities, $\chi^{\vec{E}}_{\a\b}$, are defined with 
 respect to the vector operator $E^i_{\a\b} = \sum_{\s\s'}
 c^\dagger_{\a\s}\tau^i_{\s\s'}c_{\b\s'}$, where $i=0$ represents the
-spin-singlet exciton\cite{Giuli2023PRB}, and $i=x,y,z$  correspond to the spin-triplet exciton.
+spin-singlet exciton \cite{Giuli2023PRB}, and $i=x,y,z$  correspond to the spin-triplet exciton \cite{Amaricci2023_excitons}.
 
 
 \paragraph{{\bf superc}.}
@@ -1436,7 +1421,7 @@ Green's function has the form:
 \end{equation}
 Exploiting symmetries between matrix components, it is 
 sufficient to compute only the top row elements along with 
-a few auxiliary functions\cite{Capone2001PRL,Capone2002Science,Capone2004sc,Toschi2005NJP,Toschi2005PRB,Capone2009RMP}.
+a few auxiliary functions \cite{Capone2001PRL,Capone2002Science,Capone2004PRLsc,Toschi2005NJP,Toschi2005PRB,Capone2009RMP}.
 %
 The diagonal, normal, component $G_{\a\a\up\up}$ can be 
 evaluated using the same approach as in the {\tt ed\_mode=}{\bf normal} 
@@ -1450,7 +1435,7 @@ $G_{\a\b\up\up}=\tfrac{1}{2}[C_\OO + C_\PP -
 
 Evaluating the diagonal and off-diagonal anomalous terms 
 $F_{\a\b\up\dw}$ requires distinct combinations of 
-creation and annihilation operators\cite{Capone2001PRL,Capone2002Science,Capone2004sc,Toschi2005NJP,Toschi2005PRB}. First, the component 
+creation and annihilation operators \cite{Capone2001PRL,Capone2002Science,Capone2004PRLsc,Toschi2005NJP,Toschi2005PRB}. First, the component 
 $\bar{G}_{\a\a\dw\dw}$ is evaluated as an auxiliary term 
 using $\AA = c^\dagger_{\a\dw}$. Then, we construct the two  
 linear combinations
@@ -1522,9 +1507,10 @@ the Boltzmann factor:
 \label{eq:thermal_average}
 \end{equation}
 where $E_n$ and $\ket{\psi_n}$ are the $N_{\tt state\_list}$ low-lying eigenstates 
-of the system stored in the {\tt state\_list}. This approach 
-greatly reduces computational overhead by focusing on the 
-relevant, low-energy sector.
+of the system stored in the {\tt state\_list}. 
+% This approach 
+% greatly reduces computational overhead by focusing on the 
+% relevant, low-energy sector.
 
 
 
@@ -1538,7 +1524,7 @@ relevant, low-energy sector.
 The latest version of \NAME introduces the calculation of the 
 impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), 
 extending the algorithm initially proposed in 
-Ref.~\onlinecite{BellomiaPhD}, to support the analysis of entanglement 
+Ref.~\onlinecite{BellomiaPhD,Bellomia2024PR}, to support the analysis of entanglement 
 properties of quantum impurities for any value of {\tt ed\_mode}.
 
 For sake of simplicity, this section focuses on the zero-temperature limit, 
@@ -1546,7 +1532,7 @@ assuming a non-degenerate ground state $\ket{\psi}$ present in the
 {\tt state\_list}. The generalization to the finite-temperature regime 
 or degenerate ground states is straightforward, requiring only the  introduction of an
 ensemble average $\ibra \rho^\mathrm{imp} \iket$, as defined in 
-\equ{eq:thermal_average}.What is the meaning of $\langle\rangle$ here? \equ{eq:thermal_average} contains a weighted sum over the states of the full system, while $\rho^\mathrm{imp}$ is already reduced over the bath degrees of freedom.
+\equ{eq:thermal_average}.
 
 A pure quantum state $\ket{\psi}$ belonging to a unique symmetry 
 sector $\SS_{\vec{Q}}$ can be represented in the Fock basis as:
@@ -1554,7 +1540,7 @@ $
 \ket{\psi} = \sum_I a_I \ket{I},
 $
 where the corresponding pure density matrix $\rho$ is given by:
-\begin{equation}
+\begin{equation}\label{DefRho}
 \rho = \ket{\psi}\bra{\psi} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
 a^*_J a_I \ket{I}\bra{J} = \sum_{IJ=1}^{4^{N_\mathrm{s}}} 
 \rho_{IJ} \ket{I}\bra{J}.
@@ -1569,7 +1555,7 @@ with the system size, i.e.~$4^{N_\mathrm{s}}$, quickly becoming prohibitive.
 
 To overcome the issue, we implement a fast algorithm that exploits the 
 block structure of the Fock space defined by the symmetry sectors and
-the subsequent map sparsity, to perform the trace \emph{on-the-fly}. 
+the subsequent map sparsity, to perform the trace {\it on-the-fly}. 
 This approach significantly reduces the computational cost by limiting 
 the summation to the sector size $D_\SS$ of the symmetry sector 
 $\SS$, to which the ground state (or any eigenstate) belongs, and avoiding
@@ -1578,9 +1564,9 @@ the storage of the large matrix associated with $\rho$.
 To efficiently manage this decomposition, we employ a 
 {\tt sparse\_map} ${\cal P}$, as detailed in \secu{CodeSparseMap}. 
 This structure stores, for each impurity configuration 
-(the \emph{key}), the 
+(the {\it key}), the 
 corresponding bath configurations 
-(the \emph{values}) that 
+(the {\it values}) that 
 satisfy the symmetry constraints over the sector quantum numbers
 imposed by the {\tt ed\_mode} variable.
 We denote the number of (spin-dependent) keys and values respectively
@@ -1607,12 +1593,33 @@ Here, creation (destruction) operators  $c^\dagger_{p\sigma}$
 act only on the corresponding 
 spin subspace, i.e.~they commute with the opposite spin 
 subspace $\ket{\vec{n}_{\bar{\s}}}$ without introducing any 
-fermionic sign.
-
-In the {\bf normal} mode, the iRDM is restricted to 
+fermionic sign. In this basis \equ{DefRho} takes the form:
+\begin{equation}\label{RhoNormal}
+\rho = 
+    \sum_{i_\up=1}^{D_{i_\up}}\!
+    \sum_{p_\up=1}^{D_{p_\up}}\!
+    \sum_{i_\dw=1}^{D_{i_\dw}}\!
+    \sum_{p_\dw=1}^{D_{p_\dw}}\!
+    \sum_{j_\up=1}^{D_{j_\up}}\!
+    \sum_{q_\up=1}^{D_{q_\up}}\!
+    \sum_{j_\dw=1}^{D_{j_\dw}}\!
+    \sum_{q_\dw=1}^{D_{q_\dw}}\!
+    a_{i_\up p_\up i_\dw p_\dw}a^*_{j_\up q_\up j_\dw q_\dw}
+    % \left[
+    \ket{\vec{i}_\up}\ket{\vec{p}_\up}\!\otimes\!\ket{\vec{i}_\dw}\ket{\vec{p}_\dw}
+    %\right]
+    % \left[
+    \bra{\vec{q}_\dw}\bra{\vec{j}_\dw}\!\otimes\!\bra{\vec{q}_\up}\bra{\vec{j}_\up}
+    %\right].   
+\end{equation}
+where the coefficients $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the
+expansion coefficients of the state on the Fock basis
+$\ket{\psi} = \sum_I a_I \ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}$.
+  
+Before proceeding further we show that in the {\bf normal} mode the iRDM is restricted to 
 {spin-diagonal} blocks. This follows from the observation 
 that the conserved quantum numbers are 
-\emph{additive} quantities, i.e. 
+{\it additive} quantities, i.e. 
 $N_\s = N_\s^\mathrm{imp} + N_\s^\mathrm{bath}$,
 so that the corresponding generator of the symmetry group factorizes as
 $U_{N_\s} = U_{N_\s^\mathrm{imp}} \otimes U_{N_\s^\mathrm{bath}}$. 
@@ -1630,31 +1637,27 @@ U_{N_\s^\mathrm{imp}}^\dagger \rho^\mathrm{imp} U_{N_\s^\mathrm{imp}},
 showing that $U_{N_\s^\mathrm{imp}}$ defines a symmetry of 
 $\rho^\mathrm{imp}$, which is therefore block diagonal with respect to 
 the impurity quantum numbers $N_\s^\mathrm{imp}$.
-The resulting iRDM takes the form:
+
+
+Using \equ{RhoNormal} the iRDM takes the form:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
-  \rho^\mathrm{imp} &= {\color{Plum}\Tr_{b_\up b_\dw}}{\rho} = 
-  {\color{Plum}
-  \sum_{b_\up=1}^{D_{b_\up}}
-  \sum_{b_\dw=1}^{D_{b_\dw}}
-  }
+  \rho^\mathrm{imp} &= \Tr_{{\color{red}b_\up b_\dw}}{\rho} = 
+  \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
+  \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
   \bra{b_\up}\otimes\bra{b_\dw}
     \rho
     \ket{b_\dw}\otimes\ket{b_\up}    \cr
     %
     &=
-    {\color{Plum}
-    \sum_{b_\up=1}^{D_{b_\up}}
-    }
+    \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
     \sum_{i_\up=1}^{D_{i_\up}}
     \sum_{p_\up=1}^{D_{p_\up}}
     \sum_{j_\up=1}^{D_{j_\up}} 
     \sum_{q_\up=1}^{D_{q_\up}}
     \Bigg(    
-    {\color{Plum}
-    \sum_{b_\dw=1}^{D_{b_\dw}}
-    }
+    \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
     \sum_{i_\dw=1}^{D_{i_\dw}}
     \sum_{p_\dw=1}^{D_{p_\dw}}
     \sum_{j_\dw=1}^{D_{j_\dw}} 
@@ -1670,35 +1673,19 @@ The resulting iRDM takes the form:
     \sum_{i_\dw=1}^{D_{i_\dw}}
     \sum_{j_\dw=1}^{D_{j_\dw}}
     \underbrace{\left(
-    {\color{Plum}
-    \sum_{b_\up=1}^{D_{b_\up}}
-    \sum_{b_\dw=1}^{D_{b_\dw}}
-    }
+    \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
+    \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
     a_{i_\up b_\up i_\dw b_\dw} a^*_{j_\up b_\up j_\dw b_\dw}
     \right)}_{\rho^\mathrm{imp}_{i_\up j_\up} \otimes\, \rho^\mathrm{imp}_{i_\dw j_\dw} }
     \ket{i_\up}\bra{j_\up}\otimes \ket{i_\dw}\bra{j_\dw},
   \end{aligned}
 \end{equation}
-where the coefficients $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the
-expansion coefficients of the state on the Fock basis
-$\ket{\psi} = \sum_I a_I \ket{i_\uparrow\,  b_\uparrow\,} \otimes \ket{i_\downarrow
-  \, b_\downarrow}$.
+
 Notably, the factors $C_{i,b}$, which account for the potential 
 fermionic sign from reordering bath and impurity components, are 
 trivially 1 due to the absence of cross-spin interference in this 
 mode, as enforced by the Kronecker deltas for bath and impurity 
 indices.
-% \fixme{(igor and lorenzo) to be honest we took a while to understand this equation. There are a lot of indices... could it be rewritten more compactly e.g. by not explicitly writing |p><q|? Or perhaps by only showing one spin species, since the Fock space factorizes? Or alternatively, maybe color-code the parts? I get that
-% sum\_p sum\_q <b|p><q|b> is a trace... but it's not immediate}
-% {\color{teal}(Gabriele) Mmm, if I recall it correctly, surely writing it for just
-% one spin species (after saying that the final rho factorizes), would look 
-% cleaner, but the fermionic signs will need to be computed explicitly. Cause
-% they cancel to 1 only after actually doing the product between the up and the
-% dw part. Color coding the parts could be very pretty and easy to follow,
-% \sout{I can think about that, thanks for the feedback!} I tried, by highlighting
-% the summations involved in the trace. All the remaining indices come from the
-% full impurity-bath and up-dw decomposition of the state, that is clearlly written
-% in equation (\ref{eq:decomposition_for_rdm_normal})}
 
 The numerical implementation relies on the use of the {\tt
   sparse\_map} ($\%sp$) for the ground state sector as reported in the listing below:  
@@ -1752,13 +1739,18 @@ requires an explicit computation of fermionic permutation signs.
 
 
 Consider a generic Fock basis state in the form 
-$\ket{I} =\ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}$, and define the 
-ground state as $\ket{\psi} = \sum_I a_I \ket{I}$. 
-The pure density 
-matrix is then given by
-$\rho = \sum_{IJ} a_I a^*_J \ket{I}\bra{J}$ ,
-while the iRDM is obtained by tracing over the bath degrees of 
-freedom:
+$\ket{I} =\ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}$, and express the 
+ground state as 
+$$
+\ket{\psi} = \sum_I a_I \ket{I} = 
+    \sum_{i_\up=1}^{D_{i_\up}}
+    \sum_{b_\up=1}^{D_{b_\up}}
+    \sum_{i_\dw=1}^{D_{i_\dw}}
+    \sum_{b_\dw=1}^{D_{b_\dw}}
+    a_{i_\up b_\up i_\dw b_\dw}
+    \ket{{i}_\up\,{b}_\up\,{i}_\dw\,{b}_\dw}.
+$$ 
+By tracing over the bath degrees of freedom of the corresponding pure density matrix $\rho$ we obtain:
 \begin{equation}
   \begin{aligned}
     \rho^\mathrm{imp} &= \Tr_{b_\up b_\dw}{\rho} =
@@ -1782,8 +1774,6 @@ freedom:
     \langle{q_\dw \,  j_\dw \, q_\up\, j_\up }|{b_\dw\, b_\up}\rangle\, ,
   \end{aligned}
 \end{equation}
-where $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the expansion
-coefficient in the Fock basis.
 
 To further simplify this expression, it is essential to eliminate the 
 sums over the internal bath indices $p_\sigma$ and $q_\sigma$, ideally 
@@ -1840,15 +1830,11 @@ do IimpUp=0,2**Norb-1
         if(lenBATH==0)cycle
         do ib=1,lenBath
           iBath = Bath(ib)
-          !Decompose iBath into B_Up, B_dw to reconstruct B bitset. 
-          !B --> {B_up,B_dw}
-          iBathUp = mod(iBath,2**Nbath)
-          iBathDw = (iBath)/2**Nbath
           !Reconstruct the Fock state Ii map back to sector state i
-          ii= iImpUp + iImpDw*2**Ns + 2**Norb*(IBathUp + IBathDw*2**Ns)
+          ii= iImpUp + iImpDw*2**Ns + iBath*2**Norb
           i = binary_search(sectorI%H(1)%map,ii)
           !Reconstruct the Fock state Jj map back to sector state j
-          jj= jImpUp + jImpDw*2**Ns + 2**Norb*(IBathUp + IBathDw*2**Ns)
+          jj= jImpUp + jImpDw*2**Ns + iBath*2**Norb
           j = binary_search(sectorI%H(1)%map,jj)
           !Build the signs of each component of RDM(io,jo)
           nBup  = popcnt(Ibits(ii,Norb,Norb*Nbath))
@@ -1876,15 +1862,15 @@ $\Delta_{\a\b\s\s'}(z)$ and the non-interacting Green's functions
 $G^0_{\a\b\s\s'}(z)$ for arbitrary complex frequencies $z \in \CCC$. 
 These are defined as
 \begin{equation}
-\Delta_{\a\b\s\s'}(z) = \sum_p V^p_{\a\s} 
-\left( z\11 - \hat{h}^p \right)_{\a\b\s\s'}^{-1} V^p_{\b\s'},
+\Delta_{\a\b\s\s'}(z) = \sum_p \left[\hat{V}^p
+\left( z\11 - \hat{h}^p \right)^{-1} \hat{V}^p\right]_{\a\b\s\s'},
 \end{equation}
 \begin{equation}
 G^0_{\a\b\s\s'}(z) = 
 \left[ (z + \mu)\11 - \hat{h}^0 - 
 \Delta(z) \right]_{\a\b\s\s'}^{-1},
 \end{equation}
-where $V^p_{\a\s}$ and $h^p_{\a\b\s\s'}$ are the bath coupling 
+where $V^p_{\a\b\s\s'}$ and $h^p_{\a\b\s\s'}$ are the bath coupling 
 and bath Hamiltonian matrices, respectively, and $\mu$ is the chemical 
 potential.
 
@@ -1898,12 +1884,10 @@ Different routines are available for directly evaluating $\Delta$,
 $G^0$, and its inverse $[G^0]^{-1}$, which are critical for computing 
 the self-energy functions on demand (see \secu{sSecIO}). 
 
-In the superconducting case, where {\tt ed\_mode}={\bf superc}, 
+In the superconducting case, {\tt ed\_mode}={\bf superc}, 
 special care is needed to properly handle the anomalous (off-diagonal) 
 components within the Nambu basis. In this case, the bath functions 
-must include both the normal and anomalous components, 
-which can significantly alter the form of the self-energy. Similar issues arise in the {\bf nonsu2} case, where spin off-diagonal components usually drive the physics of the problem.
-
+include both the normal and anomalous components. 
 
 
 
@@ -1942,7 +1926,7 @@ $\Delta_{\a\b\s\s'}$ are the corresponding quantities for the quantum
 impurity model, see \secu{sSecFunc}.
 
 While different optimization methods have been developed for 
-truncated algorithms like sCI~\cite{Mejuto_Bath_ASCI-DMFT} or DMRG~\cite{dmrg}, 
+truncated algorithms, e.g. sCI~\cite{Mejuto_Bath_ASCI-DMFT} or DMRG~\cite{Bauernfeind2017PRX}, 
 which handle systems with a 
 larger number of bath levels, the CG minimization approach has proven 
 both efficient and flexible for the small to moderate bath sizes 
@@ -2007,7 +1991,7 @@ C_2 & : \left\|x_{n-1} - x_n\right\| <
 where $\chi^n$ is the cost function at the $n^\mathrm{th}$ step, and 
 $x_n$ the corresponding parameter vector. The stop condition is a 
 logical OR between these criteria, with the parameter value selecting 
-which condition to apply. Is the actual stop condition the logical or between $C_1$ and $C_2$? What is meant here?
+which condition to apply.
 \end{itemize}
 
 Together, these parameters provide precise control over the fitting 

@@ -8,10 +8,10 @@
 {\color{red} Tentative conclusions}
 We have presented \NAME{}, a versatile, high-performance solver for
 generic quantum impurity problems. Leveraging on the massively
-parallel algorithms introduced with its predecessor, this version of
+parallel algorithms introduced by its predecessor, this version of
 the library features new capabilities and symmetries within a unified
 framework, providing reliable evaluations of the dynamical correlation
-functions on arbitrary complex argument.
+functions of an arbitrary complex frequency.
 This makes it particularly well-suited for capturing the sharp
 low-energy excitations and complex spectral features of strongly
 correlated systems. We have shown that this new version enables the evaluation of impurity
@@ -28,11 +28,10 @@ reproducible research.
 
 We thoroughly discussed the implementation of the \NAME library, the
 most important algorithms and classes. We presented in
-details the third-party interfaces which extend exact diagonalization
+detail the third-party interfaces which extend exact diagonalization
 capabilities beyond the realm of the library itself.   
 Finally, we showcased the use of the \NAME software in different
-contexts via elaborated example which can serve as reference for the
-potential users. 
+contexts via elaborated examples, which can serve as a reference for potential users. 
 
 The modular and extensible design of \NAME provides a
 natural foundation for future extensions, for instance to cluster-DMFT where the
@@ -53,7 +52,7 @@ reference platform for quantum impurity solvers.
 
 
 \section*{Acknowledgements}
-We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto~Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou,  M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, A.~Camjayi, M.~Rozenberg.    
+We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto~Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou, M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, M.~Rozenberg.    
 
 \paragraph{Author contributions}
 A.A. designed the project, developed the main structure of the software and conceived the computational algorithms in the core library. 
@@ -65,7 +64,7 @@ A.A. and M.C. conceived the diagonalization, correlation function  calculation a
 A.A., M.C., L.d.M. and G.S designed additional algorithms extending functionalities of the core software.   
 A.A., L.C., I.K., A.K., S.G. and G.B. performed the calculations, analyzed the results and prepared the data presentation in the examples.
 A.A. and L.C. wrote the backbone of the manuscript.
-All authors participated in the writing and revision process. 
+All authors participated in writing this manuscript. 
 
 % TODO: include funding information
 \paragraph{Funding information}
@@ -92,7 +91,7 @@ In order to further showcase the interoperability capabilities of
 {\tt Monicelli} is an esoteric programming language based on the LLVM
 toolchain.
 It is written in C++ and offers wrappers for the basic
-types and operations thereof. The syntax replicates a cultural italian
+types and operations thereof. The syntax replicates a cultural Italian
 phenomenon known as ``supercazzola", a rambling nonsensical discourse
 which gives the false impression of carrying an actual meaning,
 introduced in the movies trilogy ``Amici Miei'', directed by Mario
@@ -140,7 +139,7 @@ We shall now present a fully functioning DMFT code for
 the solution of the Bethe lattice written in Monicelli. It requires a minimal C++
 interface to handle arrays, complex numbers and properly interfacing
 the EDIpack functions.
-The first part of the DMFT code load all the required functions from
+The first part of the DMFT code loads all the required functions from
 {\tt bagaglio.cpp}, in particular it loads the interface to the \NAME
 solver functions {\tt ed\_init\_solver} and {\tt ed\_solve}:
 
@@ -166,8 +165,8 @@ functions. We start a DMFT iteration loop using the command {\tt
   Monicelli} does not support array algebra.
 The loop contains a call to the \NAME solver function, then proceeds
 by retrieving the self-energy function which is used to obtain the
-local Green's function. These enters the self-consistency equation
-which update the Weiss field. Finally bath optimization is performed
+local Green's function. These enter the self-consistency equation
+which updates the Weiss field. Finally bath optimization is performed
 and if error condition is met the loop exit.
 The main step of the implementation reads: 
 
@@ -215,7 +214,7 @@ The source code can be retrieved from
 The {\tt src} directory contains several files, including the source
 code {\tt hm\_bethe.mc} implementing the DMFT algorithm, an auxiliary file {\tt bagaglio.cpp} which
 contains a number of functions implementing complex algebra, array
-costruction and interfacing the \NAME procedures. The directory also
+construction and interfacing the \NAME procedures. The directory also
 contains an example of input file and a converged bath parametrization
 for the Bethe lattice solution at $U=2$.
 
@@ -226,11 +225,8 @@ git clone https://github.com/lcrippa/prematurata_la_dmft
 cd prematurata_la_dmft/src
 make
 \end{lstlisting}
-A simple run using provided input file {\tt inputED.conf} will
-re-converge the solution within few loops. 
-
-
-
+A simple run using the provided input file {\tt inputED.conf} will
+re-converge the solution within a few loops. 
 
 %% References with bibTeX database:
 \ifSubfilesClassLoaded{
