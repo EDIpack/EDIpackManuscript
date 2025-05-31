@@ -62,20 +62,21 @@ program ed_hm_bethe
    complex(8),allocatable :: Smats(:,:,:,:,:)
    complex(8),allocatable :: Delta(:,:,:,:,:)
    !...  
-   !Read variables
+   !EDIpack: Read variables
    call ed_read_input('inputED.conf')
-   !Solver-specific arays
+   
+   !Solver-specific arrays. Using Rank-5  
    allocate(Smats(Nspin,Nspin,Norb,Norb,Lmats))
    allocate(Delta(Nspin,Nspin,Norb,Norb,Lmats))
    allocate(Hloc(Nspin,Nspin,Norb,Norb))
    Hloc=0d0
    !...
-   !Initialize Bethe arrays
+   !Construct Bethe DOS using SciFortran functions
    allocate(Ebands(Le),Dbands(Le))
-   !From SciFortran:
    Ebands = linspace(-D,D,Le,mesh=de)
    Dbands = dens_bethe(Ebands,Wband)*de
-   !Set local H
+   !
+   !EDIpack: Set impurity Hamiltonian
    call ed_set_hloc(Hloc)
 \end{lstlisting}
 \end{minipage}
@@ -91,27 +92,28 @@ int Le = 1000;
 int iloop = 0;
 double wmixing = 0.5;
 double D = 1.0;
-//Read  variables    
+
+//EDIpack: Read  variables    
 char input[] = "inputED.conf"; 
 read_input(input);      
 //Dimensions
 int64_t d[4] = {Nspin,Nspin,Norb,Norb};
 int total_size = d[0] * d[1] * d[2] * d[3];
 int total_size_n5 = total_size * Lmats;    
-//Solver-specific arrays
+//Solver-specific arrays rank5
 vector<complex<double>> Hloc(total_size);
 vector<complex<double>> Smats(total_size_n5);
 vector<complex<double>> Delta(total_size_n5);
 //...
-//Initialize Bethe arrays
+//Construct Bethe DOS
 vector<double> Ebands, Dbands;
+
 //Locally defined functions:
 Ebands = linspace(-D,D,Le);
 Dbands = dens_bethe(Ebands,Wband,de);
-//set local H
+
+//EDIpack: Set impurity Hamiltonian
 ed_set_Hloc_single_N4(Hloc.data(), d);
-$\phantom{.}$
-$\phantom{.}$
 \end{lstlisting}
 \end{minipage}
 \end{center}
@@ -132,7 +134,7 @@ this is accomplished using the function {\tt
 \begin{minipage}[t]{0.49\linewidth}
 \textbf{Fortran}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
-   !Initialize solver
+   !EDIpack: Initialize solver
    Nb=ed_get_bath_dimension()
    allocate(bath(Nb))
    call ed_init_solver(bath)
@@ -144,7 +146,7 @@ $\phantom{.}$
 \begin{minipage}[t]{0.49\linewidth}
 \textbf{C++}
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
-// Initialize solver
+//EDIpack: Initialize solver
 int Nb;
 vector<double> Bath(Nb);
 Nb = get_bath_dimension_direct();
@@ -171,9 +173,9 @@ $$
 with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$. Note that this step can be performed analytically for the Bethe lattice~\cite{Georges1996RMP} or completely substituted by retrieving the impurity Green's function $G_\mathrm{imp}$ via the {\tt ed\_get\_gimp} function.
   
 \item[{\tiny {\it User}}] Update the Weiss field via the {\bf self-consistency}
-  relation: $\GG^{-1}_0(i\omega) = G_\mathrm{loc}(i\omega) +
+  relation: $\GG^{-1}_0(i\omega) = G^{-1}_\mathrm{loc}(i\omega) +
     \Sigma(i\omega)$. For the Bethe lattice, this simplifies to
-    $\Delta = \tfrac{D}{4}G_\mathrm{loc}$ or, equivalently, $\Delta = \tfrac{D}{4}G_\mathrm{imp}$.
+    $\Delta = \tfrac{D^2}{4}G_\mathrm{loc}$ or, equivalently, $\Delta = \tfrac{D^2}{4}G_\mathrm{imp}$.
     
   \item[{\tiny {\it User} \textgreater\ {\bf EDIpack}}] Optimize the bath parameters $\vec{x}$ against the updated
     Weiss field using the conjugate gradient procedures supplied by \NAME. Then, restart at step 1.
@@ -196,10 +198,12 @@ An example of implementation is provided in the following listings.
 !DMFT loop
 do while(.not.converged.AND.iloop<nloop)
     iloop=iloop+1     
-    !Call ED Solver
+    
+    !EDIpack: Call ED solver
     call ed_solve(bath)     
-    !Retrieve ${\color{comment-color} \Sigma(i\omega_n)}$
+    !EDIpack: Retrieve ${\color{comment-color} \Sigma(i\omega_n)}$
     call ed_get_sigma(Smats,'m')
+    
     !Build local Green's function
     wfreq = pi/beta*(2*arange(1,Lmats)-1)
     do i=1,Lmats
@@ -215,10 +219,8 @@ do while(.not.converged.AND.iloop<nloop)
     
     !Check convergence: from ${\color{comment-color}\mathrm{DMFTtools}}$
     converged=check_convergence(Delta,&
-          dmft_error,Nsuccess,Nloop)
-          
+          dmft_error,Nsuccess,Nloop)          
 enddo
-$\phantom{.}$   
 \end{lstlisting}
 \end{minipage}
 %
@@ -227,12 +229,12 @@ $\phantom{.}$
 \begin{lstlisting}[style=cstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
 //DMFT loop
 while (iloop < Nloop && !converged) {
-  //Call ED Solver
+  //EDIpack: Call ED solver
   solve_site(Bath.data(),bath_dim,1,1);      
-  //Retrieve ${\color{comment-color} \Sigma(i\omega_n)}$
+  //EDIpack: Retrieve ${\color{comment-color} \Sigma(i\omega_n)}$
   get_sigma_site_n5(Smats.data(),//
       0,0,wm.data(),Lmats,0);
-  //Build a local Green's function
+  //Build local Green's function
   for (int i=0;i<Lmats;++i) {
     zeta= wm[i] + xmu - Smats[i];
     Gmats[i] = complex<double>(0.0,0.0);
@@ -562,7 +564,7 @@ sequence already discussed in \secu{SecExamplesBetheDMFT}:
 
 \item[{\tiny {\it User}}] Update the Weiss field's components, respectively 
   $\GG_0^{-1}$ and $\FF_0^{-1}$, through the {\bf self-con\-sis\-ten\-cy}
-  relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}_\mathrm{loc}(i\omega) +
+  relation: $\mathbfcal{G}^{-1}_0(i\omega) = {\mathbf G}^{-1}_\mathrm{loc}(i\omega) +
   {\mathbf \Sigma}(i\omega)$ in Nambu space.
   
 \item[{\tiny {\it User}}\textgreater\ {\tiny {\bf EDIpack}}] Optimize the bath parameters $\vec{x}$ to best describe the updated
@@ -604,13 +606,9 @@ ed.finalize_solver()
       attraction $U$. 
       (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
       function of the attraction $U$. Data for BCS (gray) is compared
-      to DMFT results (blue line and symbols). 
-      (c) The correlation strength
-      $\Theta=\frac{|S(i\omega\to0)-S(i\omega\to\infty)|}{S(i\omega\to\infty)}$ as a function of the
+      to DMFT results (blue line and symbols). Inset: the correlation strength
+      $\Theta$ (see main text) as a function of the
       attraction $U$ across the BCS-BEC crossover. 
-      (d) Comparison of the double occupation $D=\langle n_\up
-      n_\dw\rangle$ as a function of attraction $U$ between BCS (gray
-      solid line) and DMFT (blue solid line and symbols). 
       (e) Superconducting order
       parameter $\phi$ as a function of temperature across the
       superconductor-to-normal phase transition. Data for $U=4$. The
@@ -639,17 +637,15 @@ characteristic exponential growth with $U$, known to be
 computationally challenging. In the opposite, strong-coupling, limit 
 $\phi$ saturates at its theoretical maximum of $\phi \rightarrow 1/2$. The comparison with the mean-field result 
 (gray line) reveals the effect of local dynamical fluctuations, which  slightly suppress the order parameter, particularly in the intermediate regime. 
-
-
-To quantify these dynamical effects, we plot in panel (C) the 
+To further quantify these dynamical effects, we plot in the inset of the same panel the 
 {\it correlation strength}~\cite{Amaricci2015PRL,Amaricci2016PRB}
 $\Theta=|S(i\omega\to 0)-S(i\omega\to\infty)|/S(i\omega\to\infty)$. 
 Large values of $\Theta$ indicate an anomalous self-energy with 
 significant dynamical effects, hence a more correlated superconducting state.
 Our results show that the DMFT solution significantly departs from the MF picture in the strongly correlated intermediate-coupling regime, which is known to host the largest critical temperature \cite{Toschi2005NJP,Toschi2005PRB}.
-A different angle further illustrating the impact of dynamical fluctuations, is reported in panel (D). We show the evolution of the double occupancy $d = \langle n_\up n_\dw \rangle$ as a function of $U$ compared to the MF expression $d = 1/4 + \phi^2$. The DMFT 
-results obtained with \NAME show a slight increase in $d$ over the MF prediction in the BCS regime. As $U$ increases and local correlation becomes sizable, the double occupancy drops below 
-the MF result. 
+% A different angle further illustrating the impact of dynamical fluctuations, is reported in panel (D). We show the evolution of the double occupancy $d = \langle n_\up n_\dw \rangle$ as a function of $U$ compared to the MF expression $d = 1/4 + \phi^2$. The DMFT 
+% results obtained with \NAME show a slight increase in $d$ over the MF prediction in the BCS regime. As $U$ increases and local correlation becomes sizable, the double occupancy drops below 
+% the MF result. 
 
 Finally, we demonstrate the capability of \NAME to describe finite 
 temperature effects. Panel (E) shows the temperature dependence of 
@@ -676,31 +672,28 @@ phases, for instance capturing the complex physics of the BCS-BEC crossover with
 \subsection{Holstein model on the Bethe lattice (electron-phonon coupling)}
 
 One of the features introduced in \NAME is the possibility of treating local phonons in conjunction with the superconductive phase,
-i.e. \textbf{ed\_mode=superc}. 
-In this example, we discuss  the normal and
-superconductive solution of the pure Holstein model on the Bethe
-lattice within DMFT.
-We stress that, using Fortran API, the code
+i.e. {\tt ed\_mode=superc}. In order to illustrate this property using a simple application, in this example we discuss the normal and
+superconductive solution of the pure Holstein model on the Bethe lattice within DMFT.
+We stress that  the code
 implementation for this specific case is essentially identical to the listing reported in the sections
 \ref{SecExamplesBetheDMFT} ({\tt ed\_mode=normal}) and
-\ref{SecExamplesAHM} ({\tt ed\_mode=superc}).
+\ref{SecExamplesAHM} ({\tt ed\_mode=superc}), provided electron-electron interaction is set to zero and phonon parameters are properly configured.  
 
-So we consider the model introduced in \secu{SecExamplesBetheDMFT}
+We consider the model introduced in \secu{SecExamplesBetheDMFT}
 with $U=0$ and the additional phononic and electron-phonon terms:
 \begin{equation} \label{eqex:H_Holstein}
     H_\mathrm{int} = \sum_i \Big[\omega_0 b^\dagger_i b_i + g(b^\dagger_i +
     b_i)\sum_{\sigma}\left(c^\dagger_{i\sigma}c_{i\sigma}
     -\frac{1}{2}\right)\Big]. 
 \end{equation}
-We consider the half-filling regime of the particle-hole symmetric Bethe lattice density of states. We set the half-bandwidth as our energy unit $D=1$ and introduced the electron-phonon coupling $\lambda = \tfrac{2g^2}{\omega_0D}$.  
-The iterative DMFT solution algorithm follows the same principles
-illustrated in the previous sections. 
+We focus on the half-filling regime of the particle-hole symmetric Bethe lattice DOS. We set the half-bandwidth as our energy unit $D=1$ and introduced the electron-phonon coupling $\lambda = \tfrac{2g^2}{\omega_0}$.  
+The iterative DMFT solution algorithm follows the same principles illustrated in the previous sections. 
 
-\paragraph{Results}
+\paragraph{Results.}
 In the following we discuss the adiabatic ($\omega_0\to0$) to
 anti-adiabatic ($\omega_0\to\infty$) crossover for
 the uniform solution of the Holstein model at constant coupling $\lambda=1.0$.
-
+%
 In the anti-adiabatic limit, the Holstein interaction takes a
 particularly simple form:
 \begin{equation}\label{HlikeAttraction}
@@ -709,14 +702,14 @@ particularly simple form:
 which describes a local Hubbard-like attraction among electrons
 (mediated by local phonons).
 In the opposite, adiabatic, limit, $\omega_0 \rightarrow 0$ the system
-enters a Bipolaronic Insulating phase~\cite{Capone2006PRB} for our
-choice of the coupling. 
+enters a Bipolaronic Insulating phase for our
+choice of the coupling~\cite{Capone2006PRB}. 
 
 
 We characterize the model solution by showing the evolution of the
 double occupation $\langle n_{\up}n_{\dw}\rangle$ as a function of the
 phonon frequency $\omega_0$, see panel (A) of \figu{figEx5}. In this panel we compare
-the behavior for the normal solution ({\tt ed\_mode=normal}) against the superconductive
+the behavior for the normal  ({\tt ed\_mode=normal}) against the superconductive
 solution ({\tt ed\_mode=superc}). Our results capture the whole
 crossover from adiabatic to anti-adiabatic regime. In the former
 regime, the double occupation takes a similar value for the two
@@ -725,7 +718,7 @@ solutions reach the limiting values corresponding to the residual
 attraction \equ{HlikeAttraction}.   
 To better characterize the nature of the superconducting
 phase in the Holstein model, we report the evolution of the anomalous order
-parameter $\phi$ in the adiabatic to anti-adiabatic crossover (panel (B) of \figu{figEx5}).
+parameter $\phi$ in the adiabatic to anti-adiabatic crossover, see panel (B) of \figu{figEx5}.
 The DMFT results obtained with \NAME show a rapid increase in the
 superconducting order parameter as phonon frequency grows
 large. Finally, in the anti-adiabatic regime, $\phi$ saturates to a
@@ -762,7 +755,7 @@ We proceed to demonstrate how to use the EDIpack2TRIQS compatibility
 layer (\secu{sSecInteropTRIQS}) to solve a quantum system comprised by a
 3-orbital correlated impurity coupled to a few non-interacting bath sites.
 The interaction term of the impurity Hamiltonian is in the Hubbard-Kanamori
-form (\equ{Hint}).
+form of \equ{Hint}.
 
 A Python script implementing a calculation that makes use of EDIpack2TRIQS
 generally begins with a few module imports.
@@ -774,7 +767,7 @@ generally begins with a few module imports.
 
 One then proceeds to defining the system under consideration. In this case we
 consider an impurity atom with three correlated orbitals and two bath states
-per each impurity orbital. This information must be encoded in the fundamental
+per each impurity orbital, which corresponds to {\tt bath\_type=normal} in \NAME. This information must be encoded in the fundamental
 set objects that are later used to construct the solver.
 \lstinputlisting[style=mypython,
                  numbers=none,
@@ -821,16 +814,20 @@ functions (\figu{figEx3}).
 
 
 
+
+
+
+
 \subsection{Interacting Bernevig-Hughes-Zhang model (Fortran API, {\tt ed\_mode=nonsu2})}
 In this section we focus on the DMFT solution of the interacting
 Bernevig-Hughes-Zhang (BHZ).
-As shown in Ref.~\onlinecite{AmaricciPRB2022}, at moderate
+As shown in Ref.~\cite{Amaricci2023PR}, at moderate
 interactions this model admits an excitonic phase in which opposite
-orbital electrons and holes across the band gap bind into a coherent phase.
+orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason,Amaricci2023PR,Giuli2023PRB}
 
 We consider a system of two-orbital electrons on a square
 lattice interacting through a Hubbard-Kanamori term and describing
-a quantum spin Hall insulator.
+a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Konig2007S,Hasan2010RMPa,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PR,Paoletti2024PR}.
 We consider a suitable matrix basis in terms of the Dirac
 matrices $\Gamma_{a\a}=\sigma_a\otimes \tau_\a$, where $\sigma_a$ and
 $\tau_\a$ are Pauli matrices, respectively, in the spin and orbital
@@ -839,7 +836,7 @@ $$
 H = \sum_{k}\psi_{k}^\dagger H(k)\psi_{k} + H_{\rm int},
 $$
 where $\psi_{k}=[c_{1\uparrow k}, c_{2\uparrow k},
-c_{1\downarrow k}, c_{2\downarrow k} ]$ is the spinor collecting
+c_{1\downarrow k}, c_{2\downarrow k} ]^T$ is the spinor collecting
 annihilation operator $c_{a\sigma k}$ destroying an electron at
 orbital $a=1,2$ with spin  $\sigma=\up,\dw$ and lattice momentum
 $k$. The non-interacting part of the Hamiltonian is:
@@ -862,35 +859,29 @@ spin polarization operator and $\hat{T_z}=\tfrac{1}{2}\psi_i^\dagger
 \Gamma_{03}\psi_i$ is the orbital pseudo-spin polarization operator.
 This form corresponds to the density-density part of the
 Kanamori interaction. We neglect the pair-hopping and spin-flip purely
-for numerical reasons. 
-
-In the non-interacting regime, i.e. $U=J=0$ this model describes a
+for numerical reasons \cite{Amaricci2022CPC}. 
+%
+In the non-interacting regime this model describes a
 quantum spin Hall insulator (QSHI) for $M<4t$ and a trivial Band
 Insulator (BI) for $M>4t$.
-The transition point at $M=4t$ describes the formation of a gapless
-Dirac state with linear band crossing at $k=[0,0]$.  
+The transition point at $M=4t$ describes the formation of a gapless Dirac state at  $k=[0,0]$.  
 
 
-The code implementation follows the same guidelines discussed above
-for the other examples. There are two specific modifications required
-from the user. The first is to generate the Hamiltonian $H(k)$ on a discretized Brillouin zone in
-order to obtain the local interacting Green's function, used in the
-implementation of the self-consistency conditions:
-$\GG^{-1}=G_\mathrm{loc}^{-1}+\Sigma$, with 
+The code implementation follows the same guidelines discussed above for the other examples. The user is required to generate the Hamiltonian $H(k)$ on a discretized Brillouin zone. 
+This is employed to evaluate the local interacting Green's function:
 $$
 G_\mathrm{loc}(z) = \tfrac{1}{N_k}\sum_k \left[z+\mu-H(k)-\Sigma(z)
 \right]^{-1}, 
 $$
-where $\z\in\CCC$  and $\Sigma(z)$ is the self-energy function obtained from the DMFT
-solution of the proble.  $N_k$ is the number of $k$-points. 
-The second is to  construct the ``renormalized'' topological
-Hamiltonian
+entering in self-consistency conditions $\GG^{-1}=G_\mathrm{loc}^{-1}+\Sigma$. 
+Here  $\z\in\CCC$, $N_k$ is the number of $k$-points   and $\Sigma(z)$ is the self-energy matrix  obtained from the DMFT solution of the problem.  
+Moreover, the $H(k)$ is used to  construct the {\it renormalized} topological Hamiltonian \cite{Wang2010PRL,Wang2012PRX,Blason2023PRB}
 $$
 H_\mathrm{top} = \sqrt{Z}[H(k) + \Re\Sigma(\omega\to0)]\sqrt{Z}, 
 $$
-where $Z$ is the renormalization constant. $H_\mathrm{top}$ describes the
-low-energy properties of many-body problem and can be used to obtain a 
-topological characterization of the interacting system.  
+where $Z$ is the renormalization constant matrix. The matrix $H_\mathrm{top}$ describes the
+low-energy properties of the many-body solution andcan be used to determine the characterize the topological nature of the interacting system  \cite{Gurarie2011PRB,Wang2012PRX,Wagner2023NC,Blason2023PRB,Bau2024PRB}.  
+
 
 
 
@@ -915,101 +906,121 @@ To capture the possible symmetry breaking in any excitonic channel
 driven by the local interaction, we consider the vector order
 parameter
 $\vec{E}=[E_0,E_x,E_y,E_z]$, where $E_a=\langle\psi^\dagger
-\Gamma_{a1}\psi \rangle$.
+\Gamma_{a1}\psi \rangle$ \cite{Budich2014,Kunes2014PRB,Kaneko2015JOPCS,Kunes2015JOPCM,Knolle2017PRL,Guerci2019PRM,Geffroy2019PRL,Mazza2020PRL,De-Palo2023PRB}.
+
 The first component $E_0$ describes the singlet excitonic state,
 whereas the remaining ones correspond to the triplet states with
-different spin orientation.   
+different spin orientation \cite{Blason,Amaricci2023PR}.   
 The analysis of the strong-coupling regime as well as impurity
 excitonic susceptibility available in \NAME suggest the possible
 instability to an in-plane spin-triplet exciton phase, i.e. with $E_x$
-and/or $E_y$ different from zero.
+and/or $E_y$ different from zero, see \cite{Amaricci2023PR}.
 Interestingly, this state breaks several symmetries including
 time-reversal and spin SU(2), which protect the topological state.
 
-Thus, here we illustrate the DMFT solution of the excitonic phase as a way to
-illustrate the ability of \NAME to capture matter phases with lowered
-spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
+Here we showcase the DMFT description of the excitonic phase in the interacting BHZ model as a way to
+illustrate the \NAME ability to capture matter phases with lowered spin-symmetry ({\tt ed\_mode=nonsu2}) and the use of {\tt
   bath\_type=replica}.
+
+The initial part of the code implementation is a simple generalization of the previously discussed cases. 
+The next non-trivial steps are: i) construct the lattice Hamiltonian $H(k)$ and the corresponding local part $H_\mathrm{loc}$, which determines the impurity properties, and ii) construct a matrix basis representation for the replica bath. These two steps can be implemented as follows: 
+
+%${\color{comment-color}  }
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
-   !> Set $H_\mathrm{loc}$
+   !> Set $\smash{{\color{comment-color}H_\mathrm{loc}}}$ 
    allocate(Hloc(Nso,Nso))
    Hloc = sum(Hk,dim=3)/Lk
    where(abs(dreal(Hloc))<1d-6)Hloc=zero
+
+   !EDIpack: set the impurity Hamiltonian: $\smash{{\color{comment-color}H_\mathrm{loc}\to h^0}}$
    call ed_set_hloc(Hloc)
-   !> Setup the replica bath basis:
+
+
+   !EDIpack: set the replica bath matrix basis $\smash{{\color{comment-color}  \vec{\Gamma}}}$ and $\smash{{\color{comment-color}  \vec{\lambda}}}$
+   !Here Nsym=4.
+   !Build the basis and init the variational parameters:
    allocate(lambdasym_vector(Nbath,4))
    allocate(Hsym_basis(Nso,Nso,4))
-   Hsym_basis(:,:,1)=Gamma03  ;lambdasym_vector(:,1)= Mh
+   Hsym_basis(:,:,1)=Gamma03 ;lambdasym_vector(:,1)= Mh
    Hsym_basis(:,:,2)=Gamma01 ;lambdasym_vector(:,2)= sb_field
    Hsym_basis(:,:,3)=Gamma31 ;lambdasym_vector(:,3)= sb_field
    Hsym_basis(:,:,4)=Gamma11 ;lambdasym_vector(:,4)=-sb_field
-   !> Set the replica bath
+   
+   !EDIpack: set the basis and initial values of $\smash{{\color{comment-color}  \vec{\lambda}}}$
    call ed_set_Hreplica(Hsym_basis,lambdasym_vector)
-   !> Get bath dimension and allocate user bath to this size
-   Nb=ed_get_bath_dimension(4)   !There are 4 symmetries
+   
+   !EDIpack: get bath dimension and allocate user bath to this size
+   Nb=ed_get_bath_dimension(4)
    allocate(Bath(Nb))
-   !
-   !> Initialize the ED solver (bath is guessed or read from file) 
+   
+   !EDIpack: Initialize the ED solver
    call ed_init_solver(bath)
 \end{lstlisting}
 Here we use the local non-interacting Hamiltonian 
 $H_\mathrm{loc}=\tfrac{1}{N_k}\sum_k H(k)$ to set 
 $h^0_{\a\b\s\s'}$, i.e. the impurity Hamiltonian. To anticipate the
 possibility of forming an excitonic ordered phase, the replica bath
-is constructed out of the matrix basis with 4 distinct elements
-$\Gamma_{03}$, $\Gamma_{01}$, $\Gamma_{31}$, $\Gamma_{11}$ which
-are proportional, respectively, to the mass term, the exciton singlet
+is constructed out of a matrix basis with 4 distinct elements
+$\Gamma_{03}$, $\Gamma_{01}$, $\Gamma_{31}$, $\Gamma_{11}$ which are proportional, respectively, to the mass term, the exciton singlet
 $E_0$, the exciton triplet along easy-axis $E_z$ and in-plane
-$E_x$ (we assume $E_y=0$ leveraging on residual $U(1)$ in-plane
-symmetry). 
-%
-In the following we consider the case of $M=1$, which corresponds to a
-QSHI in the non-interacting limit and $J/U=0.25$.
+$E_x$ (we assume $E_y=0$ leveraging on residual $U(1)$ in-plane symmetry). 
+In the following we consider the case of $M=1$, which corresponds to a QSHI in the non-interacting limit and $J/U=0.25$.
 The implementation is nearly identical to the cases discussed above and
 we report it here for completeness:
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
    iloop=0;converged=.false.
    do while(.not.converged.AND.iloop<nloop)
      iloop=iloop+1
-     !> Solve the impurity problem, retrieve $\Sigma(i\omega)$
+     
+     !EDIpack: Solve the impurity problem
      call ed_solve(bath)
+
+     !EDIpack: Retrieve  ${\color{comment-color} \Sigma(i\omega)}$
      call ed_get_sigma(Smats,axis='mats')
-     !> Get $G_\mathrm{loc}$ using $\color{comment-color}\mathrm{DMFTtools}$
+     
+     !Get $\color{comment-color}G_\mathrm{loc}}$ using $\color{comment-color}\mathrm{DMFTtools}$
      call get_gloc(Hk,Gmats,Smats,axis='m')
-     !> Update the Weiss field ${\color{comment-color}\GG^{-1}=G^{-1}_\mathrm{loc}+\Sigma}$ +  Linear mixing: using $\color{comment-color}\mathrm{DMFTtools}$
+     
+     !Update the Weiss field (self-consistency) using $\color{comment-color}\mathrm{DMFTtools}$
      call dmft_self_consistency(Gmats,Smats,Weiss)
+
+     !Linear mixing the Weiss fields
      if(iloop>1)Weiss = wmixing*Weiss + (1.d0-wmixing)*Weiss_;Weiss_=Weiss
-     !> Fit to updated the bath
+
+     !EDIpack: Fit to update the bath
      call ed_chi2_fitgf(Weiss,bath,ispin=1)
+     
      !Check convergence: using $\color{comment-color}\mathrm{DMFTtools}$
      converged = check_convergence(Weiss(1,1,:),dmft_error,nsuccess,nloop)
    enddo  
 \end{lstlisting}
 
 %
-The main effect of the interaction on the topological properties can be captured by the renormalized mass term $M_\mathrm{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. The
-real part of the self-energy being proportional to $\Gamma_{03}$
-corrects the mass term with respect to its bare value. To leading
-order this correction is proportional to $\tfrac{U-5J}{4}\langle
+The main effect of the interaction on the topological properties is contained in the mass term renormalization.  
+The real part of the self-energy being proportional to $\Gamma_{03}$
+corrects the mass term with respect to its bare value: $M_\mathrm{eff}=M+\tfrac{1}{4}\Tr{\Re\Sigma(i\omega\to0)}$. 
+To leading order (mean-field) this correction is proportional to $\tfrac{U-5J}{4}\langle
 \hat{T}_z\rangle$. So, for our choice of parameters, the effect of
-interaction would be to reduce the (effective) mass term and thus
-reducing the topological band gap. In the strong-coupling limit the
-two orbitals get populated by one electron per site, reaching the
+interaction would be to effectively reduce the mass term. Thus, in the strong-coupling limit the two orbitals get populated by one electron per site, reaching the
 conditions for the formation of a Mott insulating state.
-As reported in panel (A) of \figu{figEx4}, at intermediate coupling,
+This effect is highlighted in panel (A) of \figu{figEx4}, where we report the progressive reduction of the
+orbital polarization  $\langle T_z\rangle$ and, thus, of the effective mass. 
+
+
+In the same panel (A), we show that at intermediate coupling 
 the DMFT solution features the formation of a
 region of exciton condensation with $\langle E_x\rangle>0$, $\langle
 E_0\rangle=\langle E_z\rangle=0$. 
-Unlike the static mean-field description~\cite{Blason}, the
+
+Unlike the static mean-field description \cite{Blason}, the
 transition from the QSHI topological state to the Excitonic Insulator 
-(EI) becomes of first-order in the presence of the dynamical fluctuations~\cite{Continentino,Paoletti,BellomiaKMH} contained in DMFT. On the
-other hand, the EI continuously evolves into a Mott Insulator (MI)
+(EI) becomes of first-order upon including the local dynamical fluctuations \cite{Paoletti2024PR,BellomiaKMH} contained in DMFT. 
+The EI continuously evolves into a Mott Insulator (MI)
 for larger interaction (neglecting for simplicity any 
 antiferromagnetic ordering that would naturally occur in this
 regime).
-In the same panel, we report the evolution of
-$\langle T_z\rangle$ to illustrate the progressive reduction of the
-orbital polarization and, thus, of the effective mass. 
+The \NAME solution of this model nicely captures the two transitions which involve breaking of the spin symmetry group SU(2). 
+
 
 
 To further illustrate the nature of the three distinct phases of this
@@ -1018,6 +1029,7 @@ function provided by \NAME solver. In panels (B)-(D) of \figu{figEx4}
 we report the spectral functions $-\Im{G}_{a\up,\mathrm{loc}}(\omega)/\pi$ for
 $a=1,2$, and three distinct values of the interaction
 $U$ placing the solution, respectively, in the QSHI, the EI and the MI.
+
 The correlated QSHI is characterized by the presence of an 
 inverted band gap featuring a substantial orbital spectral mixing. The
 EI spectrum is instead characterized by a narrow gap, related to the
@@ -1026,10 +1038,17 @@ larger high-energy weight.
 Finally, in the MI the two-orbital spectral function describes the two 
 characteristic Hubbard bands separated by a large Mott gap.  
 
+
+
+
+
+
+
+
 \subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq, iRDM)}
 
-To complete the overview of \NAME's capabilities, we consider another
-model for interacting quantum spin-Hall insulators defined on the honeycomb lattice, with two inequivalent sites in the unit cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
+To complete the overview of \NAME features, we consider another
+model of interacting quantum spin-Hall insulator defined on the honeycomb lattice, with two inequivalent sites in the unit cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
 \begin{align*}
     H_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} H({k}) \psi_{{k}},
 \end{align*}
@@ -1041,21 +1060,19 @@ with $\psi_{{k}} = [c_{{k},\mathrm{A},\up},\,c_{{k},\mathrm{B},\up},\,c_{{k},\ma
    y_{{k}}&=t\bigl[\sin({k}\cdot{u})+\sin({k}\cdot{v})\bigr],\nonumber \\
    \delta_{{k}}&=2\lambda_\mathrm{so}\bigl[\sin({k}\cdot{u})-\sin({k}\cdot{v}) - \sin({k}\cdot{u} -{k}\cdot{v})\bigr], \nonumber
 \end{align}
-where ${u} = (3/2, \sqrt{3}/2)$, and ${v} = (3/2, -\sqrt{3}/2)$
+where ${u} = (3a/2, \sqrt{3}a/2)$, and ${v} = (3a/2, -\sqrt{3}a/2)$ 
 are suitable basis vectors for the honeycomb lattice, $t$ is the
 nearest-neighbor hopping amplitude and $\lambda_\mathrm{so}$ is 
 the amplitude of a complex next-nearest-neighbor hopping,
 with a spin-dependent $\pm\tfrac{\pi}{2}$ chiral phase arising from spin-orbit coupling, which is well-known to open a topological gap at the Fermi level \cite{Kane2005PRLa,Kane2005PRL}.
 The spinorial $4\times4$ matrices $\Gamma_{a\ell} = \sigma_a\otimes\tau_\ell$ are 
-defined in terms of $\sigma_a$ and $\tau_\ell$ Pauli matrices, respectively 
-referred to spin and sublattice degrees of freedom, with the convention that 
-$\sigma_0$ and $\tau_0$ are $2\times2$ identity matrices.
-
-To investigate the effects of electron-electron repulsion on the
-Kane-Mele model, we include a local interaction
-leading to the Kane-Mele-Hubbard Hamiltonian \cite{Hohenadler2013ROPIP,Rachel2018ROPIP}
+defined in terms of Pauli matrices $\sigma_a$, $\tau_\ell$ referred, respectively 
+to spin and sublattice degrees of freedom.
+% , with the convention that 
+% $\sigma_0$ and $\tau_0$ are $2\times2$ identity matrices.
+To investigate the effects of electron-electron repulsion we consider a local Hubbard term \cite{Hohenadler2013ROPIP,Rachel2018ROPIP}:
 \begin{equation}
-    H_\mathrm{KMH} = H_\mathrm{KM} 
+    H = H_\mathrm{KM} 
     + U\sum_{i}\Biggl[
                         \left(n_{i,\up} - \frac{1}{2}\right)
                         \left(n_{i,\dw} - \frac{1}{2}\right)
@@ -1068,9 +1085,9 @@ particle-hole symmetric form so that the model is at half-filling for zero
 chemical potential.
 
 The essential features of the ground state phase diagram have been established by intensive multi-method analyses \cite{Rachel2018ROPIP}.
-For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to relatively high Hubbard repulsion, and magnetizes to an isotropic Néel state above a critical $U/t$ ratio\footnote{In contrast to the expectations for a generic half-filled bipartite lattice, for which the ground state is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
+For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to large repulsion, and magnetizes to an isotropic Néel state above a critical $U/t$ ratio\footnote{In contrast to the expectations for a generic half-filled bipartite lattice, for which the ground state is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
 at the Fermi level renders the logarithmic instability ineffective, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
-With a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering
+For a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering
 eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
 \cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
@@ -1196,7 +1213,7 @@ the appropriate Néel symmetry:
       !> Get ${\color{comment-color}G_{loc}(i\omega_n) }$ : using ${\color{comment-color}\mathrm{DMFTtools}}$
       call dmft_gloc_matsubara(Hk,Gmats,Smats)
       !
-      !> Update local Weiss fields ${\color{comment-color}\GG^{-1}_0 = G_{loc} + \Sigma}$ :using ${\color{comment-color}\mathrm{DMFTtools}}$
+      !> Update local Weiss fields $\smash{{\color{comment-color}\GG^{-1}_0 = G^{-1}_{loc} + \Sigma}}$: using ${\color{comment-color}\mathrm{DMFTtools}}$
       call dmft_self_consistency(Gmats,Smats,Weiss)
       !
       !> Fit the new bath:
@@ -1222,30 +1239,26 @@ the appropriate Néel symmetry:
    call dmft_kinetic_energy(Hk,Smats)
 \end{lstlisting}
 
-We observe that, after convergence is reached, we can perform some 
-post-processing to get quantities of interest, e.g. computing the 
-lattice kinetic energy (as implemented in the \texttt{dmft\_tools} 
+After convergence is reached, we evaluate some quantities of interest, e.g. computing the 
+lattice kinetic energy (as implemented in the \texttt{DMFTtools} 
 library). The potential energy, as well as the AFM order parameters
-and most impurity observables are automatically computed by \NAME, 
-and saved with an appropriate inequivalent-impurity filename suffix 
-by the EDIpack2ineq layer.
+and impurity observables are automatically computed by \NAME, 
+and saved to files with the appropriate inequivalent-impurity label.
 
-Hence, we can readily evaluate the total energy of both the AFM$_\perp$
-and AFM$_\parallel$ calculations and compare them to establish which 
-is favored as the ground state of the system. In \figu{fig:KMenergy}(a)
-we show results for the energy difference $E_\parallel-E_\perp$ across
-a wide range of $U/t$ and $\lambda_\mathrm{so}$ values. To assess the
+We evaluate the total energy of both the AFM$_\perp$
+and AFM$_\parallel$ calculations and compare them to establish which  is favored as the ground state of the system. In \figu{fig:KMenergy}(A)
+we show results for the energy difference $E_\parallel-E_\perp$ across a wide range of $U/t$ and $\lambda_\mathrm{so}$ values. To assess the
 degree of accuracy of our total energy calculation, we report in
-\figu{fig:KMenergy}(b) a $\lambda_\mathrm{so}=0$ benchmark against
+\figu{fig:KMenergy}(B) a $\lambda_\mathrm{so}=0$ benchmark against
 Hartree-Fock (simple static mean-field, but inherently variational), 
 DMFT with NRG solver and lattice AFQMC data, as taken from 
 Ref.~\cite{Racz2020}. 
 
 \begin{figure}
-\hspace{1cm} (a) \hspace{7.25cm} (b)\\
+\hspace{1cm} (A) \hspace{7.25cm} (B)\\
     \includegraphics[width=0.47\linewidth,trim={0 0 0 5mm},clip]{figures/KMH_energy.pdf}\hfill
     \includegraphics[width=0.45\linewidth]{figures/benchEnergy_honey.pdf}\\
-    \caption{In panel (a) we report the total energy difference between 
+    \caption{In panel (A) we report the total energy difference between 
     the in-plane and the
     off-plane AFM solutions found with \NAME at $T=0$. Negative values
     signal a ground state with in-plane magnetization. The plateau at zero
@@ -1256,6 +1269,11 @@ Ref.~\cite{Racz2020}.
     DMFT-NRG and AFQMC solutions \cite{Racz2020}.}
     \label{fig:KMenergy}
 \end{figure}
+
+
+
+
+
 
 \begin{figure}
     \centering
@@ -1285,18 +1303,16 @@ Ref.~\cite{Racz2020}.
 
 \subsubsection{Kane-Mele Nanoflakes}
 The capabilities of the EDIpack2ineq layer go well beyond the
-simple case of a two-site unit cell. We can readily adapt the
-code to deal with nanoscopic systems such as hexagonal flakes
-\cite{Valli2016PRB,Valli2018NL}, by building a
+simple case of a two-site unit cell. Bulding on the previous example, we can readily adapt the calculation to deal with a nanoscopic~\cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
+\cite{Valli2016PRB,Valli2018NL}.
+For we consider a 
 $N_\mathrm{ineq}\times N_\mathrm{ineq}$ local Hamiltonian 
 $H_\mathrm{loc}$ with open boundary conditions, and implementing
 the self-consistent equations with a trivial single momentum 
-$k=0$. With respect to the infinite lattice, it is expected that
-the system develops an inhomogeneous magnetization, so the number
-of impurity models to solve cannot be halved by imposing the usual
-Néel symmetry. Some lowered point symmetry can be found, but a 
-safer approach of solving all the $N_\mathrm{ineq}$ impurity models
-leads to good results, with fair control of spatial numerical noise.
+$k=0$. In this configuration the system develops an inhomogeneous magnetization, so that in general no particular lattice symmetry group, e.g. N\'eel, can be exploited. 
+% Some lowered point symmetry can be found, but a 
+% safer approach of solving all the $N_\mathrm{ineq}$ impurity models
+% leads to good results, with fair control of spatial numerical noise.
 
 In \figu{fig:KMflake} we report results for a nanosystem of 
 $N_\mathrm{ineq}=54$ sites, solved with the bath parametrization 
@@ -1328,10 +1344,10 @@ tracing the bath states in the \texttt{ed\_mode=nonsu2} representation
                     0       &       0   &       0          &    \left\ibra n_{i,\rightarrow} n_{i,\leftarrow}\right\iket
         \end{pmatrix} 
 \end{equation}
-in the basis of the \emph{natural} spin-orbitals, whose occupation numbers
+in the basis of the {\it natural} spin-orbitals, whose occupation numbers
 are given by $n_{i,\rightarrow}$ and $n_{i,\leftarrow}$.
 
-As extensively discussed in \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr},
+As  discussed in \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr},
 by defining the spin traces of $\rho^\mathrm{imp}$, as
 \begin{equation}
     \rho^\mathrm{imp}_\sigma = 

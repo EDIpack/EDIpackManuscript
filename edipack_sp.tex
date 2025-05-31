@@ -99,20 +99,20 @@
 %set with  basicstyle={\usefont{OT1}{lmr}{ec}{n}\scriptsize},  
 \lstdefinestyle{fstyle}{
   language={[03]Fortran},
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\linespread{1.15}\footnotesize,
   stringstyle=\color{mymauve},
   keywordstyle=\color{keyword-color}\footnotesize,
-  commentstyle=\color{comment-color}\itshape\footnotesize,
+  commentstyle=\color{comment-color}\itshape\linespread{2}\footnotesize,
   morecomment=[l]{!\ },
-  fontadjust=true,
+   fontadjust=true,
   mathescape,
-  breakatwhitespace=false,
-  keepspaces=true,
+   breakatwhitespace=false,
+   keepspaces=true,
   showstringspaces=false,
   columns=fullflexible,
   frame=none,
-  xleftmargin=3.4pt,
-  xrightmargin=3.4pt,
+  xleftmargin=1pt,
+  xrightmargin=1pt,
   backgroundcolor=\color{gray!10},
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
@@ -419,7 +419,7 @@
 \begin{center}{
 \Large \textbf{
 \color{scipostdeepblue}{
-Flexible and interoperable high-performance Lanczos-based solver for generic Quantum Impurity problems: upgrading EDIpack.\\
+A flexible and interoperable high-performance Lanczos-based solver for generic Quantum Impurity problems: upgrading EDIpack.\\
 }
 }
 }
