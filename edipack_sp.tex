@@ -21,9 +21,10 @@
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{ltablex}
-\usepackage[final]{showlabels} %inline: draft//final
+\usepackage[inline]{showlabels} %inline: draft//final
 \usepackage{ulem} % \uline,  \uwave, \sout...
-
+\usepackage{dialogue}
+\usepackage{lips}
 % Prevent all line breaks in inline equations.
 \binoppenalty=10000
 \relpenalty=10000
@@ -98,14 +99,14 @@
 %set with  basicstyle={\usefont{OT1}{lmr}{ec}{n}\scriptsize},  
 \lstdefinestyle{fstyle}{
   language={[03]Fortran},
-  basicstyle={\ttfamily\footnotesize},
-  stringstyle=\ttfamily,
-  keywordstyle=\color{keyword-color},
-  commentstyle=\color{comment-color}\footnotesize,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\color{mymauve},
+  keywordstyle=\color{keyword-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
   morecomment=[l]{!\ },
   fontadjust=true,
   mathescape,
-  %breakatwhitespace=false,
+  breakatwhitespace=false,
   keepspaces=true,
   showstringspaces=false,
   columns=fullflexible,
@@ -117,31 +118,75 @@
 }
 
 
+% C/C++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinestyle{cstyle}{
+  language=C,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\color{mymauve},
+  keywordstyle=\color{keyword-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  captionpos=b,
+  mathescape,
+  fontadjust=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{gray!10},
+  frame=none
+}
+
 
 % PYTHON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \lstdefinestyle{mypython}{
   language=python,
   basicstyle=\ttfamily\footnotesize,
-  stringstyle=\ttfamily,
-  commentstyle=\itshape,
-  fontadjust=true,
+  stringstyle=\color{mymauve},
   keywordstyle=\color{keyword-color},
-  commentstyle=\color{comment-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  fontadjust=true,
   morecomment=[l]{\#\ },
   mathescape,
-  % fontadjust=true,
-  % mathescape,
-  % breakatwhitespace=false,
-  % keepspaces=true,
+  fontadjust=true,
+  mathescape,
+  breakatwhitespace=false,
+  keepspaces=true,
   showstringspaces=false,
-  % columns=fullflexible,
-  frame=single,
+  columns=fullflexible,
+  % frame=single,
   % xleftmargin=3.4pt,
   % xrightmargin=3.4pt,
+  backgroundcolor=\color{gray!10},
   numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
+% BASH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinestyle{mybash}{
+  language=bash,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
+  alsoletter=-
+  deletekeywords={conda-forge},
+  captionpos=b,
+  mathescape,
+  fontadjust=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=flexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{gray!10},
+  frame=none
+}
 
 %%
 %% Julia definition (c) 2014 Jubobs
@@ -158,6 +203,7 @@
    morestring=[s]{"}{"},%
    morestring=[m]{'}{'},%
 }[keywords,comments,strings]%
+
 
 \lstdefinestyle{myjulia}{
   frame=lines,
@@ -176,10 +222,10 @@
   keepspaces=true,
   showstringspaces=false,
   columns=fullflexible,
-  frame=single,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+  backgroundcolor=\color{gray!10},
+  frame=none
 }
 
 
@@ -188,7 +234,8 @@
 %% Monicelli definition (c) 2025 Amaricci
 %%
 \lstdefinelanguage{Monicelli}%
-  {morekeywords={vaffanzum,Lei,ha, clacsonato,più,meno,per,diviso,maggiore,minore,scappellamento,come fosse,Necchi,Mascetti,Perozzi,Melandri,Sassaroli,voglio,posterdati,mi,porga,stuzzica,brematura, anche,che, cos'è, o, magari,tarapia, genio,blinda,prematurata, la, supercazzola, avvertite,con,il,scherziamo,?,bituma},%
+  {
+  morekeywords={vaffanzum,Lei,ha, clacsonato,più,meno,per,diviso,maggiore,minore,scappellamento,come fosse,Necchi,Mascetti,Perozzi,Melandri,Sassaroli,voglio,posterdati,mi,porga,stuzzica,brematura, anche,che, cos'è, o, magari,tarapia, genio,blinda,prematurata, la, supercazzola, avvertite,con,il,scherziamo,?,bituma},%
    sensitive=true,%
    alsoother={\$},%
    morecomment=[l]\#,%
@@ -198,84 +245,30 @@
 }[keywords,comments,strings]%
 
 \lstdefinestyle{MonicelliStyle}{
-  frame=lines,
   language=Monicelli,
   basicstyle=\ttfamily\footnotesize,
   stringstyle=\ttfamily,
-  commentstyle=\itshape,
-  fontadjust=true,
   keywordstyle=\color{keyword-color},
-  commentstyle=\color{comment-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
   morecomment=[l]{\#\ },
   mathescape,
   fontadjust=true,
   mathescape,
-  % breakatwhitespace=false,
-  keepspaces=true,
-  showstringspaces=false,
-  columns=fullflexible,
-  frame=single,
-  xleftmargin=3.4pt,
-  xrightmargin=3.4pt,
-  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
-}
-
-
-% BASH
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\lstdefinestyle{mybash}{
-  frame=lines,
-  language=bash,
-  % basicstyle=\footnotesize,
-  basicstyle=\ttfamily,
-  stringstyle=\color{mymauve},%\ttfamily,
-  commentstyle=\color{comment-color},
-  % keywordstyle=\bfseries,
-  keywordstyle=\color{keyword-color},
-  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
-  deletekeywords={"conda-forge"},
-  captionpos=b,
-  mathescape,
-  fontadjust=true,
-  %breakatwhitespace=false,
-  % keepspaces=true,
-  showstringspaces=false,
-  columns=fullflexible,%flexible
-  xleftmargin=3.4pt,
-  xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
-  frame=none,
-  %numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
-}
-
-
-
-
-% C/C++
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\lstdefinestyle{cstyle}{
-  frame=lines,
-  language=C,
-  % basicstyle=\footnotesize,
-  basicstyle=\ttfamily,
-  stringstyle=\color{mymauve},%\ttfamily,
-  commentstyle=\color{comment-color},
-  % keywordstyle=\bfseries,
-  keywordstyle=\color{keyword-color},
-  % It would be nice to have 'conda' here,
-  % but then 'conda-forge' gets highlighted too.
-  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
-  captionpos=b,
-  mathescape,
-  fontadjust=true,
   breakatwhitespace=false,
   keepspaces=true,
   showstringspaces=false,
-  columns=flexible,
+  columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+  backgroundcolor=\color{gray!10},
+  frame=none
 }
+
+
+
+
+
+
 
 
 
@@ -426,7 +419,7 @@
 \begin{center}{
 \Large \textbf{
 \color{scipostdeepblue}{
-Flexible and Interoperable high-performance Lanczos-based Solver for generic Quantum Impurity Models: upgrading EDIpack.\\
+Flexible and interoperable high-performance Lanczos-based solver for generic Quantum Impurity problems: upgrading EDIpack.\\
 }
 }
 }
@@ -461,23 +454,42 @@ Flexible and Interoperable high-performance Lanczos-based Solver for generic Qua
 % Write all affiliations here.
 % Format: institute, city, country
 \begin{center}
+%   \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
+%   Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
+%   Trieste, Italy}
+% \newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati (SISSA),
+%   Via Bonomea 265, 34136 Trieste, Italy}
+% \newcommand{\ITPHamburg}{I. Institut f\"ur Theoretische Physik,
+%   University of Hamburg, Notkestra\ss e 9, 22607 Hamburg, Germany}
+% \newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
+%   Astrophysik,Universit\"at W\"urzburg, 97074 W\"urzburg, Germany}
+% \newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, 01062 Dresden, Germany}
+% \newcommand{\Geneve}{Department of Quantum Matter Physics, University of
+%   Geneva, Quai Ernest-Ansermet 24, 1211 Geneva, Switzerland}
+% \newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
+%   Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
+% \newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
+% \newcommand{\TUW}{Institute of Solid State Physics, TU Wien, 1040 Vienna, Austria}
+% \newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, I\-10129 Torino, Italy}
+%
+%No ZIPcode to Brooklyn...
+%
   \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
-  Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
-  Trieste, Italy}
-\newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati (SISSA),
-  Via Bonomea 265, 34136 Trieste, Italy}
+  Consiglio Nazionale delle Ricerche, Via Bonomea 265, Trieste, Italy}
+\newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati,
+  Via Bonomea 265, Trieste, Italy}
 \newcommand{\ITPHamburg}{I. Institut f\"ur Theoretische Physik,
-  University of Hamburg, Notkestra\ss e 9, 22607 Hamburg, Germany}
+  University of Hamburg, Notkestra\ss e 9, Hamburg, Germany}
 \newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
-  Astrophysik,Universit\"at W\"urzburg, 97074 W\"urzburg, Germany}
-\newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, 01062 Dresden, Germany}
+  Astrophysik,Universit\"at W\"urzburg, W\"urzburg, Germany}
+\newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, Dresden, Germany}
 \newcommand{\Geneve}{Department of Quantum Matter Physics, University of
-  Geneva, Quai Ernest-Ansermet 24, 1211 Geneva, Switzerland}
+  Geneva, Quai Ernest-Ansermet 24, Geneva, Switzerland}
 \newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
-  Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
-\newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
+  Pisa, Largo B. Pontecorvo 3, Pisa, Italy}
+\newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, Paris, France}
 \newcommand{\TUW}{Institute of Solid State Physics, TU Wien, 1040 Vienna, Austria}
-\newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, I\-10129 Torino, Italy}
+\newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, Torino, Italy}
 {\bf 1} \ITPHamburg\\
 {\bf 2} \CTQMAT\\
 {\bf 3} \WZBURG\\
