@@ -1,5 +1,5 @@
 program ed_ahm_square
-  USE EDIPACK2
+  USE EDIPACK
   USE SCIFOR
   USE DMFT_TOOLS
   USE MPI

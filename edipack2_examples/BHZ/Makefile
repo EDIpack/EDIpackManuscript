@@ -1,5 +1,5 @@
 HERE   = `pwd`
-EXE=ed_hm_bethe
+EXE=ed_exct_bhz_2d
 FC=mpif90
 PLAT=gnu
 DIREXE   = $(HERE)/test
@@ -22,8 +22,8 @@ OBJS_DEB =
 
 #NO NEED TO CHANGE DOWN HERE, only expert mode.
 #########################################################################
-GLOB_INC:=$(shell pkg-config --cflags edipack2 dmft_tools scifor)
-GLOB_LIB:=$(shell pkg-config --libs edipack2  dmft_tools scifor)
+GLOB_INC:=$(shell pkg-config --cflags edipack dmft_tools scifor)
+GLOB_LIB:=$(shell pkg-config --libs edipack  dmft_tools scifor)
 
 ifeq ($(PLAT),intel)
 FFLAG=-O2 -ftz
