@@ -10,7 +10,12 @@ Originally introduced to describe diluted magnetic impurities in metallic hosts,
 
 At the heart of quantum impurity models is the interaction between a localized ``impurity''  and a surrounding bath of itinerant particles, usually represented as a conduction band of electrons. In this context, the definition of the impurity can be taken as rather general, in order to contain orbital and spin local degrees of freedom as well as a finite number of lattice sites. %MC eliminated inequivalent to avoid confusion with the last point
 This setup captures many essential aspects of strong correlation including screening, decoherence and entanglement in a computationally tractable way. 
-Most notably, quantum impurity problems lie at the core of dynamical mean-field theory (DMFT) where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem \cite{Georges1996RMP}.  
+Most notably, quantum impurity problems lie at the core of dynamical mean-field theory (DMFT) where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem \cite{Georges1996RMP}.
+\fixme{(Samuele)I would also cite gutzwiller approx and DMET, we should not restrict the number of users of the code :). Something like:
+
+
+Most notably, quantum impurity problems lie at the core of many quantum embedding methods, like dynamical mean-field theory (DMFT)~\cite{Georges1996RMP}, density-matrix embedding theory (DMET)~\cite{Knizia2012_DMET} and Gutzwiller approximation (GA)~\cite{Lanata2015_GA}, where the complex behavior of the lattice systems is reduced to an effective self-consistent quantum impurity problem. The present code has been developed with a particular focus for DMFT but its usage extends also to the aforementioned methods.
+}
 By accounting for local quantum fluctuations, DMFT can successfully describe the most important physical features of correlated materials, including Mott insulators, heavy fermion compounds, and high-temperature superconductors.  
 
 Accurately and efficiently solving a quantum impurity problem and computing the Green's functions, which are central in the DMFT framework, remains a

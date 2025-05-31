@@ -107,33 +107,40 @@ illustrating its features and \NAME interface via a paraphrase of the original s
 \href{https://it.wikipedia.org/wiki/Supercazzola#Origine}{it.wikipedia.org/wiki/Supercazzola}
 and \href{https://www.youtube.com/watch?v=SF8YUFdP6eU}{Movie Scene}). 
 
-\noindent
-V: {\it Lei ha clacsonato?}\\
-P: {\it Tu ha clacsonato?}\\
-M: {\it Tarapia tapioco, prematurata l'interfaccia, o scherziamo?}\\
-V: {\it Prego}?\\
-M: {\it Scusi noi siamo in Monicelli, come fosse un linguaggio esoterico
-basato su C++ e utilizzante la toolchain di LLVM anche per Linux e
-Unix soltanto in due, oppure in quattro anche scribai con il file
+\begin{dialogue}
+\speak{\MakeUppercase{V}} {\it Lei ha clacsonato!}
+
+\speak{\MakeUppercase{P}} {\it Tu ha clacsonato?}
+\par\lips\par
+
+\speak{\MakeUppercase{M}} {\it Tarapia tapioco, prematurata l'interfaccia, o scherziamo?}
+
+\speak{\MakeUppercase{V}} {\it Prego}?
+
+\speak{\MakeUppercase{M}} {\it Scusi noi siamo in Monicelli, come fosse un linguaggio esoterico basato su C++ e utilizzante la toolchain di LLVM anche per Linux e Unix soltanto in due, oppure in quattro anche scribai con il file
 sorgente {\tt hm\_bethe.mc}? \\ Come {\tt
-  github.com/lcrippa/prematurata\_la\_dmft}, per esempio?}\\
-V: {\it Ma che DMFT, mi faccia il piacere! Questi signori stavano
-programmando loro, non si intrometta!}\\
-M: {\it Ma no, dico, mi porga il file {\tt bagaglio.cpp}. Le vede le
-funzioni? Lo vede che interfacciano gli array, non supportati da
-Monicelli, e prematurano anche! 
+  github.com/lcrippa/prematurata\_la\_dmft}, per esempio?}
+
+\speak{\MakeUppercase{V}} {\it Ma che DMFT, mi faccia il piacere! Questi signori stavano programmando loro, non si intrometta!}
+
+\speak{\MakeUppercase{M}} {\it Ma no, dico, mi porga il file {\tt bagaglio.cpp}. Le vede le funzioni? Lo vede che interfacciano gli array, non supportati da {\tt Monicelli}, e prematurano anche! 
 Ora io le direi, anche con il rispetto per l'autorità, anche solo le
 due parole come install {\tt Monicelli} from
 \href{https://github.com/esseks/monicelli.git}{github.com/esseks/monicelli.git}
-%\url{https://github.com/esseks/monicelli.git}
-e compila il file {\tt hm\_bethe.mc}, per esempio.}\\
-V: {\it Basta così! Mi seguano nel programma di test!}\\
-P: {\it No, no, no, attenzione! Il loop dmft completo \`e supportato
-secondo la Ref.~\onlinecite{Georges1996RMP}, abbia pazienza,
+e compila il file {\tt hm\_bethe.mc}, per esempio.}
+
+\speak{\MakeUppercase{V}} {\it Basta così! Mi seguano nel programma di test!}
+
+\speak{\MakeUppercase{P}} {\it No, no, no, attenzione! Il loop DMFT completo \`e supportato secondo la Ref.~\cite{Georges1996RMP}, abbia pazienza,
 senn\`o.... Plotta i dati, anche un pochino di Green's function e
-Self-energy in prefettura.}\\
-M: {\it Senza contare che {\tt prematurata\_la\_dmft} ha perso i contatti con il tarapia tapioco, dopo.}\\
-V: {\it Ho bello che capito. Si farà finta di passar da bischeri!}\\
+Self-energy in prefettura.}
+
+\speak{\MakeUppercase{M}} {\it Senza contare che {\tt prematurata\_la\_dmft} ha perso i contatti con il tarapia tapioco, dopo.}
+
+\par\lips\par
+
+\speak{\MakeUppercase{V}} {\it Ho bello che capito. Si farà finta di passar da bischeri!}
+\end{dialogue}
 
 We shall now present a fully functioning DMFT code for
 the solution of the Bethe lattice written in Monicelli. It requires a minimal C++
