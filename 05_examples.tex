@@ -585,7 +585,7 @@ while (not converged and iloop<ed.Nloop):
     Smats = np.array([ed.get_sigma(axis="m",typ="n"),ed.get_sigma(axis="m",typ="a")])   
     
     #Perform self-consistency levaragin {\tt aux\_funx.py} procedures:
-    Gmats = get_gloc(wm*1j       ,ed.xmu,HkNambu,Smats,axis="m")
+    Gmats = get_gloc(wm*1j,ed.xmu,HkNambu,Smats,axis="m")
     Weiss = dmft_weiss_field(Gmats,Smats)    
     
     #Fit Weiss field and update the bath

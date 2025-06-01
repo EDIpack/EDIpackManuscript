@@ -62,10 +62,11 @@
 % \setcounter{secnumdepth}{4} 
 % \setcounter{tocdepth}{4}
 
-\definecolor{mymauve}{rgb}{0.58, 0, 0.82}
-%From ALF source:
+
+% Trying to define a scipost-vibe colorset for listings
 \definecolor{comment-color}{rgb}{0.8,0.1,0.1}
 \definecolor{keyword-color}{rgb}{0.3,0.3,1}
+\definecolor{string-color}{rgb}{0.58, 0, 0.82}
 
 
 
@@ -99,9 +100,9 @@
 %see fonts here: https://latexref.xyz/Low_002dlevel-font-commands.html
 %set with  basicstyle={\usefont{OT1}{lmr}{ec}{n}\scriptsize},  
 \lstdefinestyle{fstyle}{
-  language={[03]Fortran},
+  language={[18]Fortran},
   basicstyle=\ttfamily\linespread{1.15}\footnotesize,
-  stringstyle=\color{mymauve},
+  stringstyle=\color{string-color},
   keywordstyle=\color{keyword-color}\footnotesize,
   commentstyle=\color{comment-color}\itshape\linespread{2}\footnotesize,
   morecomment=[l]{!\ },
@@ -114,7 +115,7 @@
   frame=none,
   xleftmargin=1pt,
   xrightmargin=1pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -124,7 +125,7 @@
 \lstdefinestyle{cstyle}{
   language=C,
   basicstyle=\ttfamily\footnotesize,
-  stringstyle=\color{mymauve},
+  stringstyle=\color{string-color},
   keywordstyle=\color{keyword-color}\footnotesize,
   commentstyle=\color{comment-color}\itshape\footnotesize,
   captionpos=b,
@@ -136,7 +137,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   frame=none
 }
 
@@ -146,10 +147,11 @@
 \lstdefinestyle{mypython}{
   language=python,
   basicstyle=\ttfamily\footnotesize,
-  stringstyle=\color{mymauve},
+  stringstyle=\color{string-color},
   keywordstyle=\color{keyword-color},
   commentstyle=\color{comment-color}\itshape\footnotesize,
   fontadjust=true,
+  morekeywords={np,plt,oplot,solve,EDIpackSolver,c,c_dag,n,ed,MPI,comm},
   morecomment=[l]{\#\ },
   mathescape,
   fontadjust=true,
@@ -161,7 +163,7 @@
   % frame=single,
   % xleftmargin=3.4pt,
   % xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -185,7 +187,7 @@
   columns=flexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   frame=none
 }
 
@@ -225,7 +227,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   frame=none
 }
 
@@ -261,7 +263,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{gray!10},
+  backgroundcolor=\color{xkcdOffWhite},
   frame=none
 }
 
@@ -481,7 +483,7 @@ A flexible and interoperable high-performance Lanczos-based solver for generic q
 \newcommand{\ITPHamburg}{I. Institut f\"ur Theoretische Physik,
   University of Hamburg, Hamburg, Germany}
 \newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
-  Astrophysik,Universit\"at W\"urzburg, W\"urzburg, Germany}
+  Astrophysik, Universit\"at W\"urzburg, W\"urzburg, Germany}
 \newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, Dresden, Germany}
 \newcommand{\Geneve}{Department of Quantum Matter Physics, University of
   Geneva, Geneva, Switzerland}
