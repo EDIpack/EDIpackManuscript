@@ -1549,18 +1549,16 @@ The iRDM is obtained by tracing out the bath degrees of freedom:
 \rho^\mathrm{imp} = \Tr_\mathrm{bath}(\rho).
 \end{equation}
 However, the memory footprint of $\rho$, as well as the CPU footprint 
-of the summations involved in this trace scales exponentially 
-with the system size, i.e.~$4^{N_\mathrm{s}}$, quickly becoming prohibitive.
-
+of the summations involved in the trace, scale exponentially 
+with the system size, i.e.~as $4^{N_\mathrm{s}}$, quickly becoming prohibitive.
 To overcome the issue, we implement a fast algorithm that exploits the 
 block structure of the Fock space defined by the symmetry sectors and
 the subsequent map sparsity, to perform the trace {\it on-the-fly}. 
 This approach significantly reduces the computational cost by limiting 
-the summation to the sector size $D_\SS$ of the symmetry sector 
+the summation to the size $D_\SS$ of the symmetry sector 
 $\SS$, to which the ground state (or any eigenstate) belongs, and avoiding
 the storage of the large matrix associated with $\rho$.
-
-To efficiently manage this decomposition, we employ a 
+We employ a 
 {\tt sparse\_map} ${\cal P}$, as detailed in \secu{CodeSparseMap}. 
 This structure stores, for each impurity configuration 
 (the {\it key}), the 
@@ -1569,7 +1567,7 @@ corresponding bath configurations
 satisfy the symmetry constraints over the sector quantum numbers
 imposed by the {\tt ed\_mode} variable.
 We denote the number of (spin-dependent) keys and values respectively
-as ${\cal D}_{i\s}$ and ${\cal D}_{b\s}$.
+as ${D}_{i\s}$ and ${D}_{b\s}$.
 The fast summation algorithm for evaluating the iRDM differs 
 significantly between the {\bf normal} and {\bf superc/nonsu2} modes, 
 as outlined in the sections below.
@@ -1583,8 +1581,8 @@ The global bitset can be split into spin-resolved
 impurity and bath components as
 \begin{equation}
 \ket{\vec{n}} =
-\ket{\vec{n}_\up}\otimes \ket{\vec{n}_\dw} =
-\ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}.
+\ket{{\color{xkcdRed}\vec{n}_\up}}\otimes \ket{{\color{xkcdBlue}\vec{n}_\dw}} =
+\ket{{\color{xkcdRaspberry}\vec{i}_\up}}\ket{{\color{xkcdPumpkin}\vec{b}_\up}}\otimes \ket{{\color{xkcdPurple}\vec{i}_\dw}}\ket{{\color{xkcdTeal}\vec{b}_\dw}}.
 \label{eq:decomposition_for_rdm_normal}
 \end{equation}
 Here, creation (destruction) operators  $c^\dagger_{p\sigma}$
@@ -1595,27 +1593,26 @@ subspace $\ket{\vec{n}_{\bar{\s}}}$ without introducing any
 fermionic sign. In this basis \equ{DefRho} takes the form:
 \begin{equation}\label{RhoNormal}
 \rho = 
-    \sum_{i_\up=1}^{D_{i_\up}}\!
-    \sum_{p_\up=1}^{D_{p_\up}}\!
-    \sum_{i_\dw=1}^{D_{i_\dw}}\!
-    \sum_{p_\dw=1}^{D_{p_\dw}}\!
-    \sum_{j_\up=1}^{D_{j_\up}}\!
-    \sum_{q_\up=1}^{D_{q_\up}}\!
-    \sum_{j_\dw=1}^{D_{j_\dw}}\!
-    \sum_{q_\dw=1}^{D_{q_\dw}}\!
-    a_{i_\up p_\up i_\dw p_\dw}a^*_{j_\up q_\up j_\dw q_\dw}
+    \sum_{{\color{xkcdRaspberry}i_\up}=1}^{D_{i_\up}}\!
+    \sum_{{\color{xkcdPumpkin}p_\up}=1}^{D_{p_\up}}\!
+    \sum_{{\color{xkcdPurple}i_\dw}=1}^{D_{i_\dw}}\!
+    \sum_{{\color{xkcdTeal}p_\dw}=1}^{D_{p_\dw}}\!
+    \sum_{{\color{xkcdRaspberry}j_\up}=1}^{D_{j_\up}}\!
+    \sum_{{\color{xkcdPumpkin}q_\up}=1}^{D_{q_\up}}\!
+    \sum_{{\color{xkcdPurple}j_\dw}=1}^{D_{j_\dw}}\!
+    \sum_{{\color{xkcdTeal}q_\dw}=1}^{D_{q_\dw}}\!
+    a_{{\color{xkcdRaspberry}i_\up} {\color{xkcdPumpkin}p_\up} {\color{xkcdPurple}i_\dw} {\color{xkcdTeal}p_\dw}}a^*_{{\color{xkcdRaspberry}j_\up} {\color{xkcdPumpkin}q_\up} {\color{xkcdPurple}j_\dw} {\color{xkcdTeal}q_\dw}}
     % \left[
-    \ket{\vec{i}_\up}\ket{\vec{p}_\up}\!\otimes\!\ket{\vec{i}_\dw}\ket{\vec{p}_\dw}
+    \ket{{\color{xkcdRaspberry}\vec{i}_\up}}\ket{{\color{xkcdPumpkin}\vec{p}_\up}}\!\otimes\!\ket{{\color{xkcdPurple}\vec{i}_\dw}}\ket{{\color{xkcdTeal}\vec{p}_\dw}}
     %\right]
     % \left[
-    \bra{\vec{q}_\dw}\bra{\vec{j}_\dw}\!\otimes\!\bra{\vec{q}_\up}\bra{\vec{j}_\up}
+    \bra{{\color{xkcdTeal}\vec{q}_\dw}}\bra{{\color{xkcdPurple}\vec{j}_\dw}}\!\otimes\!\bra{{\color{xkcdPumpkin}\vec{q}_\up}}\bra{{\color{xkcdRaspberry}\vec{j}_\up}}
     %\right].   
 \end{equation}
-where the coefficients $a_I = a_{i_\up b_\up i_\dw b_\dw}$ are the
+where the coefficients $a_I = a_{{\color{xkcdRaspberry}i_\up} {\color{xkcdPumpkin}b_\up} {\color{xkcdPurple}i_\dw} {\color{xkcdTeal}b_\dw}}$ are the
 expansion coefficients of the state on the Fock basis
-$\ket{\psi} = \sum_I a_I \ket{\vec{i}_\up}\ket{\vec{b}_\up}\otimes \ket{\vec{i}_\dw}\ket{\vec{b}_\dw}$.
-  
-Before proceeding further we show that in the {\bf normal} mode the iRDM is restricted to 
+$\ket{\psi} = \sum_I a_I \ket{{\color{xkcdRaspberry}{i}_\up}}\ket{{\color{xkcdPumpkin}{b}_\up}}\otimes \ket{{\color{xkcdPurple}{i}_\dw}}\ket{{\color{xkcdTeal}{b}_\dw}}$.
+Before proceeding further, we show that in the {\bf normal} mode the iRDM is restricted to 
 {spin-diagonal} blocks. This follows from the observation 
 that the conserved quantum numbers are 
 {\it additive} quantities, i.e. 
@@ -1642,29 +1639,29 @@ Using \equ{RhoNormal} the iRDM takes the form:
 \begin{equation}
   \label{iRDMnormal}
   \begin{aligned}
-  \rho^\mathrm{imp} &= \Tr_{{\color{red}b_\up b_\dw}}{\rho} = 
-  \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
-  \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
-  \bra{b_\up}\otimes\bra{b_\dw}
+  \rho^\mathrm{imp} &= \Tr_{{\color{xkcdCoral}b_\up} {\color{xkcdAzure}b_\dw}}{\rho} = 
+  \sum_{{\color{xkcdCoral} b_\up}=1}^{D_{b_\up}}
+  \sum_{{\color{xkcdAzure} b_\dw}=1}^{D_{b_\dw}}
+  \bra{{\color{xkcdCoral}b_\up}}\otimes\bra{{\color{xkcdAzure}b_\dw}}
     \rho
-    \ket{b_\dw}\otimes\ket{b_\up}    \cr
+    \ket{{\color{xkcdAzure}b_\dw}}\otimes\ket{\color{xkcdCoral}{b_\up}}    \cr
     %
     &=
-    \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
-    \sum_{i_\up=1}^{D_{i_\up}}
-    \sum_{p_\up=1}^{D_{p_\up}}
-    \sum_{j_\up=1}^{D_{j_\up}} 
-    \sum_{q_\up=1}^{D_{q_\up}}
+    \sum_{{\color{xkcdCoral} b_\up}=1}^{D_{b_\up}}
+    \sum_{{\color{xkcdRaspberry}i_\up}=1}^{D_{i_\up}}\!
+    \sum_{{\color{xkcdPumpkin}p_\up}=1}^{D_{p_\up}}\!
+    \sum_{{\color{xkcdRaspberry}j_\up}=1}^{D_{j_\up}}\!
+    \sum_{{\color{xkcdPumpkin}q_\up}=1}^{D_{q_\up}}\!
     \Bigg(    
-    \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
-    \sum_{i_\dw=1}^{D_{i_\dw}}
-    \sum_{p_\dw=1}^{D_{p_\dw}}
-    \sum_{j_\dw=1}^{D_{j_\dw}} 
-    \sum_{q_\dw=1}^{D_{q_\dw}}
-    C_{i,p}\,C_{j,q}\,a_{i_\up p_\up i_\dw p_\dw} a^*_{j_\up q_\up j_\dw q_\dw} \cr
+    \sum_{{\color{xkcdAzure} b_\dw}=1}^{D_{b_\dw}}
+    \sum_{{\color{xkcdPurple}i_\dw}=1}^{D_{i_\dw}}\!
+    \sum_{{\color{xkcdTeal}p_\dw}=1}^{D_{p_\dw}}\!
+    \sum_{{\color{xkcdPurple}j_\dw}=1}^{D_{j_\dw}}\!
+    \sum_{{\color{xkcdTeal}q_\dw}=1}^{D_{q_\dw}}\!
+    C_{i,p}\,C_{j,q}\,a_{{\color{xkcdRaspberry}i_\up} {\color{xkcdPumpkin}p_\up} {\color{xkcdPurple}i_\dw} {\color{xkcdTeal}p_\dw}}a^*_{{\color{xkcdRaspberry}j_\up} {\color{xkcdPumpkin}q_\up} {\color{xkcdPurple}j_\dw} {\color{xkcdTeal}q_\dw}} \cr
     %
     &\qquad    
-    \langle b_\up| p_\up\rangle| i_\up\rangle\langle j_\up |\langle q_\up| b_\up\rangle   \otimes \langle b_\dw| p_\dw \rangle|i_\dw\rangle \langle j_\dw  |\langle q_\dw| b_\dw\rangle \Bigg)
+    \langle {\color{xkcdCoral}b_\up}| {\color{xkcdPumpkin}p_\up}\rangle| {\color{xkcdRaspberry}i_\up}\rangle\langle {\color{xkcdRaspberry}j_\up} |\langle {\color{xkcdPumpkin}q_\up}| {\color{xkcdCoral}b_\up}\rangle   \otimes \langle {\color{xkcdAzure}b_\dw}| {\color{xkcdTeal}p_\dw} \rangle|{\color{xkcdPurple}i_\dw}\rangle \langle {\color{xkcdPurple}j_\dw}  |\langle {\color{xkcdTeal}q_\dw}| {\color{xkcdAzure}b_\dw}\rangle \Bigg)
     \cr
 &=
     \sum_{i_\up=1}^{D_{i_\up}}
@@ -1672,16 +1669,16 @@ Using \equ{RhoNormal} the iRDM takes the form:
     \sum_{i_\dw=1}^{D_{i_\dw}}
     \sum_{j_\dw=1}^{D_{j_\dw}}
     \underbrace{\left(
-    \sum_{{\color{Red} b_\up=1}}^{{\color{red} D_{b_\up}}}
-    \sum_{{\color{Red} b_\dw=1}}^{{\color{red} D_{b_\dw}}}
-    a_{i_\up b_\up i_\dw b_\dw} a^*_{j_\up b_\up j_\dw b_\dw}
-    \right)}_{\rho^\mathrm{imp}_{i_\up j_\up} \otimes\, \rho^\mathrm{imp}_{i_\dw j_\dw} }
-    \ket{i_\up}\bra{j_\up}\otimes \ket{i_\dw}\bra{j_\dw},
+    \sum_{{\color{xkcdCoral} b_\up}=1}^{D_{b_\up}}
+    \sum_{{\color{xkcdAzure} b_\dw}=1}^{D_{b_\dw}}
+    a_{{\color{xkcdRaspberry}i_\up} {\color{xkcdCoral}b_\up} {\color{xkcdPurple}i_\dw} {\color{xkcdAzure}b_\dw}}a^*_{{\color{xkcdRaspberry}j_\up} {\color{xkcdCoral}b_\up} {\color{xkcdPurple}j_\dw} {\color{xkcdAzure}b_\dw}}
+    \right)}_{\rho^\mathrm{imp}_{{\color{xkcdRaspberry}i_\up j_\up}} \otimes\, \rho^\mathrm{imp}_{{\color{xkcdPurple}i_\dw j_\dw}} }
+    \ket{{\color{xkcdRaspberry}i_\up}}\bra{{\color{xkcdRaspberry}j_\up}}\otimes \ket{{\color{xkcdPurple}i_\dw}}\bra{{\color{xkcdPurple}j_\dw}},
   \end{aligned}
 \end{equation}
 
-Notably, the factors $C_{i,b}$, which account for the potential 
-fermionic sign from reordering bath and impurity components, are 
+Notably, the factors $C_{i,b}$, which account for the 
+fermionic sign associated to swapping bath and impurity components, are 
 trivially 1 due to the absence of cross-spin interference in this 
 mode, as enforced by the Kronecker deltas for bath and impurity 
 indices.

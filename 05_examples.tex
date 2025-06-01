@@ -880,7 +880,7 @@ $$
 H_\mathrm{top} = \sqrt{Z}[H(k) + \Re\Sigma(\omega\to0)]\sqrt{Z}, 
 $$
 where $Z$ is the renormalization constant matrix. The matrix $H_\mathrm{top}$ describes the
-low-energy properties of the many-body solution andcan be used to determine the characterize the topological nature of the interacting system  \cite{Gurarie2011PRB,Wang2012PRX,Wagner2023NC,Blason2023PRB,Bau2024PRB}.  
+low-energy properties of the many-body solution and can be used to characterize the topological nature of the interacting system  \cite{Gurarie2011PRB,Wang2012PRX,Wagner2023NC,Blason2023PRB,Bau2024PRB}.  
 
 
 
@@ -975,7 +975,7 @@ we report it here for completeness:
      !EDIpack: Solve the impurity problem
      call ed_solve(bath)
 
-     !EDIpack: Retrieve  ${\color{comment-color} \Sigma(i\omega)}$
+     !EDIpack: Retrieve ${\color{comment-color} \Sigma(i\omega)}$
      call ed_get_sigma(Smats,axis='mats')
      
      !Get $\color{comment-color}G_\mathrm{loc}$ using $\color{comment-color}\mathrm{DMFTtools}$
@@ -1072,7 +1072,7 @@ to spin and sublattice degrees of freedom.
 % $\sigma_0$ and $\tau_0$ are $2\times2$ identity matrices.
 To investigate the effects of electron-electron repulsion we consider a local Hubbard term \cite{Hohenadler2013ROPIP,Rachel2018ROPIP}:
 \begin{equation}
-    H = H_\mathrm{KM} 
+    H_\mathrm{KMH}  = H_\mathrm{KM} 
     + U\sum_{i}\Biggl[
                         \left(n_{i,\up} - \frac{1}{2}\right)
                         \left(n_{i,\dw} - \frac{1}{2}\right)
@@ -1289,7 +1289,7 @@ Ref.~\cite{Racz2020}.
     (b) the local correlation as measured by the mutual 
     information between local in-plane spin eigenstates
     $I(\rightarrow:\leftarrow)$ \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr}. 
-    Both the (a) and (b) panels mark the edge and "bulk" 
+    Both the (a) and (b) panels mark the edge and ``bulk'' 
     sites in lighter and darker colors, respectively.
     In (c) and (d) a visual representation of the given 
     nano-system at different values of $U/t$, as marked 
@@ -1304,7 +1304,7 @@ Ref.~\cite{Racz2020}.
 
 \subsubsection{Kane-Mele-Hubbard model at the nanoscale}
 The capabilities of the EDIpack2ineq layer go well beyond the
-simple case of a two-site unit cell. Bulding on the previous example, we can readily adapt the calculation to deal with a nanoscopic~\cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
+simple case of a two-site unit cell. Building on the previous example, we can readily adapt the calculation to deal with a nanoscopic~\cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
 \cite{Valli2016PRB,Valli2018NL}.
 We consider a 
 $N_\mathrm{ineq}\times N_\mathrm{ineq}$ local Hamiltonian 
@@ -1371,7 +1371,7 @@ In panel (b) of \figu{fig:KMflake} we report the spatially resolved
 interaction dependency of $I(\rightarrow:\leftarrow)$, as a direct 
 observation of the enhanced local correlations at the boundary of the
 finite system. While it is usually assumed that edge sites must be
-more correlated than internal ("bulk") sites, based on the reduced
+more correlated than internal (``bulk'') sites, based on the reduced
 lattice coordination, the inter-spin mutual information quantifies directly the phenomenon: the edge correlations,
 marked in lighter green, are decidedly higher as long as the system 
 remains in a weakly magnetized regime. When the local magnetization
