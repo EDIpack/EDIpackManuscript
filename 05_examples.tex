@@ -71,7 +71,7 @@ program ed_hm_bethe
    allocate(Hloc(Nspin,Nspin,Norb,Norb))
    Hloc=0d0
    !...
-   !Construct Bethe DOS using SciFortran functions
+   !Construct Bethe DOS using SciFortran
    allocate(Ebands(Le),Dbands(Le))
    Ebands = linspace(-D,D,Le,mesh=de)
    Dbands = dens_bethe(Ebands,Wband)*de
@@ -344,7 +344,7 @@ $-{\rm Im}\Sigma(\omega\to0) \to\infty$.
 
 
 
-\subsubsection{Finite temperature solution (W2Dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTW2D}
+\subsubsection{Finite temperature (W2Dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTW2D}
 To demonstrate the usage of the W2Dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using W2Dynamics. 
 In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in W2Dynamics against the \NAME solver at finite temperature.  
 
@@ -601,15 +601,15 @@ ed.finalize_solver()
   \includegraphics[width=\linewidth]{figures/figAHM.pdf}
     \caption{\label{figEx2}%
       \textbf{The BCS to BEC crossover.}
-      (a) Evolution of the spectral functions
+      (A) Evolution of the spectral functions
       $-\Im{G_\mathrm{loc}(\omega)}/\pi$ as a function of increasing
       attraction $U$. 
-      (b) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
+      (B) The order parameter $\phi=\langle c_\up c_\dw\rangle$ as a
       function of the attraction $U$. Data for BCS (gray) is compared
       to DMFT results (blue line and symbols). Inset: the correlation strength
       $\Theta$ (see main text) as a function of the
       attraction $U$ across the BCS-BEC crossover. 
-      (e) Superconducting order
+      (C) Superconducting order
       parameter $\phi$ as a function of temperature across the
       superconductor-to-normal phase transition. Data for $U=4$. The
       fit highlights the critical behavior with a mean-field exponent
@@ -635,14 +635,14 @@ highlights the crossover from the weak-coupling BCS regime to the
 strong-coupling BEC regime. In the BCS limit, $\phi$ displays the 
 characteristic exponential growth with $U$, known to be 
 computationally challenging. In the opposite, strong-coupling, limit 
-$\phi$ saturates at its theoretical maximum of $\phi \rightarrow 1/2$. The comparison with the mean-field result 
+$\phi$ saturates at its theoretical maximum of $\phi \rightarrow 1/2$. The comparison with the BCS mean-field result 
 (gray line) reveals the effect of local dynamical fluctuations, which  slightly suppress the order parameter, particularly in the intermediate regime. 
 To further quantify these dynamical effects, we plot in the inset of the same panel the 
 {\it correlation strength}~\cite{Amaricci2015PRL,Amaricci2016PRB}
 $\Theta=|S(i\omega\to 0)-S(i\omega\to\infty)|/S(i\omega\to\infty)$. 
 Large values of $\Theta$ indicate an anomalous self-energy with 
 significant dynamical effects, hence a more correlated superconducting state.
-Our results show that the DMFT solution significantly departs from the MF picture in the strongly correlated intermediate-coupling regime, which is known to host the largest critical temperature \cite{Toschi2005NJP,Toschi2005PRB}.
+Our results show that the DMFT solution significantly departs from the BCS picture in the strongly correlated intermediate-coupling regime, which is known to host the largest critical temperature \cite{Toschi2005NJP,Toschi2005PRB}.
 % A different angle further illustrating the impact of dynamical fluctuations, is reported in panel (D). We show the evolution of the double occupancy $d = \langle n_\up n_\dw \rangle$ as a function of $U$ compared to the MF expression $d = 1/4 + \phi^2$. The DMFT 
 % results obtained with \NAME show a slight increase in $d$ over the MF prediction in the BCS regime. As $U$ increases and local correlation becomes sizable, the double occupancy drops below 
 % the MF result. 
@@ -675,7 +675,7 @@ One of the features introduced in \NAME is the possibility of treating local pho
 i.e. {\tt ed\_mode=superc}. In order to illustrate this property using a simple application, in this example we discuss the normal and
 superconductive solution of the pure Holstein model on the Bethe lattice within DMFT.
 We stress that  the code
-implementation for this specific case is essentially identical to the listing reported in the sections
+implementation for this specific case is essentially identical to the listings reported in the sections
 \ref{SecExamplesBetheDMFT} ({\tt ed\_mode=normal}) and
 \ref{SecExamplesAHM} ({\tt ed\_mode=superc}), provided electron-electron interaction is set to zero and phonon parameters are properly configured.  
 
@@ -896,8 +896,8 @@ low-energy properties of the many-body solution andcan be used to determine the 
       (B-D) Spectral functions of the two orbital electrons for three
       values of the interaction $U=2.00$ (red circle), $4.00$ (red
       square) and $6.00$ (red diamond) capturing, respectively, the
-      QSHI (B), the Excitonic Insulator (C) and the Mott Insulator
-      (D). 
+      QSHI \textbf{\textit{(B)}}, the Excitonic Insulator \textbf{\textit{(C)}} and the Mott Insulator
+      \textbf{\textit{(D)}}. 
     }
 \end{figure}
 
@@ -1128,7 +1128,8 @@ The corresponding Hamiltonian forms are:
 \end{align}
 which corresponds to $N_\mathrm{sym}=2$, with
 $\lambda_{1,p} \equiv \epsilon_p$ as the degenerate
-bath levels that are Zeeman split by $\lambda_{2,p} \equiv m_p$, respectively in the $S_z$ and $S_x$ bases.
+bath levels that are Zeeman split by $\lambda_{2,p} \equiv m_p$, respectively in the $S_z$ and $S_x$ bases 
+(see \secu{sSecBath}).
 
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
 program dmft_kane_mele_hubbard
@@ -1240,25 +1241,25 @@ the appropriate Néel symmetry:
 \end{lstlisting}
 
 After convergence is reached, we evaluate some quantities of interest, e.g. computing the 
-lattice kinetic energy (as implemented in the \texttt{DMFTtools} 
+lattice kinetic energy (as implemented in the {DMFTtools} 
 library). The potential energy, as well as the AFM order parameters
 and impurity observables are automatically computed by \NAME, 
 and saved to files with the appropriate inequivalent-impurity label.
 
 We evaluate the total energy of both the AFM$_\perp$
-and AFM$_\parallel$ calculations and compare them to establish which  is favored as the ground state of the system. In \figu{fig:KMenergy}(A)
+and AFM$_\parallel$ calculations and compare them to establish which  is favored as the ground state of the system. In \figu{fig:KMenergy}(a)
 we show results for the energy difference $E_\parallel-E_\perp$ across a wide range of $U/t$ and $\lambda_\mathrm{so}$ values. To assess the
 degree of accuracy of our total energy calculation, we report in
-\figu{fig:KMenergy}(B) a $\lambda_\mathrm{so}=0$ benchmark against
+\figu{fig:KMenergy}(b) a $\lambda_\mathrm{so}=0$ benchmark against
 Hartree-Fock (simple static mean-field, but inherently variational), 
 DMFT with NRG solver and lattice AFQMC data, as taken from 
 Ref.~\cite{Racz2020}. 
 
 \begin{figure}
-\hspace{1cm} (A) \hspace{7.25cm} (B)\\
+\hspace{1cm} (a) \hspace{6.5cm} (b)\\
     \includegraphics[width=0.47\linewidth,trim={0 0 0 5mm},clip]{figures/KMH_energy.pdf}\hfill
     \includegraphics[width=0.45\linewidth]{figures/benchEnergy_honey.pdf}\\
-    \caption{In panel (A) we report the total energy difference between 
+    \caption{In panel (a) we report the total energy difference between 
     the in-plane and the
     off-plane AFM solutions found with \NAME at $T=0$. Negative values
     signal a ground state with in-plane magnetization. The plateau at zero
@@ -1284,28 +1285,28 @@ Ref.~\cite{Racz2020}.
     \includegraphics[width=0.33\linewidth]{figures/3NflakeU6_x.pdf} \vspace{3mm}
     \caption{Kane-Mele-Hubbard model at the nanoscale.
     In (a) the local in-plane
-    magnetization $n_{i,\rightarrow}-n_{i,\leftarrow}$. In
+    magnetization $\ibra S_x \iket = \ibra n_{i,\rightarrow}-n_{i,\leftarrow}\iket$. In
     (b) the local correlation as measured by the mutual 
     information between local in-plane spin eigenstates
-    $I(\rightarrow:\leftarrow)$ \cite{BellomiaPhD}. Both the
-    (a)-(b) panels mark the edge and "bulk" sites in lighter 
-    and darker colors, respectively.
+    $I(\rightarrow:\leftarrow)$ \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr}. 
+    Both the (a) and (b) panels mark the edge and "bulk" 
+    sites in lighter and darker colors, respectively.
     In (c) and (d) a visual representation of the given 
     nano-system at different values of $U/t$, as marked 
     respectively by the orange and red vertical lines 
     in panels (a) and (b). The area of the 
     circles is proportional to $I(\rightarrow:\leftarrow)$, 
-    the length of the arrows to the local magnetization.
+    the length of the arrows to $\ibra S_x \iket$.
     All data are taken at $\lambda_\mathrm{so}=0.3t$ and $T=0$.}
     \label{fig:KMflake}
 \end{figure}
 
 
-\subsubsection{Kane-Mele Nanoflakes}
+\subsubsection{Kane-Mele-Hubbard model at the nanoscale}
 The capabilities of the EDIpack2ineq layer go well beyond the
 simple case of a two-site unit cell. Bulding on the previous example, we can readily adapt the calculation to deal with a nanoscopic~\cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
 \cite{Valli2016PRB,Valli2018NL}.
-For we consider a 
+We consider a 
 $N_\mathrm{ineq}\times N_\mathrm{ineq}$ local Hamiltonian 
 $H_\mathrm{loc}$ with open boundary conditions, and implementing
 the self-consistent equations with a trivial single momentum 
@@ -1320,7 +1321,7 @@ described in \equ{eq:afmx_dmft_ansatz}, for the in-plane
 antiferromagnetic state.
 Panel (a) shows the interaction dependence of the local magnetization,
 computed from the impurity ground state as  
-$ \ibra S_x \iket = \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket$,
+$ \ibra S_x \iket = \ibra c^\dagger_{i,\up} c_{i,\dw} + c^\dagger_{i,\dw} c_{i,\up} \iket \equiv \ibra n_{i,\rightarrow} \iket - \ibra n_{i,\leftarrow} \iket$,
 so that we can define the $S_x$ spin occupation numbers as
 \begin{equation*}
     \ibra n_{i,\rightarrow} \iket \equiv \frac{\ibra n_{i,\up} + n_{i,\dw} \iket +
@@ -1334,7 +1335,7 @@ Having a direct expression for $\ibra n_{i,\rightarrow} \iket$ and $\ibra n_{i,\
 we can verify that the impurity reduced density matrix, computed by 
 tracing the bath states in the \texttt{ed\_mode=nonsu2} representation 
 (see \ref{sSecRDM}), once diagonalized, takes the familiar form
-\cite{XiDai2013,WalshLetter2019,BellomiaPhD,BellomiaKMH,Bellomia_intracorr} 
+\cite{Zanardi2002,XiDai2013,WalshLetter2019} 
 \begin{equation}
     \rho^\mathrm{imp} = 
      \begin{pmatrix}
@@ -1344,9 +1345,10 @@ tracing the bath states in the \texttt{ed\_mode=nonsu2} representation
                     0       &       0   &       0          &    \left\ibra n_{i,\rightarrow} n_{i,\leftarrow}\right\iket
         \end{pmatrix} 
 \end{equation}
-in the basis of the {\it natural} spin-orbitals, whose occupation numbers
+in the basis of the {\it natural} spin-orbitals
+\cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr}, 
+whose occupation numbers
 are given by $n_{i,\rightarrow}$ and $n_{i,\leftarrow}$.
-
 As  discussed in \cite{BellomiaPhD,BellomiaKMH,Bellomia_intracorr},
 by defining the spin traces of $\rho^\mathrm{imp}$, as
 \begin{equation}
@@ -1370,8 +1372,7 @@ interaction dependency of $I(\rightarrow:\leftarrow)$, as a direct
 observation of the enhanced local correlations at the boundary of the
 finite system. While it is usually assumed that edge sites must be
 more correlated than internal ("bulk") sites, based on the reduced
-lattice coordination, the inter-spin mutual information beautifully
-highlights in a quantitative fashion the phenomenon: the edge correlations,
+lattice coordination, the inter-spin mutual information quantifies directly the phenomenon: the edge correlations,
 marked in lighter green, are decidedly higher as long as the system 
 remains in a weakly magnetized regime. When the local magnetization
 exceeds half of its saturation value, all local correlations start to decrease,

@@ -636,7 +636,7 @@ for each value of {\tt ed\_mode}.
 
 
 \begin{lstlisting}[style=fstyle,numbers=none]
-!sparse row: contains bath state values for each impurity key 
+!Sparse row: contains bath state values for each impurity key 
 type sparse_row
    integer                               :: size          !current size
    integer                               :: bath_state_min!smallest bath state
@@ -644,10 +644,10 @@ type sparse_row
    integer,dimension(:),allocatable      :: bath_state    !Values:rank-1 bath states
    integer,dimension(:),allocatable      :: sector_indx   !bath state sector indices
 end type sparse_row
-!Sparse Map: array of sparse rows 
+!Sparse map: array of sparse rows 
 type sparse_map
-   type(sparse_row),dimension(:),pointer :: imp_state     !Key: impurity states
-   integer                               :: Nimp_state    !Key upper limit 
+   type(sparse_row),dimension(:),pointer :: imp_state     !key: impurity states
+   integer                               :: Nimp_state    !key upper limit 
    logical                               :: status=.false.!allocation status
 end type sparse_map
 \end{lstlisting}
@@ -1018,8 +1018,8 @@ dependence on the internal spin and orbital indices: $V^p_{\a\b\s\s'}
 = V^p_{\a\s}\delta_{\a\b}\delta_{\s\s'}$. 
 %
 The number of independent bath parameters to optimize is either 
-$N_\mathrm{params} = (N_\mathrm{sym}+1)N_\mathrm{bath}$ for {\tt bath\_type}={\bf replica} or 
-$N_\mathrm{params} = (N_\mathrm{sym}+N_\a N_\s)N_\mathrm{bath}$ for {\tt bath\_type}={\bf general}.
+$N_\mathrm{param} = (N_\mathrm{sym}+1)N_\mathrm{bath}$ for {\tt bath\_type}={\bf replica} or 
+$N_\mathrm{param} = (N_\mathrm{sym}+N_\a N_\s)N_\mathrm{bath}$ for {\tt bath\_type}={\bf general}.
 
 We summarize the total number $N_s$ of electronic levels of the quantum impurity system according to the value of $N_\a$, $N_\mathrm{bath}$ and the bath topology in the following table:
 \begin{center}
@@ -1054,7 +1054,7 @@ symmetry and particle-hole symmetry, available in
 The critical functionality here is the 
 determination of the total bath array dimension, implemented in 
 {\tt ED\_BATH\_DIM}. The function {\tt ed\_get\_bath\_dimension} 
-calculates the required dimension $N_\mathrm{params}$ for user-allocated bath 
+calculates the required dimension $N_\mathrm{param}$ for user-allocated bath 
 arrays, ensuring they contain exactly the necessary number of 
 parameters. 
 % Any following call
@@ -1062,29 +1062,29 @@ parameters.
 % dimensionality using {\tt check\_bath\_dimension} to prevent 
 % allocation errors.
 
-The following table summarizes the total number of parameters $N_\mathrm{params}$, as returned by the function {\tt ed\_get\_bath\_dimension} and required to describe the bath according to the values of {\tt ed\_mode} and {\tt bath\_type}:
+The following table summarizes the total number of parameters $N_\mathrm{param}$, as returned by the function {\tt ed\_get\_bath\_dimension} and required to describe the bath according to the values of {\tt ed\_mode} and {\tt bath\_type}:
 
 \begin{center}
 \begin{tabular}{ |c||c|c|c|c| } 
  \hline     
- $N_\mathrm{params}$ & {\bf normal} & {\bf hybrid} & {\bf replica} & {\bf general}\\
+ $N_\mathrm{param}$ & {\bf normal} & {\bf hybrid} & {\bf replica} & {\bf general}\\
  \hline 
  \hline    
  {\bf normal} & 
  $2N_\a N_\mathrm{bath}$ & 
  $(N_\a+1)N_\mathrm{bath}$ & 
  $(N_\mathrm{sym}+1)N_\mathrm{bath}$ & 
- $(N_\mathrm{sym}+N_\a)N_\mathrm{bath}$\\
+ $(N_\mathrm{sym}+N_\a N_\sigma)N_\mathrm{bath}$\\
  \hline
    {\bf superc} & $3N_\a N_\mathrm{bath}$ & 
  $(N_\a+2)N_\mathrm{bath}$ & 
  $(N_\mathrm{sym}+1)N_\mathrm{bath}$ & 
- $(N_\mathrm{sym}+N_\a)N_\mathrm{bath}$\\
+ $(N_\mathrm{sym}+N_\a N_\sigma)N_\mathrm{bath}$\\
  \hline
    {\bf nonsu2} & $3N_\a N_\mathrm{bath}$ & 
  $(2N_\a+1)N_\mathrm{bath}$ & 
  $(N_\mathrm{sym}+1)N_\mathrm{bath}$ & 
- $(N_\mathrm{sym}+N_\a)N_\mathrm{bath}$\\
+ $(N_\mathrm{sym}+N_\a N_\sigma)N_\mathrm{bath}$\\
  \hline
 \end{tabular}
 \end{center}
