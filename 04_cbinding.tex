@@ -11,7 +11,7 @@ Modern Fortran, which is the language of choice for \NAME, since many
 years supports the standardized generation of procedures and
 variables that are interoperable with C.
 Here we describe the implementation of an interoperability layer aiming at developing APIs for other languages as well as 
-integrating \NAME in complex scientific frameworks, e.g. TRIQS~\cite{Parcollet2015CPC} or W2Dynamics~\cite{Wallerberger2019CPC}. 
+integrating \NAME in complex scientific frameworks, e.g. TRIQS \cite{Parcollet2015CPC} or W2Dynamics \cite{Wallerberger2019CPC}. 
 
 \subsection{C bindings}\label{sSecInteropCbindings}
 The interoperability with C language is provided by the
@@ -284,7 +284,7 @@ a pair of crucial functions in this group.
   with a discrete set of levels. The fit parameters are the bath
   parameters contained in the user-accessible array. Depending on the
   type of system we are considering (normal, superconductive,
-  non-SU(2) symmteric) a different set of inputs has to be passed. The specifics
+  non-SU(2) symmetric) a different set of inputs has to be passed. The specifics
   of the numerical fitting routines are controlled in the input file.
   \end{itemize}
 
@@ -307,7 +307,7 @@ provides a general interface, which encompasses all dimension of the
 input array there including inequivalent impurities support.
 For example, the function {\tt get\_sigma} returns the self-energy
 function array (evaluated on-the-fly) for a specified supported shape,
-normal or anomlous type and on a specific axis or frequency domain. 
+normal or anomalous type and on a specific axis or frequency domain. 
     
 
 \paragraph{{\bf Auxiliary functions}.}
@@ -327,7 +327,7 @@ and {\tt get\_bath\_type}, which works similarly for {\tt bath\_type}.
 
 
 \subsection{EDIpack2TRIQS: the TRIQS interface}\label{sSecInteropTRIQS}
-A thin compatibility layer between \NAME and TRIQS~\cite{Parcollet2015CPC}, i.e. Toolbox for Research on
+A thin compatibility layer between \NAME and TRIQS \cite{Parcollet2015CPC}, i.e. Toolbox for Research on
 Interacting Quantum Systems,  called EDIpack2TRIQS is available as a stand-alone project. This is a pure Python package
 built upon EDIpack2py (see \secu{sSecInteropEDIpy}) that provides a
 limited object-oriented interface to the most important features of \NAME.
@@ -335,7 +335,7 @@ limited object-oriented interface to the most important features of \NAME.
 EDIpack2TRIQS strives to offer seamless interoperability with program tools
 based on TRIQS by adopting data types, conventions and usage patterns
 common to other TRIQS-based impurity solvers, such as
-TRIQS/CTHYB~\cite{Seth2016CPC}. It also enables execution of \NAME calculations
+TRIQS/CTHYB \cite{Seth2016CPC}. It also enables execution of \NAME calculations
 in the MPI parallel mode with no extra effort from the user.
 Detailed documentation of the package can be 
 found online at \href{https://krivenko.github.io/edipack2triqs/}
@@ -474,7 +474,7 @@ components of the quantities in question.
 
 
 \subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
-\NAME is supported as alternative impurity solver in the W2Dynamics DMFT package~\cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation (see \secu{sSecInteropEDIpy}), which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameters.
+\NAME is supported as alternative impurity solver in the W2Dynamics DMFT package \cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation (see \secu{sSecInteropEDIpy}), which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameters.
 The  behavior of W2Dynamics is controlled by means of an input file, by default called
 {\tt Parameters.in}.
 
@@ -483,7 +483,7 @@ In line to the current design of W2Dynamics, the \NAME solver is configured and 
 
 For most of the \NAME input variables, W2Dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt [EDIPACK]} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath elements {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
 %
-A second set of input variables, including physical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also~\cite{Wallerberger2019CPC}
+A second set of input variables, including physical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also \cite{Wallerberger2019CPC}
 for further details.
 
 %All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.

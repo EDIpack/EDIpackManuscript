@@ -2,48 +2,54 @@
 \begin{document}
 
 
-
-
 \section{Conclusions}
-{\color{red} Tentative conclusions}
 We have presented \NAME{}, a versatile, high-performance solver for
 generic quantum impurity problems. Leveraging on the massively
-parallel algorithms introduced by its predecessor, this version of
+parallel algorithms introduced by its predecessor \cite{Amaricci2022CPC}, this version of
 the library features new capabilities and symmetries within a unified
-framework, providing reliable evaluations of the dynamical correlation
+framework, providing for instance reliable evaluations of the dynamical correlation
 functions of an arbitrary complex frequency.
-This makes it particularly well-suited for capturing the sharp
+This makes it particularly well-suited for capturing the
 low-energy excitations and complex spectral features of strongly
-correlated systems. We have shown that this new version enables the evaluation of impurity
-reduced density matrices directly from Fock space quantities and thus unlock 
-quantum information analyses of correlated systems.  
+correlated systems.
+We have shown that this new version enables the evaluation of impurity
+reduced density matrices directly from Fock space quantities and thus unlocks 
+quantum information analyses of correlated systems, an increasingly
+essential tool to address emergent phases of quantum materials.
 
 A central feature of \NAME is its strong focus on interoperability,
 achieved through modern Fortran constructs, C/C++-bindings, and
 comprehensive APIs for Python (EDIpack2py). 
 These interfaces enable seamless integration with broader
-computational frameworks like TRIQS and W2Dynamics, expanding the
+computational frameworks, like TRIQS \cite{Parcollet2015CPC} and
+W2Dynamics \cite{Wallerberger2019CPC}, expanding the
 functionality of these platforms and providing a robust foundation for
 reproducible research.
 
 We thoroughly discussed the implementation of the \NAME library, the
 most important algorithms and classes. We presented in
-detail the third-party interfaces which extend exact diagonalization
+detail the third-party interfaces which extend ED
 capabilities beyond the realm of the library itself.   
 Finally, we showcased the use of the \NAME software in different
 contexts via elaborated examples, which can serve as a reference for potential users. 
 
 The modular and extensible design of \NAME provides a
-natural foundation for future extensions, for instance to cluster-DMFT where the
+natural foundation for future extensions.
+For instance to
+cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} where the
 impurity problem is generalized to include clusters of interacting
 sites. This approach would enable the treatment of spatial
 correlations beyond the single-site approximation, capturing effects
 such as d-wave pairing in high-temperature superconductors, charge
 order, and complex spin textures in strongly correlated systems.
+A different outlook is the development of an integration layer with other
+quantum embedding methods, such ghost Gutzwiller \cite{Lanata2015PRX},
+which heavily rely on solving effective impurity problems.    
 We anticipate that \NAME will become a valuable tool for the
 computational condensed matter community, supporting a wide range of
 studies on strongly correlated materials and providing a reliable
 reference platform for quantum impurity solvers.
+
 
 
 
@@ -132,7 +138,7 @@ e compila il file {\tt hm\_bethe.mc}, per esempio.}
 
 \speak{\MakeUppercase{V}} {\it Basta così! Mi seguano nel programma di test!}
 
-\speak{\MakeUppercase{P}} {\it No, no, no, attenzione! Il loop DMFT completo \`e supportato secondo la Ref.~\cite{Georges1996RMP}, abbia pazienza,
+\speak{\MakeUppercase{P}} {\it No, no, no, attenzione! Il loop DMFT completo \`e supportato secondo la Ref. \cite{Georges1996RMP}, abbia pazienza,
 senn\`o.... Plotta i dati, anche un pochino di Green's function e
 Self-energy in prefettura.}
 

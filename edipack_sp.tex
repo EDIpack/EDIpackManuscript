@@ -67,8 +67,8 @@
 \definecolor{comment-color}{rgb}{0.8,0.1,0.1}
 \definecolor{keyword-color}{rgb}{0.3,0.3,1}
 \definecolor{string-color}{rgb}{0.58, 0, 0.82}
-
-
+\definecolor{bg-offwhite}{RGB}{255,255,242}%  \color{xkcdOffWhite}--
+\definecolor{bg-gray}{gray}{0.96}
 
 %LISTING PACKAGE AND CONFIG:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,7 @@
   basicstyle=\ttfamily\linespread{1.15}\footnotesize,
   stringstyle=\color{string-color},
   keywordstyle=\color{keyword-color}\footnotesize,
-  commentstyle=\color{comment-color}\itshape\linespread{2}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
   morecomment=[l]{!\ },
    fontadjust=true,
   mathescape,
@@ -115,7 +115,7 @@
   frame=none,
   xleftmargin=1pt,
   xrightmargin=1pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-offwhite}, %\color{xkcdOffWhite},
   numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -137,7 +137,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-offwhite}, %\color{xkcdOffWhite},
   frame=none
 }
 
@@ -163,7 +163,7 @@
   % frame=single,
   % xleftmargin=3.4pt,
   % xrightmargin=3.4pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-gray}, %\color{xkcdOffWhite},
   numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
 }
 
@@ -187,7 +187,7 @@
   columns=flexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-gray}, %\color{xkcdOffWhite},
   frame=none
 }
 
@@ -227,7 +227,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-offwhite}, %\color{xkcdOffWhite},
   frame=none
 }
 
@@ -263,7 +263,7 @@
   columns=fullflexible,
   xleftmargin=3.4pt,
   xrightmargin=3.4pt,
-  backgroundcolor=\color{xkcdOffWhite},
+  backgroundcolor=\color{bg-gray}, %\color{xkcdOffWhite},
   frame=none
 }
 

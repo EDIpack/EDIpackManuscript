@@ -46,7 +46,7 @@ set of two-body operators:
 \hat{H}^\mathrm{int}_\mathrm{imp} = \frac{1}{2} \sum_{ijkl} d^{\dagger}_{i}d^{\dagger}_{j}U_{ijkl}d_{l}d_{k}.\label{HintUmat}
 \end{equation}
 However, we typically 
-adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interaction~\cite{Georges2013ARCMP}:
+adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interaction \cite{Georges2013ARCMP}:
 \begin{equation}\label{Hint}
   \begin{split}
     \hat{H}^\mathrm{int}_\mathrm{imp} &=U\sum_{\a}n_{\a\uparrow}n_{\a\downarrow}+U'\sum_{\a\neq \b}n_{\a\uparrow}n_{\b\downarrow}+(U'-J)\sum_{\a<\b,\sigma}n_{\a\sigma}n_{\b\sigma}\\
@@ -59,13 +59,13 @@ adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interact
 where we introduced the occupation number operator $n_{\alpha\sigma}=d^\dagger_{\alpha\sigma}d_{\alpha\sigma}$.
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
-$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Werner2008PRL,Werner2009PRB,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
+$U'$ the inter-orbital one and $J$ the Hund's coupling \cite{Werner2008PRL,Werner2009PRB,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
 The last two terms are, respectively, the spin-exchange ($J_X$) and
 the pair-hopping ($J_P$).
 In the three-orbital case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
 U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
-$J_X=J_P=J$~\cite{Georges2013ARCMP}. Different choices, preserving part
-of the combined symmetry group, can be made for other numbers of orbitals~\cite{Georges2013ARCMP}.
+$J_X=J_P=J$ \cite{Georges2013ARCMP}. Different choices, preserving part
+of the combined symmetry group, can be made for other numbers of orbitals \cite{Georges2013ARCMP}.
 
 
 
@@ -74,7 +74,7 @@ of the combined symmetry group, can be made for other numbers of orbitals~\cite{
 
 
 
-\subsubsection{Bath and Hybrization}
+\subsubsection{Bath and Hybridization}
 The coupling between the impurity and the bath is described by
 \begin{equation}\label{Hbath}
   \begin{split}
@@ -108,9 +108,9 @@ where $m=1,\dots,M$ indexes the number of local phonon modes, and $b_m$
 ($b_m^\dagger$) are the destruction (creation) operators for a phonon with
 frequency $\omega_{0m}$. Each phonon mode is coupled to a bilinear fermionic operator $\hat{O}_m= \sum_{\alpha \beta, \sigma }g^{m}_{\alpha \beta} d^\dagger_{\alpha, \sigma} d_{\beta, \sigma}$ on the impurity, while $A_m$ is a constant acting as a displacement field.  %Indeed, if the expectation value of the bosonic displacement operator $\langle b_q^\dagger + b_q\rangle$ is non-zero, a change of variables from the bosons $b^{(\dagger)}_q$ leads to new effective bosons $\tilde{b}^{(\dagger)}_q = b^{(\dagger)}_q- A_q$ for which the displacement operator has a smaller expectation value (ideally zero if we can impose $A_m = \langle \hat{O}_m\rangle$). 
 %
-For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_{1d} = g_1 \sum_{\sigma} d^{\dagger}_{1\sigma}d_{1\sigma}$, which defines the Holstein model~\cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes~\cite{Capone2010AICMP}, for which $\hat{O}_2 = g_2(n_{1d} - n_{2d})$~\cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ H.c.)$. 
+For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_{1d} = g_1 \sum_{\sigma} d^{\dagger}_{1\sigma}d_{1\sigma}$, which defines the Holstein model \cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes \cite{Capone2010AICMP}, for which $\hat{O}_2 = g_2(n_{1d} - n_{2d})$ \cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ H.c.)$. 
 
-For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling~\cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction~\cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRL,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRBa,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime~\cite{Capone2003PRL}.
+For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling \cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction \cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRL,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRBa,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime \cite{Capone2003PRL}.
 Choosing properly the shift $A_m$, one can reduce the number of excited phonons in the ground state and consequently the required cutoff. 
 Although feasible, dealing with more than one phonon mode quickly becomes computationally very demanding, thus we will consider only one mode and we drop the $m$ index in the rest of this work.
 
@@ -314,7 +314,7 @@ Optionally, the symmetry
 can be extended to act independently on each orbital and spin
 component, i.e.~$\vec{N_\s}=[N^1_\s,\dots,N^{N_\a}_\s]$. This
 specific case is discussed extensively
-Ref.~\cite{Amaricci2022CPC}, so we will cover it no further here recalling that any consideration concerning the {\tt normal} case extends directly to this case as well.
+Ref. \cite{Amaricci2022CPC}, so we will cover it no further here recalling that any consideration concerning the {\tt normal} case extends directly to this case as well.
 
 %
 
@@ -326,8 +326,8 @@ intra- and inter-orbital pairing.
 \item{} The {\bf nonsu2} case conserves the total
 charge $N$ while allowing the spin symmetry group to be broken.
 This scenario captures effects such as local spin-orbit coupling
-$\vec{L}\cdot\vec{S}$, in-plane spin ordering~\cite{BellomiaKMH} or
-in-plane spin-triplet exciton condensation~\cite{Amaricci2023PRB,Blason2020PRB}.  
+$\vec{L}\cdot\vec{S}$, in-plane spin ordering \cite{BellomiaKMH} or
+in-plane spin-triplet exciton condensation \cite{Amaricci2023PRB,Blason2020PRB}.  
 \end{itemize}
 
 
@@ -383,7 +383,7 @@ D_{\SS_\dw}$.
 The maps $\MM_\sigma$ then connect these basis states to Fock states
 $\ket{I_e}=\ket{I_\up}\ket{I_\dw}$, labeled by two integers
 $[I_\up,I_\dw]$ as $I_e=I_\up +   I_\dw 2^{N_\mathrm{s}}$.
-For a more detailed discussion on the structure of the Fock basis in this case, see Ref.~\cite{Amaricci2022CPC}. 
+For a more detailed discussion on the structure of the Fock basis in this case, see Ref. \cite{Amaricci2022CPC}. 
 
 The presence of a symmetry reduces the electronic Hamiltonian matrix to
 a block-diagonal form, where each block labeled by $\vec{Q}$ has dimension
@@ -391,14 +391,14 @@ $D_{\SS_{\vec{Q}}}$. The sector Hamiltonian matrix $H_\SS$ is represented in the
 basis $\ket{i}\in\SS_{\vec{Q}}$ as a sparse matrix.
 In the {\bf normal} case this block structure is particularly
 symmetric due to the factorized nature of the sectors as discussed
-above, see also Ref.~\cite{Amaricci2022CPC}.
+above, see also Ref. \cite{Amaricci2022CPC}.
 The analysis of the spectrum is then reduced to inspecting the
 Hamiltonian within each symmetry sector, or to a subset thereof if
 additional constraints are present.
 
 
 
-% method~\cite{Lanczos1950JRNBSB,Lin1993CIP,Lehoucq1998,Maschhoff1996}
+% method \cite{Lanczos1950JRNBSB,Lin1993CIP,Lehoucq1998,Maschhoff1996}
 
 In \NAME, the implementation of symmetry sectors is managed through the
 {\tt sector} object, which is defined in {\tt
@@ -833,7 +833,6 @@ $$
 where $w_{mn}(\AA)$ is the weight determined by the amplitude of operator $\AA$ between the
 $m^{\rm th}$ eigenstate and the $n^{\rm th}$ Krylov basis vector and
 $dE_{mn}=E_m-E_n$ is the corresponding excitation energy.
-% \fixme{How does the operator $A$ enter this expression?}
 
 The module {\tt ED\_GFMATRIX} implements the class {\tt gfmatrix}, 
 which provides an efficient, multi-layer, data structure for storing 
@@ -1090,7 +1089,7 @@ The following table summarizes the total number of parameters $N_\mathrm{param}$
 \end{center}
 
 \paragraph{Bath replica/general.}
-The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}/{\tt Hge\-ne\-ral} for the {\bf replica}/{\bf general} bath parametrizations. In  addition to standard object construction, destruction, reading and saving, this module provides the setup for either the matrix basis  
+The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}/{\tt Hge\-ne\-ral} for the {\bf replica}/{\bf general} bath parametrization. In  addition to standard object construction, destruction, reading and saving, this module provides the setup for either the matrix basis  
 $\{ \Gamma^\nu \}_{\nu=1,\dots,N_\mathrm{sym}}$ and the initial variational parameters $\vec{\lambda}$ through the function  {\tt set\_Hreplica}/{\tt set\_Hge\-ne\-ral}. 
 %
 The bath Hamiltonian is constructed with the function 
@@ -1162,7 +1161,7 @@ H_\SS \ket{v} \to \ket{w}\qquad \ket{v},\ket{w}\in \SS_{\vec{Q}}.
 \end{equation}
 This operation amounts to more than 80\% of the overall
 computational effort, making its optimization a critical aspect of
-high-performance diagonalization algorithms. In Ref.~\cite{Amaricci2022CPC} we discussed in greater details the massively parallel strategies  employed in \NAME to optimize the MVP operations and presented various benchmarks of the parallel scaling. 
+high-performance diagonalization algorithms. In Ref. \cite{Amaricci2022CPC} we discussed in greater details the massively parallel strategies  employed in \NAME to optimize the MVP operations and presented various benchmarks of the parallel scaling. 
 Here, we provide a brief outline of the main ideas following the notation introduced
 in Ref.~\onlinecite{Amaricci2022CPC}, and focusing on the impact of the choice of {\tt ed\_mode}. 
 For sake of clarity, here we focus on the purely electronic case, i.e. neglecting the electron-phonon part. The product structure of the electron and phonon Fock spaces ensure that the following approach applies with few algorithmic modifications in presence of electron-phonon coupling.  
@@ -1408,7 +1407,7 @@ spin-singlet exciton \cite{Giuli2023PRB}, and $i=x,y,z$  correspond to the spin-
 
 
 \paragraph{{\bf superc}.}
-In the supercondutive case, the orbital-dependent Nambu $s$-wave
+In the superconductive case, the orbital-dependent Nambu $s$-wave
 Green's function has the form:
 \begin{equation}
   \label{GFnambu}
@@ -1523,7 +1522,7 @@ of the system stored in the {\tt state\_list}.
 The latest version of \NAME introduces the calculation of the 
 impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), 
 extending the algorithm initially proposed in 
-Ref.~\cite{BellomiaPhD,Bellomia2024PRB}, to support the analysis of entanglement 
+Ref. \cite{BellomiaPhD,Bellomia2024PRB}, to support the analysis of entanglement 
 properties of quantum impurities for any value of {\tt ed\_mode}.
 
 For sake of simplicity, this section focuses on the zero-temperature limit, 
@@ -1897,12 +1896,12 @@ function
 \end{equation}
 where $\mu$ is the chemical potential and $H^\mathrm{loc}$ is the 
 local non-interacting Hamiltonian. The Weiss field is obtained from the DMFT 
-self-consistency equation~\cite{Georges1996RMP}, while the bath 
+self-consistency equation \cite{Georges1996RMP}, while the bath 
 discretization requires a careful fitting of this continuous function 
 using a finite set of bath parameters (see \secu{sSecBath}).
 
 Several algorithms have been proposed for this optimization 
-step~\cite{Garcia2004PRL,Taranto2012PRB,Mejuto-Zaera2020PRB}, each with strengths suited 
+step \cite{Garcia2004PRL,Taranto2012PRB,Mejuto-Zaera2020PRB}, each with strengths suited 
 to different physical contexts. To maintain flexibility in \NAME, 
 we keep the optimization part independent 
 from the core impurity solver. However, we also include a fully 
@@ -1922,7 +1921,7 @@ $\Delta_{\a\b\s\s'}$ are the corresponding quantities for the quantum
 impurity model, see \secu{sSecFunc}.
 
 While different optimization methods have been developed for 
-truncated algorithms, e.g. sCI~\cite{Mejuto-Zaera2020PRB} or DMRG~\cite{Bauernfeind2017PRX}, 
+truncated algorithms, e.g. sCI \cite{Mejuto-Zaera2020PRB} or DMRG \cite{Bauernfeind2017PRX}, 
 which handle systems with a 
 larger number of bath levels, the CG minimization approach has proven 
 both efficient and flexible for the small to moderate bath sizes 
@@ -1940,7 +1939,7 @@ tunable parameters:
 \begin{itemize}
 \item \texttt{cg\_method=0,1} - Chooses the CG algorithm: 
 \texttt{0} for a Fletcher-Reeves-Polak-Ribiere variant adapted from 
-Numerical Recipes~\cite{NumRec77}, and \texttt{1} for the original 
+Numerical Recipes \cite{NumRec77}, and \texttt{1} for the original 
 algorithm described in Ref. \cite{Georges1996RMP}, commonly used 
 in the DMFT community.
 \item \texttt{cg\_grad=0,1} - Sets the gradient calculation method: 
@@ -2036,7 +2035,7 @@ independent quantum impurities. This situation frequently arises in
 DMFT when modeling lattices with complex unit cells containing 
 inequivalent atomic sites, or in supercell calculations where 
 translational symmetry is broken, as in heterostructures, disordered 
-systems, or multiorbital setups. 
+systems, or multi-orbital setups. 
 
 Given that \NAME allows for only a single instance of the solver at a 
 time, a dedicated extension is required to handle these more complex 

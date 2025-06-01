@@ -11,14 +11,14 @@ Thus, in the implementations using Fortran, Python or other \NAME interfaces to 
 In our examples based on the Fortran APIs we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors) to perform specific tasks, including the evaluation of the local Green's function, the implementation of the self-consistency, the construction of the tight-binding model or the calculation of the kinetic energy. 
 Where appropriate, we include comments that reference these external procedures.
 On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which handles all these tasks seamlessly.
-Similarly, the TRIQS library offers an extensive framework for the manipulation of Green’s functions and related quantities~\cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
+Similarly, the TRIQS library offers an extensive framework for the manipulation of Green’s functions and related quantities \cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
 \subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
 The test bed for any DMFT implementation is conventionally considered 
 the description of the Mott or metal-to-insulator transition (MIT) 
 in a Bethe lattice, i.e., a Cayley tree with coordination number 
-$z\to\infty$~\cite{Zhang1993PRLb,Caffarel1994PRL,Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
+$z\to\infty$ \cite{Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
 Here, we present a guided implementation of the DMFT 
 solution for the Bethe lattice at $T=0$ using \NAME as impurity
 solver.
@@ -35,7 +35,7 @@ $\langle ij \rangle$.
 We consider the system defined on a Bethe lattice with density of states
 $\rho(\e)=\frac{2}{\pi D^2}\sqrt{D^2-\e^2}$,
 where $D=2t$ is the half-bandwidth.
-Within DMFT framework~\cite{Georges1996RMP}, this lattice model is mapped onto a quantum impurity problem with an effective electronic bath that must be determined self-consistently.
+Within DMFT framework \cite{Georges1996RMP}, this lattice model is mapped onto a quantum impurity problem with an effective electronic bath that must be determined self-consistently.
 
 Below, we present the key components of a basic DMFT implementation 
 using \NAME for the Bethe lattice, employing either the Fortran or 
@@ -170,7 +170,7 @@ The iterative algorithm to solve the DMFT problem proceeds as follows:
 $$
 G_\mathrm{loc}(i\omega) = \int_{-D}^D \frac{\rho(\e)}{\zeta -\e}d\e
 $$ 
-with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$. Note that this step can be performed analytically for the Bethe lattice~\cite{Georges1996RMP} or completely substituted by retrieving the impurity Green's function $G_\mathrm{imp}$ via the {\tt ed\_get\_gimp} function.
+with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$. Note that this step can be performed analytically for the Bethe lattice \cite{Georges1996RMP} or completely substituted by retrieving the impurity Green's function $G_\mathrm{imp}$ via the {\tt ed\_get\_gimp} function.
   
 \item[{\tiny {\it User}}] Update the Weiss field via the {\bf self-consistency}
   relation: $\GG^{-1}_0(i\omega) = G^{-1}_\mathrm{loc}(i\omega) +
@@ -188,7 +188,7 @@ Given the
 critical importance of this optimization, \NAME provides access to 
 well-tested functions, ensuring stability and reproducibility of 
 results. Alternative optimization methods can also be employed as 
-needed~\cite{Mejuto-Zaera2020PRB,Huang2023PRB,Nakatsukasa2018SJOSC}. 
+needed \cite{Mejuto-Zaera2020PRB,Huang2023PRB,Nakatsukasa2018SJOSC}. 
 An example of implementation is provided in the following listings.
 
 \begin{center} 
@@ -348,7 +348,7 @@ $-{\rm Im}\Sigma(\omega\to0) \to\infty$.
 To demonstrate the usage of the W2Dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using W2Dynamics. 
 In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in W2Dynamics against the \NAME solver at finite temperature.  
 
-Unlike \NAME, which provides only the impurity solver and bath optimization procedures and requires the user to implement the DMFT algorithm themselves (potentially using various methods), W2Dynamics adopts a fundamentally different approach: a single Python script, {\tt DMFT.py}, handles the entire DMFT calculation, leveraging dedicated classes that implement the generic self-consistency. The W2Dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of W2Dynamics can be found in Ref.~\cite{Wallerberger2019CPC}           
+Unlike \NAME, which provides only the impurity solver and bath optimization procedures and requires the user to implement the DMFT algorithm themselves (potentially using various methods), W2Dynamics adopts a fundamentally different approach: a single Python script, {\tt DMFT.py}, handles the entire DMFT calculation, leveraging dedicated classes that implement the generic self-consistency. The W2Dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of W2Dynamics can be found in Ref. \cite{Wallerberger2019CPC}           
 
 Another important difference concerns the initial point of the iterative DMFT solution algorithm: while \NAME starts from a given discrete bath, W2Dynamics is initialized with a zero self-energy function or alternatively reads this quantity from a converged solution file. Thus, when using the \NAME interface in W2Dynamics, the initial Weiss field is determined using self-consistency and  an initial discrete bath is obtained through the \NAME bath optimization procedure. 
 
@@ -403,7 +403,7 @@ Assuming the parameters are listed in a plain text file called
 mpiexec -n NC /path/to/w2dynamics/DMFT.py bethe_dmft.in
 \end{lstlisting}
 
-The results are collected into an HDF5~\cite{The_HDF_Group_Hierarchical_Data_Format} archive in the usual W2Dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with W2Dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
+The results are collected into an HDF5 \cite{The_HDF_Group_Hierarchical_Data_Format} archive in the usual W2Dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with W2Dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
 \begin{lstlisting}[style=mybash,numbers=none]
 /path/to/w2dynamics/hgrep latest siw-full -1
 \end{lstlisting}
@@ -441,7 +441,7 @@ The results obtained from the three calculations are in excellent agreement one 
 
 \subsection{Attractive Hubbard model (Python API, {\tt ed\_mode=superc})}\label{SecExamplesAHM}
 The second example we present concerns the DMFT description of the 
-attractive Hubbard model~\cite{Caffarel1994PRL,Toschi2005NJP,Toschi2005PRB} on a two-dimensional square lattice. This 
+attractive Hubbard model \cite{Caffarel1994PRL,Toschi2005NJP,Toschi2005PRB} on a two-dimensional square lattice. This 
 example has a twofold aim: (i) to demonstrate the support of \NAME 
 for ($s$-wave) superconductivity, and (ii) to illustrate the use of 
 the library's Python API through a concrete working example. 
@@ -619,7 +619,7 @@ ed.finalize_solver()
 
 \paragraph{Results.}
 Here we showcase some results for the DMFT solution of the 
-attractive Hubbard model across the BCS-to-BEC crossover regime~\cite{Toschi2005PRB,Toschi2005NJP,Amaricci2014PRA} 
+attractive Hubbard model across the BCS-to-BEC crossover regime \cite{Toschi2005PRB,Toschi2005NJP,Amaricci2014PRA} 
 illustrating the capability of \NAME to handle $s$-wave 
 superconductivity at both zero and finite temperatures.
 
@@ -638,7 +638,7 @@ computationally challenging. In the opposite, strong-coupling, limit
 $\phi$ saturates at its theoretical maximum of $\phi \rightarrow 1/2$. The comparison with the BCS mean-field result 
 (gray line) reveals the effect of local dynamical fluctuations, which  slightly suppress the order parameter, particularly in the intermediate regime. 
 To further quantify these dynamical effects, we plot in the inset of the same panel the 
-{\it correlation strength}~\cite{Amaricci2015PRL,Amaricci2016PRB}
+{\it correlation strength} \cite{Amaricci2015PRL,Amaricci2016PRB}
 $\Theta=|S(i\omega\to 0)-S(i\omega\to\infty)|/S(i\omega\to\infty)$. 
 Large values of $\Theta$ indicate an anomalous self-energy with 
 significant dynamical effects, hence a more correlated superconducting state.
@@ -703,7 +703,7 @@ which describes a local Hubbard-like attraction among electrons
 (mediated by local phonons).
 In the opposite, adiabatic, limit, $\omega_0 \rightarrow 0$ the system
 enters a Bipolaronic Insulating phase for our
-choice of the coupling~\cite{Capone2006PRB}. 
+choice of the coupling \cite{Capone2006PRB}. 
 
 
 We characterize the model solution by showing the evolution of the
@@ -821,13 +821,13 @@ functions (\figu{figEx3}).
 \subsection{Interacting Bernevig-Hughes-Zhang model (Fortran API, {\tt ed\_mode=nonsu2})}
 In this section we focus on the DMFT solution of the interacting
 Bernevig-Hughes-Zhang (BHZ).
-As shown in Ref.~\cite{Amaricci2023PRB}, at moderate
+As shown in Ref. \cite{Amaricci2023PRB}, at moderate
 interactions this model admits an excitonic phase in which opposite
 orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason2020PRB,Amaricci2023PRB,Giuli2023PRB}
 
 We consider a system of two-orbital electrons on a square
 lattice interacting through a Hubbard-Kanamori term and describing
-a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Konig2007S,Hasan2010RMP,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PRB,Paoletti2024PRB}.
+a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Hasan2010RMP,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PRB,Paoletti2024PRB}.
 We consider a suitable matrix basis in terms of the Dirac
 matrices $\Gamma_{a\a}=\sigma_a\otimes \tau_\a$, where $\sigma_a$ and
 $\tau_\a$ are Pauli matrices, respectively, in the spin and orbital
@@ -880,7 +880,7 @@ $$
 H_\mathrm{top} = \sqrt{Z}[H(k) + \Re\Sigma(\omega\to0)]\sqrt{Z}, 
 $$
 where $Z$ is the renormalization constant matrix. The matrix $H_\mathrm{top}$ describes the
-low-energy properties of the many-body solution and can be used to characterize the topological nature of the interacting system  \cite{Gurarie2011PRB,Wang2012PRX,Wagner2023NC,Blason2023PRB,Bau2024PRB}.  
+low-energy properties of the many-body solution and can be used to characterize the topological nature of the interacting system \cite{Gurarie2011PRB,Wang2012PRX,Wagner2023NC,Blason2023PRB,Bau2024PRB}.  
 
 
 
@@ -925,7 +925,6 @@ illustrate the \NAME ability to capture matter phases with lowered spin-symmetry
 The initial part of the code implementation is a simple generalization of the previously discussed cases. 
 The next non-trivial steps are: i) construct the lattice Hamiltonian $H(k)$ and the corresponding local part $H_\mathrm{loc}$, which determines the impurity properties, and ii) construct a matrix basis representation for the replica bath. These two steps can be implemented as follows: 
 
-%${\color{comment-color}  }
 \begin{lstlisting}[style=fstyle,numbers=none,basicstyle={\scriptsize\ttfamily}]
    !> Set $\smash{{\color{comment-color}H_\mathrm{loc}}}$ 
    allocate(Hloc(Nso,Nso))
@@ -976,10 +975,10 @@ we report it here for completeness:
      call ed_solve(bath)
 
      !EDIpack: Retrieve ${\color{comment-color} \Sigma(i\omega)}$
-     call ed_get_sigma(Smats,axis='mats')
+     call ed_get_sigma(Smats,axis="mats")
      
      !Get $\color{comment-color}G_\mathrm{loc}$ using $\color{comment-color}\mathrm{DMFTtools}$
-     call get_gloc(Hk,Gmats,Smats,axis='m')
+     call get_gloc(Hk,Gmats,Smats,axis="m")
      
      !Update the Weiss field (self-consistency) using $\color{comment-color}\mathrm{DMFTtools}$
      call dmft_self_consistency(Gmats,Smats,Weiss)
@@ -993,8 +992,8 @@ we report it here for completeness:
      !Check convergence: using $\color{comment-color}\mathrm{DMFTtools}$
      converged = check_convergence(Weiss(1,1,:),dmft_error,nsuccess,nloop)
    enddo  
-\end{lstlisting}
-
+ \end{lstlisting}
+ 
 %
 The main effect of the interaction on the topological properties is contained in the mass term renormalization.  
 The real part of the self-energy being proportional to $\Gamma_{03}$
@@ -1088,8 +1087,9 @@ The essential features of the ground state phase diagram have been established b
 For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to large repulsion, and magnetizes to an isotropic Néel state above a critical $U/t$ ratio\footnote{In contrast to the expectations for a generic half-filled bipartite lattice, for which the ground state is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
 at the Fermi level renders the logarithmic instability ineffective, even in the presence of perfect nesting \cite{Sorella1992ELE,Castro-Neto2009RMP}.}.
 For a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering
-eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
-\cite{Griset2012PRB}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and
+eventually stabilized at large $U/t$, is characterized by a lowered
+spin symmetry, due to the inherent coupling of spin and lattice
+degrees of freedom that favors in-plane easy-axis magnetization \cite{Griset2012PRB}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
 simulations \cite{Hohenadler2013ROPIP}.
 
@@ -1253,7 +1253,7 @@ degree of accuracy of our total energy calculation, we report in
 \figu{fig:KMenergy}(b) a $\lambda_\mathrm{so}=0$ benchmark against
 Hartree-Fock (simple static mean-field, but inherently variational), 
 DMFT with NRG solver and lattice AFQMC data, as taken from 
-Ref.~\cite{Raczkowski2020PRB}. 
+Ref. \cite{Raczkowski2020PRB}. 
 
 \begin{figure}
 \hspace{1cm} (a) \hspace{6.5cm} (b)\\
@@ -1267,7 +1267,7 @@ Ref.~\cite{Raczkowski2020PRB}.
     paramagnetic quantum spin-Hall insulator), at all points except on the $\lambda_\mathrm{so}=0$ line, where the ground state is an interacting
     Dirac liquid, at weak coupling, or an isotropic antiferromagnet at strong coupling. In panel (b) we compare the total energies, across the 
     $\lambda_\mathrm{so}=0$ line, to published data for Hartree-Fock,
-    DMFT-NRG and AFQMC solutions~\cite{Raczkowski2020PRB}.}
+    DMFT-NRG and AFQMC solutions \cite{Raczkowski2020PRB}.}
     \label{fig:KMenergy}
 \end{figure}
 
@@ -1304,7 +1304,7 @@ Ref.~\cite{Raczkowski2020PRB}.
 
 \subsubsection{Kane-Mele-Hubbard model at the nanoscale}
 The capabilities of the EDIpack2ineq layer go well beyond the
-simple case of a two-site unit cell. Building on the previous example, we can readily adapt the calculation to deal with a nanoscopic~\cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
+simple case of a two-site unit cell. Building on the previous example, we can readily adapt the calculation to deal with a nanoscopic \cite{Amaricci2014PRA} system with $N_\mathrm{ineq}$ inequivalent atoms, such as hexagonal flakes
 \cite{Valli2016PRB,Valli2018NL}.
 We consider a 
 $N_\mathrm{ineq}\times N_\mathrm{ineq}$ local Hamiltonian 
