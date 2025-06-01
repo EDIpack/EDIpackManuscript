@@ -821,13 +821,13 @@ functions (\figu{figEx3}).
 \subsection{Interacting Bernevig-Hughes-Zhang model (Fortran API, {\tt ed\_mode=nonsu2})}
 In this section we focus on the DMFT solution of the interacting
 Bernevig-Hughes-Zhang (BHZ).
-As shown in Ref.~\cite{Amaricci2023PR}, at moderate
+As shown in Ref.~\cite{Amaricci2023PRB}, at moderate
 interactions this model admits an excitonic phase in which opposite
-orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason,Amaricci2023PR,Giuli2023PRB}
+orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason2020PRB,Amaricci2023PRB,Giuli2023PRB}
 
 We consider a system of two-orbital electrons on a square
 lattice interacting through a Hubbard-Kanamori term and describing
-a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Konig2007S,Hasan2010RMPa,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PR,Paoletti2024PR}.
+a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Konig2007S,Hasan2010RMP,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PRB,Paoletti2024PRB}.
 We consider a suitable matrix basis in terms of the Dirac
 matrices $\Gamma_{a\a}=\sigma_a\otimes \tau_\a$, where $\sigma_a$ and
 $\tau_\a$ are Pauli matrices, respectively, in the spin and orbital
@@ -906,15 +906,15 @@ To capture the possible symmetry breaking in any excitonic channel
 driven by the local interaction, we consider the vector order
 parameter
 $\vec{E}=[E_0,E_x,E_y,E_z]$, where $E_a=\langle\psi^\dagger
-\Gamma_{a1}\psi \rangle$ \cite{Budich2014,Kunes2014PRB,Kaneko2015JOPCS,Kunes2015JOPCM,Knolle2017PRL,Guerci2019PRM,Geffroy2019PRL,Mazza2020PRL,De-Palo2023PRB}.
+\Gamma_{a1}\psi \rangle$ \cite{Budich2014PRL,Kunes2014PRB,Kaneko2015JOPCS,Kunes2015JOPCM,Knolle2017PRL,Guerci2019PRM,Geffroy2019PRL,Mazza2020PRL,De-Palo2023PRB}.
 
 The first component $E_0$ describes the singlet excitonic state,
 whereas the remaining ones correspond to the triplet states with
-different spin orientation \cite{Blason,Amaricci2023PR}.   
+different spin orientation \cite{Blason2020PRB,Amaricci2023PRB}.   
 The analysis of the strong-coupling regime as well as impurity
 excitonic susceptibility available in \NAME suggest the possible
 instability to an in-plane spin-triplet exciton phase, i.e. with $E_x$
-and/or $E_y$ different from zero, see \cite{Amaricci2023PR}.
+and/or $E_y$ different from zero, see \cite{Amaricci2023PRB}.
 Interestingly, this state breaks several symmetries including
 time-reversal and spin SU(2), which protect the topological state.
 
@@ -1012,9 +1012,9 @@ the DMFT solution features the formation of a
 region of exciton condensation with $\langle E_x\rangle>0$, $\langle
 E_0\rangle=\langle E_z\rangle=0$. 
 
-Unlike the static mean-field description \cite{Blason}, the
+Unlike the static mean-field description \cite{Blason2020PRB}, the
 transition from the QSHI topological state to the Excitonic Insulator 
-(EI) becomes of first-order upon including the local dynamical fluctuations \cite{Paoletti2024PR,BellomiaKMH} contained in DMFT. 
+(EI) becomes of first-order upon including the local dynamical fluctuations \cite{Paoletti2024PRB,BellomiaKMH} contained in DMFT. 
 The EI continuously evolves into a Mott Insulator (MI)
 for larger interaction (neglecting for simplicity any 
 antiferromagnetic ordering that would naturally occur in this
@@ -1086,10 +1086,10 @@ chemical potential.
 
 The essential features of the ground state phase diagram have been established by intensive multi-method analyses \cite{Rachel2018ROPIP}.
 For $\lambda_\mathrm{so}=0$ the model describes a Dirac semimetal, up to large repulsion, and magnetizes to an isotropic Néel state above a critical $U/t$ ratio\footnote{In contrast to the expectations for a generic half-filled bipartite lattice, for which the ground state is antiferromagnetic for any nonzero interaction, this property descends from the peculiar properties of Dirac cones: the vanishing density of states
-at the Fermi level renders the logarithmic instability ineffective, even in the presence of perfect nesting \cite{SorellaTosatti92,Graphene_RMP}.}.
+at the Fermi level renders the logarithmic instability ineffective, even in the presence of perfect nesting \cite{Sorella1992ELE,Castro-Neto2009RMP}.}.
 For a finite spin-orbit coupling $\lambda_\mathrm{so}\neq0$, the quantum spin-Hall state results increasingly stable against magnetic ordering, due to its symmetry-protected nontrivial topology. Furthermore, the long-range ordering
 eventually stabilized at large $U/t$, is characterized by a lowered spin symmetry, due to the inherent coupling of spin and lattice degrees of freedom that favors in-plane easy-axis magnetization
-\cite{3dXY_KMH}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and
+\cite{Griset2012PRB}, as predicted by Hartree-Fock and $t$-$J$ perturbative expansions \cite{Rachel2010PRB} and
 later confirmed by Auxiliary-Field Quantum Monte Carlo (AFQMC) 
 simulations \cite{Hohenadler2013ROPIP}.
 
@@ -1253,7 +1253,7 @@ degree of accuracy of our total energy calculation, we report in
 \figu{fig:KMenergy}(b) a $\lambda_\mathrm{so}=0$ benchmark against
 Hartree-Fock (simple static mean-field, but inherently variational), 
 DMFT with NRG solver and lattice AFQMC data, as taken from 
-Ref.~\cite{Racz2020}. 
+Ref.~\cite{Raczkowski2020PRB}. 
 
 \begin{figure}
 \hspace{1cm} (a) \hspace{6.5cm} (b)\\
@@ -1267,7 +1267,7 @@ Ref.~\cite{Racz2020}.
     paramagnetic quantum spin-Hall insulator), at all points except on the $\lambda_\mathrm{so}=0$ line, where the ground state is an interacting
     Dirac liquid, at weak coupling, or an isotropic antiferromagnet at strong coupling. In panel (b) we compare the total energies, across the 
     $\lambda_\mathrm{so}=0$ line, to published data for Hartree-Fock,
-    DMFT-NRG and AFQMC solutions \cite{Racz2020}.}
+    DMFT-NRG and AFQMC solutions~\cite{Raczkowski2020PRB}.}
     \label{fig:KMenergy}
 \end{figure}
 
@@ -1335,7 +1335,7 @@ Having a direct expression for $\ibra n_{i,\rightarrow} \iket$ and $\ibra n_{i,\
 we can verify that the impurity reduced density matrix, computed by 
 tracing the bath states in the \texttt{ed\_mode=nonsu2} representation 
 (see \ref{sSecRDM}), once diagonalized, takes the familiar form
-\cite{Zanardi2002,XiDai2013,WalshLetter2019} 
+\cite{Zanardi2002PRA,Su2013MPLB,Walsh2019PRL} 
 \begin{equation}
     \rho^\mathrm{imp} = 
      \begin{pmatrix}

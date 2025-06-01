@@ -59,7 +59,7 @@ adopt a generic formulation of the local multi-orbital Hubbard-Kanamori interact
 where we introduced the occupation number operator $n_{\alpha\sigma}=d^\dagger_{\alpha\sigma}d_{\alpha\sigma}$.
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
-$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Werner2008PRL,Werner2009PR,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
+$U'$ the inter-orbital one and $J$ the Hund's coupling~\cite{Werner2008PRL,Werner2009PRB,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
 The last two terms are, respectively, the spin-exchange ($J_X$) and
 the pair-hopping ($J_P$).
 In the three-orbital case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
@@ -108,9 +108,9 @@ where $m=1,\dots,M$ indexes the number of local phonon modes, and $b_m$
 ($b_m^\dagger$) are the destruction (creation) operators for a phonon with
 frequency $\omega_{0m}$. Each phonon mode is coupled to a bilinear fermionic operator $\hat{O}_m= \sum_{\alpha \beta, \sigma }g^{m}_{\alpha \beta} d^\dagger_{\alpha, \sigma} d_{\beta, \sigma}$ on the impurity, while $A_m$ is a constant acting as a displacement field.  %Indeed, if the expectation value of the bosonic displacement operator $\langle b_q^\dagger + b_q\rangle$ is non-zero, a change of variables from the bosons $b^{(\dagger)}_q$ leads to new effective bosons $\tilde{b}^{(\dagger)}_q = b^{(\dagger)}_q- A_q$ for which the displacement operator has a smaller expectation value (ideally zero if we can impose $A_m = \langle \hat{O}_m\rangle$). 
 %
-For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_{1d} = g_1 \sum_{\sigma} d^{\dagger}_{1\sigma}d_{1\sigma}$, which defines the Holstein model\cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes\cite{Capone2010ACMP}, for which $\hat{O}_2 = g_2(n_{1d} - n_{2d})$\cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ H.c.)$. 
+For single-orbital impurities, the relevant case is $\hat{O}_1 = g_1 n_{1d} = g_1 \sum_{\sigma} d^{\dagger}_{1\sigma}d_{1\sigma}$, which defines the Holstein model~\cite{Holstein1959APNY}. For two-orbital models we included also the two Jahn-Teller modes~\cite{Capone2010AICMP}, for which $\hat{O}_2 = g_2(n_{1d} - n_{2d})$~\cite{Scazzola2023PRB} and $\hat{O}_3 = g_3 \sum_{\sigma} (d^{\dagger}_{1\sigma}d_{2\sigma}+ H.c.)$. 
 
-For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling\cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction\cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRB,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRB_ph,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime\cite{Capone2003PRL}.
+For each phonon mode, one has to introduce a cut-off in the phonon number, which has to be chosen according to the value of the electron-phonon coupling~\cite{Capone2003PRL,Capone2006PRB} and its interplay with the electron-electron interaction~\cite{Capone2004PRL,Capone2004PRLsc,Sangiovanni2005PRL,Paci2005PRL,Sangiovanni2006PRL,Sangiovanni2006PRBa,Paci2006PRB}. The larger the number of excited phonons in the ground state, the larger the cutoff. For practical calculations around 20 phonons are sufficient to achieve converged results except for the deep polaronic regime~\cite{Capone2003PRL}.
 Choosing properly the shift $A_m$, one can reduce the number of excited phonons in the ground state and consequently the required cutoff. 
 Although feasible, dealing with more than one phonon mode quickly becomes computationally very demanding, thus we will consider only one mode and we drop the $m$ index in the rest of this work.
 
@@ -327,7 +327,7 @@ intra- and inter-orbital pairing.
 charge $N$ while allowing the spin symmetry group to be broken.
 This scenario captures effects such as local spin-orbit coupling
 $\vec{L}\cdot\vec{S}$, in-plane spin ordering~\cite{BellomiaKMH} or
-in-plane spin-triplet exciton condensation~\cite{Amaricci2023_excitons,Blason}.  
+in-plane spin-triplet exciton condensation~\cite{Amaricci2023PRB,Blason2020PRB}.  
 \end{itemize}
 
 
@@ -1404,7 +1404,7 @@ $(S^z_\a + S^z_\b)$, $(N_\a + N_\b)$ or $(\Delta_\a + \Delta_\b)$.
 The excitonic susceptibilities, $\chi^{\vec{E}}_{\a\b}$, are defined with 
 respect to the vector operator $E^i_{\a\b} = \sum_{\s\s'}
 c^\dagger_{\a\s}\tau^i_{\s\s'}c_{\b\s'}$, where $i=0$ represents the
-spin-singlet exciton \cite{Giuli2023PRB}, and $i=x,y,z$  correspond to the spin-triplet exciton \cite{Amaricci2023_excitons}.
+spin-singlet exciton \cite{Giuli2023PRB}, and $i=x,y,z$  correspond to the spin-triplet exciton \cite{Amaricci2023PRB}.
 
 
 \paragraph{{\bf superc}.}
@@ -1523,7 +1523,7 @@ of the system stored in the {\tt state\_list}.
 The latest version of \NAME introduces the calculation of the 
 impurity Reduced Density Matrix (iRDM, $\rho^\mathrm{imp}$), 
 extending the algorithm initially proposed in 
-Ref.~\onlinecite{BellomiaPhD,Bellomia2024PR}, to support the analysis of entanglement 
+Ref.~\cite{BellomiaPhD,Bellomia2024PRB}, to support the analysis of entanglement 
 properties of quantum impurities for any value of {\tt ed\_mode}.
 
 For sake of simplicity, this section focuses on the zero-temperature limit, 
@@ -1902,7 +1902,7 @@ discretization requires a careful fitting of this continuous function
 using a finite set of bath parameters (see \secu{sSecBath}).
 
 Several algorithms have been proposed for this optimization 
-step~\cite{Garcia2004PRL,Taranto2012PRB,Mejuto_Bath_ASCI-DMFT}, each with strengths suited 
+step~\cite{Garcia2004PRL,Taranto2012PRB,Mejuto-Zaera2020PRB}, each with strengths suited 
 to different physical contexts. To maintain flexibility in \NAME, 
 we keep the optimization part independent 
 from the core impurity solver. However, we also include a fully 
@@ -1922,7 +1922,7 @@ $\Delta_{\a\b\s\s'}$ are the corresponding quantities for the quantum
 impurity model, see \secu{sSecFunc}.
 
 While different optimization methods have been developed for 
-truncated algorithms, e.g. sCI~\cite{Mejuto_Bath_ASCI-DMFT} or DMRG~\cite{Bauernfeind2017PRX}, 
+truncated algorithms, e.g. sCI~\cite{Mejuto-Zaera2020PRB} or DMRG~\cite{Bauernfeind2017PRX}, 
 which handle systems with a 
 larger number of bath levels, the CG minimization approach has proven 
 both efficient and flexible for the small to moderate bath sizes 
