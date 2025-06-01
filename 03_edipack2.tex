@@ -36,11 +36,11 @@ and spin $\sigma=\up,\dw$.
 The internal structure of this quadratic part is captured by the 
 matrix $h^{0}_{\a\b\sigma\sigma'}$, which can include 
 orbital-dependent on-site energies or amplitudes, spin-orbit coupling or other single-particle terms.
-In \NAME the matrix $\hat{h}_0$ is set by the user passing an complex array through the function {\tt ed\_set\_Hloc}. 
+In \NAME the matrix $\hat{h}_0$ is set by the user passing a complex array through the function {\tt ed\_set\_Hloc}. 
 
 
 The interaction part of the impurity Hamiltonian, 
- $\hat{H}^{\mathrm{int}}$ can in principle contain any 
+ $\hat{H}^{\mathrm{int}}$ can, in principle, contain any 
 set of two-body operators: 
 \begin{equation}
 \hat{H}^\mathrm{int}_\mathrm{imp} = \frac{1}{2} \sum_{ijkl} d^{\dagger}_{i}d^{\dagger}_{j}U_{ijkl}d_{l}d_{k}.\label{HintUmat}
@@ -60,12 +60,11 @@ where we introduced the occupation number operator $n_{\alpha\sigma}=d^\dagger_{
 The first three terms represent the density-density part of the
 interaction, where $U$ is the local intra-orbital Coulomb repulsion,
 $U'$ the inter-orbital one and $J$ the Hund's coupling \cite{Werner2008PRL,Werner2009PRB,Mravlje2011PRL,Medici2011PRL,Medici2011PRB,Georges2013ARCMP}.  
-The last two terms are, respectively, the spin-exchange ($J_X$) and
-the pair-hopping ($J_P$).
+The last two terms are, respectively, the spin-exchange ($J_X$) and the pair-hopping ($J_P$).
 In the three-orbital case $N_\a=3$ a fully symmetric $SU(3)_\mathrm{orbital}\otimes SU(2)_\mathrm{spin}\otimes
 U(1)_\mathrm{charge}$ form of the interaction is obtained by setting $U'=U-2J$ and
-$J_X=J_P=J$ \cite{Georges2013ARCMP}. Different choices, preserving part
-of the combined symmetry group, can be made for other numbers of orbitals \cite{Georges2013ARCMP}.
+$J_X=J_P=J$ \cite{Georges2013ARCMP}. Alternative choices that preserve part
+of the combined symmetry group can be made for other numbers of orbitals \cite{Georges2013ARCMP}.
 
 
 
@@ -93,6 +92,8 @@ according to the chosen bath topology (see \secu{sSecBath}). The  properties of 
 matrix $h^p_{\a\b\sigma\sigma'}$ while the amplitude
 $V^p_{\a\b\s\sigma'}$ describes the coupling with the impurity.   
 The bath parametrization is handled in \NAME using reverse communication strategy as will be discussed later in \secu{sSecBath}.  
+
+
 
 \subsubsection{Electron-Phonon coupling}
 Finally, we include a local electron-phonon coupling on the impurity site
@@ -957,7 +958,7 @@ with few available bath levels (see \secu{sSecFit}).
 The bath is formed by $N_\mathrm{bath}$ sites coupled to all the
 impurity orbitals, so that there are $N_\mathrm{b}\equiv  N_\mathrm{bath}$ bath levels and   $N_\mathrm{s}=N_\mathrm{bath}+N_\a$. 
 The parametrization of the bath Hamiltonian is 
-diagonal in both orbital and spin space, i.e.
+diagonal in both orbital and spin spaces, i.e.
 $$
 h^p_{\a\b\s\s'}=\varepsilon_{\a\s}\delta_{\a\b}\delta_{\s\s'}.
 $$

@@ -4,18 +4,17 @@
 
 \section{Conclusions}
 We have presented \NAME{}, a versatile, high-performance solver for
-generic quantum impurity problems. Leveraging on the massively
+generic quantum impurity problems. Building on the massively
 parallel algorithms introduced by its predecessor \cite{Amaricci2022CPC}, this version of
 the library features new capabilities and symmetries within a unified
-framework, providing for instance reliable evaluations of the dynamical correlation
+framework providing, for example, reliable evaluations of the dynamical correlation
 functions of an arbitrary complex frequency.
 This makes it particularly well-suited for capturing the
 low-energy excitations and complex spectral features of strongly
 correlated systems.
 We have shown that this new version enables the evaluation of impurity
-reduced density matrices directly from Fock space quantities and thus unlocks 
-quantum information analyses of correlated systems, an increasingly
-essential tool to address emergent phases of quantum materials.
+reduced density matrices directly from Fock space quantities and thus enables  
+quantum information analysis of correlated systems, which is becoming an essential tool to address emergent phases of quantum materials.
 
 A central feature of \NAME is its strong focus on interoperability,
 achieved through modern Fortran constructs, C/C++-bindings, and
@@ -35,8 +34,7 @@ contexts via elaborated examples, which can serve as a reference for potential u
 
 The modular and extensible design of \NAME provides a
 natural foundation for future extensions.
-For instance to
-cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} where the
+For instance it provides a suitable basis to develop cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} methods, where the
 impurity problem is generalized to include clusters of interacting
 sites. This approach would enable the treatment of spatial
 correlations beyond the single-site approximation, capturing effects

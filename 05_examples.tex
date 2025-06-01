@@ -2,23 +2,22 @@
 \begin{document}
 
 \section{Examples}\label{SecExamples}
-In this section we illustrate and benchmark the functionalities and of the \NAME
+In this section we illustrate and benchmark the functionalities and of  \NAME
 library and its interfaces as a solver for DMFT through a variety of examples. We also discuss in detail the relevant code parts from different programming languages. 
 
 Some tasks -- particularly those associated with the implementation of the DMFT self-consistency -- are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
-Thus, in the implementations using Fortran, Python or other \NAME interfaces to scientific toolboxes we adopt a reverse communication strategy, which requires the user to independently carry out these parts or, equivalently, to exploit existing utilities. 
+Thus, in the implementations using Fortran, Python or other \NAME interfaces to scientific toolboxes, we adopt a reverse communication strategy, which requires the user to independently carry out these parts or, equivalently, to take advantage of existing utilities. 
 
-In our examples based on the Fortran APIs we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors) to perform specific tasks, including the evaluation of the local Green's function, the implementation of the self-consistency, the construction of the tight-binding model or the calculation of the kinetic energy. 
+In our examples based on the Fortran APIs, we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors), to perform specific tasks, including evaluating the local Green’s function, implementing the self-consistency, constructing the tight-binding model, or calculating the kinetic energy.
 Where appropriate, we include comments that reference these external procedures.
-On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which handles all these tasks seamlessly.
-Similarly, the TRIQS library offers an extensive framework for the manipulation of Green’s functions and related quantities \cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
+
+On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which seamlessly handles all these tasks.
+Similarly, the TRIQS library offers an comprehensive framework fo manipulating Green’s functions and related quantities \cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
 \subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
-The test bed for any DMFT implementation is conventionally considered 
-the description of the Mott or metal-to-insulator transition (MIT) 
-in a Bethe lattice, i.e., a Cayley tree with coordination number 
-$z\to\infty$ \cite{Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
+The description of the Mott transition using the Hubbard model on the Bethe lattice is conventionally regarded as the standard test bed for any DMFT implementation.  \cite{Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
+
 Here, we present a guided implementation of the DMFT 
 solution for the Bethe lattice at $T=0$ using \NAME as impurity
 solver.
@@ -345,14 +344,14 @@ $-{\rm Im}\Sigma(\omega\to0) \to\infty$.
 
 
 \subsubsection{Finite temperature (W2Dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTW2D}
-To demonstrate the usage of the W2Dynamics interface to \NAME,  here we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using W2Dynamics. 
+To demonstrate how the W2Dynamics interface integrates with  \NAME, we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using W2Dynamics. 
 In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in W2Dynamics against the \NAME solver at finite temperature.  
 
 Unlike \NAME, which provides only the impurity solver and bath optimization procedures and requires the user to implement the DMFT algorithm themselves (potentially using various methods), W2Dynamics adopts a fundamentally different approach: a single Python script, {\tt DMFT.py}, handles the entire DMFT calculation, leveraging dedicated classes that implement the generic self-consistency. The W2Dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of W2Dynamics can be found in Ref. \cite{Wallerberger2019CPC}           
 
 Another important difference concerns the initial point of the iterative DMFT solution algorithm: while \NAME starts from a given discrete bath, W2Dynamics is initialized with a zero self-energy function or alternatively reads this quantity from a converged solution file. Thus, when using the \NAME interface in W2Dynamics, the initial Weiss field is determined using self-consistency and  an initial discrete bath is obtained through the \NAME bath optimization procedure. 
 
-The W2Dynamics configuration file for the solution of the Bethe lattice problem at finite temperature reads: 
+The following is the W2Dynamics configuration file used to solve the Bethe lattice problem at finite temperature: 
 \begin{lstlisting}[style=mybash,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
 [General]
 DOS             = Bethe           # support for the Bethe lattice is built-in
@@ -419,7 +418,7 @@ The results are collected into an HDF5 \cite{The_HDF_Group_Hierarchical_Data_For
 In \figu{figEx1W} we report a comparison of the results obtained using the hybridization expansion CTQMC and the \NAME ED method as solvers in W2Dynamics. In addition we compare with results obtained using the Fortran API directly as shown in the previous subsection. Using DMFT, we solve the Hubbard model on a Bethe lattice for $T/D=0.01$ and $U/D=2.00$, corresponding to a correlated metallic state. 
 
 In panel (A) we show the behavior of the imaginary part of the impurity Green's function $\Im{G}(i\omega_n)$ which is the direct output for both methods (note that W2Dynamics does not directly have access to the real-axis Green's function when using the CTQMC solver). In panel (B) we show the same comparison for impurity self-energy $\Im{\Sigma}(i\omega_n)$. 
-The results obtained from the three calculations are in excellent agreement one with another already for a small number of bath levels ({\tt NBATH=7}) and relatively low QMC statistics ({\tt Nmeas=200000}).   
+The results obtained from the three calculations are in excellent agreement with each other already for a small number of bath levels ({\tt NBATH=7}) and relatively low QMC statistics ({\tt Nmeas=200000} with {\tt NC=10} parallel processes).   
 
 
 
@@ -441,10 +440,8 @@ The results obtained from the three calculations are in excellent agreement one 
 
 \subsection{Attractive Hubbard model (Python API, {\tt ed\_mode=superc})}\label{SecExamplesAHM}
 The second example we present concerns the DMFT description of the 
-attractive Hubbard model \cite{Caffarel1994PRL,Toschi2005NJP,Toschi2005PRB} on a two-dimensional square lattice. This 
-example has a twofold aim: (i) to demonstrate the support of \NAME 
-for ($s$-wave) superconductivity, and (ii) to illustrate the use of 
-the library's Python API through a concrete working example. 
+attractive Hubbard model \cite{Caffarel1994PRL,Toschi2005NJP,Toschi2005PRB} on a two-dimensional square lattice. 
+This  example two main goals: (i) to demonstrate \NAME's support for $s$-wave superconductivity, and (ii) to showcase the Python API through a concrete example. 
 
 The 
 model Hamiltonian is given by:
@@ -458,7 +455,7 @@ is the creation operator for an electron at site $i$ with spin $\s$ and $c^\dagg
 The occupation operator is $n_{i\s} = c^\dagger_{i\s} c_{i\s}$, and 
 the energy dispersion relation is $\e(\ka)=-2t[\cos{(k_x a)}+
 \cos{(k_y a)}]$, where we set the lattice spacing 
-$a=1$  and the choose the energy unit such as $4t=D=1$ for convenience.
+$a=1$  and the choose the energy unit such that $4t=D=1$ for convenience.
 
 The DMFT workflow for this case is largely similar to the previous 
 example, but it now operates in the Nambu basis defined by the spinor $\psi_i=[\hat{c}_{i\up}\quad  \hat{c}^\dagger_{i\dw}]^T$ where the symbol $\hat{o}$ indicates the potential multi-orbital nature of the system, which reduces to a scalar in the present single-orbital case.
@@ -483,8 +480,8 @@ functions are defined on the Matsubara or real-frequency axis:
 
 The code implementation closely follows the structure of the previous 
 example, with some notable adjustments related to the Nambu basis. 
-Specifically, the above symmetries allow one to compute only the 
-independent components from the first row, significantly reducing 
+These symmetries allow computing only the 
+independent components in the first row, reducing 
 the computational effort. 
 Note that part of the operations required to implement the DMFT cycle are implemented in the Python module {\tt aux\_funx.py}, adapting from {\tt DMFTtools} functions.  
 The initial part of the code handles the 
@@ -584,7 +581,7 @@ while (not converged and iloop<ed.Nloop):
     #Retrieve the Matsubara self-energy components ${\color{comment-color}\Sigma(i\omega_n) }$ and ${\color{comment-color}S(i\omega_n) }$
     Smats = np.array([ed.get_sigma(axis="m",typ="n"),ed.get_sigma(axis="m",typ="a")])   
     
-    #Perform self-consistency levaragin {\tt aux\_funx.py} procedures:
+    #Perform self-consistency levaraging {\tt aux\_funx.py} procedures:
     Gmats = get_gloc(wm*1j,ed.xmu,HkNambu,Smats,axis="m")
     Weiss = dmft_weiss_field(Gmats,Smats)    
     
@@ -642,7 +639,7 @@ To further quantify these dynamical effects, we plot in the inset of the same pa
 $\Theta=|S(i\omega\to 0)-S(i\omega\to\infty)|/S(i\omega\to\infty)$. 
 Large values of $\Theta$ indicate an anomalous self-energy with 
 significant dynamical effects, hence a more correlated superconducting state.
-Our results show that the DMFT solution significantly departs from the BCS picture in the strongly correlated intermediate-coupling regime, which is known to host the largest critical temperature \cite{Toschi2005NJP,Toschi2005PRB}.
+Our results show that the DMFT solution significantly departs from the BCS picture in the strongly correlated intermediate-coupling, a regime known to host the highest critical temperature \cite{Toschi2005NJP,Toschi2005PRB}.
 % A different angle further illustrating the impact of dynamical fluctuations, is reported in panel (D). We show the evolution of the double occupancy $d = \langle n_\up n_\dw \rangle$ as a function of $U$ compared to the MF expression $d = 1/4 + \phi^2$. The DMFT 
 % results obtained with \NAME show a slight increase in $d$ over the MF prediction in the BCS regime. As $U$ increases and local correlation becomes sizable, the double occupancy drops below 
 % the MF result. 
@@ -663,19 +660,22 @@ phases, for instance capturing the complex physics of the BCS-BEC crossover with
 
 
 
+
+
 \begin{figure}[ht!]
     \includegraphics[width=\linewidth]{figures/figBethe_Holstein.pdf}
     \caption{\label{figEx5}
       Evolution of the double occupancy (A) and superconductive order parameter (B) as a function of $\omega_0/D$ for $\lambda=1$ in the normal (orange) and superconductive (red) phase. The horizontal broken lines are the values for the corresponding Hubbard model in the anti-adiabatic limit.}
 \end{figure}
 
+
 \subsection{Holstein model on the Bethe lattice (electron-phonon coupling)}
 
-One of the features introduced in \NAME is the possibility of treating local phonons in conjunction with the superconductive phase,
+One of the new features introduced in \NAME is the support for local phonons in combination with superconductivity,
 i.e. {\tt ed\_mode=superc}. In order to illustrate this property using a simple application, in this example we discuss the normal and
 superconductive solution of the pure Holstein model on the Bethe lattice within DMFT.
-We stress that  the code
-implementation for this specific case is essentially identical to the listings reported in the sections
+Note that the code
+implementation for this case is essentially identical to the listings in the previous sections
 \ref{SecExamplesBetheDMFT} ({\tt ed\_mode=normal}) and
 \ref{SecExamplesAHM} ({\tt ed\_mode=superc}), provided electron-electron interaction is set to zero and phonon parameters are properly configured.  
 
@@ -701,7 +701,7 @@ particularly simple form:
 \end{equation}
 which describes a local Hubbard-like attraction among electrons
 (mediated by local phonons).
-In the opposite, adiabatic, limit, $\omega_0 \rightarrow 0$ the system
+In the  adiabatic limit, $\omega_0 \rightarrow 0$ the system
 enters a Bipolaronic Insulating phase for our
 choice of the coupling \cite{Capone2006PRB}. 
 
@@ -709,8 +709,8 @@ choice of the coupling \cite{Capone2006PRB}.
 We characterize the model solution by showing the evolution of the
 double occupation $\langle n_{\up}n_{\dw}\rangle$ as a function of the
 phonon frequency $\omega_0$, see panel (A) of \figu{figEx5}. In this panel we compare
-the behavior for the normal  ({\tt ed\_mode=normal}) against the superconductive
-solution ({\tt ed\_mode=superc}). Our results capture the whole
+the behavior for the normal phase ({\tt ed\_mode=normal}) and the superconductive
+phase ({\tt ed\_mode=superc}). Our results capture the whole
 crossover from adiabatic to anti-adiabatic regime. In the former
 regime, the double occupation takes a similar value for the two
 phases. However, approaching the anti-adiabatic regime, the two
@@ -819,15 +819,13 @@ functions (\figu{figEx3}).
 
 
 \subsection{Interacting Bernevig-Hughes-Zhang model (Fortran API, {\tt ed\_mode=nonsu2})}
-In this section we focus on the DMFT solution of the interacting
-Bernevig-Hughes-Zhang (BHZ).
-As shown in Ref. \cite{Amaricci2023PRB}, at moderate
-interactions this model admits an excitonic phase in which opposite
-orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason2020PRB,Amaricci2023PRB,Giuli2023PRB}
+In this section, we focus on the DMFT solution of the interacting
+Bernevig-Hughes-Zhang (BHZ) model.
+As shown in Ref. \cite{Amaricci2023PRB}, this model exhibits an excitonic phase at moderate
+interactions in which opposite orbital electrons and holes across the band gap bind and form a coherent phase \cite{Knolle2017PRL,Jia2020,Varsano2020NN,Blason2020PRB,Amaricci2023PRB,Giuli2023PRB}
 
 We consider a system of two-orbital electrons on a square
-lattice interacting through a Hubbard-Kanamori term and describing
-a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Hasan2010RMP,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PRB,Paoletti2024PRB}.
+lattice, interacting via a Hubbard-Kanamori term. This system realizes a quantum spin Hall insulator \cite{Kane2005PRL,Bernevig2006S,Hasan2010RMP,Hohenadler2011PRL,Amaricci2015PRL,Tang2017NP,Amaricci2023PRB,Paoletti2024PRB}.
 We consider a suitable matrix basis in terms of the Dirac
 matrices $\Gamma_{a\a}=\sigma_a\otimes \tau_\a$, where $\sigma_a$ and
 $\tau_\a$ are Pauli matrices, respectively, in the spin and orbital
@@ -1046,8 +1044,7 @@ characteristic Hubbard bands separated by a large Mott gap.
 
 \subsection{Interacting Kane-Mele model (Fortran API, EDIpack2ineq, iRDM)}
 
-To complete the overview of \NAME features, we consider another
-model of interacting quantum spin-Hall insulator defined on the honeycomb lattice, with two inequivalent sites in the unit cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
+To complete the overview of \NAME's features, we consider an additional interacting quantum spin-Hall insulator model, defined on the honeycomb lattice, with two inequivalent sites in the unit cell. Neglecting the Rashba spin-orbit interaction and discarding any ionic character of the unit cell, the noninteracting Kane-Mele Hamiltonian \cite{Kane2005PRLa,Kane2005PRL} can be written in momentum space as
 \begin{align*}
     H_\mathrm{KM} = \sum_{{k}} \psi^\dagger_{{k}} H({k}) \psi_{{k}},
 \end{align*}
