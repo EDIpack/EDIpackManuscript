@@ -15,7 +15,7 @@ On the other hand, the results obtained with W2Dynamics rely on the internal fra
 Similarly, the TRIQS library offers an comprehensive framework fo manipulating Green’s functions and related quantities \cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
-\subsection{Hubbard model on the Bethe lattice (Fortran API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
+\subsection{Hubbard model on the Bethe lattice (Fortran/C++ API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
 The description of the Mott transition using the Hubbard model on the Bethe lattice is conventionally regarded as the standard test bed for any DMFT implementation.  \cite{Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
 
 Here, we present a guided implementation of the DMFT 
@@ -51,15 +51,15 @@ program ed_hm_bethe
    USE EDIPACK
    USE SCIFOR
    implicit none
-   integer                :: Le=1000
-   real(8)                :: wmixing=0.5d0
-   real(8)                :: D=1d0
-   integer                :: Nb
-   real(8),allocatable    :: Bath(:)
-   complex(8),allocatable :: Hloc(:,:,:,:)
-   real(8),allocatable    :: Ebands(:),Dbands(:)
-   complex(8),allocatable :: Smats(:,:,:,:,:)
-   complex(8),allocatable :: Delta(:,:,:,:,:)
+   integer               :: Le=1000
+   real(8)               :: wmixing=0.5d0
+   real(8)               :: D=1d0
+   integer               :: Nb
+   real(8),allocatable   :: Bath(:)
+   complex(8),allocatable:: Hloc(:,:,:,:)
+   real(8),allocatable   :: Ebands(:),Dbands(:)
+   complex(8),allocatable:: Smats(:,:,:,:,:)
+   complex(8),allocatable:: Delta(:,:,:,:,:)
    !...  
    !EDIpack: Read variables
    call ed_read_input('inputED.conf')
@@ -519,7 +519,7 @@ def h_square2d(k,t):
 #Read input
 ed.read_input("inputAHM.conf")
 
-#Generate Hk=${\color{comment-color}\e(k)}$ and set Hloc
+#Generate ${\color{comment-color}H_k=\e(k)}$ and set Hloc
 kgrid   = generate_kgrid(Nk)
 Hk      = h_square2d(kgrid,t_hop)
 Hloc    = np.sum(Hk,axis=0)/Nk**2
