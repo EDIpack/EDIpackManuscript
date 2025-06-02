@@ -8,7 +8,7 @@ library and its interfaces as a solver for DMFT through a variety of examples. W
 Some tasks -- particularly those associated with the implementation of the DMFT self-consistency -- are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
 Thus, in the implementations using Fortran, Python or other \NAME interfaces to scientific toolboxes, we adopt a reverse communication strategy, which requires the user to independently carry out these parts or, equivalently, to take advantage of existing utilities. 
 
-In our examples based on the Fortran APIs, we rely on external open-source libraries, such as DMFTtools\footnote{\url{https://github.com/aamaricci/DMFTtools}} (also developed by some of the authors), to perform specific tasks, including evaluating the local Green’s function, implementing the self-consistency, constructing the tight-binding model, or calculating the kinetic energy.
+In our examples based on the Fortran APIs, we rely on external open-source libraries, such as DMFTtools (see \href{https://github.com/aamaricci/DMFTtools}{github.com/aamaricci/DMFTtools}), to perform specific tasks, including evaluating the local Green’s function, implementing the self-consistency, constructing the tight-binding model, or calculating the kinetic energy.
 Where appropriate, we include comments that reference these external procedures.
 
 On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which seamlessly handles all these tasks.
@@ -17,7 +17,7 @@ Similarly, the TRIQS library offers an comprehensive framework fo manipulating G
 
 \subsection{Hubbard model on the Bethe lattice (Fortran/C++ API, {\tt ed\_mode=normal})}\label{SecExamplesBetheDMFT}
 The description of the Mott transition using the Hubbard model on the Bethe lattice is conventionally regarded as the standard test bed for any DMFT implementation.  \cite{Georges1996RMP,Rozenberg1999PRL,Kotliar1999EPJB,Kotliar2000PRL,Kotliar2002PRL}.
-
+%
 Here, we present a guided implementation of the DMFT 
 solution for the Bethe lattice at $T=0$ using \NAME as impurity
 solver.
@@ -36,14 +36,13 @@ $\rho(\e)=\frac{2}{\pi D^2}\sqrt{D^2-\e^2}$,
 where $D=2t$ is the half-bandwidth.
 Within DMFT framework \cite{Georges1996RMP}, this lattice model is mapped onto a quantum impurity problem with an effective electronic bath that must be determined self-consistently.
 
-Below, we present the key components of a basic DMFT implementation 
+Below, we discuss the key components of a basic DMFT implementation 
 using \NAME for the Bethe lattice, employing either the Fortran or 
-C++ APIs. Fully operational versions of the two codes can be found 
+C++ APIs and which can be found 
 in the {\tt examples} directory of the \NAME source code. Both 
 samples share a similar initial structure, including memory 
-allocation, creation of the Bethe DOS and solver initialization.
-
-\begin{center}
+allocation, creation of the Bethe DOS and solver initialization:
+ \begin{center}
 \begin{minipage}[t]{0.49\linewidth}
 \textbf{Fortran}
 \begin{lstlisting}[style=fstyle,frame=none,numbers=none,basicstyle={\scriptsize\ttfamily}]
@@ -115,7 +114,7 @@ Dbands = dens_bethe(Ebands,Wband,de);
 ed_set_Hloc_single_N4(Hloc.data(), d);
 \end{lstlisting}
 \end{minipage}
-\end{center}
+ \end{center}
 
 
 

@@ -3,17 +3,14 @@
 
 
 \section{Conclusions}
-We have presented \NAME{}, a versatile, high-performance solver for
-generic quantum impurity problems. Building on the massively
+We have presented \NAME{}, a versatile and high-performance ED solver for generic quantum impurity problems. Building on the massively
 parallel algorithms introduced by its predecessor \cite{Amaricci2022CPC}, this version of
-the library features new capabilities and symmetries within a unified
-framework providing, for example, reliable evaluations of the dynamical correlation
-functions of an arbitrary complex frequency.
-This makes it particularly well-suited for capturing the
-low-energy excitations and complex spectral features of strongly
-correlated systems.
-We have shown that this new version enables the evaluation of impurity
-reduced density matrices directly from Fock space quantities and thus enables  
+the library features new capabilities allowing for different broken-symmetry solutions within a unified
+framework that provides, for instance, reliable evaluations of a variety of local dynamical correlation
+functions of an arbitrary complex frequency ranging from the Green's functions to superconducting, excitonic and magnetic response functions.
+
+This new version allows for an efficient evaluation of 
+reduced density matrices of the impurity directly from Fock space quantities and thus enables  
 quantum information analysis of correlated systems, which is becoming an essential tool to address emergent phases of quantum materials.
 
 A central feature of \NAME is its strong focus on interoperability,
@@ -25,26 +22,22 @@ W2Dynamics \cite{Wallerberger2019CPC}, expanding the
 functionality of these platforms and providing a robust foundation for
 reproducible research.
 
-We thoroughly discussed the implementation of the \NAME library, the
+We thoroughly discussed the implementation of the \NAME library and its
 most important algorithms and classes. We presented in
 detail the third-party interfaces which extend ED
-capabilities beyond the realm of the library itself.   
+capabilities beyond the domain of the library itself. 
 Finally, we showcased the use of the \NAME software in different
-contexts via elaborated examples, which can serve as a reference for potential users. 
+contexts through elaborated examples, which can serve as a reference for potential users. 
 
 The modular and extensible design of \NAME provides a
 natural foundation for future extensions.
-For instance it provides a suitable basis to develop cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} methods, where the
+For instance it provides a suitable basis to implement cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} methods, where the
 impurity problem is generalized to include clusters of interacting
-sites. This approach would enable the treatment of spatial
-correlations beyond the single-site approximation, capturing effects
-such as d-wave pairing in high-temperature superconductors, charge
-order, and complex spin textures in strongly correlated systems.
-A different outlook is the development of an integration layer with other
-quantum embedding methods, such ghost Gutzwiller \cite{Lanata2015PRX},
+sites. This approach includes spatial correlations beyond the single-site approximation, capturing effects
+such as $d$-wave pairing, charge ordering, and complex spin textures in strongly correlated systems.
+A different outlook is the development of an integration layer with other quantum embedding methods, such as the ghost Gutzwiller scheme \cite{Lanata2015PRX},
 which heavily rely on solving effective impurity problems.    
-We anticipate that \NAME will become a valuable tool for the
-computational condensed matter community, supporting a wide range of
+We anticipate that \NAME will become a valuable tool for the computational condensed matter community, supporting a wide range of
 studies on strongly correlated materials and providing a reliable
 reference platform for quantum impurity solvers.
 
@@ -59,12 +52,11 @@ reference platform for quantum impurity solvers.
 We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto-Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou, S.~Adler, M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, M.~Rozenberg.    
 
 \paragraph{Author contributions}
-A.A. designed the project, developed the main structure of the software and conceived the computational algorithms in the core library. 
+A.A. designed the project, developed the main structure of the software and conceived the computational algorithms in the core library. A.A. and M.C. conceived the diagonalization, correlation function  calculation and bath optimization strategies implemented in the library. M.C. devised the inclusion of the electron-phonon coupling and of the superconducting state. 
 L.C., G.M., F.P. A.S., S.G. and G.B.  equally contributed to the development and implementation of many different aspects of the  software, including code writing, configuration, installation, testing and continuous integration procedures. 
 L.C. devised and developed the C-binding layer, the Python, Julia and Monicelli interface together with Python specific deployment and installation tools. 
 I.K. developed the TRIQS interface and contributed to the testing part. 
 A.K., M.W. and G.S. developed the integration with W2Dynamics.  
-A.A. and M.C. conceived the diagonalization, correlation function  calculation and bath optimization strategies implemented in the library. M.C. devised the inclusion of the electron-phonon coupling. 
 A.A., M.C., L.d.M. and G.S designed additional algorithms for extended functionalities of the core software.   
 A.A., L.C., I.K., A.K., S.G. and G.B. performed the calculations, analyzed the results and prepared the data presentation in the examples.
 A.A. and L.C. wrote the backbone of the manuscript.
