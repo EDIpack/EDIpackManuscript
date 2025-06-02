@@ -734,9 +734,9 @@ of strength $\lambda/2$.
 
 \begin{figure}[t!]
     \includegraphics[width=0.5\linewidth]
-        {edipack2_examples/edipack2triqs/G_iw.pdf}
+        {figures/G_iw.pdf}
     \includegraphics[width=0.5\linewidth]
-        {edipack2_examples/edipack2triqs/A_w.pdf}
+        {figures/A_w.pdf}
     \caption{\label{figEx3}%
         Imaginary part of the Matsubara Green's function $G_\alpha(i\omega_n)$ (left) and the
         corresponding orbital-resolved spectral function $A_\alpha(\omega) = -\Im{G_\alpha(\omega)} / \pi$ (right) computed for a
@@ -762,7 +762,7 @@ generally begins with a few module imports.
                  numbers=none,
                  basicstyle={\scriptsize\ttfamily},
                  firstline=1, lastline=13]
-{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+{figures/hubbard_kanamori.py}
 
 One then proceeds to defining the system under consideration. In this case we
 consider an impurity atom with three correlated orbitals and two bath states
@@ -772,14 +772,14 @@ set objects that are later used to construct the solver.
                  numbers=none,
                  basicstyle={\scriptsize\ttfamily},
                  firstline=15, lastline=26]
-{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+{figures/hubbard_kanamori.py}
 The next step is to define a TRIQS many-body operator expression that represents
 the Hamiltonian to be diagonalized.
 \lstinputlisting[style=mypython,
                  numbers=none,
                  basicstyle={\scriptsize\ttfamily},
                  firstline=28, lastline=67]
-{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+{figures/hubbard_kanamori.py}
 Finally, one creates a solver object and performs the actual calculation by
 calling its method {\tt solve()}. This is normally the most time- and
 memory-consuming step.
@@ -787,7 +787,7 @@ memory-consuming step.
                  numbers=none,
                  basicstyle={\scriptsize\ttfamily},
                  firstline=69, lastline=83]
-{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+{figures/hubbard_kanamori.py}
 The computation results are readily available as attributes of the solver
 object. The following code snippet shows how to access measured expectation
 values of the static observables, and how to employ the plotting framework of
@@ -798,7 +798,7 @@ functions (\figu{figEx3}).
                  numbers=none,
                  basicstyle={\scriptsize\ttfamily},
                  firstline=85, lastline=113]
-{edipack2_examples/edipack2triqs/hubbard_kanamori.py}
+{figures/hubbard_kanamori.py}
 
 
 
