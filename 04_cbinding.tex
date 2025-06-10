@@ -11,7 +11,7 @@ Modern Fortran, which is the language of choice for \NAME, since many
 years supports the standardized generation of procedures and
 variables that are interoperable with C.
 Here we describe the implementation of an interoperability layer aiming at developing APIs for other languages as well as 
-integrating \NAME in complex scientific frameworks, e.g. TRIQS \cite{Parcollet2015CPC} or W2Dynamics \cite{Wallerberger2019CPC}. 
+integrating \NAME in complex scientific frameworks, e.g. TRIQS \cite{Parcollet2015CPC} or w2dynamics \cite{Wallerberger2019CPC}. 
 
 \subsection{C bindings}\label{sSecInteropCbindings}
 The interoperability with C language is provided by the
@@ -473,22 +473,99 @@ components of the quantities in question.
 
 
 
-\subsection{W2Dynamics interface}\label{sSecInteropW2DYN}
-\NAME is supported as alternative impurity solver in the W2Dynamics DMFT package \cite{Wallerberger2019CPC} available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. The only prerequisite to use this option is the presence of a functioning EDIpack2py installation (see \secu{sSecInteropEDIpy}), which W2Dynamics will attempt to import at runtime only if the user sets the appropriate configuration parameters.
-The  behavior of W2Dynamics is controlled by means of an input file, by default called
-{\tt Parameters.in}.
 
-In order to use the \NAME impurity solver for a calculation instead of the built-in implementation of the CT-HYB algorithm, the user needs to set the {\tt solver} parameter in section {\tt General} to {\tt EDIpack}. 
-In line to the current design of W2Dynamics, the \NAME solver is configured and controlled by setting the content of a specific section in the parameters file, called {\tt [EDIPACK]}.
 
-For most of the \NAME input variables, W2Dynamics accepts a parameter of the same name (in all uppercase letters) that allows the corresponding variable to be set, and is declared in the {\tt [EDIPACK]} section of the parameters file. This set of variables includes most of the control parameters to be tuned for a specific DMFT-ED calculation, such as the number of bath elements {\tt NBATH} and options for the bath fitting and diagonalization algorithms. 
+\subsection{w2dynamics interface}\label{sSecInteropw2dyN}
+\NAME is supported as an alternative impurity solver in the w2dynamics DMFT package \cite{Wallerberger2019CPC}, available on \href{https://github.com/w2dynamics/w2dynamics}{github.com/w2dynamics/w2dynamics}. 
+This integration enables users to 
+seamlessly switch from the default hybridization expansion continuous-time QMC  (CT-HYB), included natively
+in w2dynamics, to the \NAME ED solver. This requires no changes to the input file and at most minor  adjustments to configuration parameters.
+
+
+\subsubsection{Installation}\label{sSecInteropw2dyNPrereq}
+Use of the interface requires a current version of w2dynamics ($\geq 1.1.6$) and a working installation of EDIpack2py (see 
+\secu{sSecInteropEDIpy}). 
+Users may build and optionally install w2dynamics using conventional CMake based source installation: 
+\begin{lstlisting}[style=mybash]
+git clone https://github.com/w2dynamics/w2dynamics.git
+cd w2dynamics
+mkdir build
+cd build
+cmake ..
+make install
+\end{lstlisting}
+This enables the default CT-HYB solver. For DMFT calculations 
+using the \NAME interface, it is sufficient that the 
+\texttt{EDIpack2py} module is available for import at runtime, and no compilation is required on the w2dynamics side.
+
+\subsubsection{Implementation}\label{sSecInteropw2dyNPrereq}
+The \NAME interface is implemented as the class \texttt{EDIpackSolver} 
+in the Python module \texttt{w2dyn.dmft.edipack\_solver}. It is a subclass of 
+\texttt{ImpuritySolver} and can be used as a drop-in replacement for 
+\texttt{CtHybSolver}. The w2dynamics DMFT solver provides the hybridization 
+function and local Hamiltonian for the auxiliary impurity problem via 
+an \texttt{ImpurityProblem} instance passed to \texttt{set\_problem}. It then 
+it invokes the \texttt{solve} method to obtain the results, including, 
+e.g., the Green's function, as an \texttt{ImpurityResult}.
 %
-A second set of input variables, including physical quantities such as {\tt NORB}, {\tt ULOC}, {\tt BETA}, and {\tt   NLOOP}, directly map to parameters available in other sections of the W2Dynamics input file, such as {\tt [General]} or {\tt [Atoms]}. An example of a properly formatted input file is provided in \secu{SecExamples}. The full set of configuration options can be found in the {\tt configspec} file, contained in the subfolder {\tt w2dyn/auxiliaries} of the W2Dynamics repository. See also \cite{Wallerberger2019CPC}
-for further details.
+The \texttt{solve} method sets up the calculation using \NAME by calling 
+\texttt{EDIpack2py}, writing input files to a subdirectory, running 
+\NAME, and processing both the return values of \texttt{EDIpack2py} 
+methods and the output files. It then formats the results following the w2dynamics conventions.
 
-%All of the these variables correspond to or follow from configuration parameters that a user also needs to set for a CT-HYB calculation, and in order to present a consistent and rather ``solver-agnostic'' user interface, no redundant parameters are added to the {\tt EDIPACK} section and the usual parameters such as {\tt   beta} in section {\tt General} must be used instead. Note however in particular that if the \NAME solver is used, {\tt beta} is by default only used as cut-off and does not imply a finite temperature calculation unless the user explicitly sets the parameter {\tt   ED\_FINITE\_TEMP} in section {\tt EDIPACK} to {\tt True}.
 
-Specific \NAME solver features are abstracted away to the greatest reasonable extent by having the input, output, and DMFT loop handled by W2Dynamics in a way closely resembling the standard CT-HYB code. For instance, results such as the Green's functions are stored into the W2Dynamics HDF5 output file in the typical format. Moreover, W2Dynamics uses only its own logic for calculations with multiple inequivalent impurities without relying on any related implementation provided by \NAME{2Ineq}. As a consequence, functionalities that would require specific support from W2Dynamics and are currently not available can not be used through the interface, including e.g.\ the solution of impurity problems in the superconductive phase, i.e. {\tt ed\_mode=superc}.
+
+This implementation allows w2dynamics to abstract over the specific 
+choice of impurity solver as much as possible. \NAME is only called 
+to solve individual impurity problems, while the standard w2dynamics 
+code handles higher-level tasks such as the DMFT loop, support for 
+multiple inequivalent impurities, and the user-facing interface via 
+standard w2dynamics input files and output in its usual HDF5 format.
+
+As a result, features that require explicit support from w2dynamics 
+but are not yet implemented cannot be used through the \NAME interface. 
+In particular, solving impurity problems in the superconducting phase 
+(\texttt{ed\_mode=superc}) is not yet  supported.
+
+
+\subsubsection{Configuration and Usage}\label{sSecInteropw2dyNConfig}
+w2dynamics reads its configuration parameters from a file named \texttt{Parameters.in} by default. To use \NAME methods, the {\tt solver} parameter in the section {\tt General} needs to be set as follows:
+\begin{lstlisting}[style=mybash]
+[General]
+solver = EDIPACK
+\end{lstlisting}
+Additional parameters specific to \NAME are defined in the accessory section \texttt{[EDIPACK]}. These set many of the \NAME's corresponding input variables (in  uppercase letters). For example,  the number of bath sites {\tt NBATH} can be configured as:
+\begin{lstlisting}[style=mybash]
+[EDIPACK]
+NBATH = 7
+\end{lstlisting}
+
+This section includes also the options to control the bath optimization and  diagonalization algorithms. Other input variables that define the model (e.g., {\tt NORB}, {\tt ULOC}, and {\tt BETA}) or relate to functionalities handled by 
+w2dynamics itself (e.g., \texttt{NLOOP}) must be provided through 
+standard parameters in other sections, such as \texttt{[General]} or 
+\texttt{[Atoms]}. An example of a complete properly formatted input file is provided in \secu{SecExamplesBetheDMFTW2D}.
+The full set of configuration parameters can be found in the {\tt configspec} file, located in the {\tt w2dyn/auxiliaries} of the w2dynamics repository, see  \cite{Wallerberger2019CPC} for further details.
+
+A calculation can be launched by running the w2dynamics DMFT program 
+\texttt{DMFT.py}, which supports parallel execution via MPI to take 
+advantage of \NAME's parallelization.
+
+\subsubsection{Output and Results}\label{sSecInteropw2dyNOutput}
+Calculation results are stored in an HDF5 file, grouped by DMFT iteration (with group names formatted as {\tt dmft-001}) and inequivalent impurity (for impurity-specific data, using group names like 
+\texttt{ineq-001}). 
+The content of this file can be accessed using the 
+\texttt{hgrep} script provided with w2dynamics or other HDF5 tools. 
+Stored quantities include, for example, the impurity self-energy (in 
+datasets \texttt{siw-full}) and Green's function (in 
+\texttt{giw-full}) on the Matsubara frequency axis, as well as single 
+and double occupations (in \texttt{occ}). Additionally, the interface 
+provides access to results not available when using the CT-HYB solver, 
+such as the impurity self-energy (\texttt{somega}) and Green's function 
+(\texttt{gomega}) on the real frequency axis.
+Standard \NAME output files for each individual ED impurity solution are also available in subdirectories named like the the main HDF5 output file with iteration and impurity numbers appended.
+
+
+
 
 
 

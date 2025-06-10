@@ -11,7 +11,7 @@ Thus, in the implementations using Fortran, Python or other \NAME interfaces to 
 In our examples based on the Fortran APIs, we rely on external open-source libraries, such as DMFTtools (see \href{https://github.com/aamaricci/DMFTtools}{github.com/aamaricci/DMFTtools}), to perform specific tasks, including evaluating the local Green’s function, implementing the self-consistency, constructing the tight-binding model, or calculating the kinetic energy.
 Where appropriate, we include comments that reference these external procedures.
 
-On the other hand, the results obtained with W2Dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which seamlessly handles all these tasks.
+On the other hand, the results obtained with w2dynamics rely on the internal framework provided by the software itself -- see the script \texttt{DMFT.py} \cite{Wallerberger2019CPC}, which seamlessly handles all these tasks.
 Similarly, the TRIQS library offers an comprehensive framework fo manipulating Green’s functions and related quantities \cite{Parcollet2015CPC}, making these tasks easily accessible while maintaining very high standards of optimization and accuracy.
 
 
@@ -342,15 +342,15 @@ $-{\rm Im}\Sigma(\omega\to0) \to\infty$.
 
 
 
-\subsubsection{Finite temperature (W2Dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTW2D}
-To demonstrate how the W2Dynamics interface integrates with  \NAME, we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using W2Dynamics. 
-In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in W2Dynamics against the \NAME solver at finite temperature.  
+\subsubsection{Finite temperature (w2dynamics interface, CT-HYB benchmark)}\label{SecExamplesBetheDMFTW2D}
+To demonstrate how the w2dynamics interface integrates with  \NAME, we briefly discuss how to solve the same problem, i.e. the Hubbard model on the Bethe lattice within DMFT using w2dynamics. 
+In order to showcase the capabilities of \NAME to address low-temperature problems, we compare the continuous-time Quantum Monte Carlo (CTQMC) solver using the hybridization expansion method (CT-HYB) included in w2dynamics against the \NAME solver at finite temperature.  
 
-Unlike \NAME, which provides only the impurity solver and bath optimization procedures and requires the user to implement the DMFT algorithm themselves (potentially using various methods), W2Dynamics adopts a fundamentally different approach: a single Python script, {\tt DMFT.py}, handles the entire DMFT calculation, leveraging dedicated classes that implement the generic self-consistency. The W2Dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of W2Dynamics can be found in Ref. \cite{Wallerberger2019CPC}           
+Unlike \NAME, which provides only the impurity solver and bath optimization procedures and requires the user to implement the DMFT algorithm themselves (potentially using various methods), w2dynamics adopts a fundamentally different approach: a single Python script, {\tt DMFT.py}, handles the entire DMFT calculation, leveraging dedicated classes that implement the generic self-consistency. The w2dynamics calculation is then entirely controlled by a model-dependent parameters file {\tt Parameters.in}, which contains a number of variable specifications including options to control the ED solver inherited from \NAME. Further information about the functioning of w2dynamics can be found in Ref. \cite{Wallerberger2019CPC}           
 
-Another important difference concerns the initial point of the iterative DMFT solution algorithm: while \NAME starts from a given discrete bath, W2Dynamics is initialized with a zero self-energy function or alternatively reads this quantity from a converged solution file. Thus, when using the \NAME interface in W2Dynamics, the initial Weiss field is determined using self-consistency and  an initial discrete bath is obtained through the \NAME bath optimization procedure. 
+Another important difference concerns the initial point of the iterative DMFT solution algorithm: while \NAME starts from a given discrete bath, w2dynamics is initialized with a zero self-energy function or alternatively reads this quantity from a converged solution file. Thus, when using the \NAME interface in w2dynamics, the initial Weiss field is determined using self-consistency and  an initial discrete bath is obtained through the \NAME bath optimization procedure. 
 
-The following is the W2Dynamics configuration file used to solve the Bethe lattice problem at finite temperature: 
+The following is the w2dynamics configuration file used to solve the Bethe lattice problem at finite temperature: 
 \begin{lstlisting}[style=mybash,language={},numbers=none,basicstyle={\scriptsize\ttfamily}]
 [General]
 DOS             = Bethe           # support for the Bethe lattice is built-in
@@ -401,7 +401,7 @@ Assuming the parameters are listed in a plain text file called
 mpiexec -n NC /path/to/w2dynamics/DMFT.py bethe_dmft.in
 \end{lstlisting}
 
-The results are collected into an HDF5 \cite{The_HDF_Group_Hierarchical_Data_Format} archive in the usual W2Dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with W2Dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
+The results are collected into an HDF5 \cite{The_HDF_Group_Hierarchical_Data_Format} archive in the usual w2dynamics format, including output quantities inherited from \NAME. Results can be viewed using the script {\tt hgrep} provided with w2dynamics or with other HDF5 tools. In this example we extract the Matsubara self-energy function $\Sigma(i\omega_n)$ for the last DMFT iteration:
 \begin{lstlisting}[style=mybash,numbers=none]
 /path/to/w2dynamics/hgrep latest siw-full -1
 \end{lstlisting}
@@ -410,13 +410,13 @@ The results are collected into an HDF5 \cite{The_HDF_Group_Hierarchical_Data_For
   \includegraphics[width=\linewidth]{figures/figBetheW2D.pdf}
     \caption{\label{figEx1W}%
     \textbf{Finite temperature DMFT solution.}
-    Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with W2Dynamics are compared against \NAME ED results, used both through the W2Dynamics interface and with a standalone Fortran program. 
+    Comparison of the imaginary parts of the Green's function $\Im{G}(i\omega_n)$ and self-energy $\Im{\Sigma}(i\omega_n)$ from different solutions of the Hubbard model on the Bethe lattice using DMFT. Data are for $T/D=0.01$ and $U/D=2.0$. CTQMC results from the solver included with w2dynamics are compared against \NAME ED results, used both through the w2dynamics interface and with a standalone Fortran program. 
         }
 \end{figure}
 
-In \figu{figEx1W} we report a comparison of the results obtained using the hybridization expansion CTQMC and the \NAME ED method as solvers in W2Dynamics. In addition we compare with results obtained using the Fortran API directly as shown in the previous subsection. Using DMFT, we solve the Hubbard model on a Bethe lattice for $T/D=0.01$ and $U/D=2.00$, corresponding to a correlated metallic state. 
+In \figu{figEx1W} we report a comparison of the results obtained using the hybridization expansion CTQMC and the \NAME ED method as solvers in w2dynamics. In addition we compare with results obtained using the Fortran API directly as shown in the previous subsection. Using DMFT, we solve the Hubbard model on a Bethe lattice for $T/D=0.01$ and $U/D=2.00$, corresponding to a correlated metallic state. 
 
-In panel (A) we show the behavior of the imaginary part of the impurity Green's function $\Im{G}(i\omega_n)$ which is the direct output for both methods (note that W2Dynamics does not directly have access to the real-axis Green's function when using the CTQMC solver). In panel (B) we show the same comparison for impurity self-energy $\Im{\Sigma}(i\omega_n)$. 
+In panel (A) we show the behavior of the imaginary part of the impurity Green's function $\Im{G}(i\omega_n)$ which is the direct output for both methods (note that w2dynamics does not directly have access to the real-axis Green's function when using the CTQMC solver). In panel (B) we show the same comparison for impurity self-energy $\Im{\Sigma}(i\omega_n)$. 
 The results obtained from the three calculations are in excellent agreement with each other already for a small number of bath levels ({\tt NBATH=7}) and relatively low QMC statistics ({\tt Nmeas=200000} with {\tt NC=10} parallel processes).   
 
 

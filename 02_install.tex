@@ -82,11 +82,12 @@ be retrieved directly from its GitHub repository, for instance using
 \begin{lstlisting}[style=mybash,numbers=none]
 git clone https://github.com/edipack/EDIpack 
 \end{lstlisting}
-Then, assuming to be in the software root directory ({\tt \$cd EDIpack}), a conventional out-of-source building can be performed using two alternative compilation backends.
+Then, assuming to be in the software root directory ({\tt \$cd EDIpack}), a conventional out-of-source building can be performed as follows:
+%using two alternative compilation backends.
 
-\begin{itemize}
-  \item {\bf GNU Make}\\
-This is the default CMake workflow:
+%\begin{itemize}
+%  \item {\bf GNU Make}\\
+%This is the default CMake workflow:
 \begin{lstlisting}[style=mybash,numbers=none]
 mkdir build
 cd build
@@ -96,19 +97,19 @@ make install
 \end{lstlisting}
 
 
-\item{\bf Ninja}
+%\item{\bf Ninja}
 
-An alternative workflow employs the Ninja building backend with
-Fortran support. Ninja is generally faster and automatically supports
-parallel compilation:
-\begin{lstlisting}[style=mybash,numbers=none]
-mkdir build
-cd build
-cmake -GNinja ..
-ninja
-ninja install
-\end{lstlisting}
-\end{itemize}
+%An alternative workflow employs the Ninja building backend with
+%Fortran support. Ninja is generally faster and automatically supports
+%parallel compilation:
+%\begin{lstlisting}[style=mybash,numbers=none]
+%mkdir build
+%cd build
+%cmake -GNinja ..
+%ninja
+%ninja install
+%\end{lstlisting}
+%\end{itemize}
 
 \noindent
 The CMake configuration can be further tuned using the following variables:
