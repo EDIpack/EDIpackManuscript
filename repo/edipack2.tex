@@ -1,0 +1,372 @@
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or
+%% 5p,twocolumn, preprint, review
+\documentclass[preprint,3p,10pt]{elsarticle}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{stackengine}
+\newlength\llength
+\llength=1.38ex\relax
+\usepackage[dvipsnames]{xcolor}
+\usepackage{makecell}
+\usepackage{subfiles}
+\usepackage{comment}
+
+\usepackage{xspace}
+
+%% natbib.sty is loaded by default. natbib options with \biboptions{...}
+\biboptions{sort&compress,super}
+
+% Hypelinks in the document; settings
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=red]{hyperref}
+% \usepackage[normalem]{ulem}
+
+
+\usepackage{listings}
+\lstdefinestyle{fstyle}{
+  frame=lines,
+  language=fortran,
+  basicstyle=\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+\lstdefinestyle{mypython}{
+  frame=lines,
+  language=python,
+  basicstyle=\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+\definecolor{mymauve}{rgb}{0.58, 0, 0.82}
+\lstdefinestyle{mybash}{
+  frame=lines,
+  language=bash,
+  basicstyle=\footnotesize,
+  captionpos=b,
+  stringstyle=\color{mymauve},%\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\bfseries,
+  % It would be nice to have 'conda' here,
+  % but then 'conda-forge' gets highlighted too.
+  morekeywords={*,git,mkdir,cmake,make,pip},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+\lstdefinestyle{cstyle}{
+  frame=lines,
+  language=c,
+  basicstyle=\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{red},
+  % morekeywords={*,...},
+  mathescape,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+% % MINTED:
+% % \usepackage[cache=true,cachedir=minted-cache]{minted}
+% % \usepackage[finalizecache=true,cachedir=minted-cache]{minted}
+% \usepackage[frozencache=true,cachedir=minted-cache]{minted}
+% \setminted[fortran]{linenos,mathescape,frame=lines,style=bw,framesep=1mm,
+%   baselinestretch=1,fontsize=\footnotesize}
+
+
+
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ltablex}
+
+
+\DeclareMathAlphabet\mathbfcal{OMS}{cmsy}{b}{n}
+
+
+\renewcommand{\arraystretch}{1.4}
+\newcolumntype{T}[1]{>{\tt\footnotesize\raggedright\arraybackslash}p{#1}}
+\newcolumntype{D}[1]{>{\it\footnotesize\raggedright\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\scriptsize\raggedright\arraybackslash}p{#1}}
+
+
+\newcommand{\onlinecite}[1]{\nocite{#1}\!\!\!\citenum{#1}}
+\newcommand{\fixme}[1]{{\color{BrickRed} #1}}
+\newcommand {\note}[1]{{\color{blue} [{\bf NOTE}: \bf #1]}}
+\newcommand {\aac}[1]{{\color{red} [{\bf AA}: \bf #1]}}
+\newcommand {\new}[1]{{\color{blue}\it #1}}
+
+\usepackage[inline]{showlabels}
+
+
+%Reference to a given labelled equation
+%and definition of a bib. element.
+%-------------------------------------------
+\newcommand{\equ}[1]
+{Eq.\,(\ref{#1})}
+
+\newcommand{\figu}[1]
+{Fig.\,\ref{#1}}
+
+\newcommand{\secu}[1]
+{Sec.\,\ref{#1}}
+
+\newcommand{\ket}[1]
+{|#1\rangle}
+
+\newcommand{\bra}[1]
+{\langle #1|}
+
+\newcommand{\sgn}
+{\mathop{\mathrm{sgn}}}
+
+
+
+%SIMBOLI VARI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\a{\alpha}       \def\b{\beta}   \def\g{\gamma}   \def\d{\delta}
+\def\e{\varepsilon}  \def\z{\zeta}   \def\h{\eta}     \def\th{\theta}
+\def\k{\kappa}       \def\l{\lambda} \def\m{\mu}      \def\n{\nu}
+\def\x{\xi}          \def\p{\pi}     \def\r{\rho}     \def\s{\sigma}
+\def\t{\tau}         \def\f{\varphi} \def\ph{\varphi} \def\c{\chi}
+\def\ps{\pi}        \def\y{\upsilon}\def\o{\omega}   \def\si{\varsigma}
+\def\G{\Gamma}       \def\D{\Delta}  \def\Th{\Theta}  \def\L{\Lambda}
+\def\X{\Xi}          \def\P{\Pi}     \def\Si{\Sigma}  \def\F{\Phi}
+\def\Ps{\Psi}        \def\O{\Omega}  \def\Y{\Upsilon} \def\lg{\langle}
+
+\def\PP{{\cal P}}\def\EE{{\cal E}}\def\MM{{\cal M}} \def\VV{{\cal V}}
+\def\CC{{\cal C}}\def\FF{{\cal F}}\def\HH{{\cal H}}\def\WW{{\cal W}}
+\def\TT{{\cal T}}\def\NN{{\cal N}}\def\BB{{\cal B}} \def\II{{\cal I}}
+\def\RR{{\cal R}}\def\LL{{\cal L}}\def\JJ{{\cal J}} \def\OO{{\cal O}}
+\def\DD{{\cal D}}
+\def\AA{{\cal A}}
+\def\GG{{\cal G}} \def\SS{{\cal S}}
+\def\ZZ{{\cal Z}} \def\UU{{\cal U}}
+\def\SB{{\cal S}{\cal B}}
+\def\aa{{\V \a}}
+\def\hh{{\V h}}\def\HHH{{\V H}}
+%\def\AA{{\V A}}
+%\def\GG{{\V G}}\def\BB{{\V B}}\def\aaa{{\V a}}\def\bbb{{\V b}}
+\def\nn{{\V \n}}\def\pp{{\V p}}\def\mm{{\V m}}\def\qq{{\bf q}}
+\def\RRR{\mathbb{R}} \def\CCC{\mathbb{C}} \def\NNN{\mathbb{N}}
+\def\ZZZ{\mathbb{Z}}
+%\def\TTT{\hbox{\msytw T}}
+
+
+
+\def\ul{\underline}
+\def\=={\equiv}
+\def\defi{{\buildrel def \over =}}
+\def\lft{\left} \def\rgt{\right} \def\dpr{\partial} \def\der{{\rm d}}
+\def\us{\underline \s} \def\ue{{\underline \e}}
+\def\la{\left\langle}
+\def\ra{\right\rangle}
+\def\qed{\raise1pt\hbox{\vrule height5pt width5pt depth0pt}}
+\def\iome{i\omega_n} \def\iom{i\omega} \def\iom#1{i\omega_{#1}}
+\def\iomn{i\omega_n}
+\def\epsk{\epsilon({\bf k})} \def\Ga{\Gamma_{\alpha}}
+\def\Seff{S_{eff}}  \def\dinf{$d\rightarrow\infty\,$}
+\def\cG0{{\cal G}_0}
+\def\cG{{\cal G}}  \def\cU{{\cal U}}  \def\cS{{\cal S}}
+\def\spinup{\uparrow} \def\spindown{\downarrow} \def\spindw{\downarrow}
+\def\up{\uparrow} \def\down{\downarrow} \def\dw{\downarrow}
+
+
+\def\Ak{{\bf A}} \def\Akt{{\bf A}(t)} \def\Ek{{\mathbf E}}
+% \def\Im{\mbox{Im}}
+\def\=={\equiv}
+\def\defi{{\buildrel def \over =}} \def\nt{\widetilde{n}}
+\def\Im{{\rm Im}} \def\Re{{\rm Re}} \def\Tr{{\rm Tr}}
+\def\det{{\rm det}\,} 
+
+
+\def\ibra{\langle}
+\def\iket{\rangle}
+
+\def\ka{{\bf k}}
+\def\vk{{\bf k}}
+\def\qa{{\bf q}}
+\def\vQ{{\bf Q}}
+\def\vr{{\bf r}}
+\def\q{{\bf q}}
+\def\R{{\bf R}}
+\def\vR{{\bf R}}
+\def\kx{{ k_x}}
+\def\ia{{\bf i}}
+\def\ja{{\bf j}}
+
+\usepackage{bbold}
+\def\11{\mathbb{1}}
+\def\00{\mathbf{0}}
+\def\NAME{{\rm EDIpack}\xspace}
+\newcommand{\shortrightarrow}{\mathrel{\mkern3mu\rightarrow\mkern}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+ 
+%\journal{Computer Physics Communications}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{EDIpack: A generic and interoperable Lanczos-based solver for quantum impurity problems}
+\author[a,b,c]{L.~Crippa*}
+\author[a]{I.~Krivenko*}
+\author[d]{S.~Giuli*}
+\author[d]{G.~Bellomia*}
+\author[c]{A.~Kowalski}
+\author[e]{F.~Petocchi}
+\author[f]{M.~Wallerberger}
+\author[g]{G.~Mazza}
+\author[h]{L.~de Medici}
+\author[c,b]{G.~Sangiovanni}
+\author[d,i]{M.~Capone*}
+\author[i]{A.~Amaricci*}
+% \author[]{A.~Scazzola}
+
+% \cortext[author] {Corresponding author.\\\textit{E-mail address:} amaricci@iom.cnr.it}
+\newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
+  Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
+  Trieste, Italy}
+\newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati (SISSA),
+  Via Bonomea 265, 34136 Trieste, Italy}
+\newcommand{\ITPHamburg}{I. Institute of Theoretical Physics,
+  University of Hamburg, Notkestrasse 9, 22607 Hamburg, Germany}
+\newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
+  Astrophysik, Universit\"at W\"urzburg, 97074 W\"urzburg, Germany}
+\newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, 01062 Dresden, Germany}
+\newcommand{\Geneve}{Department of Quantum Matter Physics, University of
+  Geneva, Quai Ernest-Ansermet 24, 1211 Geneva, Switzerland}
+\newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
+  Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
+\newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
+\newcommand{\TUW}{Institure of Solid State Physics, TU Wien, 1040 Vienna, Austria}
+
+\address[a]{\ITPHamburg}
+\address[b]{\CTQMAT}
+\address[c]{\WZBURG}
+\address[d]{\SISSA}
+\address[e]{\Geneve}
+\address[f]{\TUW}
+\address[g]{\UPISA}
+\address[h]{\ESPCI}
+\address[i]{\CNRIOM}
+% \address[]{Politecnico di Torino, Turin, Italy}
+\cortext[1]{Corresponding authors}
+% \cortext[*] {Corresponding author:giuli@sissa.it}
+% \cortext[*]{Corresponding author:bellomia@sissa.it}
+
+\begin{abstract}
+  
+\end{abstract}
+
+\begin{keyword}
+  %% keywords here, in the form: keyword \sep keyword
+  Exact Diagonalization \sep
+  Quantum Impurity Models\sep  
+  Strongly Correlated Electrons \sep  
+  Dynamical Mean-Field Theory
+\end{keyword}
+
+\end{frontmatter}
+
+% Computer program descriptions should contain the following
+% PROGRAM SUMMARY.
+\noindent
+{\bf PROGRAM SUMMARY}
+\begin{small}
+  \noindent
+  \\
+  {\em Program Title:}  EDIpack                                        \\
+  {\em Licensing provisions:} GPLv3\\
+  {\em Programming language:}  Fortran, Python, C/C++\\
+  {\em Classification:} 6.5, 7.4, 20 \\
+  {\em Required dependencies:} CMake ($>=3.10.0$), Scifortran, MPI\\
+  {\em Nature of problem:}. \\
+  {\em Solution method:} .\\
+\end{small}
+
+
+\tableofcontents
+
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+%
+%                              PAPER HERE BELOW
+%                              
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
+\subfile{01_intro.tex}
+
+% ##################################################################
+
+
+\subfile{02_install.tex}
+
+% ##################################################################
+
+\subfile{03_edipack2.tex}
+
+% ##################################################################
+
+\subfile{04_cbinding.tex}
+
+% ##################################################################
+
+\subfile{05_examples.tex}
+
+% ##################################################################
+
+
+\subfile{06_conclusions_acknowledgement_appendix.tex}
+
+% ##################################################################
+% ##################################################################
+% ##################################################################
+
+
+
+
+%% References with bibTeX database:
+% \section*{References}
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+

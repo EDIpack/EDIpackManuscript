@@ -1,0 +1,207 @@
+\documentclass[a4paper,12pt]{letter}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[nodayofweek]{datetime}
+\usepackage{geometry}
+\geometry{a4paper, inner=25mm, top=20mm, outer=25mm , bottom=20mm}
+\usepackage{setspace}
+\usepackage[svgnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{physics}
+\usepackage{todonotes}
+
+%-------------------------------------------
+
+
+\newcommand{\refereesays}[1]
+{{\it \color{NavyBlue}{#1}}\vspace{1cm}}
+
+
+%SIMBOLI VARI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\a{\alpha}
+\def\b{\beta}
+\def\g{\gamma}
+\def\d{\delta}
+\def\e{\varepsilon}
+\def\z{\zeta}
+\def\h{\eta}
+\def\th{\theta}
+\def\k{\kappa}
+\def\l{\lambda}
+ \def\m{\mu}
+\def\n{\nu}
+\def\x{\xi}
+\def\p{\pi}
+\def\r{\rho}
+ \def\s{\sigma}
+\def\t{\tau}
+\def\f{\varphi}
+\def\ph{\varphi}
+\def\c{\chi}
+\def\ps{\pi}
+\def\y{\upsilon}
+\def\o{\omega}
+\def\si{\varsigma}
+\def\G{\Gamma}
+\def\D{\Delta}
+\def\Th{\Theta}
+\def\L{\Lambda}
+\def\X{\Xi}
+\def\P{\Pi}
+\def\Si{\Sigma}
+\def\F{\Phi}
+\def\Ps{\Psi}
+\def\O{\Omega}
+\def\Y{\Upsilon}
+\def\PP{{\cal P}}
+\def\EE{{\cal E}}
+\def\MM{{\cal M}}
+\def\VV{{\cal V}}
+\def\CC{{\cal C}}
+\def\FF{{\cal F}}
+\def\HH{{\cal H}}
+\def\WW{{\cal W}}
+\def\TT{{\cal T}}
+\def\NN{{\cal N}}
+\def\BB{{\cal B}}
+\def\II{{\cal I}}
+\def\RR{{\cal R}}
+\def\LL{{\cal L}}
+\def\JJ{{\cal J}}
+\def\OO{{\cal O}}
+\def\DD{{\cal D}}
+\def\GG{{\cal G}}
+\def\RRR{\mathbb{R}}
+\def\CCC{\mathbb{C}}
+\def\up{\uparrow}
+\def\down{\downarrow}
+\def\bra{\langle}
+\def\ket{\rangle}
+
+%Author's comments
+\def \fixme#1{\color{Red}{fixme: #1}}
+\date{\today}
+
+\begin{document}
+
+{\textbf{Reply to  Referee A}}
+
+We thank the refereee for their time and work in reviewing our
+manuscript. Here below we address point by point all the issues raised
+in their reports.
+
+
+
+\refereesays{Exact diagonalization (ED) plays a vital role in the study of quantum impurity problems. In this work, the authors present an ED library and describe its usage in considerable detail. While it builds upon the previous EDIpack library, the manuscript introduces sufficient new developments to warrant a separate publication. Notably, several significant extensions and improvements are included, such as a unified framework for zero- and finite-temperature calculations for a wide range of impurity models; access to the full complex frequency plane; access to the Fock space and the ability to evaluate quantities like reduced density matrices; support for inequivalent impurities; integration with other programming languages and scientific libraries; and compatibility with widely used software suites such as TRIQS and w2dynamics.}
+
+\refereesays{Overall, the paper is well written and highly detailed, allowing new users to install and utilize the library with ease. Furthermore, the comprehensive DMFT tests, demonstrated through a variety of examples and accompanied by corresponding scripts, provide excellent starting points for newcomers. I believe this work makes a valuable contribution to the community and am therefore pleased to recommend its publication in SciPost.}
+
+
+\begin{enumerate}
+
+\item \refereesays{On page 3, a large portion of paragraph 3, which introduces DMFT, lacks citations. For example, the authors mention the success of DMFT in capturing key features of various materials, including Mott insulators, heavy fermion compounds, and unconventional superconductors. It would be helpful to include relevant references here to guide interested readers toward further reading.}
+
+\item \refereesays{Perhaps a sentence like “Section 6 provides the conclusions” was intended at the end of Section 1 but was inadvertently omitted?}
+
+\item \refereesays{Were the spin indices omitted in Eq. (3)? Or do the indices i,j,k,l represent “flavors” that is, combined spin and orbital indices—rather than orbitals alone? The same question applies to the display equation of $H^{int}$ on page 13. This could be confusing to readers, especially since the spin index is also not explicitly shown in the format of the <UMATRIX\_FILE>.restart file described on the same page.}
+
+\item \refereesays{The last display equation on page 10 seems incorrect, since the creation and annihilation operators do not appear to result in any particle being created or annihilated.}
+
+\item \refereesays{In Sec. 3.3, it appears that users must manually select one of the three provided symmetry configurations to perform block-diagonalization. Is there a plan to extend the code to automatically detect all relevant symmetries—especially in cases where orbitals or sites possess additional symmetries that would allow further block-diagonalization of the matrix?}
+
+\item \refereesays{On page 43, it is mentioned that the spectrum obtained from ED is “inherently spiky”. What is the value of the broadening parameter used in these simulations? Including this information in the main text may improve the clarity and reproducibility of the paper.}
+
+\item \refereesays{"$J_x \rightarrow J_X$" and "$J_p \rightarrow J_P$" in the second paragraph of page 13} 
+
+\item \refereesays{“store” $\rightarrow$  “stored” in the last line of page 13}
+
+\item \refereesays{"As discussed" $\rightarrow$ "As will be discussed" at the beginning of Sec. 3.5.2} 
+
+\item \refereesays{"$\vec{B_\sigma}$" $\rightarrow$ "$\vec{B}_\sigma$" in the sentence "The values are given by all integers $B_\sigma$ corresponding to..." of page 14} 
+
+\item \refereesays{for the display equation of $C(z)$ on page 16, summation index $m$ has lower and upper bounds, while index $n$ does not, although they are dummy variables for the same thing. Same for Eq.~(14)} 
+
+
+\item \refereesays{should be no indentation for the sentence right after the first display equation on page 17} 
+
+\item \refereesays{"$w(\mathcal{A})_{mn}^\nu$" $\rightarrow$ "$w_{mn}^\nu(\mathcal{A})$" in the second line after Eq.~(14)}
+
+\item \refereesays{"This example two main goals" $\rightarrow$ "This example has two main goals" on page 46.}
+
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+{\textbf{Reply to Referee B}}
+
+
+We thank the refereee for their time and work in reviewing our
+manuscript. Here below we address point by point all the issues raised
+in their reports.
+
+
+
+\refereesays{This paper presents the current status in an exact diagonalisation impurity solver EDIpack. It provides a detailed exposition of the multiple interfaces as well as a number of tutorial-style examples that provide details that will be appreciated to new users of the package. I believe that providing robust and well-tested computer codes, as well as high quality documentation, are a big service to the community. I wholeheartedly recommend this work for publication.}
+
+\begin{enumerate}
+
+\item \refereesays{On p. 8, function {\tt ed\_set\_Hloc} is introduced, but without much further information. Maybe the reader could be referred to some later section where its use is illustrated.}
+
+\item \refereesays{On p. 9, the discussion about the phonon cutoff sounds potentially a bit misleading. The cutoff is surely problem dependent, and there are (generalized) cases where the shift A\_m cannot be considered as a free parameter.}
+
+\item \refereesays{I find the discussion at the end of page 11 somewhat unclear, especially the terminology. Is this a discussion of consecutive indexing vs. occupation number representation?}
+
+\item \refereesays{The motivation of including the code on p. 12 is unclear. What is the intention here?}
+
+\item \refereesays{Parenthesis missing in the equation at the bottom of p. 12.}
+
+\item \refereesays{Bottom of p. 13: "are store" -> "are stored"}
+
+\item \refereesays{Top of p. 14: What is global share, what are istart, ishift, iend? I suppose this is Fortran-specific.}
+
+\item \refereesays{p. 16: GFmatrix is said to be a critical component for high-speed execution. Maybe it could be describe in more detail? In what way is it efficient? What does it mean it is multi-layed? In passing, it would be nice if the capitalization would be uniform, e.g. GFmatrix vs. gfmatrix (I understand that Fortran compiler does not care, but the human reader perhaps does).}
+
+
+\item \refereesays{A trick for computing off-diagonal functions is presented on p. 21. Doesn't this require switching to complex-valued floating points even in cases where the Hamiltonian is purely real?}
+
+\item \refereesays{In Eq. (18), is Z the same on both sides of approximation sign?}
+
+\item \refereesays{Are the code listings on p. 25 and p. 26 of sufficient interest to readers?}
+
+\item \refereesays{p. 28: "as the nonsu2 and superc diagonalizations entail nontrivial subtleties in optimizing the off-diagonal components of X". What are these subtleties?}
+
+\item \refereesays{As a general coding comment: would it be possible to remove use of global variables?}
+
+\item \refereesays{p. 40: I find the discussion of parallelism in Julia wrapper unnecessary. Such information does not necessarily age well. This belongs to a readme file.}
+
+\item \refereesays{p. 41: "an comprehensive" -> "a", "fo manipulating" -> for}
+
+\item \refereesays{p. 41: The code listing mentions Wband and de, but I don't see where this is coming from.}
+
+\item \refereesays{p. 42: "provides access to well-tested functions". This is unclear. Functions doing what?}
+
+\item \refereesays{p. 46: This example two main goals: missing "has"?}
+
+\item \refereesays{p. 47: generate_kgrid is confusingly complex. There must be a simpler way to accomplish this.}
+
+\item \refereesays{p. 57: Is the footnote necessary? Will it be of interest to the expected readers of this paper?}
+
+\end{enumerate}
+
+
+
+\end{document}
+

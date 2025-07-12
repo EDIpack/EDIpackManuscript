@@ -1,0 +1,239 @@
+\documentclass[edipack_sp.tex]{subfiles}
+\begin{document}
+
+
+\section{Conclusions}\label{SecConclusions}
+We have presented \NAME{}, a versatile and high-performance ED solver for generic quantum impurity problems. Building on the massively
+parallel algorithms introduced by its predecessor \cite{Amaricci2022CPC}, this version of
+the library features new capabilities allowing for different broken-symmetry solutions within a unified
+framework that provides, for instance, reliable evaluations of a variety of local dynamical correlation
+functions of an arbitrary complex frequency ranging from the Green's functions to superconducting, excitonic and magnetic response functions.
+
+This new version allows for an efficient evaluation of 
+reduced density matrices of the impurity directly from Fock space quantities and thus enables  
+quantum information analysis of correlated systems, which is becoming an essential tool to address emergent phases of quantum materials.
+
+A central feature of \NAME is its strong focus on interoperability,
+achieved through modern Fortran constructs, C/C++-bindings, and
+comprehensive APIs for Python (EDIpack2py). 
+These interfaces enable seamless integration with broader
+computational frameworks, like TRIQS \cite{Parcollet2015CPC} and
+w2dynamics \cite{Wallerberger2019CPC}, expanding the
+functionality of these platforms and providing a robust foundation for
+reproducible research.
+
+We thoroughly discussed the implementation of the \NAME library and its
+most important algorithms and classes. We presented in
+detail the third-party interfaces which extend ED
+capabilities beyond the domain of the library itself. 
+Finally, we showcased the use of the \NAME software in different
+contexts through elaborated examples, which can serve as a reference for potential users. 
+
+The modular and extensible design of \NAME provides a
+natural foundation for future extensions.
+For instance it provides a suitable basis to implement cluster-DMFT \cite{Capone2004PRB,Kotliar2006RMP,Park2008PRL} methods, where the
+impurity problem is generalized to include clusters of interacting
+sites. This approach includes spatial correlations beyond the single-site approximation, capturing effects
+such as $d$-wave pairing, charge ordering, and complex spin textures in strongly correlated systems.
+A different outlook is the development of an integration layer with other quantum embedding methods, such as the ghost Gutzwiller scheme \cite{Lanata2015PRX},
+which heavily rely on solving effective impurity problems.    
+We anticipate that \NAME will become a valuable tool for the computational condensed matter community, supporting a wide range of
+studies on strongly correlated materials and providing a reliable
+reference platform for quantum impurity solvers.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section*{Acknowledgements}
+We acknowledge helpful discussions occurring at various stages of development of \NAME with: C.~Mejuto-Zaera, P.~Villar~Arribi, M.~Chatzieleftheriou, S.~Adler, M.~Collura, C.~Weber, A.~Sartori, H.~Choi, A.~Valli, M.~Rozenberg.    
+
+\paragraph{Author contributions}
+A.A. designed the project, developed the main structure of the software and conceived the computational algorithms in the core library. A.A., L.C. and M.C. conceived the diagonalization, correlation function  calculation and bath optimization strategies implemented in the library. A.A., G.M., A.S., S.G. and M.C. devised the inclusion of the electron-phonon coupling and of the superconducting state. 
+L.C., G.M., F.P. A.S., S.G. and G.B. equally contributed to the development and implementation of many different aspects of the  software, including code writing, configuration, installation, testing and continuous integration procedures. 
+L.C. devised and developed the C-binding layer, the Python, Julia and Monicelli interface together with Python specific deployment and installation tools. 
+I.K. developed the TRIQS interface and contributed to the testing part. 
+A.K., M.W. and G.S. developed the integration with w2dynamics.  
+A.A., M.C., L.d.M. and G.S designed additional algorithms for extended functionalities of the core software.   
+A.A., L.C., I.K., A.K., S.G. and G.B. performed the calculations, analyzed the results and prepared the data presentation in the examples.
+A.A. and L.C. wrote the backbone of the manuscript.
+All authors participated in writing this manuscript. 
+
+% TODO: include funding information
+\paragraph{Funding information}
+L.C. acknowledges support from Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) thr\-ough the cluster of excellence ``CUI: Advanced Imaging of Matter" of the Deutsche Forschungsgemeinschaft (DFG EXC 2056, Project ID 390715994) and gratefully acknowledges the scientific support and HPC resources provided by the Erlangen National High Performance Computing Center (NHR@FAU) of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) under the NHR project b158cb. NHR funding is provided by federal and Bavarian state authorities. NHR@FAU hardware is partially funded by the German Research Foundation (DFG)– 440719683.
+I.K. acknowledges support from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Grant agreement No.~854843-FASTCORR).
+G.S. and A.K. acknowledge financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) through FOR 5249 (project-id 449872909, Project P05), and the W\"urzburg-Dresden Cluster of Excellence on Complexity and Topology in Quantum Matter-ct.qmat (EXC 2147, project-id 390858490).
+F.P. acknowledges support from the Swiss National Science Foundation via NCCR Marvel and SNSF Grant No. 200021-196966.
+M.W. acknowledges support from the Austrian Science Fund (FWF) through grant DOI 10.55776/P36332.
+%G.M.
+G.M. acknowledges support from the MUR - Italian Ministry of University and Research - through the Rita-Levi Montalcini program.
+L.dM. acknowledges support by the European Commission through the ERC-CoG2016, StrongCoPhy4Energy, GA No. 724177.
+M.C., S.G. and G.B. acknowledge financial support from the National Recovery and Resilience Plan PNRR
+MUR Project No.~CN00000013-ICSC and by MUR via PRIN 2020 (Prot.~2020JLZ52N-002) and PRIN 2022 (Prot.~20228YCYY7) programmes.
+A.A. and M.C. acknowledge financial support from the National Recovery and Resilience Plan PNRR MUR Project No.~PE0000023-NQSTI. 
+
+
+
+
+\section{Appendix A: Monicelli interface}\label{appendixA}
+In order to further showcase the interoperability capabilities of
+\NAME provided by the C-bindings module, we describe a simple interface to {\tt Monicelli}.
+
+  
+{\tt Monicelli} is an esoteric programming language based on the LLVM
+toolchain.
+It is written in C++ and offers wrappers for the basic
+types and operations thereof. The syntax replicates a cultural Italian
+phenomenon known as ``supercazzola", a rambling nonsensical discourse
+which gives the false impression of carrying an actual meaning,
+introduced in the movies trilogy ``Amici Miei'', directed by Mario
+Monicelli (see \href{https://it.wikipedia.org/wiki/Amici_miei}{it.wikipedia.org/wiki/Amici\-\_\-miei}). 
+
+The {\tt Monicelli} language can be found at
+\href{https://github.com/esseks/monicelli.git}{github.com/esseks/monicelli.git}
+and can be installed using CMake. The software depends on C++
+compiler with {\tt stdlib}, LLVM and in some cases {\tt libz} library. The installation gives access to the {\tt
+  Monicelli} compiler {\tt mcc}, which statically links LLVM. 
+
+We believe the discourse flow of this language is best captured by 
+illustrating its features and \NAME interface via a paraphrase of the original supercazzola, an epic non-sensical dialogue between a traffic policeman (V), count Mascetti (M) and G. Perozzi (P) (see
+\href{https://it.wikipedia.org/wiki/Supercazzola#Origine}{it.wikipedia.org/wiki/Supercazzola}
+and \href{https://www.youtube.com/watch?v=SF8YUFdP6eU}{Movie Scene}). 
+
+\begin{dialogue}
+\speak{\MakeUppercase{V}} {\it Lei ha clacsonato!}
+
+\speak{\MakeUppercase{P}} {\it Tu ha clacsonato?}
+\par\lips\par
+
+\speak{\MakeUppercase{M}} {\it Tarapia tapioco, prematurata l'interfaccia, o scherziamo?}
+
+\speak{\MakeUppercase{V}} {\it Prego}?
+
+\speak{\MakeUppercase{M}} {\it Scusi noi siamo in Monicelli, come fosse un linguaggio esoterico basato su C++ e utilizzante la toolchain di LLVM anche per Linux e Unix soltanto in due, oppure in quattro anche scribai con il file
+sorgente {\tt hm\_bethe.mc}? \\ Come {\tt
+  github.com/lcrippa/prematurata\_la\_dmft}, per esempio?}
+
+\speak{\MakeUppercase{V}} {\it Ma che DMFT, mi faccia il piacere! Questi signori stavano programmando loro, non si intrometta!}
+
+\speak{\MakeUppercase{M}} {\it Ma no, dico, mi porga il file {\tt bagaglio.cpp}. Le vede le funzioni? Lo vede che interfacciano gli array, non supportati da {\tt Monicelli}, e prematurano anche! 
+Ora io le direi, anche con il rispetto per l'autorità, anche solo le
+due parole come install {\tt Monicelli} from
+\href{https://github.com/esseks/monicelli.git}{github.com/esseks/monicelli.git}
+e compila il file {\tt hm\_bethe.mc}, per esempio.}
+
+\speak{\MakeUppercase{V}} {\it Basta così! Mi seguano nel programma di test!}
+
+\speak{\MakeUppercase{P}} {\it No, no, no, attenzione! Il loop DMFT completo \`e supportato secondo la Ref. \cite{Georges1996RMP}, abbia pazienza,
+senn\`o.... Plotta i dati, anche un pochino di Green's function e
+Self-energy in prefettura.}
+
+\speak{\MakeUppercase{M}} {\it Senza contare che {\tt prematurata\_la\_dmft} ha perso i contatti con il tarapia tapioco, dopo.}
+
+\par\lips\par
+
+\speak{\MakeUppercase{V}} {\it Ho bello che capito. Si farà finta di passar da bischeri!}
+\end{dialogue}
+
+We shall now present a fully functioning DMFT code for
+the solution of the Bethe lattice written in Monicelli. It requires a minimal C++
+interface to handle arrays, complex numbers and properly interfacing
+the EDIpack functions.
+The first part of the DMFT code loads all the required functions from
+{\tt bagaglio.cpp}, in particular it loads the interface to the \NAME
+solver functions {\tt ed\_init\_solver} and {\tt ed\_solve}:
+
+\lstset{breaklines=true, breakindent=1em}
+\begin{lstlisting}[style=MonicelliStyle,numbers=none]
+bituma le funzioni ausiliarie che vengono dal bagaglio
+...
+blinda la supercazzola leggi o scherziamo?
+blinda la supercazzola iniziailsolver o scherziamo?
+blinda la supercazzola risolvi o scherziamo?
+blinda la supercazzola prendilasigma o scherziamo?
+blinda la supercazzola prendilbagno con l`elemento Necchi, il valore Sassaroli o scherziamo?
+...
+\end{lstlisting}
+
+After a long initialization, we follow the structure already presented
+in \secu{SecExamplesBetheDMFT} for the Fortran implementation.
+The DMFT code starts with the opening {\tt Lei ha clacsonato} (see
+above). Next, we read the input file and set the dimensions of some
+array describing the bath, the self-energy and Green's
+functions. We start a DMFT iteration loop using the command {\tt
+  stuzzica}, which includes an internal frequency loop as {\tt
+  Monicelli} does not support array algebra.
+The loop contains a call to the \NAME solver function, then proceeds
+by retrieving the self-energy function which is used to obtain the
+local Green's function. These enter the self-consistency equation
+which updates the Weiss field. Finally bath optimization is performed
+and if error condition is met the loop exit.
+The main step of the implementation reads: 
+
+
+\begin{lstlisting}[style=MonicelliStyle,numbers=none]
+Lei ha clacsonato
+#Read the input file
+    prematurata la supercazzola dimmilfile o scherziamo?
+    prematurata la supercazzola leggi o scherziamo? 
+...                                                  
+#Init the ED solver:
+    voglio il sapone, Necchi come se fosse
+    prematurata la supercazzola ilbagnoepronto o scherziamo?
+    prematurata la supercazzola lavati con il sapone o scherziamo?
+        
+    prematurata la supercazzola prendilah o scherziamo?
+    prematurata la supercazzola iniziailsolver o scherziamo?
+...
+#DMFT loop:
+stuzzica    
+      prematurata la supercazzola risolvi o scherziamo?
+      
+      prematurata la supercazzola prendilag o scherziamo?
+      prematurata la supercazzola prendilasigma o scherziamo?
+#Get $G_{loc}$ and update $\GG^{-1}$: frequency loop
+      stuzzica                   
+          il contatoredue come fosse 0
+          prematurata la supercazzola prendi con 108, contatore, 0.0, 0.0, 0 o scherziamo?
+...
+      e brematura anche, se il contatore minore di frequenze
+...      
+      prematurata la supercazzola lavatiancora o scherziamo?
+#Fit the bath:       
+      prematurata la supercazzola spiaccica o scherziamo?
+#Mix the bath           
+      prematurata la supercazzola failmischiotto con il sapone, il frullatore o scherziamo?
+#Check error      
+      la fine come se fosse prematurata la supercazzola cisiamo o scherziamo?         
+ e brematura anche, se la fine minore di 1
+\end{lstlisting}
+
+\paragraph{Usage.}
+The source code can be retrieved from
+\href{https://github.com/lcrippa/prematurata_la_dmft}{github.com/lcrippa/prematurata\_la\_dmft}. 
+The {\tt src} directory contains several files, including the source
+code {\tt hm\_bethe.mc} implementing the DMFT algorithm, an auxiliary file {\tt bagaglio.cpp} which
+contains a number of functions implementing complex algebra, array
+construction and interfacing the \NAME procedures. The directory also
+contains an example of input file and a converged bath parametrization
+for the Bethe lattice solution at $U=2$.
+
+The code is compiled using standard Make invocation in the source
+directory:
+\begin{lstlisting}[style=mybash,numbers=none]
+git clone https://github.com/lcrippa/prematurata_la_dmft
+cd prematurata_la_dmft/src
+make
+\end{lstlisting}
+A simple run using the provided input file {\tt inputED.conf} will
+re-converge the solution within a few loops. 
+
+%% References with bibTeX database:
+\ifSubfilesClassLoaded{
+  \bibliography{references}
+}{}
+\end{document}

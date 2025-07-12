@@ -1,0 +1,633 @@
+\documentclass[dvipsnames]{SciPost}
+\usepackage[bitstream-charter]{mathdesign}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+%\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{stackengine}
+\newlength\llength
+\llength=1.38ex\relax
+\usepackage{makecell}
+\usepackage{subfiles}
+\usepackage{comment}
+\usepackage{xspace}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ltablex}
+%\usepackage[inline]{showlabels} %inline: draft//final
+\usepackage{ulem} % \uline,  \uwave, \sout...
+\usepackage{xkcdcolors}
+\usepackage{dialogue}
+\usepackage{lips}
+% Prevent all line breaks in inline equations.
+\binoppenalty=10000
+\relpenalty=10000
+
+  \hypersetup{
+    breaklinks=true,
+    colorlinks,
+    pdfborder={0 0 0},
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+  }
+
+\urlstyle{same}
+
+% Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
+\DeclareSymbolFont{usualmathcal}{OMS}{cmsy}{m}{n}
+\DeclareSymbolFontAlphabet{\mathcal}{usualmathcal}
+\DeclareMathAlphabet\mathbfcal{OMS}{cmsy}{b}{n}
+
+
+\renewcommand{\texttt}[1]{%
+  \begingroup
+  \ttfamily
+  \begingroup\lccode`~=`_\lowercase{\endgroup\def~}{/\discretionary{}{}{}}%
+  \begingroup\lccode`~=`/\lowercase{\endgroup\def~}{/\discretionary{}{}{}}%
+  \begingroup\lccode`~=`[\lowercase{\endgroup\def~}{[\discretionary{}{}{}}%
+  \begingroup\lccode`~=`.\lowercase{\endgroup\def~}{.\discretionary{}{}{}}%
+  \catcode`/=\active\catcode`[=\active\catcode`.=\active
+  \scantokens{#1\noexpand}%
+  \endgroup
+}
+
+% \setcounter{secnumdepth}{4} 
+% \setcounter{tocdepth}{4}
+
+
+% Trying to define a scipost-vibe colorset for listings
+\definecolor{comment-color}{rgb}{0.8,0.1,0.1}
+\definecolor{keyword-color}{rgb}{0.3,0.3,1}
+\definecolor{string-color}{rgb}{0.58, 0, 0.82}
+\definecolor{bg-gray}{gray}{0.96}
+
+%LISTING PACKAGE AND CONFIG:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings}
+
+% backgroundcolor - colour for the background. External color or xcolor package needed.
+% commentstyle - style of comments in source language.
+% basicstyle - font size/family/etc. for source (e.g. basicstyle=\ttfamily\small)
+% keywordstyle - style of keywords in source language (e.g. keywordstyle=\color{red})
+% numberstyle - style used for line-numbers
+% numbersep - distance of line-numbers from the code
+% stringstyle - style of strings in source language
+% showspaces - emphasize spaces in code (true/false)
+% showstringspaces - emphasize spaces in strings (true/false)
+% showtabs - emphasize tabulators in code (true/false)
+% numbers - position of line numbers (left/right/none, i.e. no line numbers)
+% prebreak - displaying mark on the end of breaking line (e.g. prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}})
+% captionpos - position of caption (t/b)
+% frame - showing frame outside code (none/leftline/topline/bottomline/lines/single/shadowbox)
+% breakatwhitespace - sets if automatic breaks should only happen at whitespaces
+% breaklines - automatic line-breaking
+% keepspaces - keep spaces in the code, useful for indetation
+% tabsize - default tabsize
+% escapeinside - specify characters to escape from source code to LATEX (e.g. escapeinside={\%*}{*)})
+% rulecolor - Specify the colour of the frame-box
+
+% FORTRAN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%see fonts here: https://latexref.xyz/Low_002dlevel-font-commands.html
+%set with  basicstyle={\usefont{OT1}{lmr}{ec}{n}\scriptsize},  
+\lstdefinestyle{fstyle}{
+  language={[03]Fortran},
+  basicstyle=\ttfamily\linespread{1.15}\footnotesize,
+  stringstyle=\color{string-color},
+  keywordstyle=\color{keyword-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  morecomment=[l]{!\ },
+   fontadjust=true,
+  mathescape,
+   breakatwhitespace=false,
+   keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  frame=none,
+  xleftmargin=1pt,
+  xrightmargin=1pt,
+  backgroundcolor=\color{xkcdPaleLavender!20!white},
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+
+% C/C++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinestyle{cstyle}{
+  language=C,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\color{string-color},
+  keywordstyle=\color{keyword-color}\footnotesize,
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  captionpos=b,
+  mathescape,
+  fontadjust=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{xkcdSky!15!white},
+  frame=none
+}
+
+
+% PYTHON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinestyle{mypython}{
+  language=python,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\color{string-color},
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  fontadjust=true,
+  morekeywords={np,plt,oplot,solve,EDIpackSolver,c,c_dag,n,ed,MPI,comm},
+  morecomment=[l]{\#\ },
+  mathescape,
+  fontadjust=true,
+  mathescape,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  % frame=single,
+  % xleftmargin=3.4pt,
+  % xrightmargin=3.4pt,
+  backgroundcolor=\color{xkcdPale!50!white},
+  numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=3pt
+}
+
+% BASH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstdefinestyle{mybash}{
+  language=bash,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  morekeywords={*,git,mkdir,cmake,make,pip,ninja,conda},
+  alsoletter=-
+  deletekeywords={conda-forge},
+  captionpos=b,
+  mathescape,
+  fontadjust=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=flexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{bg-gray}, %\color{xkcdPale},
+  frame=none
+}
+
+%%
+%% Julia definition (c) 2014 Jubobs
+%%
+\lstdefinelanguage{Julia}%
+  {morekeywords={abstract,break,case,catch,const,continue,do,else,elseif,%
+      end,export,false,for,function,immutable,import,importall,if,in,%
+      macro,module,otherwise,quote,return,switch,true,try,type,typealias,%
+      using,while},%
+   sensitive=true,%
+   alsoother={\$},%
+   morecomment=[l]\#,%
+   morecomment=[n]{\#=}{=\#},%
+   morestring=[s]{"}{"},%
+   morestring=[m]{'}{'},%
+}[keywords,comments,strings]%
+
+
+\lstdefinestyle{myjulia}{
+  frame=lines,
+  language=julia,
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  commentstyle=\itshape,
+  fontadjust=true,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\footnotesize,
+  morecomment=[l]{\#\ },% Otherwise it's a comment only with space after #
+  mathescape,
+  fontadjust=true,
+  mathescape,
+  % breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{xkcdSoftPurple!20!white},
+  frame=none
+}
+
+
+
+%%
+%% Monicelli definition (c) 2025 Amaricci
+%%
+\lstdefinelanguage{Monicelli}%
+  {
+  morekeywords={vaffanzum,Lei,ha, clacsonato,più,meno,per,diviso,maggiore,minore,scappellamento,come fosse,Necchi,Mascetti,Perozzi,Melandri,Sassaroli,voglio,posterdati,mi,porga,stuzzica,brematura, anche,che, cos'è, o, magari,tarapia, genio,blinda,prematurata, la, supercazzola, avvertite,con,il,scherziamo,?,bituma},%
+   sensitive=true,%
+   alsoother={\$},%
+   morecomment=[l]\#,%
+   morecomment=[n]{\#=}{=\#},%
+   morestring=[s]{"}{"},%
+   morestring=[m]{'}{'},%
+}[keywords,comments,strings]%
+
+\lstdefinestyle{MonicelliStyle}{
+  language=Monicelli, 
+  basicstyle=\ttfamily\footnotesize,
+  stringstyle=\ttfamily,
+  keywordstyle=\color{keyword-color},
+  commentstyle=\color{comment-color}\itshape\footnotesize,
+  morecomment=[l]{\#\ },
+  mathescape,
+  fontadjust=true,
+  mathescape,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  xleftmargin=3.4pt,
+  xrightmargin=3.4pt,
+  backgroundcolor=\color{xkcdLightSage!20!white}, %\color{xkcdPale},
+  frame=none
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\renewcommand{\arraystretch}{1.4}
+\newcolumntype{T}[1]{>{\tt\footnotesize\raggedright\arraybackslash}p{#1}}
+\newcolumntype{D}[1]{>{\it\footnotesize\raggedright\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\scriptsize\raggedright\arraybackslash}p{#1}}
+
+
+\newcommand{\onlinecite}[1]{\cite{#1}}
+% {\nocite{#1}\!\!\!\citenum{#1}} This was for CPC
+\newcommand{\fixme}[1]{{\color{BrickRed} #1}}
+\newcommand {\note}[1]{{\color{blue} [{\bf NOTE}: \bf #1]}}
+\newcommand {\new}[1]{{\color{blue}\it #1}}
+
+
+
+
+%Reference to a given labelled equation
+%and definition of a bib. element.
+%-------------------------------------------
+\newcommand{\equ}[1]
+{Eq.\,(\ref{#1})}
+
+\newcommand{\figu}[1]
+{Fig.\,\ref{#1}}
+
+\newcommand{\secu}[1]
+{Sec.\,\ref{#1}}
+
+\newcommand{\ket}[1]
+{|#1\rangle}
+
+\newcommand{\bra}[1]
+{\langle #1|}
+
+\newcommand{\sgn}
+{\mathop{\mathrm{sgn}}}
+
+
+
+%SIMBOLI VARI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\a{\alpha}       \def\b{\beta}   \def\g{\gamma}   \def\d{\delta}
+\def\e{\varepsilon}  \def\z{\zeta}   \def\h{\eta}     \def\th{\theta}
+\def\k{\kappa}       \def\l{\lambda} \def\m{\mu}      \def\n{\nu}
+\def\x{\xi}          \def\p{\pi}     \def\r{\rho}     \def\s{\sigma}
+\def\t{\tau}         \def\f{\varphi} \def\ph{\varphi} \def\c{\chi}
+\def\ps{\pi}        \def\y{\upsilon}\def\o{\omega}   \def\si{\varsigma}
+\def\G{\Gamma}       \def\D{\Delta}  \def\Th{\Theta}  \def\L{\Lambda}
+\def\X{\Xi}          \def\P{\Pi}     \def\Si{\Sigma}  \def\F{\Phi}
+\def\Ps{\Psi}        \def\O{\Omega}  \def\Y{\Upsilon} \def\lg{\langle}
+
+\def\PP{{\cal P}}\def\EE{{\cal E}}\def\MM{{\cal M}} \def\VV{{\cal V}}
+\def\CC{{\cal C}}\def\FF{{\cal F}}\def\HH{{\cal H}}\def\WW{{\cal W}}
+\def\TT{{\cal T}}\def\NN{{\cal N}}\def\BB{{\cal B}} \def\II{{\cal I}}
+\def\RR{{\cal R}}\def\LL{{\cal L}}\def\JJ{{\cal J}} \def\OO{{\cal O}}
+\def\DD{{\cal D}}
+\def\AA{{\cal A}}
+\def\GG{{\cal G}} \def\SS{{\cal S}}
+\def\ZZ{{\cal Z}} \def\UU{{\cal U}}
+\def\SB{{\cal S}{\cal B}}
+\def\aa{{\V \a}}
+\def\hh{{\V h}}\def\HHH{{\V H}}
+%\def\AA{{\V A}}
+%\def\GG{{\V G}}\def\BB{{\V B}}\def\aaa{{\V a}}\def\bbb{{\V b}}
+\def\nn{{\V \n}}\def\pp{{\V p}}\def\mm{{\V m}}\def\qq{{\bf q}}
+\def\RRR{\mathbb{R}} \def\CCC{\mathbb{C}} \def\NNN{\mathbb{N}}
+\def\ZZZ{\mathbb{Z}}
+%\def\TTT{\hbox{\msytw T}}
+
+
+
+\def\ul{\underline}
+\def\=={\equiv}
+\def\defi{{\buildrel def \over =}}
+\def\lft{\left} \def\rgt{\right} \def\dpr{\partial} \def\der{{\rm d}}
+\def\us{\underline \s} \def\ue{{\underline \e}}
+\def\la{\left\langle}
+\def\ra{\right\rangle}
+\def\qed{\raise1pt\hbox{\vrule height5pt width5pt depth0pt}}
+\def\iome{i\omega_n} \def\iom{i\omega} \def\iom#1{i\omega_{#1}}
+\def\iomn{i\omega_n}
+\def\epsk{\epsilon({\bf k})} \def\Ga{\Gamma_{\alpha}}
+\def\Seff{S_{eff}}  \def\dinf{$d\rightarrow\infty\,$}
+\def\cG0{{\cal G}_0}
+\def\cG{{\cal G}}  \def\cU{{\cal U}}  \def\cS{{\cal S}}
+\def\spinup{\uparrow} \def\spindown{\downarrow} \def\spindw{\downarrow}
+\def\up{\uparrow} \def\down{\downarrow} \def\dw{\downarrow}
+
+
+\def\Ak{{\bf A}} \def\Akt{{\bf A}(t)} \def\Ek{{\mathbf E}}
+% \def\Im{\mbox{Im}}
+\def\=={\equiv}
+\def\defi{{\buildrel def \over =}} \def\nt{\widetilde{n}}
+\def\Im{{\rm Im}} \def\Re{{\rm Re}} \def\Tr{{\rm Tr}}
+\def\det{{\rm det}\,} 
+
+
+\def\ibra{\langle}
+\def\iket{\rangle}
+
+\def\ka{{\bf k}}
+\def\vk{{\bf k}}
+\def\qa{{\bf q}}
+\def\vQ{{\bf Q}}
+\def\vr{{\bf r}}
+\def\q{{\bf q}}
+\def\R{{\bf R}}
+\def\vR{{\bf R}}
+\def\kx{{ k_x}}
+\def\ia{{\bf i}}
+\def\ja{{\bf j}}
+
+%\usepackage{bbold}
+\def\11{\mathbb{1}}
+\def\00{\mathbf{0}}
+\def\NAME{{\rm EDIpack}\xspace}
+\newcommand{\shortrightarrow}{\mathrel{\mkern3mu\rightarrow\mkern}}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\fancypagestyle{SPstyle}{
+\fancyhf{}
+\lhead{\colorbox{scipostblue}{\bf \color{white} ~SciPost Physics Codebases }}
+\rhead{{\bf \color{scipostdeepblue} ~Submission }}
+\renewcommand{\headrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}}
+}
+
+
+
+\begin{document}
+
+\pagestyle{SPstyle}
+
+%TITLE
+%%%%%%%%%% TODO: Write your article's title here
+\begin{center}{
+\Large \textbf{
+\color{scipostdeepblue}{
+A flexible and interoperable high-performance Lanczos-based solver for generic quantum impurity problems: upgrading EDIpack\\
+}
+}
+}
+\end{center}
+%%%%%%%%%% END TODO: TITLE
+
+
+
+%%%%%%%%%% AUTHORS
+% Mark the corresponding author(s) with a superscript symbol in this order
+% \star, \dagger, \ddagger, \circ, \S, \P, \parallel, ...
+\begin{center}\textbf{\small
+    Lorenzo Crippa\textsuperscript{1,2,3},
+    Igor Krivenko\textsuperscript{1},
+    Samuele Giuli\textsuperscript{4},
+    Gabriele Bellomia\textsuperscript{4},
+    Alexander Kowalski\textsuperscript{3},    
+    Francesco Petocchi\textsuperscript{5},
+    Alberto Scazzola\textsuperscript{6},
+    Markus Wallerberger\textsuperscript{7},
+    Giacomo Mazza\textsuperscript{8},
+    Luca de Medici\textsuperscript{9},
+    Giorgio Sangiovanni\textsuperscript{2,3},
+    Massimo Capone\textsuperscript{4,10} and 
+    Adriano Amaricci\textsuperscript{10}    
+}\end{center}
+%%%%%%%%%% END TODO: AUTHORS
+
+
+
+%%%%%%%%%% TODO: AFFILIATIONS
+% Write all affiliations here.
+% Format: institute, city, country
+\begin{center}
+%   \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
+%   Consiglio Nazionale delle Ricerche, Via Bonomea 265, 34136
+%   Trieste, Italy}
+% \newcommand{\SISSA}{Scuola Internazionale Superiore di Studi Avanzati (SISSA),
+%   Via Bonomea 265, 34136 Trieste, Italy}
+% \newcommand{\ITPHamburg}{I. Institut f\"ur Theoretische Physik,
+%   University of Hamburg, Notkestra\ss e 9, 22607 Hamburg, Germany}
+% \newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
+%   Astrophysik,Universit\"at W\"urzburg, 97074 W\"urzburg, Germany}
+% \newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, 01062 Dresden, Germany}
+% \newcommand{\Geneve}{Department of Quantum Matter Physics, University of
+%   Geneva, Quai Ernest-Ansermet 24, 1211 Geneva, Switzerland}
+% \newcommand{\UPISA}{Department of Physics ``E. Fermi'' University of
+%   Pisa, Largo B. Pontecorvo 3, 56127 Pisa, Italy}
+% \newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, 75005 Paris, France}
+% \newcommand{\TUW}{Institute of Solid State Physics, TU Wien, 1040 Vienna, Austria}
+% \newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, I\-10129 Torino, Italy}
+%
+%No ZIPcode to Brooklyn...
+%
+  \newcommand{\CNRIOM}{CNR-IOM, Istituto Officina dei Materiali,
+  Consiglio Nazionale delle Ricerche, Trieste, Italy}
+\newcommand{\SISSA}{SISSA, Scuola Internazionale Superiore di Studi Avanzati, Trieste, Italy}
+\newcommand{\ITPHamburg}{I. Institut f\"ur Theoretische Physik,
+  University of Hamburg, Hamburg, Germany}
+\newcommand{\WZBURG}{Institut f\"ur Theoretische Physik und
+  Astrophysik, Universit\"at W\"urzburg, W\"urzburg, Germany}
+\newcommand{\CTQMAT}{W\"urzburg-Dresden Cluster of Excellence ct.qmat, Dresden, Germany}
+\newcommand{\Geneve}{Department of Quantum Matter Physics, University of
+  Geneva, Geneva, Switzerland}
+\newcommand{\UPISA}{Department of Physics ``E. Fermi'', University of
+  Pisa, Pisa, Italy}
+\newcommand{\ESPCI}{LPEM, ESPCI Paris, PSL Research University, CNRS, Sorbonne Universit\'e, Paris, France}
+\newcommand{\TUW}{Institute of Solid State Physics, TU Wien, Vienna, Austria}
+\newcommand{\ToPoli}{Department of Electronics and Telecommunications, Politecnico di Torino, Torino, Italy}
+{\small
+{\bf 1} \ITPHamburg\\
+{\bf 2} \CTQMAT\\
+{\bf 3} \WZBURG\\
+{\bf 4} \SISSA\\
+{\bf 5} \Geneve\\
+{\bf 6} \ToPoli\\
+{\bf 7} \TUW\\   
+{\bf 8} \UPISA\\
+{\bf 9} \ESPCI\\
+{\bf 10} \CNRIOM\\
+}
+\end{center}
+%%%%%%%%%% END TODO: AFFILIATIONS
+
+
+
+%%%%%%%%%% TODO: EMAIL
+% Provide email address of corresponding author(s)
+\begin{center}
+%\vspace{\baselineskip}
+% $\star$ \href{mailto:email1}{\small email1}\,,\quad
+EDIpack group: \href{mailto:edipack@cnr.iom.it}{\small edipack@cnr.iom.it}
+\end{center}
+%%%%%%%%%% END TODO: EMAIL
+
+
+
+%%%%%%%%%% TODO: ABSTRACT
+% Write your abstract here: should be limited to 8lines
+\section*{\color{scipostdeepblue}{Abstract}}
+\textbf{\boldmath{%
+EDIpack is a flexible, high-performance numerical library using Lanczos-based exact diagonalization to solve generic quantum impurity problems, such as those introduced in Dynamical Mean-Field Theory to describe extended strongly correlated materials. 
+The library efficiently solves impurity problems allowing for different broken-symmetry solutions, including superconductivity and featuring local spin-orbit coupling and/or electron-phonon coupling. 
+%Removed to shrink the ABSTRACT
+% It provides access to dynamical correlation functions on the entire complex frequency plane at zero and low-temperatures.    
+The modular architecture of the software not only provides Fortran APIs but also includes bindings to C/C++, interfaces with Python and Julia or with TRIQS and w2dynamics research platforms, thus ensuring unprecedented level of inter-operability.   
+The outlook includes further extensions to study quantum materials and cold atoms quantum simulators, as well as quantum information applications.
+}}
+%%%%%%%%%% END TODO: ABSTRACT
+
+\vspace{\baselineskip}
+
+
+% %%%%%%%%%% BLOCK: Copyright information
+% % This block will be filled during the proof stage, and finilized just before publication.
+% % It exists here only as a placeholder, and should not be modified by authors.
+% \noindent\textcolor{white!90!black}{%
+% \fbox{\parbox{0.975\linewidth}{%
+% \textcolor{white!40!black}{\begin{tabular}{lr}%
+%   \begin{minipage}{0.6\textwidth}%
+%     {\small Copyright attribution to authors. \newline
+%     This work is a submission to SciPost Physics Codebases. \newline
+%     License information to appear upon publication. \newline
+%     Publication information to appear upon publication.}
+%   \end{minipage} & \begin{minipage}{0.4\textwidth}
+%     {\small Received Date \newline Accepted Date \newline Published Date}%
+%   \end{minipage}
+% \end{tabular}}
+% }}
+% }
+% %%%%%%%%%% BLOCK: Copyright information
+
+
+%%%%%%%%%% TODO: LINENO
+% For convenience during refereeing we turn on line numbers:
+%\linenumbers
+% You should run LaTeX twice in order for the line numbers to appear.
+%%%%%%%%%% END TODO: LINENO
+
+%%%%%%%%%% TODO: TOC 
+% Guideline: if your paper is longer that 6 pages, include a TOC
+% To remove the TOC, simply cut the following block
+\vspace{10pt}
+\noindent\rule{\textwidth}{1pt}
+\tableofcontents
+\noindent\rule{\textwidth}{1pt}
+\vspace{10pt}
+%%%%%%%%%% END TODO: TOC
+
+
+
+
+
+% ###################################################
+% ###################################################
+% ###################################################
+%
+%                 PAPER HERE BELOW
+%                              
+% ###################################################
+% ###################################################
+% ###################################################
+
+
+
+\subfile{01_intro.tex}
+
+% ###################################################
+
+
+\subfile{02_install.tex}
+
+% ###################################################
+
+\subfile{03_edipack2.tex}
+
+% ###################################################
+
+\subfile{04_cbinding.tex}
+
+% ###################################################
+
+\subfile{05_examples.tex}
+
+% ###################################################
+
+
+\subfile{06_conclusions_acknowledgement_appendix.tex}
+
+% ###################################################
+% ###################################################
+% ###################################################
+
+
+%% References with bibTeX database:
+\bibliography{references}
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
