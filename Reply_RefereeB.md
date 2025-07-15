@@ -1,11 +1,11 @@
-We thank the refereee for their time and work in reviewing our
-manuscript. Here below we address point by point all the issues raised
+We thank the referee for their time and work in reviewing our
+manuscript. In the following, we address point by point all the issues raised
 in their reports.
 
 
 > *This paper presents the current status in an exact diagonalisation impurity solver EDIpack. It provides a detailed exposition of the multiple interfaces as well as a number of tutorial-style examples that provide details that will be appreciated to new users of the package. I believe that providing robust and well-tested computer codes, as well as high quality documentation, are a big service to the community. I wholeheartedly recommend this work for publication.*
 
-We sincerely thank the referee for their positive and encouraging comments. We are very pleased to hear that the exposition, interfaces, and tutorial examples were found to be helpful and of value to new users. We are grateful for your recommendation for publication and your support for open and well-maintained scientific software.
+We sincerely thank the referee for their positive and encouraging comments. We are very pleased to hear that the exposition, interfaces, and tutorial examples were found to be helpful and of value to new users. We are grateful for their recommendation for publication and their support for open and well-maintained scientific software.
 
 
 
@@ -16,7 +16,7 @@ We sincerely thank the referee for their positive and encouraging comments. We a
 > *On p. 8, function {\tt ed\_set\_Hloc} is introduced, but without much further information. Maybe the reader could be referred to some later section where its use is illustrated.*
 
 We acknowledge the referee’s suggestion.
-The function ${\tt ed\_set\_Hloc}$, introduced in Section 3.1.1, is employed to define the impurity Hamiltonian. At this stage of the manuscript, its purpose is solely described: setting the local non-interacting component of the impurity Hamiltonian, without further elaboration.
+The function ${\tt ed\_set\_Hloc}$, introduced in Section 3.1.1, is employed to define the impurity Hamiltonian. At this stage of the manuscript, its purpose is solely as described: setting the local non-interacting component of the impurity Hamiltonian, without further elaboration.
 
 To enhance clarity and facilitate reader comprehension of its practical application, we have revised the text at this location. Specifically, we have included a forward reference to Section 5, where ${\tt ed\_set\_Hloc}$ is explicitly utilized in various application examples. These examples encompass the Hubbard model on the Bethe lattice (Section 5.1), the interacting Bernevig-Hughes-Zhang model (Section 5.5), and the Kane-Mele-Hubbard model (Section 5.6). These instances aim to elucidate both the structure of the input arguments and the context in which this function is commonly employed.
 

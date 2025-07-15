@@ -115,8 +115,8 @@ In response to the referee's valuable suggestion, we have updated the manuscript
 
 We appreciate the referee's careful observation regarding the summation indices in the display equation of $C(z)$ on page 16 and Eq. (14). To maintain consistency and clarity, we have revised the manuscript to ensure that both indices $m$ and $n$ have clearly defined lower and upper bounds, as they represent dummy variables for the same summation. 
 
-In particular, we now explicitly indicate the summation upper bound for $n$ by using the number $N_{\rm state\_list}$ of eigenstates contained in the `state_list` class and describing the lower end of the energy spectrum.   
-Following the referee's observation, we propagated this correction to all the expression involving a trace over Hamiltonian spectrum. We appreciate the referee's attention to this detail.
+In particular, we now explicitly indicate the upper summation bound for $n$ by using the number $N_{\rm state\_list}$ of eigenstates contained in the `state_list` class and describing the lower end of the energy spectrum.   
+Following the referee's observation, we propagated this correction to all the expressions involving a trace over the Hamiltonian spectrum. We appreciate the referee's attention to this detail.
 
 
 
