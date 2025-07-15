@@ -58,7 +58,7 @@ This new formulation replaces the previous wording and makes explicit the distin
 
 > *The motivation of including the code on p. 12 is unclear. What is the intention here?*
 
-We thank the referee for raising this point. The code snippet on page 12 was originally included to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. Moreover, this code snippet is useful to understand the structure of the ${\tt sparse_map}$ used to implement fast-algorithm for the evaluation of the reduced impurity density matrix in section 3.5.2. 
+We thank the referee for raising this point. The code snippet on page 12 was originally included to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. Moreover, this code snippet is useful to understand the structure of the ${\tt sparse_map}$ used to implement fast algorithm for the evaluation of the reduced impurity density matrix in Section 3.5.2. 
 
 In response to the referee’s comment, we have slightly revised the manuscript to clarify this intent. Specifically, we have added the following introductory sentence to the relevant section:
 
@@ -80,10 +80,10 @@ The issue at hand concerns the parallel construction of a matrix that is distrib
 
 The variables ${\tt istart}$ and ${\tt iend}$ define the global index range of matrix rows assigned to a given thread or process. That is, a given thread will handle only the rows from ${\tt istart}$ to ${\tt iend}$ (inclusive), corresponding to its local share of the full matrix. The variable ${\tt ishift}$ is then used to translate global row indices into local ones, effectively setting ${\tt ishift = mpiRank*Q}$. This allows local arrays to be aligned correctly with the globally defined matrix structure.
 
-While the code is written in Fortran, this construction is not specific to the language itself. Rather, it is a general approach for handling parallel matrix distribution in any programming environment where the global matrix is divided into row blocks across multiple processing units. To avoid potential confusion and to make the implementation choices more transparent to the reader in the revised we now write:
+While the code is written in Fortran, this construction is not specific to the language itself. Rather, it is a general approach for handling parallel matrix distribution in any programming environment where the global matrix is divided into row blocks across multiple processing units. To avoid potential confusion and to make the implementation choices more transparent to the reader in the revised, we now write:
 
 
-"*In a parallel setting, each thread is assigned a contiguous block of matrix rows $Q=D_{\mathcal S}/N_{cpu}$. We denote the locally stored rows on a given thread by $q = 1, \ldots, Q$, and relate them to their corresponding global indices $i = 1, \ldots, D_{\mathcal S}$ via the variables \texttt{istart}, \texttt{iend}, and \texttt{ishift}. Here, \texttt{istart} and \texttt{iend} define the global index range $[q_1, q_Q]$ assigned to the thread, corresponding to $q_1 = \texttt{istart}$ and $q_Q = \texttt{iend}$. The variable \texttt{ishift} $= \texttt{istart} - 1$ allows for mapping between the local index $q$ and the global index $i$ through the simple relation $i = q + \texttt{ishift}$. This mapping ensures consistent global indexing while enabling efficient local computation.*"
+"*In a parallel setting, each thread is assigned a contiguous block of matrix rows $Q=D_{\mathcal S}/N_{cpu}$. We denote the locally stored rows on a given thread by $q = 1, \ldots, Q$, and relate them to their corresponding global indices $i = 1, \ldots, D_{\mathcal S}$ via the variables \texttt{istart}, \texttt{iend}, and \texttt{ishift}. Here, \texttt{istart} and \texttt{iend} define the global index range $[q_1, q_Q]$ assigned to the thread, corresponding to $q_1 = \texttt{istart}$ and $q_Q = \texttt{iend}$. The variable \texttt{ishift} $= \texttt{istart} - 1$ allows mapping between the local index $q$ and the global index $i$ through the simple relation $i = q + \texttt{ishift}$. This mapping ensures consistent global indexing while enabling efficient local computation.*"
 
 
 
@@ -103,9 +103,9 @@ The term multi-layered refers to the hierarchical organization of the ${\tt gfma
 Specifically, the data are organized across three conceptual layers: (1) the many-body eigenstates of the Hamiltonian spectrum, (2) the amplitude channels associated to each such state, and (3) the set of poles and weights corresponding to physical excitations from this state. This structure is necessary to correctly represent the Lehmann decomposition of Green's functions and related objects, while still allowing dynamic access and manipulation during calculations.
 
 The efficiency of ${\tt gfmatrix}$ stems from two main features. First, correlation functions do not need to be precomputed and stored on fixed frequency or time grids; instead, their values are computed on-the-fly at arbitrary complex arguments, allowing precise and flexible evaluation as required by different solvers or output formats. Second, memory usage is optimized by avoiding redundant storage. The internal design separates spectral data, and evaluation logic, allowing minimal overhead during the object construction and easing post-processing analysis. 
-We also recognize that the use of the term "high-performance" could be misleading and rephrases the paragraph at page 16 in a more precise way as:
+We also recognize that the use of the term "high-performance" could be misleading and rephrases the paragraph on page 16 in a more precise way as
 
-"*The module ${\tt ED\_GFMATRIX}$ implements the class ${\tt gfmatrix}$, which provides an efficient and flexible representation of DCFs. It is structured as a hierarchical, or {\it multi-layered}, data container that organizes spectral weights and poles across three levels: (i) the initial eigenstate $|n\rangle$ of the Hamiltonian spectrum, (ii) the amplitude channel associated with this state, corresponding to the applied operator, and (iii) the set of excitations from $|n\rangle$, each characterized by a pole and its corresponding weight.  
+"*The module ${\tt ED\_GFMATRIX}$ implements the class ${\tt gfmatrix}$, which provides an efficient and flexible representation of DCFs. It is structured as a hierarchical, or {\it multilayered}, data container that organizes spectral weights and poles across three levels: (i) the initial eigenstate $|n\rangle$ of the Hamiltonian spectrum, (ii) the amplitude channel associated with this state, corresponding to the applied operator, and (iii) the set of excitations from $|n\rangle$, each characterized by a pole and its corresponding weight.  
 This structure allows the ${\tt gfmatrix}$ class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. As a result, ${\tt gfmatrix}$ is a core component of EDIpack, essential for efficient memory management, consistent storage of spectral data, and high-performance post-processing.*"
 
 We also thank the referee for pointing out inconsistencies in capitalization. We have now ensured that the identifier is uniformly written as **gfmatrix** throughout the manuscript.
@@ -129,7 +129,7 @@ to be real symmetric, which simplifies the evaluation
 of the off-diagonal terms by exploiting the following symmetry 
 under orbital exchange $G_{\alpha\beta\sigma\sigma}(z)=G_{\beta\alpha\sigma\sigma}(z)$. 
 In this case, the off-diagonal Green's function components can be obtained using just real-valued auxiliary operators such as  
-${\mathcal O}=c_{\alpha\sigma}+c_{\beta\sigma}$, along wit the identity 
+${\mathcal O}=c_{\alpha\sigma}+c_{\beta\sigma}$, along with the identity 
 $G_{\alpha\beta\sigma\sigma}=\tfrac{1}{2}(C_{\mathcal O} - G_{\alpha\alpha\sigma\sigma} - G_{\beta\beta\sigma\sigma})$,
 where $C_{\mathcal O}$ denotes the DCF associated to ${\mathcal O}$. This approach, avoiding the need for complex arithmetic, preserves the efficiency of real-valued computation.*"
 
@@ -139,9 +139,9 @@ where $C_{\mathcal O}$ denotes the DCF associated to ${\mathcal O}$. This approa
 
 > *In Eq. (18), is Z the same on both sides of approximation sign?*
 
-We are indebted with the referee for pointing out this important subtlety, which in fact extends to both sections 3.8 and 3.9. In the original version of the manuscript, the partition function $Z$ appearing in different expressions (including the Eq.(18) indicated the referee), may have misleadingly suggested that it was being evaluated exactly, even though the trace had been truncated.
+We are indebted with the referee for pointing out this important subtlety, which in fact extends to both sections 3.8 and 3.9. In the original version of the manuscript, the partition function $Z$ appearing in different expressions (including the Eq.(18) indicated by the referee), may have misleadingly suggested that it was being evaluated exactly, even though the trace had been truncated.
 
-In the revised manuscript we have corrected this issue. We now use the symbol $Z$ to indicate the exact partition function and reserve the symbol $\tilde{Z}$ to  explicitly indicated the partition function approximated using only the finite set of low-energy eigenstates retained in the trace, i.e., those contributing significantly due to their large Boltzmann weights. This makes the approximation consistent on both sides of the involved equations, namely Eqs. (13), (14) and (18), properly reflecting the finite-state summation used in practice.
+In the revised manuscript we have corrected this issue. We now use the symbol $Z$ to indicate the exact partition function and reserve the symbol $\tilde{Z}$ to explicitly indicate the partition function approximated using only the finite set of low-energy eigenstates retained in the trace, i.e., those contributing significantly due to their large Boltzmann weights. This makes the approximation consistent on both sides of the involved equations, namely Eqs. (13), (14) and (18), properly reflecting the finite-state summation used in practice.
 
 
 
@@ -160,13 +160,13 @@ We acknowledge that our brief comment reads a bit obscure while this point requi
 
 The bath optimization is a crucial step in the DMFT framework. As we discuss in the manuscript, to preserve the general application of EDIpack we introduced several control parameters for the conjugate-gradient fit. A key one is the definition of the norm, or distance, between matrix functions appearing in Eq. 30.
 
-While for function matrices with a particularly symmetric structure the choice of the metric is inessential, it might dramatically affect the quality of the optimization in more general cases. 
+While for matrix functions with a particularly symmetric structure the choice of the metric is inessential, it might dramatically affect the quality of the optimization in more general cases. 
 The subtleties in optimizing the off-diagonal components in either ${\tt nonsu2}$ and ${\tt superc}$ diagonalizations arise from the complex interplay between these components’ physical characteristics and the picked optimization metric. 
 In either case, the coexistence of components having a very different physical interpretation, e.g., anomalous terms, and/or spanning very different energy scales represents a serious challenge to the optimization of the bath. 
 This requires careful tuning of the control parameters to ensure that the optimization does not disproportionately favor certain matrix elements over others, thereby maintaining the overall fidelity of the bath representation.
-In this sense, introducing other norms which ensure a better balance among the components is a development line to improve EDIpack usage. 
+In this sense, introducing other norms, which ensure a better balance among the components, is a development line to improve EDIpack usage. 
 
-In the revised manuscript we amended to this unclear statement writing:   
+In the revised manuscript we amended this unclear statement writing:
 *"We plan to expand the available options for the cg_norm parameter in future EDIpack updates, since the nonsu2 and superc diagonalization modes involve subtle challenges in optimizing the off-diagonal components of X, due to the coexistence of matrix elements with different physical meanings and energy scales, which require carefully balanced optimization metrics to ensure an accurate bath representation."*
     
 
@@ -176,7 +176,7 @@ We thank the referee for this general but important observation. In principle, i
 
 Their use in EDIpack is deliberate and serves to maintain clarity and modularity in the code, particularly for widely shared objects such as configuration parameters, system-wide operators, or state indexing data. Removing these global definitions would require passing a large number of arguments through deep call chains, which we believe would significantly increase code complexity, reduce readability, and introduce greater potential errors, without offering any computational or architectural advantages.
 
-However, we recognise the importance of careful design in managing global memory, and we have ensured that such variables are encapsulated within dedicated modules with well defined scopes. Should it prove beneficial for future code maintainability or extension by third-party contributors, we are ready to reviewing and refining this aspect of the implementation.  
+However, we recognise the importance of careful design in managing global memory, and we have ensured that such variables are encapsulated within dedicated modules with well defined scopes. Should it prove beneficial for future code maintainability or extension by third-party contributors, we are ready to review and refine this aspect of the implementation.  
 
 
 
@@ -188,7 +188,7 @@ We thank the referee for this suggestion. We agree that the detailed discussion 
 
 > *p. 41: The code listing mentions Wband and de, but I don't see where this is coming from.*
 
-We thank the referee for carefully reviewing this sectoin and pointing this out. Indeed, the variable ${\tt Wband}$ should not appear in the code listing, as it corresponds to ${\tt D}$, which is correctly defined earlier in the script.  Additionally, the variable ${\tt de}$ represents the energy grid spacing, computed as ${\tt de = 2D / Le}$, where Le is the number of energy points discretizing the Bethe lattice density of states. We have corrected the code listing accordingly to eliminate Wband and clarify the definition of de.
+We thank the referee for carefully reviewing this section and pointing this out. Indeed, the variable ${\tt Wband}$ should not appear in the code listing, as it corresponds to ${\tt D}$, which is correctly defined earlier in the script.  Additionally, the variable ${\tt de}$ represents the energy grid spacing, computed as ${\tt de = 2D / Le}$, where Le is the number of energy points discretizing the Bethe lattice density of states. We have corrected the code listing accordingly to eliminate Wband and clarify the definition of de.
 
 
 
@@ -199,7 +199,7 @@ We thank the referee for carefully reviewing this sectoin and pointing this out.
 
 > *p. 42: "provides access to well-tested functions". This is unclear. Functions doing what?*
 
-We thank the referee for pointing out the ambiguity in this sentence. Our intention was to clarify that, although the bath optimization problem is conceptually distinct from the core impurity diagonalization task for which EDIpack was originally developed, nonetheless the package provides access to a well-tested implementation of the conjugate-gradient fitting procedure for the bath optimization. We have revised the sentence accordingly in the manuscript to make this connection and the role of these functions more explicit writing: 
+We thank the referee for pointing out the ambiguity in this sentence. Our intention was to clarify that, although the bath optimization problem is conceptually distinct from the core impurity diagonalization task, for which EDIpack was originally developed, nonetheless the package provides access to a well-tested implementation of the conjugate-gradient fitting procedure for the bath optimization. We have revised the sentence accordingly in the manuscript to make this connection and the role of these functions more explicit by writing: 
 
 *"Given the critical importance of this optimization, EDIpack provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package."*
 

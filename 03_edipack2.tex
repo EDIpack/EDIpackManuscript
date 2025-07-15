@@ -540,7 +540,7 @@ Each line defines a two-body second-quantized operator of the form
 $$
 \hat{H}^{\mathrm{int}}=\frac{1}{2}d^{\dagger}_{i}d^{\dagger}_{j}U_{ijkl}d_{l}d_{k}.
 $$
-where the indices $\{ijkl\}$ condense orbital and spin degrees of freedom, e.g. $i=\alpha\sigma$. 
+where the indices $\{ijkl\}$ refer to the combined spin and internal (orbital, valley...) degrees of freedom, e.g. $i=\alpha\sigma$. 
 Note that the coefficient indices $l$ and $k$ are swapped in the input file with respect to the two-body operator they implement. The $\tfrac{1}{2}$ prefactor is applied internally by the parsing routine and need not be accounted for by the user.
 Empty lines and lines starting with {\tt \#, \%, !} are ignored.
 
@@ -1397,7 +1397,7 @@ to be real symmetric, which simplifies the evaluation
 of the off-diagonal terms by exploiting the following symmetry 
 under orbital exchange $G_{\a\b\s\s}(z)=G_{\b\a\s\s}(z)$. 
 In this case, the off-diagonal Green's function components can be obtained using just real-valued auxiliary operators such as  
-$\OO=c_{\a\s}+c_{\b\s}$, along wit the identity 
+$\OO=c_{\a\s}+c_{\b\s}$, along with the identity 
 $G_{\a\b\s\s}=\tfrac{1}{2}(C_\OO - G_{\a\a\s\s} - G_{\b\b\s\s})$,
 where $C_\OO$ denotes the DCF associated to $\OO$      . This approach, avoiding the need for complex arithmetic, preserves the efficiency of real-valued computation.  
 
