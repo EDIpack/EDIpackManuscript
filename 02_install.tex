@@ -114,15 +114,22 @@ make install
 \noindent
 The CMake configuration can be further tuned using the following variables:
 \begin{center}
+\small
 \begin{tabular}{ l|l|l } 
  \hline
   {\bf Option}               & {\bf Scope} & {\bf Value (default in {\color{xkcdEmerald}green})}\\
   \hline
-  -D{\bf PREFIX}          & Install directory  & {\color{xkcdEmerald} $\sim$/opt/EDIpack/TAG/PLAT/BRANCH} \\
-  -D{\bf USE\_MPI}       & MPI support  &  True/{\color{xkcdEmerald}False}\\
-  -D{\bf WITH\_INEQ}   & multi-impurities support & {\color{xkcdEmerald}True}/{False}\\
-  -D{\bf VERBOSE}      & Verbose CMake output & {\color{xkcdEmerald}True}/{False}\\ 
-  -D{\bf BUILD\_TYPE} & Compilation flags & {\color{xkcdEmerald}RELEASE}/TESTING/DEBUG \\
+  -D{\bf CMAKE\_INSTALL\_PREFIX}          & Install prefix override  & {\color{xkcdEmerald} None}\textbf{/}User-defined path \\
+  
+  -D{\bf LONG\_PREFIX}          & Install directory (if & {\color{xkcdEmerald} $\sim$/opt/edipack/}\\
+  &install prefix unset)&{\color{xkcdEmerald}TAG/} (\textit{e.g. 5.3.3})\\
+  &&{\color{xkcdEmerald}PLAT/} (\textit{gnu/intel/...})\\
+  &&{\color{xkcdEmerald}BRANCH} (\textit{main/debug/...})\textbf{/}\\
+  &&$\sim$/opt/edipack/custom \\
+  -D{\bf USE\_MPI}       & MPI support  &  True\textbf{/}{\color{xkcdEmerald}False}\\
+  -D{\bf WITH\_INEQ}   & multi-impurities support & {\color{xkcdEmerald}True}\textbf{/}{False}\\
+  -D{\bf VERBOSE}      & Verbose CMake output & {\color{xkcdEmerald}True}\textbf{/}{False}\\ 
+  -D{\bf BUILD\_TYPE} & Compilation flags & {\color{xkcdEmerald}RELEASE}\textbf{/}TESTING\textbf{/}DEBUG \\
  \hline
 \end{tabular}
 \end{center}

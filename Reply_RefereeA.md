@@ -50,7 +50,7 @@ see this comment itself
 
 
 We thank the referee for their time and work in reviewing our
-manuscript. Here below we address point by point all the issues raised
+manuscript. In the following, we address point by point all the issues raised
 in their reports.
 
 
@@ -59,27 +59,27 @@ in their reports.
 
 > *Overall, the paper is well written and highly detailed, allowing new users to install and utilize the library with ease. Furthermore, the comprehensive DMFT tests, demonstrated through a variety of examples and accompanied by corresponding scripts, provide excellent starting points for newcomers. I believe this work makes a valuable contribution to the community and am therefore pleased to recommend its publication in SciPost.*
 
-We thank the referee for their constructive assessement of our work and for recognizing its value in a more general context. We deeply appreciate their recommendation.  
+We thank the referee for their constructive assessment of our work and for recognizing its value in a more general context. We deeply appreciate their recommendation.  
 
 
 > *On page 3, a large portion of paragraph 3, which introduces DMFT, lacks citations. For example, the authors mention the success of DMFT in capturing key features of various materials, including Mott insulators, heavy fermion compounds, and unconventional superconductors. It would be helpful to include relevant references here to guide interested readers toward further reading.
 *
 
-We agree with this comment of the referee. Although it is impossible to give justice to the wide literature accumulated over the years, we have made concerted efforts to incorporate key references that reflect the breadth and depth of research in this field. In the revised version, we have included several citations pertinent to DMFT across the discussed subjects, ensuring that foundational and more recent contributions are acknowledged. This approach aims to provide a balanced overview while addressing the referee's insightful comment. 
+We agree with this comment of the referee. Although it is impossible to do justice to the wide literature accumulated over the years, we have made concerted efforts to incorporate key references that reflect the breadth and depth of research in this field. In the revised version, we have included several citations pertinent to DMFT across the discussed subjects, ensuring that foundational and more recent contributions are acknowledged. This approach aims to provide a balanced overview while addressing the referee's insightful comment. 
 
 
 > *Perhaps a sentence like “Section 6 provides the conclusions” was intended at the end of Section 1 but was inadvertently omitted?*
 
-We sincerely appreciate the referee's prompt attention to this matter. We must admit that we "inadvertently" overlooked a reference to Section 6, i.e. the conclusions, at the end of the introduction when discussing the manuscript's structure. We amended to this issue in the revised text by including the sentence:   
+We sincerely appreciate the referee's prompt attention to this matter. We must admit that we "inadvertently" overlooked a reference to Section 6, i.e. the conclusions, at the end of the introduction when discussing the manuscript's structure. We resolved this issue in the revised text by including the sentence:   
 *"In Sec. 6 we present some concluding remarks and considerations."*
 
 
 
 > *Were the spin indices omitted in Eq. (3)? Or do the indices i,j,k,l represent “flavors” that is, combined spin and orbital indices—rather than orbitals alone? The same question applies to the display equation of $H^{int}$ on page 13. This could be confusing to readers, especially since the spin index is also not explicitly shown in the format of the <UMATRIX\_FILE>.restart file described on the same page.*
 
-Thanks for this insightful comment. Indeed, both in Eq.(3) and in the display equation of $H^{int}$ on page 13, the indices $i, j, k, l$  represent "flavors",  corresponding to the combined spin and orbital indices rather than orbitals alone. We acknowledge that this could be potentially confusing, especially given the absence of explicit spin indices in the format of the <UMATRIX_FILE>.restart file described on the same page.
+Thanks for this insightful comment. Indeed, both in Eq.(3) and in the display equation of $H^{int}$ on page 13, the indices $i, j, k, l$  represent "flavors",  corresponding to the combined spin and orbital indices rather than orbitals alone. We acknowledge that this could potentially be confusing, especially given the absence of explicit spin indices in the format of the <UMATRIX\_FILE>.restart file described on the same page.
 
-To clarify this, we will revise the manuscript to explicitly state that the indices denote combined spin and orbital components. Additionally, we will add a note to the relevant sections to highlight this point, ensuring that readers can interpret the equations and file formats correctly.
+To clarify this, we have revised the manuscript to explicitly state that the indices denote combined spin and orbital components. Additionally, we will add a note to the relevant sections to highlight this point, ensuring that the readers can interpret the equations and file formats correctly.
 
 We appreciate your attention to this detail and believe that your suggestion will enhance the clarity of our presentation.
 
@@ -94,9 +94,9 @@ We express our gratitude to the referee for bringing to our attention the discre
 
 > *In Sec. 3.3, it appears that users must manually select one of the three provided symmetry configurations to perform block-diagonalization. Is there a plan to extend the code to automatically detect all relevant symmetries—especially in cases where orbitals or sites possess additional symmetries that would allow further block-diagonalization of the matrix?*
 
-We acknowledge the referee’s observation. While the code currently necessitates manual selection of one of the provided symmetry configurations, we recognize the value of automating the detection of all relevant symmetries. Regrettably, we do not have any plans to incorporate automatic detection of all pertinent symmetries within the code. In the current setup, this would be feasible through an accurate analysis of the effective bath decomposition, as discussed in section 3.6, excluding simpler cases described by `bath_type=normal, hybrid`.
+We acknowledge the referee’s observation. Although the code currently necessitates manual selection of one of the provided symmetry configurations, we recognize the value of automating the detection of all relevant symmetries. Regrettably, we do not have any plans to incorporate automatic detection of all pertinent symmetries within the code. In the current setup, this would be feasible through an accurate analysis of the effective bath decomposition, as discussed in section 3.6, excluding simpler cases described by `bath_type=normal, hybrid`.
 
-Nevertheless, we are actively exploring development avenues that aim to integrate more sophisticated conservation laws, which would further reduce the matrix dimensions. We are confident that these enhancements would enhance the code’s flexibility and efficiency in managing systems characterized by intricate symmetry patterns.
+Nevertheless, we are actively exploring development avenues that aim to integrate more sophisticated conservation laws, which would further reduce the matrix dimensions. We are confident that these enhancements would improve code’s flexibility and efficiency in managing systems characterized by intricate symmetries.
 
 
 
@@ -111,9 +111,9 @@ The extent of this broadening is controlled by the input parameter `eps`, which 
 
 In response to the referee's valuable suggestion, we have updated the manuscript to explicitly specify the value of this broadening parameter in all relevant examples that illustrate the behavior of the spectral function. We believe this addition enhances the clarity and reproducibility of our results, and we thank the referee for their constructive feedback.
 
-> *for the display equation of $C(z)$ on page 16, summation index $m$ has lower and upper bounds, while index $n$ does not, although they are dummy variables for the same thing. Same for Eq.~(14)*
+> *for the display equation of $C(z)$ on page 16, summation index $m$ has lower and upper bounds, while index $n$ does not, although they are dummy variables for the same thing. Same for Eq. (14)*
 
-We appreciate the referee's careful observation regarding the summation indices in the display equation of $C(z)$ on page 16 and Eq.~(14). To maintain consistency and clarity, we have revised the manuscript to ensure that both indices $m$ and $n$ have clearly defined lower and upper bounds, as they represent dummy variables for the same summation. 
+We appreciate the referee's careful observation regarding the summation indices in the display equation of $C(z)$ on page 16 and Eq. (14). To maintain consistency and clarity, we have revised the manuscript to ensure that both indices $m$ and $n$ have clearly defined lower and upper bounds, as they represent dummy variables for the same summation. 
 
 In particular, we now explicitly indicate the summation upper bound for $n$ by using the number $N_{\rm state\_list}$ of eigenstates contained in the `state_list` class and describing the lower end of the energy spectrum.   
 Following the referee's observation, we propagated this correction to all the expression involving a trace over Hamiltonian spectrum. We appreciate the referee's attention to this detail.
@@ -136,13 +136,4 @@ Following the referee's observation, we propagated this correction to all the ex
 >
 
 We sincerely appreciate the referee's careful review and constructive feedback. In the revised manuscript, we have addressed all the indicated typos and corrections as suggested. We are grateful for the referee’s meticulous attention to detail, which has significantly contributed to improving the clarity and accuracy of our manuscript.
-
-
-
-
-
-
-
-
-
 

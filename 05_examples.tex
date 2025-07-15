@@ -71,9 +71,10 @@ program ed_hm_bethe
    Hloc=0d0
    !...
    !Construct Bethe DOS using SciFortran
+   !de = 2*D/Le
    allocate(Ebands(Le),Dbands(Le))
    Ebands = linspace(-D,D,Le,mesh=de)
-   Dbands = dens_bethe(Ebands,Wband)*de
+   Dbands = dens_bethe(Ebands,D)*de
    !
    !EDIpack: Set impurity Hamiltonian
    call ed_set_hloc(Hloc)
@@ -107,9 +108,9 @@ vector<complex<double>> Delta(total_size_n5);
 //Construct Bethe DOS
 vector<double> Ebands, Dbands;
 
-//Locally defined functions:
+//Locally defined functions: de = 2*D/Le
 Ebands = linspace(-D,D,Le);
-Dbands = dens_bethe(Ebands,Wband,de);
+Dbands = dens_bethe(Ebands,D,de);
 
 //EDIpack: Set impurity Hamiltonian
 ed_set_Hloc_single_N4(Hloc.data(), d);
@@ -183,10 +184,8 @@ with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$. Note that this step can be perfor
 The first two steps are handled directly by \NAME routines, while during the subsequent steps the 
  control returns to the user, who must implement the algebraic updates required to 
 close the self-consistency loop and optimize the bath.
-Given the 
-critical importance of this optimization, \NAME provides access to 
-well-tested functions, ensuring stability and reproducibility of 
-results. Alternative optimization methods can also be employed as 
+Given the critical importance of this optimization, \NAME provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package.
+Alternative optimization methods can also be employed as 
 needed \cite{Mejuto-Zaera2020PRB,Huang2023PRB,Nakatsukasa2018SJOSC}. 
 An example of implementation is provided in the following listings.
 

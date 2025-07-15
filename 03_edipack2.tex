@@ -116,7 +116,10 @@ For each phonon mode, one has to introduce a cut-off in the phonon number to avo
 The larger the number of excited phonons in the ground state, the larger the cutoff. 
 For practical calculations a cutoff of about 20 phonons is usually sufficient to achieve converged results, except for the deep polaronic regime \cite{Capone2003PRL}.
 
-In many cases one can reduce the number of excited phonons in the ground state, and consequently the required cutoff, by choosing properly the shift $A_m$.  
+In many cases, one can reduce the number of excited phonons in the ground state, and
+consequently the required cutoff, by appropriately choosing the shift $A_m$.
+In practice one can use $A_m = \langle \hat{O}_m \rangle $ and redefine a shifted bosonic fields $\tilde{b}_m^{(\dagger)} = b_m^{(\dagger)} + \frac{\langle \hat{O}_m \rangle }{\omega_0}$. This choice would ensure that $\langle \tilde{b}_m^\dagger + \tilde{b}_m \rangle =0$ effectively reducing the number of phonons required for the calculation. Observables on the physical bosons are linked to the new one via the previous transformation.
+{ \color{red} However, we stress that this is not always possible: in some generalized models or realistic systems derived from microscopic considerations, $A_m$ may be fixed and not a freely tunable parameter. In such cases, the phonon cutoff must be increased accordingly to ensure numerical convergence. SG: i would remove this part}
 Although feasible, dealing with more than one phonon mode quickly becomes computationally very demanding, thus we will consider only one mode and we drop the $m$ index in the rest of this work.
 
 The phonon frequency is passed to the \NAME program via the variable { \tt W0\_PH } to be read from the input file. The displacement field acting on the phonon is passed through the variable {\tt A\_PH} from the input file. For every phonon mode, the $g$ coupling can be written as a matrix $g_{\alpha \beta}$ which can be passed in two different ways. If the matrix is diagonal ($g_{\alpha \beta} = g_\alpha \delta_{\alpha \beta}$), from the input file one can simply write in order the values $g_\alpha$ in the variable {\tt G\_PH}. For any general shape one can pass to the input file a {\tt GPHfile } variable containing the name of the file storing the $g_{\alpha \beta}$ array.
@@ -219,8 +222,8 @@ respectively, act on the Fock space as:
 where $\#_{a\sigma}=\sum_{i\sigma'<a\sigma} n_{i\sigma'}$ accounts for the fermionic sign imposed by the Pauli principle.
 The bosonic operators $b$ and $b^\dagger$ act on the phonon part $\ket{p}$ of the Fock state as
 \begin{align*}
-  b\ket{p} &= \sqrt{p-1}\ket{p-1}, \\
-  b^\dagger\ket{p} &= \sqrt{p}\ket{p+1}.
+  b\ket{p} &= \sqrt{p} \ket{p-1}, \\
+  b^\dagger\ket{p} &= \sqrt{p+1}\ket{p+1}.
 \end{align*}
 The implementation of Fock states and operators can be found in 
 {\tt ED\_AUX\_FUNX}. In particular, in that module we define the bitwise action 
@@ -829,7 +832,7 @@ A histogram  of the number of states per sector is produced after each diagonali
 
 
 
-\subsubsection{GFmatrix}
+\subsubsection{gfmatrix}
 One of the main goals of the \NAME is to evaluate dynamical correlations
 functions (DCF), e.g. $C(t) = \ibra \TT[ A(t) A^\dagger ]\iket$. Using Krylov methods,
 these DCFs can be expressed as truncated K\"all\'en-Lehmann spectral sums of the form
@@ -841,45 +844,44 @@ where $w_{mn}(\AA)$ is the weight determined by the amplitude of operator $\AA$ 
 $m^{\rm th}$ eigenstate and the $n^{\rm th}$ Krylov basis vector, 
 $dE_{mn}=E_m-E_n$ is the corresponding excitation energy.
 
-The module {\tt ED\_GFMATRIX} implements the class {\tt gfmatrix}, 
-which provides an efficient, multi-layer, data structure for storing 
-all weights and poles required for the evaluation of DCFs. This 
-class is designed to handle multiple operators and sectors, allowing 
-on-the-fly evaluation of the DCF for any complex frequency 
-$z\in\CCC$.
 
-The use of this data structure significantly reduces the computational 
-cost of evaluating DCFs making it a critical component 
-for the high-performance execution of \NAME.
+The module {\tt ED\_GFMATRIX} implements the class {\tt gfmatrix}, which provides an efficient and flexible representation of DCFs. It is structured as a hierarchical, or {\it multi-layered}, data container that organizes spectral weights and poles across three levels: (i) the initial eigenstate $\ket{n}$ of the Hamiltonian spectrum, (ii) the amplitude channel associated with this state, corresponding to the applied operator, and (iii) the set of excitations from $\ket{n}$, each characterized by a pole and its corresponding weight.
+This structure allows the {\tt gfmatrix} class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. As a result, {\tt gfmatrix} is a core component of \NAME, essential for efficient memory management, consistent storage of spectral data, and high-performance post-processing.
 
-\begin{lstlisting}[style=fstyle,numbers=none]   
-!The contributions to the GF Kallen-Lehmann sum are stored as
-!GF_{ab,sr}%state%channel%{w,e}.
-!A couple of weight,poles {w,e} is stored: 
-!for each *channel, i.e. !applied operator, for any starting state ${\color{comment-color}\ket{n}}$.
-!
-!Sub-class: contains the actual weight and poles:
-type GFspectrum
-   complex(8),dimension(:),allocatable       :: weight
-   real(8),dimension(:),allocatable          :: poles
-end type GFspectrum
-!
-!N_channel = ${\color{comment-color} C,\, C^\dagger,\, C \pm C^\dagger,\, C \pm iC^\dagger}$, etc.
-!Subclass: contains a given set of weights and poles.
-!Each instance of this subclass corresponds to a given input state 
-!and a given operator in the Kallen-Lehmann representation.  
-type GFchannel
-   type(GFspectrum),dimension(:),allocatable :: channel 
-end type GFchannel
-!
-!Main class: stores  weights and poles of a given DCF 
-!obtained through the dynamical Lanczos algorithm.
-!state_list%size = Number of states in the spectrum 
-type GFmatrix
-   type(GFchannel),dimension(:),allocatable  :: state
-   logical                                   :: status=.false. !Allocation status
-end type GFmatrix
-\end{lstlisting}
+
+% The module {\tt ED\_GFMATRIX} implements the class {\tt gfmatrix} for the efficient storage of these quantities. It is designed as a hierarchical, or  {\it multi-layered}, data structure that organize spectral weights and poles using three distinct levels: i) the initial eigenstate $\ket{n}$ of the Hamiltonian spectrum, ii) the amplitude channel associated to this state, i.e. the operator applied and, finally, iii) the weights and poles corresponding to each physical excitation from such initial state. 
+% This class is designed to handle multiple operators and states, allowing 
+% on-the-fly evaluation of the DCF for any complex frequency $z\in\CCC$. 
+% The use of this data structure significantly reduces the computational cost of evaluating DCFs, making it a critical component in \NAME both from the point of view of memory management, data conservation and post-processing analysis.
+
+% \begin{lstlisting}[style=fstyle,numbers=none]   
+% !The contributions to the GF Kallen-Lehmann sum are stored as
+% !GF_{ab,sr}%state%channel%{w,e}.
+% !A couple of weight,poles {w,e} is stored: 
+% !for each *channel, i.e. !applied operator, for any starting state ${\color{comment-color}\ket{n}}$.
+% !
+% !Sub-class: contains the actual weight and poles:
+% type GFspectrum
+%    complex(8),dimension(:),allocatable       :: weight
+%    real(8),dimension(:),allocatable          :: poles
+% end type GFspectrum
+% !
+% !N_channel = ${\color{comment-color} C,\, C^\dagger,\, C \pm C^\dagger,\, C \pm iC^\dagger}$, etc.
+% !Subclass: contains a given set of weights and poles.
+% !Each instance of this subclass corresponds to a given input state 
+% !and a given operator in the Kallen-Lehmann representation.  
+% type GFchannel
+%    type(GFspectrum),dimension(:),allocatable :: channel 
+% end type GFchannel
+% !
+% !Main class: stores  weights and poles of a given DCF 
+% !obtained through the dynamical Lanczos algorithm.
+% !state_list%size = Number of states in the spectrum 
+% type gfmatrix
+%    type(GFchannel),dimension(:),allocatable  :: state
+%    logical                                   :: status=.false. !Allocation status
+% end type gfmatrix
+% \end{lstlisting}
 
 
 
@@ -1275,7 +1277,7 @@ generic approach. Consider the generic DCF:
 where $\AA(t)=e^{iHt}\AA e^{-iHt}$, $\TT_\pm$ is the time-ordering
 operator for fermions ($+$) or
 bosons ($-$), and $\ibra \cdot \iket=\frac{1}{Z}\Tr{ \left[ e^{-\beta
-      H}\cdot \right]}$, with $Z=\sum_ne^{-\beta E_n}$, the thermodynamic
+      H}\cdot \right]}$, with $Z=\sum_n e^{-\beta E_n}$, the thermodynamic
 average.
 Using spectral decomposition, the expression \equ{eqGaa} reduces to a
 K\"all\`en-Lehmann form:
@@ -1285,13 +1287,13 @@ K\"all\`en-Lehmann form:
     &=  \ibra \AA \frac{1}{z-H} \AA^\dagger\iket
     \mp \ibra \AA^\dagger \frac{1}{z+H} \AA\iket \cr
     %
-    & =\frac{1}{Z}\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}\sum_m
+    & \simeq \frac{1}{\tilde{Z}}\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}\sum_m
   \frac{ |\bra{\psi_m}\AA^\dagger \ket{\psi_n}|^2 }  {z-(E_m-E_n)}
   \mp
   \frac{ |\bra{\psi_m}\AA \ket{\psi_n}|^2 }  {z+(E_m-E_n)},\cr
 \end{split}
 \end{equation}
-where $z\in\CCC$, and $\{\ket{\psi_n}, E_n\}$ are the eigenpairs of the
+where $z\in\CCC$, $\tilde{Z}=\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}$ and $\{\ket{\psi_n}, E_n\}$ are the eigenpairs of the
 Hamiltonian $H$. 
 This form is appealing but computationally prohibitive, as it requires
 the full spectrum of the Hamiltonian. However, the first line in \equ{KLgf}
@@ -1321,13 +1323,13 @@ we can approximate the expression \equ{KLgf} as:
 \begin{equation}
   \label{eqGKrylov}
   \begin{split}
-    C_\AA(z)  &\simeq \frac{1}{Z}\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}
+    C_\AA(z)  &\simeq \frac{1}{\tilde{Z}}\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}
     \sum_{m=1}^{N} \frac{\bra{\psi_n}\AA \AA^\dagger\ket{\psi_n} |a^n_m|^2}{
       z - (E_m-E_n)} \mp \frac{\bra{\psi_n}\AA^\dagger \AA\ket{\psi_n}
       |a^n_m|^2}{ z + (E_m-E_n)}\cr
     %
-    &= \frac{1}{Z}\sum_{n=1}^{N_{\tt state\_list}}\sum_{m=1}^{N} \sum_{\nu=\pm}\frac{w^{\nu}_{mn}(\AA)}{z - dE^\nu_{mn}(\AA)} 
-    \equiv \frac{1}{Z}\sum_n
+    &= \frac{1}{\tilde{Z}}\sum_{n=1}^{N_{\tt state\_list}}\sum_{m=1}^{N} \sum_{\nu=\pm}\frac{w^{\nu}_{mn}(\AA)}{z - dE^\nu_{mn}(\AA)} 
+    \equiv \frac{1}{\tilde{Z}}\sum_n
     \sum_{m=1}^{N} \sum_{\nu=\pm} g_\AA(z;\nu, w^{\nu}_{mn},  dE^\nu_{mn}), \cr
   \end{split}
 \end{equation}
@@ -1391,11 +1393,13 @@ operation relies on the functions {\tt apply\_op\_C/CDG} in
 
 
 The sector Hamiltonian matrix in this mode is assumed 
-to be real symmetric, which significantly simplifies the evaluation of the off-diagonal terms. In this case, the following symmetry relation 
-$G_{\a\b\s\s}=G_{\b\a\s\s}$ holds, allowing the computation of 
-off-diagonal components using an auxiliary operator 
-$\OO=c_{\a\s}+c_{\b\s}$ and the identity:
-$G_{\a\b\s\s}=\tfrac{1}{2}(C_\OO - G_{\a\a\s\s} - G_{\b\b\s\s})$.
+to be real symmetric, which simplifies the evaluation 
+of the off-diagonal terms by exploiting the following symmetry 
+under orbital exchange $G_{\a\b\s\s}(z)=G_{\b\a\s\s}(z)$. 
+In this case, the off-diagonal Green's function components can be obtained using just real-valued auxiliary operators such as  
+$\OO=c_{\a\s}+c_{\b\s}$, along wit the identity 
+$G_{\a\b\s\s}=\tfrac{1}{2}(C_\OO - G_{\a\a\s\s} - G_{\b\b\s\s})$,
+where $C_\OO$ denotes the DCF associated to $\OO$      . This approach, avoiding the need for complex arithmetic, preserves the efficiency of real-valued computation.  
 
 The diagonal spin, charge and pair susceptibility terms
 $\chi^{S^z}_{\a\a}$, $\chi^N_{\a\a}$ and $\chi^\Delta_{\a\a}$
@@ -1505,17 +1509,14 @@ evaluated using the stored low-energy part of the spectrum,
 taking advantage of the exponential suppression provided by 
 the Boltzmann factor:
 \begin{equation}
-\ibra \OO\iket = \frac{1}{Z}\sum_{n=1}^{\infty} e^{-\beta E_n}
+\ibra \OO\iket 
+= \frac{1}{Z}\sum_{n=1}^{\infty} e^{-\beta E_n}
 \bra{\psi_n} \OO \ket{\psi_n}\simeq \frac{1}{\tilde{Z}}\sum_{n=1}^{N_{\tt state\_list}} e^{-\beta E_n}
 \bra{\psi_n} \OO \ket{\psi_n},
 \label{eq:thermal_average}
 \end{equation}
 where $E_n$ and $\ket{\psi_n}$ are the $N_{\tt state\_list}$ low-lying eigenstates 
-of the system stored in the {\tt state\_list} and $\tilde{Z}=\sum_{n=1}^{N_{\tt state\_list}}e^{-\beta E_n}$. 
-% This approach 
-% greatly reduces computational overhead by focusing on the 
-% relevant, low-energy sector.
-
+of the system stored in the {\tt state\_list},  $Z=\sum_n e^{-\beta E_n}$ and  $\tilde{Z}=\sum_{n=1}^{N_{\tt state\_list}}e^{-\beta E_n}$. 
 
 
 
@@ -1975,9 +1976,10 @@ The \texttt{frobenius} option implements instead the matrix distance induced by 
 For $q=2$ (see \texttt{cg\_pow}) the Frobenius norm is equivalent
 to the Euclidean distance in matrix space. 
 %For $q\neq2$ we are implementing something that is not a matrix norm (better to not comment on it explicitly)
- \fixme{We prospect to expand the choices for \texttt{cg\_norm} in future updates of \NAME, as the \textbf{nonsu2} and \textbf{superc}
-diagonalization modes entail nontrivial subtleties in optimizing 
-the off-diagonal components of $X$.}
+%  \fixme{We prospect to expand the choices for \texttt{cg\_norm} in future updates of \NAME, as the \textbf{nonsu2} and \textbf{superc}
+% diagonalization modes entail nontrivial subtleties in optimizing 
+% the off-diagonal components of $X$.}
+We plan to expand the available options for the {tt cg\_norm} parameter in future \NAME updates, since the {\tt nonsu2} and {\tt superc} diagonalization modes involve subtle challenges in optimizing the off-diagonal components of $X$, due to the coexistence of matrix elements with different physical meanings and/or spanning different energy scales, which require carefully balanced optimization metrics to ensure an accurate bath representation.
 \item \texttt{cg\_Ftol} - Controls the fit tolerance, setting the 
 convergence threshold for the CG minimization.
 \item \texttt{cg\_Niter} - Specifies the maximum number of allowed 
