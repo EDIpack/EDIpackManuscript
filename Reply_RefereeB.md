@@ -30,11 +30,7 @@ To enhance clarity and facilitate reader comprehension of its practical applicat
 
 We thank the referee for this observation. Indeed, the cutoff on the number of phonon excitations is inherently problem dependent and should be carefully adjusted in light of the specific electron-phonon coupling regime, the phonon frequency, and the interplay with electronic correlations. Furthermore, we agree that the shift $A_m$, while often treated as a tunable parameter in simplified models, is not always free to choose. In more general contexts, such as in first-principles-derived Hamiltonians or systems constrained by symmetry or external potentials, $A_m$ may be fixed by physical considerations or derived from the underlying microscopic model.
 
-To reflect this more nuanced detail, we have revised the paragraph on page 9 to acknowledge that the shift $A_m$ is not universally a free parameter. The new text reads:
-
-*“In many cases, one can reduce the number of excited phonons in the ground state, and consequently the required cutoff, by appropriately choosing the shift $A_m$. However, we stress that this is not always possible: in some generalized models or realistic systems derived from microscopic considerations, $A_m$ may be fixed and not a freely tunable parameter. In such cases, the phonon cutoff must be increased accordingly to ensure numerical convergence.”*
-
-This modification ensures that our discussion does not overgeneralise while aligning with the range of physical contexts in which EDIpack may be applied. We thank the referee for helping us clarify this important point.
+To reflect this more nuanced detail, we have revised the paragraph on page 9 to acknowledge that the shift $A_m$ is not universally a free parameter. This ensures that our discussion does not overgeneralise while aligning with the range of physical contexts in which EDIpack may be applied. 
 
 
 
@@ -58,7 +54,7 @@ This new formulation replaces the previous wording and makes explicit the distin
 
 > *The motivation of including the code on p. 12 is unclear. What is the intention here?*
 
-We thank the referee for raising this point. The code snippet on page 12 was originally included to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. Moreover, this code snippet is useful to understand the structure of the ${\tt sparse_map}$ used to implement fast algorithm for the evaluation of the reduced impurity density matrix in Section 3.5.2. 
+We thank the referee for raising this point. The code snippet on page 12 was originally included to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. Moreover, this code snippet is useful to understand the structure of the ${\tt sparse\_map}$ used to implement fast algorithm for the evaluation of the reduced impurity density matrix in Section 3.5.2. 
 
 In response to the referee’s comment, we have slightly revised the manuscript to clarify this intent. Specifically, we have added the following introductory sentence to the relevant section:
 
@@ -103,10 +99,10 @@ The term multi-layered refers to the hierarchical organization of the ${\tt gfma
 Specifically, the data are organized across three conceptual layers: (1) the many-body eigenstates of the Hamiltonian spectrum, (2) the amplitude channels associated to each such state, and (3) the set of poles and weights corresponding to physical excitations from this state. This structure is necessary to correctly represent the Lehmann decomposition of Green's functions and related objects, while still allowing dynamic access and manipulation during calculations.
 
 The efficiency of ${\tt gfmatrix}$ stems from two main features. First, correlation functions do not need to be precomputed and stored on fixed frequency or time grids; instead, their values are computed on-the-fly at arbitrary complex arguments, allowing precise and flexible evaluation as required by different solvers or output formats. Second, memory usage is optimized by avoiding redundant storage. The internal design separates spectral data, and evaluation logic, allowing minimal overhead during the object construction and easing post-processing analysis. 
-We also recognize that the use of the term "high-performance" could be misleading and rephrases the paragraph on page 16 in a more precise way as
+We recognize that the use of the term "high-performance" could be misleading and rephrases the paragraph on page 16 in a more precise way as
 
 "*The module ${\tt ED\_GFMATRIX}$ implements the class ${\tt gfmatrix}$, which provides an efficient and flexible representation of DCFs. It is structured as a hierarchical, or {\it multilayered}, data container that organizes spectral weights and poles across three levels: (i) the initial eigenstate $|n\rangle$ of the Hamiltonian spectrum, (ii) the amplitude channel associated with this state, corresponding to the applied operator, and (iii) the set of excitations from $|n\rangle$, each characterized by a pole and its corresponding weight.  
-This structure allows the ${\tt gfmatrix}$ class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. As a result, ${\tt gfmatrix}$ is a core component of EDIpack, essential for efficient memory management, consistent storage of spectral data, and high-performance post-processing.*"
+This structure allows the ${\tt gfmatrix}$ class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. Through the use of ${\tt gfmatrix}$ EDIpack achieve and efficient memory management, consistent storage of spectral data, and high-performance post-processing.*"
 
 We also thank the referee for pointing out inconsistencies in capitalization. We have now ensured that the identifier is uniformly written as **gfmatrix** throughout the manuscript.
 
@@ -158,9 +154,9 @@ These listings are intended to complement the discussion by offering concrete ex
 
 We acknowledge that our brief comment reads a bit obscure while this point requires a more detailed, yet brief, discussion.
 
-The bath optimization is a crucial step in the DMFT framework. As we discuss in the manuscript, to preserve the general application of EDIpack we introduced several control parameters for the conjugate-gradient fit. A key one is the definition of the norm, or distance, between matrix functions appearing in Eq. 30.
+The bath optimization is a crucial step in the DMFT framework. Hence, to ensure EDIpack has a large degree of versatility while preserving robustness, we introduced several control parameters for the conjugate-gradient fit. A key one is the definition of the norm, or distance, between matrix functions appearing in Eq. 30.
 
-While for matrix functions with a particularly symmetric structure the choice of the metric is inessential, it might dramatically affect the quality of the optimization in more general cases. 
+While the choice of metric plays a limited role for matrix-valued functions with particularly symmetric structures, it can significantly impact the quality of the optimization in more general cases. 
 The subtleties in optimizing the off-diagonal components in either ${\tt nonsu2}$ and ${\tt superc}$ diagonalizations arise from the complex interplay between these components’ physical characteristics and the picked optimization metric. 
 In either case, the coexistence of components having a very different physical interpretation, e.g., anomalous terms, and/or spanning very different energy scales represents a serious challenge to the optimization of the bath. 
 This requires careful tuning of the control parameters to ensure that the optimization does not disproportionately favor certain matrix elements over others, thereby maintaining the overall fidelity of the bath representation.
@@ -176,7 +172,7 @@ We thank the referee for this general but important observation. In principle, i
 
 Their use in EDIpack is deliberate and serves to maintain clarity and modularity in the code, particularly for widely shared objects such as configuration parameters, system-wide operators, or state indexing data. Removing these global definitions would require passing a large number of arguments through deep call chains, which we believe would significantly increase code complexity, reduce readability, and introduce greater potential errors, without offering any computational or architectural advantages.
 
-However, we recognise the importance of careful design in managing global memory, and we have ensured that such variables are encapsulated within dedicated modules with well defined scopes. Should it prove beneficial for future code maintainability or extension by third-party contributors, we are ready to review and refine this aspect of the implementation.  
+However, we recognise the importance of careful design in managing global memory, and we have ensured that such variables are encapsulated within dedicated modules with well defined scopes. Should it prove beneficial for future code maintainability or extension by third-party contributors, we are open to review and refine this aspect of the implementation.  
 
 
 
@@ -201,7 +197,7 @@ We thank the referee for carefully reviewing this section and pointing this out.
 
 We thank the referee for pointing out the ambiguity in this sentence. Our intention was to clarify that, although the bath optimization problem is conceptually distinct from the core impurity diagonalization task, for which EDIpack was originally developed, nonetheless the package provides access to a well-tested implementation of the conjugate-gradient fitting procedure for the bath optimization. We have revised the sentence accordingly in the manuscript to make this connection and the role of these functions more explicit by writing: 
 
-*"Given the critical importance of this optimization, EDIpack provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package."*
+*"Given the critical importance of this step, EDIpack provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package."*
 
 
 
