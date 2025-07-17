@@ -5,11 +5,7 @@ in their reports.
 
 > *This paper presents the current status in an exact diagonalisation impurity solver EDIpack. It provides a detailed exposition of the multiple interfaces as well as a number of tutorial-style examples that provide details that will be appreciated to new users of the package. I believe that providing robust and well-tested computer codes, as well as high quality documentation, are a big service to the community. I wholeheartedly recommend this work for publication.*
 
-We sincerely thank the referee for their positive and encouraging comments. We are very pleased to hear that the exposition, interfaces, and tutorial examples were found to be helpful and of value to new users. We are grateful for their recommendation for publication and their support for open and well-maintained scientific software.
-
-
-
-
+We sincerely thank the referee for their positive comments. We are very pleased to hear that the exposition, interfaces, and tutorial examples were found to be helpful and of value to new users. We are grateful for their recommendation for publication and their support for open and well-maintained scientific software.
 
 
 
@@ -46,15 +42,15 @@ We thank the referee for pointing out this issue. Indeed, the original text aime
 
 To clarify this point, we have revised the final paragraph of page 11 in the current version of the manuscript. The updated text now reads:
 
-*“From a computational perspective, constructing a symmetry sector amounts to defining an injective map $\mathcal{M} : \mathcal{S}_{\vec{Q}} \rightarrow \mathcal{F}_e$ that relates the consecutive indexing of the electronic states |i\rangle within a given symmetry sector $\mathcal{S}_{\vec{Q}}$ to the Fock states $|I_e\rangle$ in the electronic Fock space in their number representation. This map is typically implemented as a rank-1 integer array, whose size corresponds to the dimension of the sector $D^{\mathcal{S}}$.”*
+*“From a computational perspective, constructing a symmetry sector amounts to defining an injective map $\mathcal{M} : \mathcal{S}_{\vec{Q}} \rightarrow \mathcal{F}_e$ that relates the consecutive indexing of the electronic states |i\rangle within a given symmetry sector $\mathcal{S}_{\vec{Q}}$ to the Fock states $|I_e\rangle$ in the electronic Fock space in occupation number representation. This map is typically implemented as a rank-1 integer array, whose size corresponds to the dimension of the sector $D^{\mathcal{S}}$.”*
 
-This new formulation replaces the previous wording and makes explicit the distinction between the consecutive indexing of the sector states $|i\rangle$ and the Fock states in the integer-based occupation number representation $|I_e\rangle$. In doing so, we clarify that the mapping $\mathcal{M}$ is what connects the two encodings of the same physical state. We believe the revised text should eliminate the ambiguity the referee noted.
+This new formulation replaces the previous wording and makes explicit the distinction between the consecutive indexing of the sector states $|i\rangle$ and the Fock states in the occupation number representation $|I_e\rangle$. In doing so, we clarify that the mapping $\mathcal{M}$ is what connects the two encodings of the same physical state. We believe the revised text should eliminate the ambiguity the referee noted.
 
 
 
 > *The motivation of including the code on p. 12 is unclear. What is the intention here?*
 
-We thank the referee for raising this point. The code snippet on page 12 was originally included to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. Moreover, this code snippet is useful to understand the structure of the ${\tt sparse\_map}$ used to implement fast algorithm for the evaluation of the reduced impurity density matrix in Section 3.5.2. 
+We thank the referee for raising this point. The purpose of the code snippet in question is to illustrate the concrete implementation of the mapping from Fock states to symmetry sectors for different values of ${\tt ed\_mode}$. Our goal was to make explicit the internal logic used to construct the quantum number-conserving subspaces, bridging the gap between formal description and practical realization. We suggest this code snippet is useful to understand the structure of the ${\tt sparse\_map}$ used to implement fast algorithm for the evaluation of the reduced impurity density matrix in Section 3.5.2. 
 
 In response to the referee’s comment, we have slightly revised the manuscript to clarify this intent. Specifically, we have added the following introductory sentence to the relevant section:
 
@@ -98,11 +94,11 @@ We thank the referee for pointing out the need for a clearer and more detailed d
 The term multi-layered refers to the hierarchical organization of the ${\tt gfmatrix}$ object, which is essential for storing and accessing the analytic structure of correlation functions, i.e. the weights and the poles, in a flexible and scalable way. 
 Specifically, the data are organized across three conceptual layers: (1) the many-body eigenstates of the Hamiltonian spectrum, (2) the amplitude channels associated to each such state, and (3) the set of poles and weights corresponding to physical excitations from this state. This structure is necessary to correctly represent the Lehmann decomposition of Green's functions and related objects, while still allowing dynamic access and manipulation during calculations.
 
-The efficiency of ${\tt gfmatrix}$ stems from two main features. First, correlation functions do not need to be precomputed and stored on fixed frequency or time grids; instead, their values are computed on-the-fly at arbitrary complex arguments, allowing precise and flexible evaluation as required by different solvers or output formats. Second, memory usage is optimized by avoiding redundant storage. The internal design separates spectral data, and evaluation logic, allowing minimal overhead during the object construction and easing post-processing analysis. 
+The efficiency of ${\tt gfmatrix}$ stems from two main features. First, correlation functions do not need to be precomputed and stored on fixed frequency or time grids; instead, their values are computed on-the-fly at arbitrary complex arguments, allowing precise and flexible evaluation as required by different solvers or output formats. Second, memory usage is optimized by avoiding redundant storage. The internal design separates spectral data and evaluation logic, allowing minimal overhead during the object construction and easing post-processing analysis. 
 We recognize that the use of the term "high-performance" could be misleading and rephrases the paragraph on page 16 in a more precise way as
 
 "*The module ${\tt ED\_GFMATRIX}$ implements the class ${\tt gfmatrix}$, which provides an efficient and flexible representation of DCFs. It is structured as a hierarchical, or {\it multilayered}, data container that organizes spectral weights and poles across three levels: (i) the initial eigenstate $|n\rangle$ of the Hamiltonian spectrum, (ii) the amplitude channel associated with this state, corresponding to the applied operator, and (iii) the set of excitations from $|n\rangle$, each characterized by a pole and its corresponding weight.  
-This structure allows the ${\tt gfmatrix}$ class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. Through the use of ${\tt gfmatrix}$ EDIpack achieve and efficient memory management, consistent storage of spectral data, and high-performance post-processing.*"
+This structure allows the ${\tt gfmatrix}$ class to simultaneously handle multiple initial states and operators, enabling on-the-fly evaluation of DCFs at arbitrary complex frequencies $z \in \mathbb{C}$. By avoiding precomputed grids and redundant storage this approach minimizes memory footprint and computational overhead. Through the use of ${\tt gfmatrix}$ EDIpack achieves efficient memory management, consistent storage of spectral data and high-performance post-processing.*"
 
 We also thank the referee for pointing out inconsistencies in capitalization. We have now ensured that the identifier is uniformly written as **gfmatrix** throughout the manuscript.
 
@@ -147,14 +143,14 @@ In the revised manuscript we have corrected this issue. We now use the symbol $Z
 
 We acknowledge the referee observation. We believe that the code listings on pages 25 and 26, i.e. the implementation of the fast-algorithm for the evaluation of the impurity RDM,    provide valuable insight into the practical aspects of the implementation discussed in the text, particularly with respect to the subtle issues related to state decomposition and the treatment of fermionic sign conventions where required.
 
-These listings are intended to complement the discussion by offering concrete examples that clarify how the formal logic is realized in code. Given the potential for confusion when dealing with basis state reconstruction and operator ordering in fermionic systems, we believe that these examples will be of interest and practical benefit to users aiming to extend or interface with the library.
+These listings are intended to complement the discussion by offering concrete examples that clarify how the formal logic is realized in code. Given the potential for confusion when dealing with basis state reconstruction and operator ordering in fermionic systems, we believe that these examples can be of interest and practical benefit to users aiming to extend or interface with the library.
 
 
 > *p. 28: "as the nonsu2 and superc diagonalizations entail nontrivial subtleties in optimizing the off-diagonal components of X". What are these subtleties?*
 
 We acknowledge that our brief comment reads a bit obscure while this point requires a more detailed, yet brief, discussion.
 
-The bath optimization is a crucial step in the DMFT framework. Hence, to ensure EDIpack has a large degree of versatility while preserving robustness, we introduced several control parameters for the conjugate-gradient fit. A key one is the definition of the norm, or distance, between matrix functions appearing in Eq. 30.
+The bath optimization is a crucial step in the DMFT-ED algorithm. Hence, to ensure EDIpack has a large degree of versatility while preserving robustness, we introduced several control parameters for the conjugate-gradient fit. A key one is the definition of the norm, or distance, between matrix functions appearing in Eq. 30.
 
 While the choice of metric plays a limited role for matrix-valued functions with particularly symmetric structures, it can significantly impact the quality of the optimization in more general cases. 
 The subtleties in optimizing the off-diagonal components in either ${\tt nonsu2}$ and ${\tt superc}$ diagonalizations arise from the complex interplay between these components’ physical characteristics and the picked optimization metric. 
@@ -197,7 +193,7 @@ We thank the referee for carefully reviewing this section and pointing this out.
 
 We thank the referee for pointing out the ambiguity in this sentence. Our intention was to clarify that, although the bath optimization problem is conceptually distinct from the core impurity diagonalization task, for which EDIpack was originally developed, nonetheless the package provides access to a well-tested implementation of the conjugate-gradient fitting procedure for the bath optimization. We have revised the sentence accordingly in the manuscript to make this connection and the role of these functions more explicit by writing: 
 
-*"Given the critical importance of this step, EDIpack provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package."*
+*"Given the critical importance of this step, EDIpack provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results. This task is conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package."*
 
 
 
@@ -207,12 +203,9 @@ We thank the referee for pointing out the ambiguity in this sentence. Our intent
 
 > *p. 47: generate_kgrid is confusingly complex. There must be a simpler way to accomplish this.*
 
-We agree with the referee that the implementation of ${\tt generate_kgrid}$ could be simplified for clarity. The purpose of this function is merely to construct a uniform 2D grid in the Brillouin zone using the reciprocal lattice vectors, which can indeed be achieved with more concise or intuitive code. 
+We agree with the referee that the implementation of ${\tt generate_kgrid}$ could be simplified for clarity. The purpose of this function is merely to construct a uniform 2D grid in the Brillouin zone using the reciprocal lattice vectors. In the case of the square lattice discussed in this example, this implementation is indeed rather overcomplicated, given the orthodonality of the reciprocal lattice vectors. Being completely generic, however, this function can also be used for less simple 2d lattices (e.g. triangular). We further note that in the way it is written, relying entirely on numpy functions, it avoids making use of explicit python ${\tt for}$ loops, which cause performance degradation when the requested number of k-points is large.
 
-More generally, we note that this step is not essential to the core functionalities provided by EDIpack, as it pertains only to the sampling of the Brillouin zone. For more involved tight-binding constructions, users may wish to rely on specialized libraries such as PythTB, which are designed for this purpose. Our goal here was only to provide a minimal working example for illustration.
-
-
-
+More generally, we note that this step is not essential to the core functionalities provided by EDIpack, as it pertains only to the sampling of the Brillouin zone. For more involved tight-binding constructions, users may wish to rely on specialized libraries such as PythTB, which are designed for this purpose. 
 
 
 > *p. 57: Is the footnote necessary? Will it be of interest to the expected readers of this paper?*

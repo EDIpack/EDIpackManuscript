@@ -184,7 +184,7 @@ with  $\zeta=i\omega+\mu-h^0-\Sigma(i\omega)$. Note that this step can be perfor
 The first two steps are handled directly by \NAME routines, while during the subsequent steps the 
  control returns to the user, who must implement the algebraic updates required to 
 close the self-consistency loop and optimize the bath.
-Given the critical importance of this step, \NAME provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results, even though this task remains conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package.
+Given the critical importance of this step, \NAME provides access to a well-tested implementation of the conjugate gradient method for performing the bath optimization, ensuring stability and reproducibility of the results. This task is conceptually distinct from the  diagonalization of the impurity problem, which remains the core focus of the package.
 Alternative optimization methods can also be employed as 
 needed \cite{Mejuto-Zaera2020PRB,Huang2023PRB,Nakatsukasa2018SJOSC}. 
 An example of implementation is provided in the following listings.
