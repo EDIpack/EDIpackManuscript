@@ -4,9 +4,9 @@
 \section{Examples}\label{SecExamples}
 In this section we illustrate and benchmark the functionalities and of  \NAME
 library and its interfaces as a solver for DMFT through a variety of examples. We also discuss in detail the relevant code parts from different programming languages. 
-The codes,the data and the script to generate the figures presented here can be found in the repository \href{https://github.com/EDIpack/EDIpack2examples}{github.com/EDIpack/EDIpack2examples}.  
+The codes, the data and the scripts to rework some of the examples presented here, as well as additional upcoming tutorials, can be found in the repository \href{https://github.com/EDIpack/EDIpack2examples}{github.com/EDIpack/EDIpack2examples}.  
 
-Some tasks -- particularly those associated with the implementation of the DMFT self-consistency -- are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
+Some tasks---particularly those associated with the implementation of the DMFT self-consistency---are inherently independent of \NAME itself, and the impurity solver is agnostic about them. 
 Thus, in the implementations using Fortran, Python or other \NAME interfaces to scientific toolboxes, we adopt a reverse communication strategy, which requires the user to independently carry out these parts or, equivalently, to take advantage of existing utilities. 
 
 In our examples based on the Fortran APIs, we rely on external open-source libraries, such as DMFTtools (see \href{https://github.com/aamaricci/DMFTtools}{github.com/aamaricci/DMFTtools}), to perform specific tasks, including evaluating the local Green’s function, implementing the self-consistency, constructing the tight-binding model, or calculating the kinetic energy.

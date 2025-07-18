@@ -81,7 +81,7 @@ Thanks for this insightful comment. Indeed, both in Eq.(3) and in the display eq
 
 To clarify this, we have revised the manuscript to explicitly state that the indices denote combined spin and orbital components. Additionally, we will add a note to the relevant sections to highlight this point, ensuring that the readers can interpret the equations and file formats correctly.
 
-We appreciate their attention to this detail and believe that their suggestion will enhance the clarity of our presentation.
+We appreciate the referee's attention to this detail and believe that their suggestion will enhance the clarity of our presentation.
 
 
 
@@ -95,7 +95,7 @@ We express our gratitude to the referee for bringing to our attention the discre
 > *In Sec. 3.3, it appears that users must manually select one of the three provided symmetry configurations to perform block-diagonalization. Is there a plan to extend the code to automatically detect all relevant symmetries—especially in cases where orbitals or sites possess additional symmetries that would allow further block-diagonalization of the matrix?*
 
 We acknowledge the referee’s observation. While the main code currently necessitates manual selection of one of the provided symmetry configurations, we recognize the value of automating the detection of all relevant symmetries. In fact, the Triqs interface ${\tt edipack2triqs}$ features an efficient algorithm to automatically recognize the symmetries of the problem and select the appropriate value for ${\tt ed\_mode}$. 
-In the actual version of the Fortran API this is not implemented yet, but we have plans to incorporate it in future release. In the current setup, this requires to accurately analyse the model Hamiltonian and the effective bath decomposition, as discussed in section 3.6, at initialization time. 
+In the actual version of the Fortran API this is not implemented yet, but we have plans to incorporate it in a future release. In the current setup, this requires to accurately analyse the model Hamiltonian and the effective bath decomposition, as discussed in section 3.6, at initialization time. 
 
 At the same time, we are actively exploring development avenues that aim to integrate more sophisticated conservation laws, which would further reduce the matrix dimensions. We are confident that these enhancements would improve code’s flexibility and efficiency in managing systems characterized by intricate symmetries.
 
@@ -103,7 +103,7 @@ At the same time, we are actively exploring development avenues that aim to inte
 
 > *On page 43, it is mentioned that the spectrum obtained from ED is “inherently spiky”. What is the value of the broadening parameter used in these simulations? Including this information in the main text may improve the clarity and reproducibility of the paper.*
 
-We appreciate the referee's  observation. The size of the Lorentzian broadening of the spectral poles is controlled by the input parameter `eps`. It is important to note that the value of `eps` is not fixed universally but rather is chosen based on the specific requirements of each simulation. In the particular examples discussed on page 43 of our manuscript, we have employed a broadening parameter of `eps = 0.01`, expressed in units of the half-bandwidth `D`.
+We appreciate the referee's  observation. The width of the Lorentzian broadening of the spectral poles is controlled by the input parameter `eps`. It is important to note that the value of `eps` is not fixed universally but rather is chosen based on the specific requirements of each simulation. In the particular examples discussed on page 43 of our manuscript, we have employed a broadening parameter of `eps = 0.01`, expressed in units of the half-bandwidth `D`.
 In response to the referee's suggestion, we have updated the manuscript  explicitly specifying the value of this broadening parameter. 
 
 

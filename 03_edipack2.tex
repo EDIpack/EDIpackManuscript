@@ -1979,7 +1979,7 @@ to the Euclidean distance in matrix space.
 %  \fixme{We prospect to expand the choices for \texttt{cg\_norm} in future updates of \NAME, as the \textbf{nonsu2} and \textbf{superc}
 % diagonalization modes entail nontrivial subtleties in optimizing 
 % the off-diagonal components of $X$.}
-We plan to expand the available options for the {tt cg\_norm} parameter in future \NAME updates, since the {\tt nonsu2} and {\tt superc} diagonalization modes involve subtle challenges in optimizing the off-diagonal components of $X$, due to the coexistence of matrix elements with different physical meanings and/or spanning different energy scales, which require carefully balanced optimization metrics to ensure an accurate bath representation.
+We plan to expand the available options for the {tt cg\_norm} parameter in future \NAME updates, since the {\tt nonsu2} and {\tt superc} diagonalization modes involve subtle challenges in optimizing the off-diagonal components of X. These difficulties are related to the coexistence of matrix elements with different physical origin, so that they can live on different orders of magnitude, hence requiring carefully balanced optimization metrics to ensure an accurate bath representation.
 \item \texttt{cg\_Ftol} - Controls the fit tolerance, setting the 
 convergence threshold for the CG minimization.
 \item \texttt{cg\_Niter} - Specifies the maximum number of allowed 
