@@ -62,8 +62,7 @@ in their reports.
 We thank the referee for their positive assessment of our work and for recognizing its value in a more general context. We deeply appreciate their recommendation.  
 
 
-> *On page 3, a large portion of paragraph 3, which introduces DMFT, lacks citations. For example, the authors mention the success of DMFT in capturing key features of various materials, including Mott insulators, heavy fermion compounds, and unconventional superconductors. It would be helpful to include relevant references here to guide interested readers toward further reading.
-*
+> *On page 3, a large portion of paragraph 3, which introduces DMFT, lacks citations. For example, the authors mention the success of DMFT in capturing key features of various materials, including Mott insulators, heavy fermion compounds, and unconventional superconductors. It would be helpful to include relevant references here to guide interested readers toward further reading.*
 
 We agree with this comment by the referee. Although it is impossible to do justice to the wide literature accumulated over the years, we have made concerted efforts to incorporate key references that reflect the breadth and depth of research in this field. In the revised version, we have included several citations pertinent to DMFT across the discussed subjects, ensuring that foundational and more recent contributions are acknowledged. This approach aims to provide a balanced overview while addressing the referee's insightful comment. 
 
