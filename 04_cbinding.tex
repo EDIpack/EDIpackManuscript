@@ -56,7 +56,7 @@ When using \NAME functions in a C/C++ program, care must be taken in the way arr
 
 \subsubsection{Implementation}\label{sSecInteropCbindingsImplementation}
 The interface layer is contained in the Fortran module {\tt
-  EDIPACK\_C}. It contains a common part and two set of functions,
+  EDIPACK\_C}. It contains a common part and two sets of functions,
 one to interface the procedures from \NAME and a second
 one to extend the interface to the inequivalent impurities case.
 Specifically, the implemented interface functions expose to C through
@@ -128,7 +128,7 @@ further interfaces of \NAME as a plug-in solver for external Python-based softwa
 \subsubsection{Installation}\label{sSecInteropEDIpyInstallation}
 \paragraph{From source.}
 EDIpack2py is available as a platform-agnostic Python module depending on EDIpack.
-The code can be obtained and and installed from source as:
+The code can be obtained and installed from source as:
 \begin{lstlisting}[style=mybash]
 git clone https://github.com/edipack/EDIpack2py EDIpack2py
 cd EDIpack2py
@@ -167,7 +167,7 @@ conda install -c conda-forge -c edipack edipack #install edipack
 \noindent
 When the {\tt EDIpack2py}    module is imported, it attempts to load the dynamic library {\tt
   libedipack\-\_cbindings.so (.dylib)} containing the Fortran-C bindings
-for \NAME. By default the library search proceeds as follow: 
+for \NAME. By default the library search proceeds as follows: 
 \begin{enumerate}
 \item The user can override the location of the library
   (determined during the \NAME build configuration) by exporting an

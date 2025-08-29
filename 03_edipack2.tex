@@ -126,7 +126,7 @@ The phonon frequency is passed to the \NAME program via the variable { \tt W0\_P
 If {\tt GPHfile=NONE}, the matrix $g_{\alpha\beta}$ is read from the variable {\tt G\_PH}, otherwise it is read from the {\tt GPHfile}.
 
 \subsubsection{System setup}
-We consider a quantum impurity system comprised by a single multi-orbital impurity, a bath discretized into a number $N_\mathrm{bath}$ of {\it elements} possibly endowed with an internal structure, and a number of available phonons. 
+We consider a quantum impurity system comprised of a single multi-orbital impurity, a bath discretized into a number $N_\mathrm{bath}$ of {\it elements} possibly endowed with an internal structure, and a number of available phonons. 
 The total size of the system is determined by three contributions: i) the number of impurity orbitals $N_\a$, ii) the total count of electronic bath levels $N_\mathrm{b}$, and iii) by the maximum  number of allowed phonons $N_\mathrm{ph}$, introducing a cutoff to the unbounded dimension of the local phonon Hilbert space.
 The number of bath degrees of freedom $N_\mathrm{b}$ is a
 function of the bath topology and of $N_\mathrm{bath}$, which is determined internally by \NAME.
@@ -312,7 +312,7 @@ As the symmetries apply to the electronic terms, here we discuss the organizatio
 In \NAME, three different symmetry configurations 
 controlled by the input variable {\tt ed\_mode} = {\bf normal}, 
 {\bf superc}, {\bf nonsu2} are available. A summary of the sector properties is provided in
-Table~(\ref{TabSector}). 
+Table~(\ref{Table2}). 
 
 \begin{itemize}
 \item{} The {\bf normal} case conserves both the electrons' total occupation $N$
@@ -339,8 +339,9 @@ in-plane spin-triplet exciton condensation \cite{Amaricci2023PRB,Blason2020PRB}.
 \end{itemize}
 
 
-\begin{table}%[ht]
-\begin{tabularx}{\linewidth}{ |X|X|X| }
+\begin{table}
+  \centering
+  \begin{tabular}{ |c|c|c| }
  \hline
   {\tt ed\_mode} & {\it Quantum Numbers} & {\it Sector Dimension} \\
   \hline
@@ -353,15 +354,15 @@ in-plane spin-triplet exciton condensation \cite{Amaricci2023PRB,Blason2020PRB}.
   \hline
   {\bf nonsu2} & $N \equiv N_\up+N_\dw$ & $\binom{2N_\mathrm{s}}{N}$ \\ 
  \hline  
-\end{tabularx}
-\vspace{2mm}
-\caption{\label{TabSector}
-  {\bf Quantum Numbers}.
+\end{tabular}
+\caption{
+ {\bf Quantum Numbers}.
 A table summarizing the possible values of the input variable {\tt
   ed\_mode} selecting the symmetries of the problem (first column). To each value
 correspond different quantum numbers listed in the second column.
 The third column reports the dimension of the electronic symmetry sector $\SS_{\vec{Q}}$ for a
 given value of the quantum numbers $\vec{Q}$.}
+\label{Table2}
 \end{table}
 
 
@@ -1028,8 +1029,13 @@ The number of independent bath parameters to optimize is either
 $N_\mathrm{param} = (N_\mathrm{sym}+1)N_\mathrm{bath}$ for {\tt bath\_type}={\bf replica} or 
 $N_\mathrm{param} = (N_\mathrm{sym}+N_\a N_\s)N_\mathrm{bath}$ for {\tt bath\_type}={\bf general}.
 
-We summarize the total number $N_s$ of electronic levels of the quantum impurity system according to the value of $N_\a$, $N_\mathrm{bath}$ and the bath topology in the following table:
-\begin{center}
+
+We summarize the total number $N_s$ of electronic levels of the
+quantum impurity system according to the value of $N_\a$,
+$N_\mathrm{bath}$ and the bath topology in Table~\ref{Table3}:
+
+\begin{table}
+\centering
 \begin{tabular}{ |c||c|c|c|c| } 
  \hline     
 {\tt bath\_type} & {\bf normal} & {\bf hybrid} & {\bf replica} & {\bf general}\\
@@ -1042,9 +1048,16 @@ We summarize the total number $N_s$ of electronic levels of the quantum impurity
  $N_\a(N_\mathrm{bath}+1)$  \\ 
  \hline
 \end{tabular}
-\end{center}
+\caption{
+  {\bf Total number of electronic levels}.
+  The table summarizes the possible number of the electronic levels $N_s$ (second row) according to the value of the {\tt bath\_type}
+(first row), the number of impurity orbitals $N_\alpha$ and the number
+of the bath sites $N_{\rm bath}$.}
+\label{Table3}
+\end{table}
 
-\vspace{2mm}
+
+% \vspace{2mm}
 All the procedures concerning the bath
 % , either on the user side or concerning the internal {\tt effective\_bath}, 
 are grouped into a set of modules wrapped by {\tt ED\_BATH}. 
@@ -1069,9 +1082,10 @@ parameters.
 % dimensionality using {\tt check\_bath\_dimension} to prevent 
 % allocation errors.
 
-The following table summarizes the total number of parameters $N_\mathrm{param}$, as returned by the function {\tt ed\_get\_bath\_dimension} and required to describe the bath according to the values of {\tt ed\_mode} and {\tt bath\_type}:
+Table~\ref{Table4} summarizes the total number of parameters $N_\mathrm{param}$, as returned by the function {\tt ed\_get\_bath\_dimension} and required to describe the bath according to the values of {\tt ed\_mode} and {\tt bath\_type}:
 
-\begin{center}
+\begin{table}
+\centering
 \begin{tabular}{ |c||c|c|c|c| } 
  \hline     
  $N_\mathrm{param}$ & {\bf normal} & {\bf hybrid} & {\bf replica} & {\bf general}\\
@@ -1094,7 +1108,20 @@ The following table summarizes the total number of parameters $N_\mathrm{param}$
  $(N_\mathrm{sym}+N_\a N_\sigma)N_\mathrm{bath}$\\
  \hline
 \end{tabular}
-\end{center}
+\caption{
+  {\bf Total number of bath parameters}. The table lists the number of
+  bath parameters $N_{\rm param}$ according to the conserved
+  symmetry {\tt ed\_mode} (first column), and the
+  bath topology {\tt bath\_type} (first
+  row). The number of parameters is obtained as a function of the
+  impurity orbitals $N_\alpha$, the number of spin channels
+  $N_\sigma$, the number of bath sites $N_{\rm bath}$ and, where
+  applicable, the size of the matrix basis used to describe the {\tt
+    replica/general} bath structure $N_{\rm sym}$.}
+\label{Table4}
+\end{table}
+
+
 
 \paragraph{Bath replica/general.}
 The module {\tt ED\_BATH\_REPLICA} defines the class {\tt Hreplica}/{\tt Hge\-ne\-ral} for the {\bf replica}/{\bf general} bath parametrization. In  addition to standard object construction, destruction, reading and saving, this module provides the setup for either the matrix basis  
@@ -1172,7 +1199,7 @@ computational effort, making its optimization a critical aspect of
 high-performance diagonalization algorithms. In Ref. \cite{Amaricci2022CPC} we discussed in greater details the massively parallel strategies  employed in \NAME to optimize the MVP operations and presented various benchmarks of the parallel scaling. 
 Here, we provide a brief outline of the main ideas following the notation introduced
 in Ref.~\onlinecite{Amaricci2022CPC}, and focusing on the impact of the choice of {\tt ed\_mode}. 
-For sake of clarity, here we focus on the purely electronic case, i.e. neglecting the electron-phonon part. The product structure of the electron and phonon Fock spaces ensure that the following approach applies with few algorithmic modifications in presence of electron-phonon coupling.  
+For the sake of clarity, here we focus on the purely electronic case, i.e. neglecting the electron-phonon part. The product structure of the electron and phonon Fock spaces ensure that the following approach applies with few algorithmic modifications in presence of electron-phonon coupling.  
 
 
 
@@ -1263,7 +1290,7 @@ the resulting {\tt state\_list} of conserved eigenstates.
 
 
 \subsection{Dynamical correlation functions}\label{sSecGF}
-The determination of the low energy part of the Hamiltonian's spectrum
+The determination of the low-energy part of the Hamiltonian's spectrum
 enables evaluation of the Dynamical Correlation Functions (DCFs) using Krylov subspace algorithm.
 This capability is central to the library when using \NAME as an
 impurity solver within the DMFT framework.
@@ -1337,7 +1364,7 @@ where the terms are grouped as a sum over spectral weights and
 poles. We introduced the notation $g(z;\nu, w^{\nu}_{mn},  dE^\nu_{mn})$
 for the {\tt gfmatrix} object containing the weights $w^{\nu}_{mn}(\AA)$ and
 poles $dE^{\nu}_{mn}(\AA)$ for the operator $\AA$, for every initial state $\ket{\psi_n}$
-contributing to the low energy spectrum, for every order $m$ of the
+contributing to the low-energy spectrum, for every order $m$ of the
 Krylov subspace algorithm and for channel $\nu$.
 % This approach significantly reduces the computational burden, as it
 % requires a much smaller set of basis states.
@@ -1532,7 +1559,7 @@ extending the algorithm initially proposed in
 Ref. \cite{BellomiaPhD,Bellomia2024PRB}, to support the analysis of entanglement 
 properties of quantum impurities for any value of {\tt ed\_mode}.
 
-For sake of simplicity, this section focuses on the zero-temperature limit, 
+For the sake of simplicity, this section focuses on the zero-temperature limit, 
 assuming a non-degenerate ground state $\ket{\psi}$ present in the 
 {\tt state\_list}. The generalization to the finite-temperature regime 
 or degenerate ground states is straightforward, requiring only the  introduction of an
